@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 
-// Leaflet（地図）コンポーネントをSSR無効（ssr: false）で動的インポート
-// ※もし Leaflet コンポーネントのファイルパスが異なる場合は "@/components/Map" などを適宜変更してください
+// Leaflet（地図）コンポーネントをSSR無効で動的インポート
 const MapComponent = dynamic(() => import("../components/Map"), {
   ssr: false,
 });
