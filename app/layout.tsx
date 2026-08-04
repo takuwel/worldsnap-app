@@ -1,8 +1,8 @@
-import React from "react";
+import "./globals.css";
 
 export const metadata = {
-  title: "WorldSnap Live Map",
-  description: "WorldSnap App",
+  title: "WorldSnap",
+  description: "Map App",
 };
 
 export default function RootLayout({
