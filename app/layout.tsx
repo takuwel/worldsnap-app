@@ -11,7 +11,6 @@ import {
   Map as MapIcon,
   Heart,
   Share2,
-  Filter,
   X,
   Globe,
   CloudRain,
@@ -30,22 +29,15 @@ const COUNTRY_COORDS: Record<string, { lat: number; lng: number; name: string }>
 };
 
 export default function Home() {
-  // 国籍選択状態（初期選択モーダル用）
   const [selectedCountry, setSelectedCountry] = useState<string>("JP");
   const [hasSelectedCountry, setHasSelectedCountry] = useState<boolean>(false);
-
-  // タブ状態
   const [activeTab, setActiveTab] = useState<"map" | "search" | "saved" | "profile">("map");
 
-  // フィルター状態
   const [mode, setMode] = useState<"public" | "friends">("public");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
-
-  // 新規投稿モーダルの開閉
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
-  // サンプル投稿データ
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -82,14 +74,11 @@ export default function Home() {
     },
   ]);
 
-  // 新規投稿フォーム用の状態
   const [newTitle, setNewTitle] = useState("");
   const [newLocation, setNewLocation] = useState("");
-  const [newCategory, setNewCategory] = useState("gourmet");
   const [newIsRainy, setNewIsRainy] = useState(false);
   const [newIsFriendOnly, setNewIsFriendOnly] = useState(false);
 
-  // フィルター処理後の投稿一覧
   const filteredPosts = posts.filter((post) => {
     if (mode === "friends" && !post.isFriendOnly) return false;
     if (selectedCategory === "gourmet" && post.category !== "gourmet") return false;
@@ -103,14 +92,10 @@ export default function Home() {
     return true;
   });
 
-  // 保存（ブックマーク）の切り替え
   const toggleSave = (id: number) => {
-    setPosts(
-      posts.map((p) => (p.id === id ? { ...p, saved: !p.saved } : p))
-    );
+    setPosts(posts.map((p) => (p.id === id ? { ...p, saved: !p.saved } : p)));
   };
 
-  // 投稿追加処理
   const handleCreatePost = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle) return;
@@ -119,7 +104,7 @@ export default function Home() {
       id: Date.now(),
       title: newTitle,
       location: newLocation || "位置情報なし",
-      category: newCategory,
+      category: "gourmet",
       isRainyOk: newIsRainy,
       isFriendOnly: newIsFriendOnly,
       likes: 0,
@@ -134,6 +119,18 @@ export default function Home() {
   };
 
   const currentCoords = COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
+
+  // 広告バナー用コンポーネント（目立たないデザイン）
+  const AdBanner = () => (
+    <div className="my-6 p-3 bg-slate-200/60 border border-slate-300 rounded-xl text-center">
+      <span className="text-[9px] font-semibold text-slate-400 block tracking-wider uppercase mb-1">
+        スポンサーリンク / 広告
+      </span>
+      <div className="h-14 bg-slate-300/70 rounded-lg flex items-center justify-center text-slate-500 text-xs font-medium border border-dashed border-slate-400">
+        Google AdSense / 広告枠スペース (320x50)
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex flex-col h-screen w-screen bg-slate-50 text-slate-800 overflow-hidden font-sans">
@@ -171,7 +168,6 @@ export default function Home() {
 
       {/* 2. 上部ヘッダー & トグルスイッチ */}
       <header className="bg-white border-b border-slate-200 z-10 p-3 space-y-2 shadow-sm">
-        {/* 検索バー */}
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
@@ -185,9 +181,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* トグルスイッチ（横スクロールチップ） */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 text-xs font-semibold">
-          {/* パブリック / フレンド切替 */}
           <button
             onClick={() => setMode(mode === "public" ? "friends" : "public")}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition shrink-0 ${
@@ -202,7 +196,6 @@ export default function Home() {
 
           <div className="h-4 w-[1px] bg-slate-300 shrink-0" />
 
-          {/* ジャンルチップ */}
           <button
             onClick={() => setSelectedCategory("all")}
             className={`px-3 py-1.5 rounded-full border transition shrink-0 ${
@@ -240,7 +233,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 3. メインコンテンツエリア */}
+      {/* 3. メインコンテンツ */}
       <main className="flex-1 relative overflow-y-auto bg-slate-100">
         {/* 【マップタブ】 */}
         {activeTab === "map" && (
@@ -252,7 +245,6 @@ export default function Home() {
               loading="lazy"
             ></iframe>
 
-            {/* スポット案内カード */}
             <div className="absolute bottom-4 left-4 right-4 bg-white/95 backdrop-blur border border-slate-200 p-3 rounded-2xl shadow-xl flex items-center gap-3">
               <img
                 src={filteredPosts[0]?.image || "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&auto=format&fit=crop"}
@@ -260,16 +252,9 @@ export default function Home() {
                 className="w-14 h-14 rounded-xl object-cover"
               />
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md">
-                    注目スポット
-                  </span>
-                  {filteredPosts[0]?.isFriendOnly && (
-                    <span className="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-md">
-                      フレンド限定
-                    </span>
-                  )}
-                </div>
+                <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md">
+                  注目スポット
+                </span>
                 <h3 className="text-sm font-bold text-slate-800 truncate mt-0.5">
                   {filteredPosts[0]?.title || "周辺の注目スポット"}
                 </h3>
@@ -289,56 +274,30 @@ export default function Home() {
               <span className="text-xs font-normal text-slate-500">{filteredPosts.length}件表示</span>
             </h2>
 
-            {filteredPosts.length === 0 ? (
-              <div className="text-center py-12 text-slate-400">
-                <p>条件に該当する投稿が見つかりませんでした。</p>
-              </div>
-            ) : (
-              <div className="grid gap-4">
-                {filteredPosts.map((post) => (
-                  <div
-                    key={post.id}
-                    className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition"
-                  >
-                    <div className="relative">
-                      <img src={post.image} alt={post.title} className="w-full h-48 object-cover" />
-                      <button
-                        onClick={() => toggleSave(post.id)}
-                        className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur rounded-full shadow text-slate-700 hover:text-blue-600"
-                      >
-                        <Bookmark className={`w-4 h-4 ${post.saved ? "fill-blue-600 text-blue-600" : ""}`} />
-                      </button>
-                    </div>
-                    <div className="p-4">
-                      <div className="flex gap-2 mb-2">
-                        {post.isFriendOnly && (
-                          <span className="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded">
-                            フレンド限定
-                          </span>
-                        )}
-                        {post.isRainyOk && (
-                          <span className="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded">
-                            雨の日OK
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="font-bold text-slate-800 text-base">{post.title}</h3>
-                      <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
-                        <MapPin className="w-3.5 h-3.5 text-red-500" /> {post.location}
-                      </p>
-                      <div className="flex justify-between items-center mt-3 pt-3 border-t border-slate-100 text-slate-500 text-xs">
-                        <span className="flex items-center gap-1 text-red-500 font-medium">
-                          <Heart className="w-4 h-4 fill-red-500" /> {post.likes}
-                        </span>
-                        <button className="hover:text-blue-600">
-                          <Share2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
+            <div className="grid gap-4">
+              {filteredPosts.map((post) => (
+                <div key={post.id} className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                  <div className="relative">
+                    <img src={post.image} alt={post.title} className="w-full h-48 object-cover" />
+                    <button
+                      onClick={() => toggleSave(post.id)}
+                      className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur rounded-full shadow text-slate-700"
+                    >
+                      <Bookmark className={`w-4 h-4 ${post.saved ? "fill-blue-600 text-blue-600" : ""}`} />
+                    </button>
                   </div>
-                ))}
-              </div>
-            )}
+                  <div className="p-4">
+                    <h3 className="font-bold text-slate-800 text-base">{post.title}</h3>
+                    <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
+                      <MapPin className="w-3.5 h-3.5 text-red-500" /> {post.location}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* スクロール最下部に自然な広告枠 */}
+            <AdBanner />
           </div>
         )}
 
@@ -346,34 +305,19 @@ export default function Home() {
         {activeTab === "saved" && (
           <div className="p-4 max-w-md mx-auto pb-20">
             <h2 className="text-base font-bold text-slate-800 mb-4">保存したスポット</h2>
-            {posts.filter((p) => p.saved).length === 0 ? (
-              <div className="text-center py-16 text-slate-400">
-                <Bookmark className="w-12 h-12 mx-auto text-slate-300 mb-2" />
-                <p className="text-sm font-medium">保存されたスポットはありません</p>
-              </div>
-            ) : (
-              <div className="grid gap-3">
-                {posts
-                  .filter((p) => p.saved)
-                  .map((post) => (
-                    <div key={post.id} className="bg-white border border-slate-200 rounded-xl p-3 flex gap-3 shadow-sm">
-                      <img src={post.image} alt={post.title} className="w-20 h-20 rounded-lg object-cover" />
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-sm text-slate-800 truncate">{post.title}</h4>
-                        <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                          <MapPin className="w-3 h-3 text-red-500" /> {post.location}
-                        </p>
-                        <button
-                          onClick={() => toggleSave(post.id)}
-                          className="mt-3 text-xs text-red-500 font-medium hover:underline"
-                        >
-                          保存解除
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            )}
+            <div className="grid gap-3">
+              {posts.filter((p) => p.saved).map((post) => (
+                <div key={post.id} className="bg-white border border-slate-200 rounded-xl p-3 flex gap-3 shadow-sm">
+                  <img src={post.image} alt={post.title} className="w-20 h-20 rounded-lg object-cover" />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-sm text-slate-800 truncate">{post.title}</h4>
+                    <p className="text-xs text-slate-500 mt-1">{post.location}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <AdBanner />
           </div>
         )}
 
@@ -389,11 +333,10 @@ export default function Home() {
             <div className="mt-6 bg-white border border-slate-200 rounded-2xl p-4 text-left shadow-sm space-y-4">
               <h3 className="text-sm font-bold text-slate-700">エリア・国籍設定</h3>
               <div>
-                <label className="text-xs text-slate-500 block mb-1">デフォルト表示地域</label>
                 <select
                   value={selectedCountry}
                   onChange={(e) => setSelectedCountry(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800"
                 >
                   {Object.entries(COUNTRY_COORDS).map(([code, data]) => (
                     <option key={code} value={code}>
@@ -403,72 +346,35 @@ export default function Home() {
                 </select>
               </div>
             </div>
+
+            <AdBanner />
           </div>
         )}
       </main>
 
-      {/* 4. 新規投稿モーダル */}
+      {/* モーダル & ナビゲーション */}
       {isPostModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-5 max-w-md w-full shadow-2xl relative">
             <button
               onClick={() => setIsPostModalOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+              className="absolute top-4 right-4 text-slate-400"
             >
               <X className="w-5 h-5" />
             </button>
-
             <h3 className="text-lg font-bold text-slate-800 mb-4">新しいスポットを共有</h3>
-
             <form onSubmit={handleCreatePost} className="space-y-3">
-              <div>
-                <label className="text-xs font-semibold text-slate-600 block mb-1">スポット名</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="例: 表参道のカフェ"
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-slate-600 block mb-1">場所・エリア</label>
-                <input
-                  type="text"
-                  placeholder="例: 東京都 渋谷区"
-                  value={newLocation}
-                  onChange={(e) => setNewLocation(e.target.value)}
-                  className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="flex gap-4 pt-2">
-                <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={newIsRainy}
-                    onChange={(e) => setNewIsRainy(e.target.checked)}
-                    className="rounded text-blue-600 focus:ring-blue-500"
-                  />
-                  雨の日OK
-                </label>
-
-                <label className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={newIsFriendOnly}
-                    onChange={(e) => setNewIsFriendOnly(e.target.checked)}
-                    className="rounded text-indigo-600 focus:ring-indigo-500"
-                  />
-                  フレンド限定
-                </label>
-              </div>
-
+              <input
+                type="text"
+                required
+                placeholder="スポット名"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                className="w-full border rounded-xl px-3 py-2 text-sm"
+              />
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition mt-4"
+                className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl shadow-lg mt-4"
               >
                 投稿する
               </button>
@@ -477,54 +383,21 @@ export default function Home() {
         </div>
       )}
 
-      {/* 5. 下部ナビゲーションバー */}
       <nav className="bg-white border-t border-slate-200 p-2 flex justify-around items-center z-10 shadow-lg">
-        <button
-          onClick={() => setActiveTab("map")}
-          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition ${
-            activeTab === "map" ? "text-blue-600 font-bold" : "text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          <MapIcon className="w-5 h-5" />
-          <span className="text-[10px]">マップ</span>
+        <button onClick={() => setActiveTab("map")} className={`flex flex-col items-center gap-1 py-1 px-3 ${activeTab === "map" ? "text-blue-600 font-bold" : "text-slate-400"}`}>
+          <MapIcon className="w-5 h-5" /><span className="text-[10px]">マップ</span>
         </button>
-
-        <button
-          onClick={() => setActiveTab("search")}
-          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition ${
-            activeTab === "search" ? "text-blue-600 font-bold" : "text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          <Compass className="w-5 h-5" />
-          <span className="text-[10px]">探す</span>
+        <button onClick={() => setActiveTab("search")} className={`flex flex-col items-center gap-1 py-1 px-3 ${activeTab === "search" ? "text-blue-600 font-bold" : "text-slate-400"}`}>
+          <Compass className="w-5 h-5" /><span className="text-[10px]">探す</span>
         </button>
-
-        {/* ＋投稿ボタン */}
-        <button
-          onClick={() => setIsPostModalOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg shadow-blue-500/30 -mt-5 transition transform active:scale-95"
-        >
+        <button onClick={() => setIsPostModalOpen(true)} className="bg-blue-600 text-white p-3 rounded-full shadow-lg -mt-5">
           <Plus className="w-6 h-6" />
         </button>
-
-        <button
-          onClick={() => setActiveTab("saved")}
-          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition ${
-            activeTab === "saved" ? "text-blue-600 font-bold" : "text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          <Bookmark className="w-5 h-5" />
-          <span className="text-[10px]">保存</span>
+        <button onClick={() => setActiveTab("saved")} className={`flex flex-col items-center gap-1 py-1 px-3 ${activeTab === "saved" ? "text-blue-600 font-bold" : "text-slate-400"}`}>
+          <Bookmark className="w-5 h-5" /><span className="text-[10px]">保存</span>
         </button>
-
-        <button
-          onClick={() => setActiveTab("profile")}
-          className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg transition ${
-            activeTab === "profile" ? "text-blue-600 font-bold" : "text-slate-400 hover:text-slate-600"
-          }`}
-        >
-          <User className="w-5 h-5" />
-          <span className="text-[10px]">マイページ</span>
+        <button onClick={() => setActiveTab("profile")} className={`flex flex-col items-center gap-1 py-1 px-3 ${activeTab === "profile" ? "text-blue-600 font-bold" : "text-slate-400"}`}>
+          <User className="w-5 h-5" /><span className="text-[10px]">マイページ</span>
         </button>
       </nav>
     </div>
