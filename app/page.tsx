@@ -24,6 +24,7 @@ import {
   Video,
   Check,
   UserPlus,
+  Crop,
 } from "lucide-react";
 
 const COUNTRY_COORDS: Record<string, { lat: number; lng: number; name: string }> = {
@@ -61,7 +62,7 @@ export default function Home() {
   const [publicSubCategory, setPublicSubCategory] = useState<"view" | "rainy" | "food">("view");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // 初期投稿データ
+  // マップ上のピン・投稿データ
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -76,6 +77,8 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&auto=format&fit=crop",
       author: "Takuya",
       saved: false,
+      topRatio: "35%",
+      leftRatio: "48%",
     },
     {
       id: 2,
@@ -90,6 +93,8 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop",
       author: "Ken",
       saved: true,
+      topRatio: "55%",
+      leftRatio: "52%",
     },
     {
       id: 3,
@@ -104,6 +109,8 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&auto=format&fit=crop",
       author: "Yuki",
       saved: false,
+      topRatio: "42%",
+      leftRatio: "60%",
     },
   ]);
 
@@ -113,9 +120,12 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<"views" | "newest" | "likes">("views");
   const [unsaveConfirmId, setUnsaveConfirmId] = useState<number | null>(null);
 
-  // 投稿フロー
+  // 投稿フロー（カメラ ➔ プレビュー/トリミング ➔ フォーム ➔ AI審査）
   const [isPostFlowOpen, setIsPostFlowOpen] = useState(false);
-  const [postStep, setPostStep] = useState<"camera" | "form" | "ai_check">("camera");
+  const [postStep, setPostStep] = useState<"camera" | "preview" | "form" | "ai_check">("camera");
+
+  // トリミングアスペクト比
+  const [cropAspectRatio, setCropAspectRatio] = useState<"1:1" | "9:16" | "4:3">("9:16");
 
   // カメラ機能
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -125,7 +135,12 @@ export default function Home() {
   const [zoomLevel, setZoomLevel] = useState<"0.5x" | "1x" | "2x">("1x");
   const [timerSeconds, setTimerSeconds] = useState<0 | 3 | 10>(0);
 
-  // 投稿フォーム用状態（整理後の単一選択）
+  // 撮影後のプレビュー用ダミーメディア
+  const [capturedMediaUrl, setCapturedMediaUrl] = useState<string>(
+    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop"
+  );
+
+  // 投稿フォーム状態
   const [newTitle, setNewTitle] = useState("");
   const [postTargetMode, setPostTargetMode] = useState<"public" | "friends" | "private">("public");
   const [postTargetCategory, setPostTargetCategory] = useState<"view" | "rainy" | "food">("view");
@@ -169,7 +184,13 @@ export default function Home() {
     }
   };
 
-  // フィルタリング（モード＆サブカテゴリにマッチするものを表示）
+  // シャッター処理 ➔ プレビュー確認画面へ
+  const handleCapture = () => {
+    stopCamera();
+    setPostStep("preview");
+  };
+
+  // フィルタリング
   const filteredPosts = posts.filter((post) => {
     if (post.mode !== mainMode) return false;
     if (mainMode === "public" && post.category !== publicSubCategory) return false;
@@ -192,7 +213,7 @@ export default function Home() {
     }
   };
 
-  // AI審査完了後に即座にピンとして追加
+  // AI審査完了後にマップ中央付近へ新規ピンを設置
   const handleStartPostCheck = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle) return;
@@ -200,6 +221,10 @@ export default function Home() {
 
     setTimeout(() => {
       const currentCoords = COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
+
+      // マップ画面上にランダムな位置でピンを配置（ダミー位置調整）
+      const randomTop = Math.floor(35 + Math.random() * 30) + "%";
+      const randomLeft = Math.floor(35 + Math.random() * 30) + "%";
 
       const newPostObj = {
         id: Date.now(),
@@ -211,21 +236,20 @@ export default function Home() {
         likes: 0,
         createdAt: "2026-08-05",
         mediaType: cameraType,
-        image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop",
+        image: capturedMediaUrl,
         author: username,
         saved: false,
+        topRatio: randomTop,
+        leftRatio: randomLeft,
       };
 
-      // 投稿一覧に反映
       setPosts((prevPosts) => [newPostObj, ...prevPosts]);
 
-      // 現在のマップ表示モードを投稿したモード・カテゴリへ自動切り替え
       setMainMode(postTargetMode);
       if (postTargetMode === "public") {
         setPublicSubCategory(postTargetCategory);
       }
 
-      // 新しく作成したピンを自動選択して膨らませる
       setSelectedSpotPin(newPostObj);
 
       setPostStep("camera");
@@ -377,6 +401,7 @@ export default function Home() {
       <main className="flex-1 relative overflow-y-auto bg-slate-100">
         {activeTab === "map" && (
           <div className="w-full h-full relative">
+            {/* 地図枠 */}
             <iframe
               title="Map"
               src={`https://maps.google.com/maps?q=${currentCoords.lat},${currentCoords.lng}&z=14&output=embed`}
@@ -384,7 +409,7 @@ export default function Home() {
               loading="lazy"
             ></iframe>
 
-            {/* スタイリッシュなポインター */}
+            {/* 中央のスタイリッシュなポインター */}
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
               <div className="relative flex items-center justify-center">
                 <div className="w-8 h-8 rounded-full border-2 border-blue-500 bg-blue-500/20 animate-ping absolute" />
@@ -394,34 +419,49 @@ export default function Home() {
               </div>
             </div>
 
-            {/* マップ上部：投稿済みピンボタンリスト（即時追加される） */}
-            <div className="absolute top-3 left-3 right-3 flex gap-2 overflow-x-auto p-2 bg-white/90 backdrop-blur rounded-2xl shadow border border-slate-200">
-              <span className="text-xs font-bold text-slate-600 self-center whitespace-nowrap pl-1">
-                📍 立てたピン:
-              </span>
-              {filteredPosts.length === 0 ? (
-                <span className="text-xs text-slate-400 self-center pl-2">ピンがありません（投稿すると出現します）</span>
-              ) : (
-                filteredPosts.map((spot) => (
-                  <button
-                    key={spot.id}
-                    onClick={() => setSelectedSpotPin(spot)}
-                    className={`flex items-center gap-1.5 border px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0 ${
-                      selectedSpotPin?.id === spot.id
-                        ? "bg-red-50 border-red-500 text-red-600 scale-105 shadow-md"
-                        : "bg-white border-slate-300 text-slate-700 hover:border-blue-500"
-                    }`}
-                  >
-                    <MapPin className="w-3.5 h-3.5 text-red-500 fill-red-500" />
-                    {spot.title}
-                  </button>
-                ))
-              )}
-            </div>
+            {/* マップ上に直接配置されたピン（ワンタップでアイコンサムネイルに化ける） */}
+            {filteredPosts.map((spot) => {
+              const isSelected = selectedSpotPin?.id === spot.id;
+              return (
+                <div
+                  key={spot.id}
+                  style={{ top: spot.topRatio, left: spot.leftRatio }}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 z-20 cursor-pointer"
+                  onClick={() => setSelectedSpotPin(spot)}
+                >
+                  {isSelected ? (
+                    /* タップ時：膨らんだ画像アイコンサムネイル */
+                    <div
+                      className="relative group animate-in zoom-in-75 duration-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsDetailModalOpen(true);
+                      }}
+                    >
+                      <img
+                        src={spot.image}
+                        alt={spot.title}
+                        className="w-16 h-16 rounded-2xl border-4 border-blue-500 object-cover shadow-2xl ring-4 ring-white/50"
+                      />
+                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold shadow whitespace-nowrap">
+                        動画を見る
+                      </div>
+                    </div>
+                  ) : (
+                    /* 通常時：標準のマップピン */
+                    <div className="flex flex-col items-center hover:scale-125 transition transform">
+                      <div className="p-2 bg-red-600 rounded-full text-white shadow-lg border-2 border-white">
+                        <MapPin className="w-4 h-4 fill-white" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
 
-            {/* ピンタップ時の膨らむサムネイル */}
+            {/* ピンをタップした際の下部案内カード */}
             {selectedSpotPin && (
-              <div className="absolute bottom-4 left-4 right-4 bg-white p-4 rounded-2xl shadow-2xl border-2 border-blue-500 animate-in zoom-in-95 duration-200">
+              <div className="absolute bottom-4 left-4 right-4 bg-white p-4 rounded-2xl shadow-2xl border-2 border-blue-500 animate-in zoom-in-95 duration-200 z-30">
                 <button
                   onClick={() => setSelectedSpotPin(null)}
                   className="absolute top-3 right-3 text-slate-400 hover:text-slate-600"
@@ -434,7 +474,7 @@ export default function Home() {
                     <img
                       src={selectedSpotPin.image}
                       alt={selectedSpotPin.title}
-                      className="w-24 h-24 rounded-xl object-cover shadow-md border-2 border-blue-400"
+                      className="w-20 h-20 rounded-xl object-cover shadow-md border-2 border-blue-400"
                     />
                   </div>
 
@@ -589,7 +629,7 @@ export default function Home() {
         )}
       </main>
 
-      {/* 4. 保存解除の2段階確認ダイアログ */}
+      {/* 4. 保存解除確認ダイアログ */}
       {unsaveConfirmId !== null && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-5 max-w-xs w-full text-center shadow-2xl space-y-3">
@@ -706,9 +746,10 @@ export default function Home() {
         </div>
       )}
 
-      {/* 6. カメラ撮影 ＆ 整理された投稿選択ボックス */}
+      {/* 6. カメラ撮影 ＆ プレビュー・トリミング ＆ フォーム選択 */}
       {isPostFlowOpen && (
         <div className="fixed inset-0 z-50 bg-black flex flex-col justify-between p-4 text-white">
+          {/* STEP 1: カメラ撮影 */}
           {postStep === "camera" && (
             <>
               <div className="flex justify-between items-center z-10">
@@ -725,7 +766,6 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* カメラ映像（インカメラの鏡像反転をCSS補正） */}
               <div className="relative flex-1 my-4 bg-black rounded-3xl overflow-hidden flex items-center justify-center">
                 <video
                   ref={videoRef}
@@ -775,7 +815,7 @@ export default function Home() {
                   </button>
 
                   <button
-                    onClick={() => setPostStep("form")}
+                    onClick={handleCapture}
                     className="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center p-1 active:scale-95 transition"
                   >
                     <div className={`w-full h-full rounded-full ${cameraType === "video" ? "bg-red-600" : "bg-white"}`} />
@@ -792,7 +832,65 @@ export default function Home() {
             </>
           )}
 
-          {/* 整理された投稿選択ボックス（モード1つ、カテゴリ1つ） */}
+          {/* STEP 2: プレビュー確認 ＆ トリミング設定 */}
+          {postStep === "preview" && (
+            <div className="flex flex-col h-full justify-between max-w-md w-full mx-auto">
+              <div className="flex justify-between items-center p-2">
+                <h3 className="font-bold text-sm text-white flex items-center gap-1.5">
+                  <Crop className="w-4 h-4 text-blue-400" /> プレビュー＆トリミング確認
+                </h3>
+                <button
+                  onClick={() => setPostStep("camera")}
+                  className="text-xs bg-slate-800 px-3 py-1.5 rounded-full text-slate-300"
+                >
+                  撮り直す
+                </button>
+              </div>
+
+              {/* トリミング用アスペクト比適用枠 */}
+              <div className="flex-1 my-2 bg-slate-900 rounded-2xl overflow-hidden flex items-center justify-center relative p-2">
+                <div
+                  className={`relative overflow-hidden transition-all duration-300 border-2 border-blue-500 rounded-xl shadow-2xl ${
+                    cropAspectRatio === "1:1"
+                      ? "w-72 h-72"
+                      : cropAspectRatio === "4:3"
+                      ? "w-80 h-60"
+                      : "w-64 h-96"
+                  }`}
+                >
+                  <img src={capturedMediaUrl} alt="preview" className="w-full h-full object-cover" />
+                  <div className="absolute top-2 left-2 bg-black/60 px-2 py-0.5 rounded text-[10px] font-bold text-white">
+                    {cameraType === "video" ? "🎥 撮影した動画" : "📷 撮影した写真"}
+                  </div>
+                </div>
+              </div>
+
+              {/* トリミング比率切り替え */}
+              <div className="flex justify-center gap-2 mb-4 bg-slate-900 p-2 rounded-xl text-xs font-bold border border-slate-800">
+                <span className="text-slate-400 text-[11px] self-center mr-2">アスペクト比:</span>
+                {(["9:16", "1:1", "4:3"] as const).map((ratio) => (
+                  <button
+                    key={ratio}
+                    onClick={() => setCropAspectRatio(ratio)}
+                    className={`px-3 py-1 rounded-lg transition ${
+                      cropAspectRatio === ratio ? "bg-blue-600 text-white font-bold" : "bg-slate-800 text-slate-400"
+                    }`}
+                  >
+                    {ratio}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setPostStep("form")}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow text-sm transition mb-2"
+              >
+                この映像で投稿へ進む
+              </button>
+            </div>
+          )}
+
+          {/* STEP 3: 投稿入力フォーム */}
           {postStep === "form" && (
             <div className="bg-white text-slate-800 rounded-3xl p-6 max-w-md w-full mx-auto my-auto shadow-2xl space-y-4">
               <h3 className="font-bold text-lg text-slate-900 border-b pb-2">投稿情報の入力</h3>
@@ -809,11 +907,8 @@ export default function Home() {
                 />
               </div>
 
-              {/* 1. 公開範囲（モード）の単一選択 */}
               <div>
-                <label className="text-xs font-bold text-slate-600 block mb-1.5">
-                  ① 投稿先のモードを選択 (1つ選択)
-                </label>
+                <label className="text-xs font-bold text-slate-600 block mb-1.5">① 投稿先のモードを選択 (1つ選択)</label>
                 <div className="grid grid-cols-3 gap-2 text-xs font-semibold">
                   {[
                     { key: "public", label: "パブリック" },
@@ -826,7 +921,7 @@ export default function Home() {
                       onClick={() => setPostTargetMode(item.key as any)}
                       className={`py-2 px-2 rounded-xl border text-center transition ${
                         postTargetMode === item.key
-                          ? "border-blue-600 bg-blue-60 text-blue-700 font-bold border-2"
+                          ? "border-blue-600 bg-blue-50 text-blue-700 font-bold border-2"
                           : "border-slate-200 text-slate-600"
                       }`}
                     >
@@ -836,11 +931,8 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* 2. ジャンル（カテゴリ）の単一選択 */}
               <div>
-                <label className="text-xs font-bold text-slate-600 block mb-1.5">
-                  ② ジャンルを選択 (1つ選択)
-                </label>
+                <label className="text-xs font-bold text-slate-600 block mb-1.5">② ジャンルを選択 (1つ選択)</label>
                 <div className="grid grid-cols-3 gap-2 text-xs font-semibold">
                   {[
                     { key: "view", label: "view" },
@@ -865,10 +957,10 @@ export default function Home() {
 
               <div className="flex gap-2 pt-2">
                 <button
-                  onClick={() => setPostStep("camera")}
+                  onClick={() => setPostStep("preview")}
                   className="w-1/3 bg-slate-100 text-slate-700 font-bold py-3 rounded-xl text-xs"
                 >
-                  撮り直す
+                  戻る
                 </button>
                 <button
                   onClick={handleStartPostCheck}
@@ -881,6 +973,7 @@ export default function Home() {
             </div>
           )}
 
+          {/* STEP 4: AI審査中 */}
           {postStep === "ai_check" && (
             <div className="bg-white text-slate-800 rounded-3xl p-8 max-w-sm w-full mx-auto my-auto shadow-2xl text-center space-y-4">
               <Sparkles className="w-12 h-12 text-purple-600 mx-auto animate-spin" />
