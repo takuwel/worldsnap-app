@@ -5,7 +5,6 @@ import {
   Search,
   Compass,
   MapPin,
-  Plus,
   Bookmark,
   User,
   Map as MapIcon,
@@ -30,6 +29,7 @@ import {
   Navigation,
   Smile,
   Film,
+  Heart,
 } from "lucide-react";
 
 // 国籍・地域データ
@@ -83,12 +83,15 @@ export default function Home() {
   const [publicSubCategory, setPublicSubCategory] = useState<"view" | "rainy" | "food">("view");
   const [searchQuery, setSearchQuery] = useState("");
 
+  // フレンドリストデータ（投稿データ紐付け用）
   const [friendsList] = useState([
-    { id: 1, name: "サトシ", code: "@satoshi_88", status: "オンライン" },
-    { id: 2, name: "ケンタ", code: "@kenta_tokyo", status: "オフライン" },
+    { id: 1, name: "サトシ", code: "@satoshi_88", status: "オンライン", authorName: "Ken" },
+    { id: 2, name: "ケンタ", code: "@kenta_tokyo", status: "オフライン", authorName: "Yuki" },
   ]);
 
-  // 複数ピン保持のための初期投稿リスト（複数ピン管理）
+  const [selectedFriendUser, setSelectedFriendUser] = useState<any>(null);
+
+  // マップ上の投稿スポット
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -156,11 +159,10 @@ export default function Home() {
   const [isPostFlowOpen, setIsPostFlowOpen] = useState(false);
   const [postStep, setPostStep] = useState<"camera" | "recording" | "preview" | "form" | "ai_check">("camera");
 
-  // TikTok / CapCut 風トリミング & アスペクト比
   const [recordingSeconds, setRecordingSeconds] = useState(0);
   const recordingTimerRef = useRef<any>(null);
   const [isPlayingPreview, setIsPlayingPreview] = useState(true);
-  const [trimStart, setTrimStart] = useState(0);
+  const [trimStart] = useState(0);
   const [trimEnd, setTrimEnd] = useState(100);
   const [cropAspectRatio, setCropAspectRatio] = useState<"9:16" | "1:1" | "4:3">("9:16");
 
@@ -172,7 +174,6 @@ export default function Home() {
   const [zoomLevel, setZoomLevel] = useState<"0.5x" | "1x" | "2x">("1x");
   const [timerSeconds, setTimerSeconds] = useState<0 | 3 | 10>(0);
 
-  // 実際に撮影したメディアデータ URL
   const [capturedMediaUrl, setCapturedMediaUrl] = useState<string>("");
 
   const [newTitle, setNewTitle] = useState("");
@@ -185,7 +186,6 @@ export default function Home() {
     { id: 101, name: "サトシ", code: "FRIEND-8821" },
   ]);
 
-  // カメラの初期化
   useEffect(() => {
     if (isPostFlowOpen && (postStep === "camera" || postStep === "recording")) {
       startCamera();
@@ -218,7 +218,6 @@ export default function Home() {
     }
   };
 
-  // 画面キャンバスから実際の静止画・サムネイルをキャプチャ
   const captureFrameFromVideo = () => {
     if (videoRef.current) {
       const canvas = document.createElement("canvas");
@@ -231,16 +230,13 @@ export default function Home() {
           ctx.scale(-1, 1);
         }
         ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL("image/jpeg");
-        setCapturedMediaUrl(dataUrl);
+        setCapturedMediaUrl(canvas.toDataURL("image/jpeg"));
         return;
       }
     }
-    // バックアップ（カメラが直接取得できない場合）
     setCapturedMediaUrl("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop");
   };
 
-  // 写真・動画のシャッター/録画開始・停止処理
   const handleStartRecording = () => {
     captureFrameFromVideo();
     if (cameraType === "photo") {
@@ -261,7 +257,7 @@ export default function Home() {
       clearInterval(recordingTimerRef.current);
     }
     stopCamera();
-    setPostStep("preview"); // 確認・トリミング画面へ
+    setPostStep("preview");
   };
 
   const filteredPosts = posts.filter((post) => {
@@ -286,7 +282,6 @@ export default function Home() {
     }
   };
 
-  // AI審査後に複数ピンとしてそのままマップ上に固定・累積追加
   const handleStartPostCheck = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle) return;
@@ -295,7 +290,6 @@ export default function Home() {
     setTimeout(() => {
       const baseCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
 
-      // ランダムな位置（マップ上の複数ピン演出用）
       const randomTop = Math.floor(30 + Math.random() * 40) + "%";
       const randomLeft = Math.floor(30 + Math.random() * 40) + "%";
 
@@ -318,7 +312,6 @@ export default function Home() {
         leftRatio: randomLeft,
       };
 
-      // 既存のピンリストに追加（複数ピンが残り続ける）
       setPosts((prevPosts) => [newPostObj, ...prevPosts]);
       setMainMode(postTargetMode);
       if (postTargetMode === "public") setPublicSubCategory(postTargetCategory);
@@ -332,7 +325,8 @@ export default function Home() {
 
   const currentCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
 
-  const generateMapEmbedUrl = () => {
+  // 赤ピンなどのマーカーなしの背景用クリア地図URL
+  const generateCleanMapEmbedUrl = () => {
     return `https://maps.google.com/maps?q=${currentCoords.lat},${currentCoords.lng}&z=14&output=embed`;
   };
 
@@ -477,10 +471,10 @@ export default function Home() {
       <main className="flex-1 relative overflow-y-auto bg-slate-100">
         {activeTab === "map" && (
           <div className="w-full h-full relative overflow-hidden">
-            {/* 地図埋め込み */}
+            {/* 地図埋め込み（デフォルトの赤ピンなし） */}
             <iframe
               title="Map"
-              src={generateMapEmbedUrl()}
+              src={generateCleanMapEmbedUrl()}
               className="w-full h-full border-0 touch-auto pointer-events-auto"
               loading="lazy"
             ></iframe>
@@ -500,7 +494,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* マップ上に残る複数 📍 ピン（ワンタップでアイコン化） */}
+            {/* ★可愛くてスタイリッシュなオリジナルピン（ワンタップでアイコン化） */}
             {filteredPosts.map((spot) => {
               const isSelected = selectedSpotPin?.id === spot.id;
               return (
@@ -511,7 +505,7 @@ export default function Home() {
                   onClick={() => setSelectedSpotPin(spot)}
                 >
                   {isSelected ? (
-                    /* 📍をワンタップしたら膨らむサムネイルアイコン */
+                    /* 1タップ時：ぷっくり丸みのある画像サムネイルアイコン */
                     <div
                       className="relative group animate-in zoom-in-90 duration-200"
                       onClick={(e) => {
@@ -522,16 +516,19 @@ export default function Home() {
                       <img
                         src={spot.image}
                         alt={spot.title}
-                        className="w-16 h-16 rounded-2xl border-2 border-white object-cover shadow-2xl ring-4 ring-blue-500"
+                        className="w-16 h-16 rounded-2xl border-4 border-white object-cover shadow-2xl ring-4 ring-pink-500"
                       />
-                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[8px] px-1.5 py-0.2 rounded-full font-bold shadow whitespace-nowrap">
-                        動画を見る
+                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[8px] px-2 py-0.5 rounded-full font-bold shadow whitespace-nowrap">
+                        動画を見る 💖
                       </div>
                     </div>
                   ) : (
-                    /* 通常時の 📍 形ピン */
-                    <div className="flex flex-col items-center hover:scale-125 transition transform">
-                      <span className="text-2xl drop-shadow-md">📍</span>
+                    /* 通常時：オリジナル可愛いグラデーションハートピン */
+                    <div className="flex flex-col items-center hover:scale-125 transition transform group">
+                      <div className="w-9 h-9 bg-gradient-to-tr from-pink-500 via-rose-500 to-purple-500 rounded-full shadow-lg border-2 border-white flex items-center justify-center animate-bounce">
+                        <Heart className="w-5 h-5 text-white fill-white" />
+                      </div>
+                      <div className="w-1.5 h-1.5 bg-rose-500 rounded-full shadow-sm -mt-0.5" />
                     </div>
                   )}
                 </div>
@@ -540,7 +537,7 @@ export default function Home() {
 
             {/* ピン選択時のポップアップ */}
             {selectedSpotPin && (
-              <div className="absolute bottom-4 left-4 right-4 bg-white p-4 rounded-2xl shadow-2xl border-2 border-blue-500 animate-in zoom-in-95 duration-200 z-30">
+              <div className="absolute bottom-4 left-4 right-4 bg-white p-4 rounded-2xl shadow-2xl border-2 border-pink-500 animate-in zoom-in-95 duration-200 z-30">
                 <button
                   onClick={() => setSelectedSpotPin(null)}
                   className="absolute top-3 right-3 text-slate-400 hover:text-slate-600"
@@ -553,12 +550,12 @@ export default function Home() {
                     <img
                       src={selectedSpotPin.image}
                       alt={selectedSpotPin.title}
-                      className="w-20 h-20 rounded-xl object-cover shadow-md border-2 border-blue-400"
+                      className="w-20 h-20 rounded-xl object-cover shadow-md border-2 border-pink-400"
                     />
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-bold bg-pink-100 text-pink-700 px-2 py-0.5 rounded">
                       投稿者: {selectedSpotPin.author}
                     </span>
                     <h3 className="font-bold text-slate-900 text-sm mt-1 truncate">{selectedSpotPin.title}</h3>
@@ -567,7 +564,7 @@ export default function Home() {
                     <div className="flex gap-2 mt-3">
                       <button
                         onClick={() => setIsDetailModalOpen(true)}
-                        className="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow hover:bg-blue-700 transition"
+                        className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow hover:opacity-90 transition"
                       >
                         動画・写真を見る
                       </button>
@@ -648,7 +645,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* 【マイページタブ】 */}
+        {/* 【マイページタブ】（フレンドの投稿閲覧ボタン追加） */}
         {activeTab === "profile" && (
           <div className="p-6 max-w-md mx-auto text-center pb-20">
             <div className="w-20 h-20 bg-blue-600 text-white font-bold text-2xl rounded-full mx-auto flex items-center justify-center shadow-lg mb-3">
@@ -669,7 +666,7 @@ export default function Home() {
               )}
             </button>
 
-            {/* フレンドリスト */}
+            {/* フレンドリスト（その人の投稿を見るボタンつき） */}
             <div className="mt-6 bg-white border border-slate-200 rounded-2xl p-4 text-left shadow-sm space-y-3">
               <h3 className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
                 <Users className="w-4 h-4 text-indigo-600" /> フレンドリスト ({friendsList.length}人)
@@ -684,9 +681,16 @@ export default function Home() {
                         <p className="text-[10px] text-slate-400">{friend.code}</p>
                       </div>
                     </div>
-                    <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">
-                      {friend.status}
-                    </span>
+                    <button
+                      onClick={() => {
+                        const targetPost = posts.find((p) => p.author === friend.authorName) || posts[0];
+                        setSelectedSpotPin(targetPost);
+                        setIsDetailModalOpen(true);
+                      }}
+                      className="text-[10px] font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg shadow transition"
+                    >
+                      投稿を見る ➔
+                    </button>
                   </div>
                 ))}
               </div>
@@ -844,10 +848,9 @@ export default function Home() {
         </div>
       )}
 
-      {/* 6. カメラ撮影 (録画画面暗転修正) ➔ TikTok/CapCut風確認・トリミング ➔ フォーム投稿 */}
+      {/* 6. カメラ撮影 ➔ 確認・トリミング ➔ フォーム投稿 */}
       {isPostFlowOpen && (
         <div className="fixed inset-0 z-50 bg-black flex flex-col justify-between p-4 text-white">
-          {/* STEP 1: リアルタイムカメラ撮影・録画（暗転しない） */}
           {(postStep === "camera" || postStep === "recording") && (
             <>
               <div className="flex justify-between items-center z-10">
@@ -871,7 +874,6 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* 録画時も暗転させずに映像を表示 */}
               <div className="relative flex-1 my-4 bg-black rounded-3xl overflow-hidden flex items-center justify-center">
                 <video
                   ref={videoRef}
@@ -947,7 +949,6 @@ export default function Home() {
             </>
           )}
 
-          {/* STEP 2: TikTok / CapCut 風の動画確認＆トリミング画面 */}
           {postStep === "preview" && (
             <div className="flex flex-col h-full justify-between max-w-md w-full mx-auto space-y-3">
               <div className="flex justify-between items-center p-2">
@@ -962,7 +963,6 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* 撮影映像プレビュー */}
               <div className="flex-1 my-1 bg-slate-900 rounded-2xl overflow-hidden flex items-center justify-center relative p-2">
                 <div
                   className={`relative overflow-hidden transition-all duration-300 border-2 border-yellow-400 rounded-2xl shadow-2xl ${
@@ -990,7 +990,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* TikTok / CapCut 風タイムライントリミングバー */}
               {cameraType === "video" && (
                 <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl space-y-2">
                   <div className="flex justify-between items-center text-xs font-bold">
@@ -1000,7 +999,6 @@ export default function Home() {
                     <span className="text-slate-400 text-[10px]">{trimStart}s - {trimEnd}%</span>
                   </div>
 
-                  {/* フィルム・スライダー演出 */}
                   <div className="relative h-10 bg-slate-800 rounded-xl overflow-hidden border border-yellow-400/50 flex items-center px-2">
                     <input
                       type="range"
@@ -1014,7 +1012,6 @@ export default function Home() {
                 </div>
               )}
 
-              {/* アスペクト比選択（TikTok風） */}
               <div className="flex justify-center gap-2 bg-slate-900 p-2 rounded-xl text-xs font-bold border border-slate-800">
                 <span className="text-slate-400 text-[11px] self-center mr-2">サイズ:</span>
                 {(["9:16", "1:1", "4:3"] as const).map((ratio) => (
@@ -1039,7 +1036,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* STEP 3: 投稿フォーム */}
           {postStep === "form" && (
             <div className="bg-white text-slate-800 rounded-3xl p-6 max-w-md w-full mx-auto my-auto shadow-2xl space-y-4">
               <h3 className="font-bold text-lg text-slate-900 border-b pb-2">投稿情報の入力</h3>
@@ -1122,7 +1118,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* STEP 4: AIコンプライアンス審査 */}
           {postStep === "ai_check" && (
             <div className="bg-white text-slate-800 rounded-3xl p-8 max-w-sm w-full mx-auto my-auto shadow-2xl text-center space-y-4">
               <Sparkles className="w-12 h-12 text-purple-600 mx-auto animate-spin" />
