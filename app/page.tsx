@@ -25,6 +25,7 @@ import {
   Check,
   UserPlus,
   Crop,
+  Navigation,
 } from "lucide-react";
 
 const COUNTRY_COORDS: Record<string, { lat: number; lng: number; name: string }> = {
@@ -40,6 +41,9 @@ export default function Home() {
   const [selectedCountry, setSelectedCountry] = useState("JP");
   const [isFirstVisit, setIsFirstVisit] = useState(true);
 
+  // 位置情報（GPS）
+  const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
+
   useEffect(() => {
     const savedName = localStorage.getItem("worldsnap_username");
     const savedCountry = localStorage.getItem("worldsnap_country");
@@ -47,6 +51,21 @@ export default function Home() {
       setUsername(savedName);
       setSelectedCountry(savedCountry);
       setIsFirstVisit(false);
+    }
+
+    // 位置情報（GPS）の取得処理
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.warn("位置情報が取得できませんでした:", error);
+        }
+      );
     }
   }, []);
 
@@ -62,12 +81,14 @@ export default function Home() {
   const [publicSubCategory, setPublicSubCategory] = useState<"view" | "rainy" | "food">("view");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // マップ上のピン・投稿データ
+  // マップ上のピンデータ（実際の緯度・経度で管理）
   const [posts, setPosts] = useState([
     {
       id: 1,
       title: "エッフェル塔前の絶景スポット",
       location: "パリ, フランス",
+      lat: 48.8584,
+      lng: 2.2945,
       category: "view",
       mode: "public",
       views: 15400,
@@ -77,13 +98,13 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&auto=format&fit=crop",
       author: "Takuya",
       saved: false,
-      topRatio: "35%",
-      leftRatio: "48%",
     },
     {
       id: 2,
       title: "絶品和牛ランチイタリアン",
       location: "東京都 港区",
+      lat: 35.6586,
+      lng: 139.7454,
       category: "food",
       mode: "public",
       views: 8900,
@@ -93,13 +114,13 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop",
       author: "Ken",
       saved: true,
-      topRatio: "55%",
-      leftRatio: "52%",
     },
     {
       id: 3,
       title: "雨の日でも楽しめる癒しの水族館",
       location: "東京都 江東区",
+      lat: 35.6308,
+      lng: 139.793,
       category: "rainy",
       mode: "public",
       views: 21000,
@@ -109,8 +130,6 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&auto=format&fit=crop",
       author: "Yuki",
       saved: false,
-      topRatio: "42%",
-      leftRatio: "60%",
     },
   ]);
 
@@ -120,11 +139,9 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<"views" | "newest" | "likes">("views");
   const [unsaveConfirmId, setUnsaveConfirmId] = useState<number | null>(null);
 
-  // 投稿フロー（カメラ ➔ プレビュー/トリミング ➔ フォーム ➔ AI審査）
+  // 投稿フロー
   const [isPostFlowOpen, setIsPostFlowOpen] = useState(false);
   const [postStep, setPostStep] = useState<"camera" | "preview" | "form" | "ai_check">("camera");
-
-  // トリミングアスペクト比
   const [cropAspectRatio, setCropAspectRatio] = useState<"1:1" | "9:16" | "4:3">("9:16");
 
   // カメラ機能
@@ -135,17 +152,14 @@ export default function Home() {
   const [zoomLevel, setZoomLevel] = useState<"0.5x" | "1x" | "2x">("1x");
   const [timerSeconds, setTimerSeconds] = useState<0 | 3 | 10>(0);
 
-  // 撮影後のプレビュー用ダミーメディア
   const [capturedMediaUrl, setCapturedMediaUrl] = useState<string>(
     "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop"
   );
 
-  // 投稿フォーム状態
   const [newTitle, setNewTitle] = useState("");
   const [postTargetMode, setPostTargetMode] = useState<"public" | "friends" | "private">("public");
   const [postTargetCategory, setPostTargetCategory] = useState<"view" | "rainy" | "food">("view");
 
-  // フレンド機能
   const [isFriendModalOpen, setIsFriendModalOpen] = useState(false);
   const [friendCodeInput, setFriendCodeInput] = useState("");
   const [friendRequests, setFriendRequests] = useState([
@@ -184,13 +198,11 @@ export default function Home() {
     }
   };
 
-  // シャッター処理 ➔ プレビュー確認画面へ
   const handleCapture = () => {
     stopCamera();
     setPostStep("preview");
   };
 
-  // フィルタリング
   const filteredPosts = posts.filter((post) => {
     if (post.mode !== mainMode) return false;
     if (mainMode === "public" && post.category !== publicSubCategory) return false;
@@ -213,23 +225,21 @@ export default function Home() {
     }
   };
 
-  // AI審査完了後にマップ中央付近へ新規ピンを設置
+  // AI審査完了後に現在地（GPS）の座標へピンを固定追加
   const handleStartPostCheck = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle) return;
     setPostStep("ai_check");
 
     setTimeout(() => {
-      const currentCoords = COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
-
-      // マップ画面上にランダムな位置でピンを配置（ダミー位置調整）
-      const randomTop = Math.floor(35 + Math.random() * 30) + "%";
-      const randomLeft = Math.floor(35 + Math.random() * 30) + "%";
+      const baseCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
 
       const newPostObj = {
         id: Date.now(),
         title: newTitle,
-        location: `${currentCoords.name} (投稿した場所)`,
+        location: currentLocation ? "現在地周辺 (GPS固定)" : `${COUNTRY_COORDS[selectedCountry]?.name} (固定地)`,
+        lat: baseCoords.lat,
+        lng: baseCoords.lng,
         category: postTargetCategory,
         mode: postTargetMode,
         views: 1,
@@ -239,8 +249,6 @@ export default function Home() {
         image: capturedMediaUrl,
         author: username,
         saved: false,
-        topRatio: randomTop,
-        leftRatio: randomLeft,
       };
 
       setPosts((prevPosts) => [newPostObj, ...prevPosts]);
@@ -258,7 +266,15 @@ export default function Home() {
     }, 2000);
   };
 
-  const currentCoords = COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
+  const currentCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
+
+  // 複数の固定ピンを表示するGoogle Dynamic Embed URLの生成
+  const generateEmbedMapUrl = () => {
+    const pinQueries = filteredPosts
+      .map((p) => `q=${p.lat},${p.lng}`)
+      .join("&");
+    return `https://maps.google.com/maps?q=${currentCoords.lat},${currentCoords.lng}&z=14&${pinQueries}&output=embed`;
+  };
 
   const getSortedDetailPosts = () => {
     let list = [...posts].filter((p) => p.mediaType === activeMediaTab);
@@ -401,65 +417,41 @@ export default function Home() {
       <main className="flex-1 relative overflow-y-auto bg-slate-100">
         {activeTab === "map" && (
           <div className="w-full h-full relative">
-            {/* 地図枠 */}
+            {/* 刺した場所の緯度経度に固定されたピンが表示されるGoogleマップ */}
             <iframe
               title="Map"
-              src={`https://maps.google.com/maps?q=${currentCoords.lat},${currentCoords.lng}&z=14&output=embed`}
+              src={generateEmbedMapUrl()}
               className="w-full h-full border-0 touch-auto pointer-events-auto"
               loading="lazy"
             ></iframe>
 
-            {/* 中央のスタイリッシュなポインター */}
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-              <div className="relative flex items-center justify-center">
-                <div className="w-8 h-8 rounded-full border-2 border-blue-500 bg-blue-500/20 animate-ping absolute" />
-                <div className="w-5 h-5 rounded-full border-2 border-white bg-blue-600 shadow-xl flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                </div>
+            {/* 現在地取得状態インジケーター */}
+            {currentLocation && (
+              <div className="absolute top-3 right-3 bg-white/90 backdrop-blur border border-slate-200 px-2.5 py-1 rounded-full shadow text-[10px] font-bold text-emerald-600 flex items-center gap-1 z-10">
+                <Navigation className="w-3 h-3 fill-emerald-600 animate-pulse" />
+                GPS現在地オン
               </div>
+            )}
+
+            {/* マップ上の固定ピン選択リスト */}
+            <div className="absolute top-3 left-3 flex gap-1.5 overflow-x-auto max-w-[70%] p-1.5 bg-white/90 backdrop-blur rounded-2xl shadow border border-slate-200 z-10">
+              {filteredPosts.map((spot) => (
+                <button
+                  key={spot.id}
+                  onClick={() => setSelectedSpotPin(spot)}
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold transition shrink-0 ${
+                    selectedSpotPin?.id === spot.id
+                      ? "bg-red-50 border border-red-500 text-red-600 shadow"
+                      : "bg-white border border-slate-200 text-slate-700"
+                  }`}
+                >
+                  <MapPin className="w-3 h-3 text-red-500 fill-red-500" />
+                  {spot.title}
+                </button>
+              ))}
             </div>
 
-            {/* マップ上に直接配置されたピン（ワンタップでアイコンサムネイルに化ける） */}
-            {filteredPosts.map((spot) => {
-              const isSelected = selectedSpotPin?.id === spot.id;
-              return (
-                <div
-                  key={spot.id}
-                  style={{ top: spot.topRatio, left: spot.leftRatio }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 z-20 cursor-pointer"
-                  onClick={() => setSelectedSpotPin(spot)}
-                >
-                  {isSelected ? (
-                    /* タップ時：膨らんだ画像アイコンサムネイル */
-                    <div
-                      className="relative group animate-in zoom-in-75 duration-200"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsDetailModalOpen(true);
-                      }}
-                    >
-                      <img
-                        src={spot.image}
-                        alt={spot.title}
-                        className="w-16 h-16 rounded-2xl border-4 border-blue-500 object-cover shadow-2xl ring-4 ring-white/50"
-                      />
-                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold shadow whitespace-nowrap">
-                        動画を見る
-                      </div>
-                    </div>
-                  ) : (
-                    /* 通常時：標準のマップピン */
-                    <div className="flex flex-col items-center hover:scale-125 transition transform">
-                      <div className="p-2 bg-red-600 rounded-full text-white shadow-lg border-2 border-white">
-                        <MapPin className="w-4 h-4 fill-white" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
-            {/* ピンをタップした際の下部案内カード */}
+            {/* 固定ピンタップ時の拡大サムネイルポップアップ */}
             {selectedSpotPin && (
               <div className="absolute bottom-4 left-4 right-4 bg-white p-4 rounded-2xl shadow-2xl border-2 border-blue-500 animate-in zoom-in-95 duration-200 z-30">
                 <button
@@ -495,9 +487,7 @@ export default function Home() {
                       <button
                         onClick={() =>
                           window.open(
-                            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                              selectedSpotPin.title + " " + selectedSpotPin.location
-                            )}`,
+                            `https://www.google.com/maps/search/?api=1&query=${selectedSpotPin.lat},${selectedSpotPin.lng}`,
                             "_blank"
                           )
                         }
@@ -731,9 +721,7 @@ export default function Home() {
               <button
                 onClick={() =>
                   window.open(
-                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                      selectedSpotPin.title + " " + selectedSpotPin.location
-                    )}`,
+                    `https://www.google.com/maps/search/?api=1&query=${selectedSpotPin.lat},${selectedSpotPin.lng}`,
                     "_blank"
                   )
                 }
@@ -749,7 +737,6 @@ export default function Home() {
       {/* 6. カメラ撮影 ＆ プレビュー・トリミング ＆ フォーム選択 */}
       {isPostFlowOpen && (
         <div className="fixed inset-0 z-50 bg-black flex flex-col justify-between p-4 text-white">
-          {/* STEP 1: カメラ撮影 */}
           {postStep === "camera" && (
             <>
               <div className="flex justify-between items-center z-10">
@@ -832,7 +819,6 @@ export default function Home() {
             </>
           )}
 
-          {/* STEP 2: プレビュー確認 ＆ トリミング設定 */}
           {postStep === "preview" && (
             <div className="flex flex-col h-full justify-between max-w-md w-full mx-auto">
               <div className="flex justify-between items-center p-2">
@@ -847,7 +833,6 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* トリミング用アスペクト比適用枠 */}
               <div className="flex-1 my-2 bg-slate-900 rounded-2xl overflow-hidden flex items-center justify-center relative p-2">
                 <div
                   className={`relative overflow-hidden transition-all duration-300 border-2 border-blue-500 rounded-xl shadow-2xl ${
@@ -865,7 +850,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* トリミング比率切り替え */}
               <div className="flex justify-center gap-2 mb-4 bg-slate-900 p-2 rounded-xl text-xs font-bold border border-slate-800">
                 <span className="text-slate-400 text-[11px] self-center mr-2">アスペクト比:</span>
                 {(["9:16", "1:1", "4:3"] as const).map((ratio) => (
@@ -890,7 +874,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* STEP 3: 投稿入力フォーム */}
           {postStep === "form" && (
             <div className="bg-white text-slate-800 rounded-3xl p-6 max-w-md w-full mx-auto my-auto shadow-2xl space-y-4">
               <h3 className="font-bold text-lg text-slate-900 border-b pb-2">投稿情報の入力</h3>
@@ -973,7 +956,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* STEP 4: AI審査中 */}
           {postStep === "ai_check" && (
             <div className="bg-white text-slate-800 rounded-3xl p-8 max-w-sm w-full mx-auto my-auto shadow-2xl text-center space-y-4">
               <Sparkles className="w-12 h-12 text-purple-600 mx-auto animate-spin" />
