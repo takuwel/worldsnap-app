@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Search,
   Compass,
@@ -17,8 +17,6 @@ import {
   Utensils,
   Users,
   Eye,
-  Bot,
-  Crosshair,
   Camera,
   Video,
   Image as ImageIcon,
@@ -32,6 +30,7 @@ import {
   Lock,
   Sparkles,
   ArrowUpDown,
+  AlertTriangle,
 } from "lucide-react";
 
 // 国籍・地域データ
@@ -69,17 +68,17 @@ export default function Home() {
   // メインナビゲーション & モード
   const [activeTab, setActiveTab] = useState<"map" | "search" | "saved" | "profile">("map");
   const [mainMode, setMainMode] = useState<"public" | "friends" | "private">("public");
-  const [publicSubCategory, setPublicSubCategory] = useState<"normal" | "rainy" | "food">("normal");
+  const [publicSubCategory, setPublicSubCategory] = useState<"view" | "rainy" | "food">("view");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // サンプル投稿データ（マップピン・サムネイル用）
+  // サンプル投稿データ
   const [posts, setPosts] = useState([
     {
       id: 1,
       title: "エッフェル塔前の絶景スポット",
       location: "パリ, フランス",
-      category: "normal",
-      modes: ["public", "normal"],
+      category: "view",
+      modes: ["public", "view"],
       views: 15400,
       likes: 1240,
       createdAt: "2026-08-01",
@@ -124,19 +123,57 @@ export default function Home() {
   const [activeMediaTab, setActiveMediaTab] = useState<"video" | "photo">("video");
   const [sortBy, setSortBy] = useState<"views" | "newest" | "likes">("views");
 
+  // 保存解除の確認ダイアログ用状態
+  const [unsaveConfirmId, setUnsaveConfirmId] = useState<number | null>(null);
+
   // 投稿フロー（カメラ ➔ フォーム ➔ AI審査）
   const [isPostFlowOpen, setIsPostFlowOpen] = useState(false);
   const [postStep, setPostStep] = useState<"camera" | "form" | "ai_check">("camera");
 
-  // カメラ状態
+  // カメラ機能（Webcam）
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [cameraType, setCameraType] = useState<"video" | "photo">("video");
-  const [cameraFacing, setCameraFacing] = useState<"environment" | "user">("environment");
+  const [cameraFacing, setCameraFacing] = useState<"user" | "environment">("environment");
   const [zoomLevel, setZoomLevel] = useState<"0.5x" | "1x" | "2x">("1x");
   const [timerSeconds, setTimerSeconds] = useState<0 | 3 | 10>(0);
 
+  // カメラの初期化・終了処理
+  useEffect(() => {
+    if (isPostFlowOpen && postStep === "camera") {
+      startCamera();
+    } else {
+      stopCamera();
+    }
+    return () => stopCamera();
+  }, [isPostFlowOpen, postStep, cameraFacing]);
+
+  const startCamera = async () => {
+    stopCamera();
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: cameraFacing },
+        audio: cameraType === "video",
+      });
+      setCameraStream(stream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      console.warn("カメラアクセス許可が必要です:", err);
+    }
+  };
+
+  const stopCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach((track) => track.stop());
+      setCameraStream(null);
+    }
+  };
+
   // 投稿フォーム状態
   const [newTitle, setNewTitle] = useState("");
-  const [selectedModes, setSelectedModes] = useState<string[]>(["public", "normal"]);
+  const [selectedModes, setSelectedModes] = useState<string[]>(["public", "view"]);
 
   // フレンド申請モーダル
   const [isFriendModalOpen, setIsFriendModalOpen] = useState(false);
@@ -153,11 +190,22 @@ export default function Home() {
     return true;
   });
 
-  const toggleSave = (id: number) => {
-    setPosts(posts.map((p) => (p.id === id ? { ...p, saved: !p.saved } : p)));
+  // 保存（切り替え・確認）
+  const handleToggleSaveClick = (id: number, currentSaved: boolean) => {
+    if (currentSaved) {
+      setUnsaveConfirmId(id);
+    } else {
+      setPosts(posts.map((p) => (p.id === id ? { ...p, saved: true } : p)));
+    }
   };
 
-  // モードチェックの切り替え
+  const confirmUnsave = () => {
+    if (unsaveConfirmId !== null) {
+      setPosts(posts.map((p) => (p.id === unsaveConfirmId ? { ...p, saved: false } : p)));
+      setUnsaveConfirmId(null);
+    }
+  };
+
   const toggleModeSelection = (modeKey: string) => {
     if (selectedModes.includes(modeKey)) {
       setSelectedModes(selectedModes.filter((m) => m !== modeKey));
@@ -166,7 +214,7 @@ export default function Home() {
     }
   };
 
-  // 投稿実行（AI審査シミュレーション）
+  // AI審査＆投稿
   const handleStartPostCheck = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle || selectedModes.length === 0) return;
@@ -176,8 +224,8 @@ export default function Home() {
       const newPostObj = {
         id: Date.now(),
         title: newTitle,
-        location: `${COUNTRY_COORDS[selectedCountry]?.name || "指定地"} (エイム位置)`,
-        category: selectedModes.includes("food") ? "food" : selectedModes.includes("rainy") ? "rainy" : "normal",
+        location: `${COUNTRY_COORDS[selectedCountry]?.name || "指定地"} (ポインター位置)`,
+        category: selectedModes.includes("food") ? "food" : selectedModes.includes("rainy") ? "rainy" : "view",
         modes: selectedModes,
         views: 1,
         likes: 0,
@@ -192,7 +240,7 @@ export default function Home() {
       setPostStep("camera");
       setIsPostFlowOpen(false);
       setNewTitle("");
-      setSelectedModes(["public", "normal"]);
+      setSelectedModes(["public", "view"]);
     }, 2000);
   };
 
@@ -207,9 +255,8 @@ export default function Home() {
     return list;
   };
 
-  // 広告バナーコンポーネント（最下部固定ナビの上に常時設置）
   const PermanentAdBanner = () => (
-    <div className="w-full bg-slate-200/80 border-t border-slate-300 py-1 px-3 text-center">
+    <div className="w-full bg-slate-200/80 border-t border-slate-300 py-1 px-3 text-center shrink-0">
       <span className="text-[8px] font-bold text-slate-400 block tracking-wider uppercase">
         スポンサーリンク / ADVERTISEMENT
       </span>
@@ -269,10 +316,9 @@ export default function Home() {
         </div>
       )}
 
-      {/* 2. 最上部ヘッダー（中央モード切替・右上パブリックサブメニュー） */}
-      <header className="bg-white border-b border-slate-200 z-10 p-2 shadow-sm flex flex-col gap-2">
+      {/* 2. 最上部ヘッダー（view表記・最上部モード切替） */}
+      <header className="bg-white border-b border-slate-200 z-10 p-2 shadow-sm flex flex-col gap-2 shrink-0">
         <div className="flex items-center justify-between gap-2">
-          {/* 検索バー */}
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
             <input
@@ -284,24 +330,23 @@ export default function Home() {
             />
           </div>
 
-          {/* 右上：パブリックモード時のサブカテゴリ切替（ノーマル/景色、雨の日、フード） */}
           {mainMode === "public" && (
             <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-full text-[11px] font-bold">
               <button
-                onClick={() => setPublicSubCategory("normal")}
-                className={`px-2 py-1 rounded-full transition ${publicSubCategory === "normal" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
+                onClick={() => setPublicSubCategory("view")}
+                className={`px-2.5 py-1 rounded-full transition ${publicSubCategory === "view" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
               >
-                景色
+                view
               </button>
               <button
                 onClick={() => setPublicSubCategory("rainy")}
-                className={`px-2 py-1 rounded-full transition ${publicSubCategory === "rainy" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
+                className={`px-2.5 py-1 rounded-full transition ${publicSubCategory === "rainy" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
               >
                 雨の日
               </button>
               <button
                 onClick={() => setPublicSubCategory("food")}
-                className={`px-2 py-1 rounded-full transition ${publicSubCategory === "food" ? "bg-white text-orange-600 shadow-sm" : "text-slate-500"}`}
+                className={`px-2.5 py-1 rounded-full transition ${publicSubCategory === "food" ? "bg-white text-orange-600 shadow-sm" : "text-slate-500"}`}
               >
                 フード
               </button>
@@ -309,7 +354,6 @@ export default function Home() {
           )}
         </div>
 
-        {/* 最上部中央：モード切替（パブリック / フレンド / プライベート） */}
         <div className="flex justify-center border-t border-slate-100 pt-1">
           <div className="flex bg-slate-100 p-1 rounded-xl text-xs font-bold">
             <button
@@ -340,28 +384,30 @@ export default function Home() {
         </div>
       </header>
 
-      {/* 3. メインコンテンツ */}
+      {/* 3. メインエリア */}
       <main className="flex-1 relative overflow-y-auto bg-slate-100">
         {/* 【マップタブ】 */}
         {activeTab === "map" && (
           <div className="w-full h-full relative">
-            {/* Googleマップ風画面 */}
+            {/* Googleマップ風画面（1本指タッチドラッグ完全対応） */}
             <iframe
               title="Map"
               src={`https://maps.google.com/maps?q=${currentCoords.lat},${currentCoords.lng}&z=14&output=embed`}
-              className="w-full h-full border-0"
+              className="w-full h-full border-0 touch-auto pointer-events-auto"
               loading="lazy"
             ></iframe>
 
-            {/* 中央のエイム（照準） */}
+            {/* スタイリッシュなポインター（銃エイム感を排除） */}
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
               <div className="relative flex items-center justify-center">
-                <Crosshair className="w-10 h-10 text-red-500 animate-pulse" />
-                <div className="w-2 h-2 bg-red-600 rounded-full absolute" />
+                <div className="w-8 h-8 rounded-full border-2 border-blue-500 bg-blue-500/20 animate-ping absolute" />
+                <div className="w-5 h-5 rounded-full border-2 border-white bg-blue-600 shadow-xl flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                </div>
               </div>
             </div>
 
-            {/* マップ上のインタラクティブ・ピン（投稿スポット） */}
+            {/* ピン一覧 */}
             <div className="absolute top-3 left-3 right-3 flex gap-2 overflow-x-auto p-2 bg-white/90 backdrop-blur rounded-2xl shadow border border-slate-200">
               <span className="text-xs font-bold text-slate-600 self-center whitespace-nowrap pl-1">
                 📍 ピン一覧:
@@ -382,7 +428,7 @@ export default function Home() {
               ))}
             </div>
 
-            {/* ピンを押した時の膨らむサムネイル＆詳細ボタン */}
+            {/* ピン詳細カード */}
             {selectedSpotPin && (
               <div className="absolute bottom-4 left-4 right-4 bg-white p-4 rounded-2xl shadow-2xl border-2 border-blue-500 animate-in zoom-in-95 duration-200">
                 <button
@@ -397,11 +443,8 @@ export default function Home() {
                     <img
                       src={selectedSpotPin.image}
                       alt={selectedSpotPin.title}
-                      className="w-24 h-24 rounded-xl object-cover shadow-md border-2 border-blue-400 transition transform group-hover:scale-105"
+                      className="w-24 h-24 rounded-xl object-cover shadow-md border-2 border-blue-400"
                     />
-                    <div className="absolute bottom-1 right-1 bg-black/70 text-white text-[9px] px-1.5 py-0.5 rounded font-bold">
-                      再生数最多
-                    </div>
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -449,7 +492,7 @@ export default function Home() {
                   <div className="relative">
                     <img src={post.image} alt={post.title} className="w-full h-48 object-cover" />
                     <button
-                      onClick={() => toggleSave(post.id)}
+                      onClick={() => handleToggleSaveClick(post.id, post.saved)}
                       className="absolute top-3 right-3 p-2 bg-white/80 rounded-full shadow"
                     >
                       <Bookmark className={`w-4 h-4 ${post.saved ? "fill-blue-600 text-blue-600" : ""}`} />
@@ -467,7 +510,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* 【保存タブ】 */}
+        {/* 【保存タブ】（2段階削除機能） */}
         {activeTab === "saved" && (
           <div className="p-4 max-w-md mx-auto pb-20">
             <h2 className="text-base font-bold text-slate-800 mb-4">保存したスポット・動画</h2>
@@ -484,7 +527,7 @@ export default function Home() {
                         <h4 className="font-bold text-sm text-slate-800 truncate">{post.title}</h4>
                         <p className="text-xs text-slate-500 mt-1">{post.location}</p>
                         <button
-                          onClick={() => toggleSave(post.id)}
+                          onClick={() => handleToggleSaveClick(post.id, true)}
                           className="mt-2 text-xs text-red-500 font-bold hover:underline"
                         >
                           保存解除
@@ -497,7 +540,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* 【マイページタブ】（フレンド申請機能含む） */}
+        {/* 【マイページタブ】 */}
         {activeTab === "profile" && (
           <div className="p-6 max-w-md mx-auto text-center pb-20">
             <div className="w-20 h-20 bg-blue-600 text-white font-bold text-2xl rounded-full mx-auto flex items-center justify-center shadow-lg mb-3">
@@ -506,7 +549,6 @@ export default function Home() {
             <h2 className="text-lg font-bold text-slate-800">{username}</h2>
             <p className="text-xs text-slate-400">@worldsnap_user</p>
 
-            {/* フレンドを探すボタン */}
             <button
               onClick={() => setIsFriendModalOpen(true)}
               className="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl shadow flex items-center justify-center gap-2 text-xs transition"
@@ -556,11 +598,35 @@ export default function Home() {
         )}
       </main>
 
-      {/* 4. 動画・写真一覧モーダル（並び替え・Googleマップボタン・保存機能付き） */}
+      {/* 4. 保存解除の2段階確認ダイアログ */}
+      {unsaveConfirmId !== null && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-5 max-w-xs w-full text-center shadow-2xl space-y-3">
+            <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto" />
+            <h3 className="font-bold text-slate-900 text-sm">本当に保存を解除しますか？</h3>
+            <p className="text-xs text-slate-500">保存一覧からこの投稿が削除されます。</p>
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={() => setUnsaveConfirmId(null)}
+                className="w-1/2 bg-slate-100 text-slate-700 text-xs font-bold py-2.5 rounded-xl"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={confirmUnsave}
+                className="w-1/2 bg-red-600 text-white text-xs font-bold py-2.5 rounded-xl shadow"
+              >
+                解除する
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. 動画・写真詳細モーダル（写真表示時に再生回数欄非表示） */}
       {isDetailModalOpen && selectedSpotPin && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
-            {/* モーダルヘッダー */}
             <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
               <div>
                 <h3 className="font-bold text-slate-900 text-base">{selectedSpotPin.title}</h3>
@@ -573,9 +639,7 @@ export default function Home() {
               </button>
             </div>
 
-            {/* Googleマップリンク & メディア切り替え */}
             <div className="p-3 bg-slate-100 flex items-center justify-between gap-2 border-b border-slate-200">
-              {/* 動画 / 写真 切替（ベースは動画） */}
               <div className="flex bg-slate-200 p-1 rounded-xl text-xs font-bold">
                 <button
                   onClick={() => setActiveMediaTab("video")}
@@ -595,7 +659,6 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* 並び替えボタン */}
               <div className="flex items-center gap-1 text-xs font-bold text-slate-600">
                 <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
                 <select
@@ -603,21 +666,20 @@ export default function Home() {
                   onChange={(e: any) => setSortBy(e.target.value)}
                   className="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs"
                 >
-                  <option value="views">再生回数順</option>
+                  {activeMediaTab === "video" && <option value="views">再生回数順</option>}
                   <option value="newest">新着順</option>
                   <option value="likes">いいね数順</option>
                 </select>
               </div>
             </div>
 
-            {/* 投稿グリッド表示 */}
             <div className="p-4 overflow-y-auto flex-1 grid grid-cols-2 gap-3">
               {getSortedDetailPosts().map((item) => (
                 <div key={item.id} className="bg-slate-900 rounded-xl overflow-hidden relative shadow group">
                   <img src={item.image} alt={item.title} className="w-full h-36 object-cover opacity-90" />
                   <div className="absolute top-2 right-2">
                     <button
-                      onClick={() => toggleSave(item.id)}
+                      onClick={() => handleToggleSaveClick(item.id, item.saved)}
                       className="p-1.5 bg-black/60 backdrop-blur rounded-full text-white"
                     >
                       <Bookmark className={`w-3.5 h-3.5 ${item.saved ? "fill-yellow-400 text-yellow-400" : ""}`} />
@@ -626,7 +688,8 @@ export default function Home() {
                   <div className="p-2 bg-slate-900 text-white text-[11px]">
                     <p className="font-bold truncate">{item.title}</p>
                     <div className="flex justify-between text-[10px] text-slate-400 mt-1">
-                      <span>再生: {item.views.toLocaleString()}</span>
+                      {/* 写真タブの場合は再生回数を非表示 */}
+                      {item.mediaType === "video" && <span>再生: {item.views.toLocaleString()}</span>}
                       <span>❤️ {item.likes}</span>
                     </div>
                   </div>
@@ -634,7 +697,6 @@ export default function Home() {
               ))}
             </div>
 
-            {/* モーダル最下部：Googleマップ直行ボタン */}
             <div className="p-3 border-t border-slate-200 bg-slate-50">
               <button
                 onClick={() =>
@@ -654,10 +716,9 @@ export default function Home() {
         </div>
       )}
 
-      {/* 5. iPhone風フル機能カメラ & 投稿フロー */}
+      {/* 6. 実機カメラ対応フロー */}
       {isPostFlowOpen && (
         <div className="fixed inset-0 z-50 bg-black flex flex-col justify-between p-4 text-white">
-          {/* カメラ画面トップヘッダー */}
           {postStep === "camera" && (
             <>
               <div className="flex justify-between items-center z-10">
@@ -677,13 +738,9 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* カメラファインダー中央 */}
-              <div className="relative flex-1 my-4 bg-slate-900 rounded-3xl overflow-hidden flex items-center justify-center border border-slate-800">
-                <p className="text-slate-500 text-xs text-center px-4">
-                  iPhoneカメラ起動中 ({cameraFacing === "environment" ? "外カメラ" : "内カメラ"})<br />
-                  ズーム: {zoomLevel}
-                </p>
-                {/* ズーム選択ボタン */}
+              {/* 実際のカメラ映像表示領域 */}
+              <div className="relative flex-1 my-4 bg-black rounded-3xl overflow-hidden flex items-center justify-center">
+                <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
                 <div className="absolute bottom-4 flex gap-3 bg-black/50 px-3 py-1.5 rounded-full backdrop-blur text-xs font-bold">
                   {(["0.5x", "1x", "2x"] as const).map((z) => (
                     <button
@@ -697,9 +754,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* 下部カメラコントロール */}
               <div className="space-y-4 pb-4">
-                {/* モード切替（動画 / 写真） */}
                 <div className="flex justify-center gap-6 text-xs font-bold tracking-widest">
                   <button
                     onClick={() => setCameraType("video")}
@@ -715,17 +770,14 @@ export default function Home() {
                   </button>
                 </div>
 
-                {/* シャッター＆サイドボタン */}
                 <div className="flex justify-around items-center">
-                  {/* 左下：写真フォルダ（アクセス許可風動作） */}
                   <button
-                    onClick={() => alert("「WorldSnap」が写真ライブラリへのアクセスを求めています ➔ 許可されました")}
+                    onClick={() => alert("「WorldSnap」が写真ライブラリへのアクセスを許可しました")}
                     className="w-12 h-12 bg-slate-800 rounded-xl border border-slate-700 flex items-center justify-center"
                   >
                     <ImageIcon className="w-6 h-6 text-slate-300" />
                   </button>
 
-                  {/* シャッターボタン */}
                   <button
                     onClick={() => setPostStep("form")}
                     className="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center p-1 active:scale-95 transition"
@@ -733,7 +785,6 @@ export default function Home() {
                     <div className={`w-full h-full rounded-full ${cameraType === "video" ? "bg-red-600" : "bg-white"}`} />
                   </button>
 
-                  {/* 右下：イン/アウトカメラ切り替え */}
                   <button
                     onClick={() => setCameraFacing(cameraFacing === "environment" ? "user" : "environment")}
                     className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center"
@@ -745,7 +796,6 @@ export default function Home() {
             </>
           )}
 
-          {/* 投稿設定フォームステップ */}
           {postStep === "form" && (
             <div className="bg-white text-slate-800 rounded-3xl p-6 max-w-md w-full mx-auto my-auto shadow-2xl space-y-4">
               <h3 className="font-bold text-lg text-slate-900 border-b pb-2">投稿情報の入力</h3>
@@ -762,7 +812,6 @@ export default function Home() {
                 />
               </div>
 
-              {/* 投稿先マップモード（✅複数選択可能） */}
               <div>
                 <label className="text-xs font-bold text-slate-600 block mb-2">
                   投稿先のマップを選択（※1つ以上✅が必要）
@@ -770,7 +819,7 @@ export default function Home() {
                 <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
                   {[
                     { key: "public", label: "パブリック" },
-                    { key: "normal", label: "景色（ノーマル）" },
+                    { key: "view", label: "view" },
                     { key: "rainy", label: "雨の日OK" },
                     { key: "food", label: "フード" },
                     { key: "friends", label: "フレンド限定" },
@@ -815,24 +864,19 @@ export default function Home() {
             </div>
           )}
 
-          {/* AIコンプライアンス審査中ステップ */}
           {postStep === "ai_check" && (
             <div className="bg-white text-slate-800 rounded-3xl p-8 max-w-sm w-full mx-auto my-auto shadow-2xl text-center space-y-4">
               <Sparkles className="w-12 h-12 text-purple-600 mx-auto animate-spin" />
               <h3 className="font-bold text-lg text-slate-900">AIコンプライアンス自動審査中</h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                動画・写真の安全性をチェックしています。<br />
                 不適切なコンテンツが含まれていないかAIが検証中です...
               </p>
-              <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                <div className="bg-purple-600 h-full w-3/4 animate-pulse" />
-              </div>
             </div>
           )}
         </div>
       )}
 
-      {/* 6. フレンド申請・承認モーダル */}
+      {/* 7. フレンド申請・承認モーダル */}
       {isFriendModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-5 max-w-md w-full shadow-2xl relative space-y-4">
@@ -844,7 +888,6 @@ export default function Home() {
             </button>
             <h3 className="text-base font-bold text-slate-900">フレンド検索・承認</h3>
 
-            {/* フレンドコード入力 */}
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-600">フレンドコードを入力して申請</label>
               <div className="flex gap-2">
@@ -869,7 +912,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 届いている申請一覧 */}
             <div className="border-t border-slate-100 pt-3">
               <h4 className="text-xs font-bold text-slate-700 mb-2">届いている申請 ({friendRequests.length}件)</h4>
               {friendRequests.map((req) => (
@@ -880,7 +922,7 @@ export default function Home() {
                   </div>
                   <button
                     onClick={() => {
-                      alert(`${req.name} さんとフレンドになりました！フレンドマップで共有可能です。`);
+                      alert(`${req.name} さんとフレンドになりました！`);
                       setFriendRequests(friendRequests.filter((r) => r.id !== req.id));
                     }}
                     className="bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow"
@@ -894,11 +936,11 @@ export default function Home() {
         </div>
       )}
 
-      {/* 7. 最下部固定広告バナー（ナビの上） */}
+      {/* 8. 最下部固定広告バナー */}
       <PermanentAdBanner />
 
-      {/* 8. 下部メインナビゲーション（真ん中はエイム投稿ボタン） */}
-      <nav className="bg-white border-t border-slate-200 p-2 flex justify-around items-center z-10 shadow-lg">
+      {/* 9. 下部メインナビゲーション */}
+      <nav className="bg-white border-t border-slate-200 p-2 flex justify-around items-center z-10 shadow-lg shrink-0">
         <button
           onClick={() => setActiveTab("map")}
           className={`flex flex-col items-center gap-1 py-1 px-3 ${
@@ -919,7 +961,6 @@ export default function Home() {
           <span className="text-[10px]">探す</span>
         </button>
 
-        {/* 中央の＋ボタン（エイム指定位置にカメラ投稿） */}
         <button
           onClick={() => {
             setPostStep("camera");
