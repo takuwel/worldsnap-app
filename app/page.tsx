@@ -26,6 +26,7 @@ import {
   UserPlus,
   Crop,
   Navigation,
+  Smile,
 } from "lucide-react";
 
 const COUNTRY_COORDS: Record<string, { lat: number; lng: number; name: string }> = {
@@ -53,7 +54,6 @@ export default function Home() {
       setIsFirstVisit(false);
     }
 
-    // 位置情報（GPS）の取得処理
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -81,14 +81,18 @@ export default function Home() {
   const [publicSubCategory, setPublicSubCategory] = useState<"view" | "rainy" | "food">("view");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // マップ上のピンデータ（実際の緯度・経度で管理）
+  // フレンドリストデータ
+  const [friendsList, setFriendsList] = useState([
+    { id: 1, name: "サトシ", code: "@satoshi_88", status: "オンライン" },
+    { id: 2, name: "ケンタ", code: "@kenta_tokyo", status: "オフライン" },
+  ]);
+
+  // マップ上のピン・写真アイコンデータ
   const [posts, setPosts] = useState([
     {
       id: 1,
       title: "エッフェル塔前の絶景スポット",
       location: "パリ, フランス",
-      lat: 48.8584,
-      lng: 2.2945,
       category: "view",
       mode: "public",
       views: 15400,
@@ -98,13 +102,13 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&auto=format&fit=crop",
       author: "Takuya",
       saved: false,
+      topRatio: "40%",
+      leftRatio: "45%",
     },
     {
       id: 2,
       title: "絶品和牛ランチイタリアン",
       location: "東京都 港区",
-      lat: 35.6586,
-      lng: 139.7454,
       category: "food",
       mode: "public",
       views: 8900,
@@ -114,13 +118,13 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop",
       author: "Ken",
       saved: true,
+      topRatio: "55%",
+      leftRatio: "52%",
     },
     {
       id: 3,
       title: "雨の日でも楽しめる癒しの水族館",
       location: "東京都 江東区",
-      lat: 35.6308,
-      lng: 139.793,
       category: "rainy",
       mode: "public",
       views: 21000,
@@ -130,6 +134,8 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&auto=format&fit=crop",
       author: "Yuki",
       saved: false,
+      topRatio: "48%",
+      leftRatio: "62%",
     },
   ]);
 
@@ -225,21 +231,19 @@ export default function Home() {
     }
   };
 
-  // AI審査完了後に現在地（GPS）の座標へピンを固定追加
+  // AI審査完了後にエイム位置に新しく写真・動画ピンを確実に残す
   const handleStartPostCheck = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle) return;
     setPostStep("ai_check");
 
     setTimeout(() => {
-      const baseCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
+      const currentCoords = COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
 
       const newPostObj = {
         id: Date.now(),
         title: newTitle,
-        location: currentLocation ? "現在地周辺 (GPS固定)" : `${COUNTRY_COORDS[selectedCountry]?.name} (固定地)`,
-        lat: baseCoords.lat,
-        lng: baseCoords.lng,
+        location: `${currentCoords.name} (エイム位置)`,
         category: postTargetCategory,
         mode: postTargetMode,
         views: 1,
@@ -249,6 +253,8 @@ export default function Home() {
         image: capturedMediaUrl,
         author: username,
         saved: false,
+        topRatio: "50%",
+        leftRatio: "50%",
       };
 
       setPosts((prevPosts) => [newPostObj, ...prevPosts]);
@@ -267,14 +273,6 @@ export default function Home() {
   };
 
   const currentCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
-
-  // 複数の固定ピンを表示するGoogle Dynamic Embed URLの生成
-  const generateEmbedMapUrl = () => {
-    const pinQueries = filteredPosts
-      .map((p) => `q=${p.lat},${p.lng}`)
-      .join("&");
-    return `https://maps.google.com/maps?q=${currentCoords.lat},${currentCoords.lng}&z=14&${pinQueries}&output=embed`;
-  };
 
   const getSortedDetailPosts = () => {
     let list = [...posts].filter((p) => p.mediaType === activeMediaTab);
@@ -416,42 +414,58 @@ export default function Home() {
       {/* 3. メインエリア */}
       <main className="flex-1 relative overflow-y-auto bg-slate-100">
         {activeTab === "map" && (
-          <div className="w-full h-full relative">
-            {/* 刺した場所の緯度経度に固定されたピンが表示されるGoogleマップ */}
+          <div className="w-full h-full relative overflow-hidden">
             <iframe
               title="Map"
-              src={generateEmbedMapUrl()}
+              src={`https://maps.google.com/maps?q=${currentCoords.lat},${currentCoords.lng}&z=14&output=embed`}
               className="w-full h-full border-0 touch-auto pointer-events-auto"
               loading="lazy"
             ></iframe>
 
-            {/* 現在地取得状態インジケーター */}
-            {currentLocation && (
-              <div className="absolute top-3 right-3 bg-white/90 backdrop-blur border border-slate-200 px-2.5 py-1 rounded-full shadow text-[10px] font-bold text-emerald-600 flex items-center gap-1 z-10">
-                <Navigation className="w-3 h-3 fill-emerald-600 animate-pulse" />
-                GPS現在地オン
+            {/* GPS現在地マーカー（自分の居場所） */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
+              <div className="relative flex items-center justify-center">
+                <div className="w-10 h-10 bg-blue-500/30 rounded-full animate-ping absolute" />
+                <div className="w-4 h-4 bg-blue-600 border-2 border-white rounded-full shadow-lg" />
               </div>
-            )}
-
-            {/* マップ上の固定ピン選択リスト */}
-            <div className="absolute top-3 left-3 flex gap-1.5 overflow-x-auto max-w-[70%] p-1.5 bg-white/90 backdrop-blur rounded-2xl shadow border border-slate-200 z-10">
-              {filteredPosts.map((spot) => (
-                <button
-                  key={spot.id}
-                  onClick={() => setSelectedSpotPin(spot)}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold transition shrink-0 ${
-                    selectedSpotPin?.id === spot.id
-                      ? "bg-red-50 border border-red-500 text-red-600 shadow"
-                      : "bg-white border border-slate-200 text-slate-700"
-                  }`}
-                >
-                  <MapPin className="w-3 h-3 text-red-500 fill-red-500" />
-                  {spot.title}
-                </button>
-              ))}
             </div>
 
-            {/* 固定ピンタップ時の拡大サムネイルポップアップ */}
+            {/* 中央のエイムポインター */}
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-15">
+              <div className="w-12 h-12 rounded-full border-2 border-dashed border-blue-600/80 flex items-center justify-center">
+                <div className="w-2 h-2 bg-blue-600 rounded-full" />
+              </div>
+            </div>
+
+            {/* 投稿された写真・動画アイコン（マップ上に残る） */}
+            {filteredPosts.map((spot) => {
+              const isSelected = selectedSpotPin?.id === spot.id;
+              return (
+                <div
+                  key={spot.id}
+                  style={{ top: spot.topRatio, left: spot.leftRatio }}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 z-20 cursor-pointer"
+                  onClick={() => setSelectedSpotPin(spot)}
+                >
+                  <div
+                    className={`relative group transition transform ${
+                      isSelected ? "scale-125" : "hover:scale-110"
+                    }`}
+                  >
+                    <img
+                      src={spot.image}
+                      alt={spot.title}
+                      className="w-14 h-14 rounded-2xl border-2 border-white object-cover shadow-2xl ring-2 ring-blue-500"
+                    />
+                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[8px] px-1.5 py-0.2 rounded-full font-bold shadow whitespace-nowrap">
+                      {spot.title.slice(0, 5)}...
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* タップした写真の詳細ポップアップ */}
             {selectedSpotPin && (
               <div className="absolute bottom-4 left-4 right-4 bg-white p-4 rounded-2xl shadow-2xl border-2 border-blue-500 animate-in zoom-in-95 duration-200 z-30">
                 <button
@@ -487,7 +501,9 @@ export default function Home() {
                       <button
                         onClick={() =>
                           window.open(
-                            `https://www.google.com/maps/search/?api=1&query=${selectedSpotPin.lat},${selectedSpotPin.lng}`,
+                            `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                              selectedSpotPin.title + " " + selectedSpotPin.location
+                            )}`,
                             "_blank"
                           )
                         }
@@ -561,7 +577,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* 【マイページタブ】 */}
+        {/* 【マイページタブ】（フレンドリスト追加） */}
         {activeTab === "profile" && (
           <div className="p-6 max-w-md mx-auto text-center pb-20">
             <div className="w-20 h-20 bg-blue-600 text-white font-bold text-2xl rounded-full mx-auto flex items-center justify-center shadow-lg mb-3">
@@ -582,7 +598,30 @@ export default function Home() {
               )}
             </button>
 
-            <div className="mt-6 bg-white border border-slate-200 rounded-2xl p-4 text-left shadow-sm space-y-4">
+            {/* フレンドリストエリア */}
+            <div className="mt-6 bg-white border border-slate-200 rounded-2xl p-4 text-left shadow-sm space-y-3">
+              <h3 className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
+                <Users className="w-4 h-4 text-indigo-600" /> フレンドリスト ({friendsList.length}人)
+              </h3>
+              <div className="grid gap-2">
+                {friendsList.map((friend) => (
+                  <div key={friend.id} className="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                    <div className="flex items-center gap-2">
+                      <Smile className="w-6 h-6 text-indigo-500" />
+                      <div>
+                        <p className="text-xs font-bold text-slate-800">{friend.name}</p>
+                        <p className="text-[10px] text-slate-400">{friend.code}</p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">
+                      {friend.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-4 bg-white border border-slate-200 rounded-2xl p-4 text-left shadow-sm space-y-4">
               <h3 className="text-sm font-bold text-slate-700">アカウント設定</h3>
               <div>
                 <label className="text-xs text-slate-500 block mb-1">ユーザー名</label>
@@ -721,7 +760,9 @@ export default function Home() {
               <button
                 onClick={() =>
                   window.open(
-                    `https://www.google.com/maps/search/?api=1&query=${selectedSpotPin.lat},${selectedSpotPin.lng}`,
+                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                      selectedSpotPin.title + " " + selectedSpotPin.location
+                    )}`,
                     "_blank"
                   )
                 }
