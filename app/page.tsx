@@ -178,7 +178,7 @@ export default function Home() {
     { id: 101, name: "サトシ", code: "FRIEND-8821" },
   ]);
 
-  // 地図（Leaflet）関連のリファレンス（見やすい標準マップスタイル）
+  // 地図リファレンス
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -192,7 +192,7 @@ export default function Home() {
 
   const currentCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
 
-  // ピンが絶対に浮いて動かない「地図一体型固定描画」処理
+  // シンプルでピンクの線がないクリーンな地図のレンダリング
   useEffect(() => {
     if (activeTab !== "map" || !mapContainerRef.current) return;
 
@@ -208,15 +208,16 @@ export default function Home() {
       if (!L) return;
 
       if (!mapInstanceRef.current) {
-        // 見やすく標準的なGoogleマップ風の地図タイル
         const map = L.map(mapContainerRef.current, {
           center: [currentCoords.lat, currentCoords.lng],
           zoom: 14,
           zoomControl: false,
         });
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        // 邪魔なピンク線や境界線を取り除いた「CartoDB Voyager」クリーンマップタイル
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
           maxZoom: 19,
+          subdomains: "abcd",
         }).addTo(map);
 
         mapInstanceRef.current = map;
@@ -227,12 +228,11 @@ export default function Home() {
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
 
-      // ピンを緯度・経度の絶対座標で地図内部に完全固定
       filteredPosts.forEach((spot) => {
         const customHtml = `
           <div style="cursor: pointer; transform: translate(-50%, -100%);">
-            <div style="width: 42px; height: 42px; background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(0,0,0,0.3); border: 2px solid white;">
-              <div style="transform: rotate(45deg); font-size: 18px;">💖</div>
+            <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(236,72,153,0.4); border: 2.5px solid #ffffff;">
+              <div style="transform: rotate(45deg); font-size: 20px; line-height: 1;">💖</div>
             </div>
           </div>
         `;
@@ -240,8 +240,8 @@ export default function Home() {
         const customIcon = L.divIcon({
           html: customHtml,
           className: "",
-          iconSize: [42, 42],
-          iconAnchor: [21, 42],
+          iconSize: [44, 44],
+          iconAnchor: [22, 44],
         });
 
         const marker = L.marker([spot.lat, spot.lng], { icon: customIcon }).addTo(mapInstanceRef.current);
@@ -530,7 +530,7 @@ export default function Home() {
       <main className="flex-1 relative overflow-y-auto bg-slate-100">
         {activeTab === "map" && (
           <div className="w-full h-full relative overflow-hidden">
-            {/* 地図（一体型固定描画） */}
+            {/* クリーンで美しい地図 */}
             <div ref={mapContainerRef} className="w-full h-full z-0" />
 
             {/* エイムポインター */}
