@@ -1,5 +1,4 @@
-import { Plus } from 'lucide-react';
-use client";
+"use client";
 
 import React, { useState, useEffect, useRef } from "react";
 import {
@@ -31,6 +30,7 @@ import {
   Smile,
   Film,
   Heart,
+  Plus,
 } from "lucide-react";
 
 // 国籍・地域データ
@@ -84,13 +84,11 @@ export default function Home() {
   const [publicSubCategory, setPublicSubCategory] = useState<"view" | "rainy" | "food">("view");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // フレンドリストデータ（投稿データ紐付け用）
+  // フレンドリストデータ
   const [friendsList] = useState([
     { id: 1, name: "サトシ", code: "@satoshi_88", status: "オンライン", authorName: "Ken" },
     { id: 2, name: "ケンタ", code: "@kenta_tokyo", status: "オフライン", authorName: "Yuki" },
   ]);
-
-  const [selectedFriendUser, setSelectedFriendUser] = useState<any>(null);
 
   // マップ上の投稿スポット
   const [posts, setPosts] = useState([
@@ -326,7 +324,6 @@ export default function Home() {
 
   const currentCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
 
-  // 赤ピンなどのマーカーなしの背景用クリア地図URL
   const generateCleanMapEmbedUrl = () => {
     return `https://maps.google.com/maps?q=${currentCoords.lat},${currentCoords.lng}&z=14&output=embed`;
   };
@@ -472,7 +469,6 @@ export default function Home() {
       <main className="flex-1 relative overflow-y-auto bg-slate-100">
         {activeTab === "map" && (
           <div className="w-full h-full relative overflow-hidden">
-            {/* 地図埋め込み（デフォルトの赤ピンなし） */}
             <iframe
               title="Map"
               src={generateCleanMapEmbedUrl()}
@@ -480,14 +476,12 @@ export default function Home() {
               loading="lazy"
             ></iframe>
 
-            {/* エイムポインター */}
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
               <div className="w-10 h-10 rounded-full border-2 border-blue-600 border-dashed flex items-center justify-center shadow-lg">
                 <div className="w-2 h-2 bg-blue-600 rounded-full" />
               </div>
             </div>
 
-            {/* GPSステータス */}
             {currentLocation && (
               <div className="absolute top-3 right-3 bg-white/90 backdrop-blur border border-slate-200 px-2.5 py-1 rounded-full shadow text-[10px] font-bold text-emerald-600 flex items-center gap-1 z-10">
                 <Navigation className="w-3 h-3 fill-emerald-600 animate-pulse" />
@@ -495,7 +489,6 @@ export default function Home() {
               </div>
             )}
 
-            {/* ★可愛くてスタイリッシュなオリジナルピン（ワンタップでアイコン化） */}
             {filteredPosts.map((spot) => {
               const isSelected = selectedSpotPin?.id === spot.id;
               return (
@@ -506,7 +499,6 @@ export default function Home() {
                   onClick={() => setSelectedSpotPin(spot)}
                 >
                   {isSelected ? (
-                    /* 1タップ時：ぷっくり丸みのある画像サムネイルアイコン */
                     <div
                       className="relative group animate-in zoom-in-90 duration-200"
                       onClick={(e) => {
@@ -524,7 +516,6 @@ export default function Home() {
                       </div>
                     </div>
                   ) : (
-                    /* 通常時：オリジナル可愛いグラデーションハートピン */
                     <div className="flex flex-col items-center hover:scale-125 transition transform group">
                       <div className="w-9 h-9 bg-gradient-to-tr from-pink-500 via-rose-500 to-purple-500 rounded-full shadow-lg border-2 border-white flex items-center justify-center animate-bounce">
                         <Heart className="w-5 h-5 text-white fill-white" />
@@ -536,7 +527,6 @@ export default function Home() {
               );
             })}
 
-            {/* ピン選択時のポップアップ */}
             {selectedSpotPin && (
               <div className="absolute bottom-4 left-4 right-4 bg-white p-4 rounded-2xl shadow-2xl border-2 border-pink-500 animate-in zoom-in-95 duration-200 z-30">
                 <button
@@ -588,7 +578,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* 【探すタブ】 */}
         {activeTab === "search" && (
           <div className="p-4 space-y-4 max-w-md mx-auto pb-20">
             <h2 className="text-base font-bold text-slate-800">投稿タイムライン</h2>
@@ -616,7 +605,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* 【保存タブ】 */}
         {activeTab === "saved" && (
           <div className="p-4 max-w-md mx-auto pb-20">
             <h2 className="text-base font-bold text-slate-800 mb-4">保存したスポット・動画</h2>
@@ -646,7 +634,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* 【マイページタブ】（フレンドの投稿閲覧ボタン追加） */}
         {activeTab === "profile" && (
           <div className="p-6 max-w-md mx-auto text-center pb-20">
             <div className="w-20 h-20 bg-blue-600 text-white font-bold text-2xl rounded-full mx-auto flex items-center justify-center shadow-lg mb-3">
@@ -667,7 +654,6 @@ export default function Home() {
               )}
             </button>
 
-            {/* フレンドリスト（その人の投稿を見るボタンつき） */}
             <div className="mt-6 bg-white border border-slate-200 rounded-2xl p-4 text-left shadow-sm space-y-3">
               <h3 className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
                 <Users className="w-4 h-4 text-indigo-600" /> フレンドリスト ({friendsList.length}人)
