@@ -89,7 +89,7 @@ export default function Home() {
     { id: 2, name: "ケンタ", code: "@kenta_tokyo", status: "オフライン", authorName: "Yuki" },
   ]);
 
-  // マップ上の投稿スポット（実世界座標管理）
+  // マップ上の投稿スポット
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -183,7 +183,6 @@ export default function Home() {
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
 
-  // フィルタリングされた投稿
   const filteredPosts = posts.filter((post) => {
     if (post.mode !== mainMode) return false;
     if (mainMode === "public" && post.category !== publicSubCategory) return false;
@@ -193,11 +192,10 @@ export default function Home() {
 
   const currentCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
 
-  // Leaflet.jsマップの初期化 & ピンの座標固定プロット
+  // 日本語地名固定＆元の見やすい明るいマップ設定
   useEffect(() => {
     if (activeTab !== "map" || !mapContainerRef.current) return;
 
-    // LeafletのCSS・JSを動的にロード
     const link = document.createElement("link");
     link.rel = "stylesheet";
     link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
@@ -210,16 +208,15 @@ export default function Home() {
       if (!L) return;
 
       if (!mapInstanceRef.current) {
-        // マップ生成
         const map = L.map(mapContainerRef.current, {
           center: [currentCoords.lat, currentCoords.lng],
           zoom: 13,
           zoomControl: false,
         });
 
-        // ダーク＆スタイリッシュな地図タイル（参考写真風）
-        L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-          attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+        // 以前の見やすい標準マップ (OpenStreetMap 日本語環境優先)
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
           maxZoom: 19,
         }).addTo(map);
 
@@ -228,18 +225,16 @@ export default function Home() {
         mapInstanceRef.current.setView([currentCoords.lat, currentCoords.lng]);
       }
 
-      // 既存のマーカーをクリア
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
 
-      // ピンを地図上に完璧な座標で埋め込み固定（追従しない）
       filteredPosts.forEach((spot) => {
         const customHtml = `
-          <div style="cursor: pointer; transform: translate(-50%, -50%); transition: all 0.2s;">
-            <div style="width: 52px; height: 52px; border-radius: 12px; border: 3px solid white; box-shadow: 0 10px 25px rgba(0,0,0,0.3); overflow: hidden; background: #000;">
+          <div style="cursor: pointer; transform: translate(-50%, -50%); transition: transform 0.2s;">
+            <div style="width: 52px; height: 52px; border-radius: 12px; border: 3px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.25); overflow: hidden; background: #000;">
               <img src="${spot.image}" style="width: 100%; height: 100%; object-fit: cover;" />
             </div>
-            <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); background: #ef4444; color: white; font-size: 8px; font-weight: bold; padding: 1px 5px; border-radius: 10px; white-space: nowrap;">
+            <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); background: #ec4899; color: white; font-size: 8px; font-weight: bold; padding: 1px 6px; border-radius: 10px; white-space: nowrap; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
               💖 動画
             </div>
           </div>
@@ -538,8 +533,15 @@ export default function Home() {
       <main className="flex-1 relative overflow-y-auto bg-slate-100">
         {activeTab === "map" && (
           <div className="w-full h-full relative overflow-hidden">
-            {/* 緯度・経度で完璧にピンが固定されるLeafletマップ */}
+            {/* 地図コンテナ */}
             <div ref={mapContainerRef} className="w-full h-full z-0" />
+
+            {/* エイムポインター（復元） */}
+            <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
+              <div className="w-10 h-10 rounded-full border-2 border-blue-600 border-dashed flex items-center justify-center shadow-lg">
+                <div className="w-2 h-2 bg-blue-600 rounded-full" />
+              </div>
+            </div>
 
             {/* GPSステータス */}
             {currentLocation && (
