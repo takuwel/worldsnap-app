@@ -106,8 +106,6 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&auto=format&fit=crop",
       author: "Takuya",
       saved: false,
-      topRatio: "38%",
-      leftRatio: "45%",
     },
     {
       id: 2,
@@ -124,8 +122,6 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop",
       author: "Ken",
       saved: true,
-      topRatio: "58%",
-      leftRatio: "52%",
     },
     {
       id: 3,
@@ -142,8 +138,6 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&auto=format&fit=crop",
       author: "Yuki",
       saved: false,
-      topRatio: "45%",
-      leftRatio: "65%",
     },
   ]);
 
@@ -184,6 +178,92 @@ export default function Home() {
     { id: 101, name: "サトシ", code: "FRIEND-8821" },
   ]);
 
+  // 地図（Leaflet）関連のリファレンス（見やすい標準マップスタイル）
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
+
+  const filteredPosts = posts.filter((post) => {
+    if (post.mode !== mainMode) return false;
+    if (mainMode === "public" && post.category !== publicSubCategory) return false;
+    if (searchQuery && !post.title.includes(searchQuery) && !post.location.includes(searchQuery)) return false;
+    return true;
+  });
+
+  const currentCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
+
+  // ピンが絶対に浮いて動かない「地図一体型固定描画」処理
+  useEffect(() => {
+    if (activeTab !== "map" || !mapContainerRef.current) return;
+
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+    document.head.appendChild(link);
+
+    const script = document.createElement("script");
+    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    script.onload = () => {
+      const L = (window as any).L;
+      if (!L) return;
+
+      if (!mapInstanceRef.current) {
+        // 見やすく標準的なGoogleマップ風の地図タイル
+        const map = L.map(mapContainerRef.current, {
+          center: [currentCoords.lat, currentCoords.lng],
+          zoom: 14,
+          zoomControl: false,
+        });
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+        }).addTo(map);
+
+        mapInstanceRef.current = map;
+      } else {
+        mapInstanceRef.current.setView([currentCoords.lat, currentCoords.lng]);
+      }
+
+      markersRef.current.forEach((m) => m.remove());
+      markersRef.current = [];
+
+      // ピンを緯度・経度の絶対座標で地図内部に完全固定
+      filteredPosts.forEach((spot) => {
+        const customHtml = `
+          <div style="cursor: pointer; transform: translate(-50%, -100%);">
+            <div style="width: 42px; height: 42px; background: linear-gradient(135deg, #ec4899, #8b5cf6); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(0,0,0,0.3); border: 2px solid white;">
+              <div style="transform: rotate(45deg); font-size: 18px;">💖</div>
+            </div>
+          </div>
+        `;
+
+        const customIcon = L.divIcon({
+          html: customHtml,
+          className: "",
+          iconSize: [42, 42],
+          iconAnchor: [21, 42],
+        });
+
+        const marker = L.marker([spot.lat, spot.lng], { icon: customIcon }).addTo(mapInstanceRef.current);
+
+        marker.on("click", () => {
+          setSelectedSpotPin(spot);
+        });
+
+        markersRef.current.push(marker);
+      });
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [activeTab, mainMode, publicSubCategory, selectedCountry, currentLocation, posts]);
+
+  // カメラ機能
   useEffect(() => {
     if (isPostFlowOpen && (postStep === "camera" || postStep === "recording")) {
       startCamera();
@@ -258,13 +338,6 @@ export default function Home() {
     setPostStep("preview");
   };
 
-  const filteredPosts = posts.filter((post) => {
-    if (post.mode !== mainMode) return false;
-    if (mainMode === "public" && post.category !== publicSubCategory) return false;
-    if (searchQuery && !post.title.includes(searchQuery) && !post.location.includes(searchQuery)) return false;
-    return true;
-  });
-
   const handleToggleSaveClick = (id: number, currentSaved: boolean) => {
     if (currentSaved) {
       setUnsaveConfirmId(id);
@@ -288,15 +361,12 @@ export default function Home() {
     setTimeout(() => {
       const baseCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
 
-      const randomTop = Math.floor(30 + Math.random() * 40) + "%";
-      const randomLeft = Math.floor(30 + Math.random() * 40) + "%";
-
       const newPostObj = {
         id: Date.now(),
         title: newTitle,
         location: currentLocation ? "現在地周辺 (固定ピン)" : `${COUNTRY_COORDS[selectedCountry]?.name} (固定ピン)`,
-        lat: baseCoords.lat + (Math.random() - 0.5) * 0.01,
-        lng: baseCoords.lng + (Math.random() - 0.5) * 0.01,
+        lat: baseCoords.lat + (Math.random() - 0.5) * 0.015,
+        lng: baseCoords.lng + (Math.random() - 0.5) * 0.015,
         category: postTargetCategory,
         mode: postTargetMode,
         views: 1,
@@ -306,8 +376,6 @@ export default function Home() {
         image: capturedMediaUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop",
         author: username,
         saved: false,
-        topRatio: randomTop,
-        leftRatio: randomLeft,
       };
 
       setPosts((prevPosts) => [newPostObj, ...prevPosts]);
@@ -319,13 +387,6 @@ export default function Home() {
       setIsPostFlowOpen(false);
       setNewTitle("");
     }, 2000);
-  };
-
-  const currentCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
-
-  // Googleマップスタイルの埋め込みURL
-  const generateCleanMapEmbedUrl = () => {
-    return `https://maps.google.com/maps?q=${currentCoords.lat},${currentCoords.lng}&z=14&output=embed`;
   };
 
   const getSortedDetailPosts = () => {
@@ -469,13 +530,8 @@ export default function Home() {
       <main className="flex-1 relative overflow-y-auto bg-slate-100">
         {activeTab === "map" && (
           <div className="w-full h-full relative overflow-hidden">
-            {/* 地図埋め込み（見やすいGoogleマップスタイル） */}
-            <iframe
-              title="Map"
-              src={generateCleanMapEmbedUrl()}
-              className="w-full h-full border-0 touch-auto pointer-events-auto"
-              loading="lazy"
-            ></iframe>
+            {/* 地図（一体型固定描画） */}
+            <div ref={mapContainerRef} className="w-full h-full z-0" />
 
             {/* エイムポインター */}
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
@@ -491,47 +547,6 @@ export default function Home() {
                 GPS現在地オン
               </div>
             )}
-
-            {/* マップ上のオリジナル可愛いピン */}
-            {filteredPosts.map((spot) => {
-              const isSelected = selectedSpotPin?.id === spot.id;
-              return (
-                <div
-                  key={spot.id}
-                  style={{ top: spot.topRatio, left: spot.leftRatio }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 z-20 cursor-pointer"
-                  onClick={() => setSelectedSpotPin(spot)}
-                >
-                  {isSelected ? (
-                    /* 1タップ時：丸みのあるサムネイルアイコン */
-                    <div
-                      className="relative group animate-in zoom-in-90 duration-200"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setIsDetailModalOpen(true);
-                      }}
-                    >
-                      <img
-                        src={spot.image}
-                        alt={spot.title}
-                        className="w-16 h-16 rounded-2xl border-4 border-white object-cover shadow-2xl ring-4 ring-pink-500"
-                      />
-                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[8px] px-2 py-0.5 rounded-full font-bold shadow whitespace-nowrap">
-                        動画を見る 💖
-                      </div>
-                    </div>
-                  ) : (
-                    /* 通常時：オリジナル可愛いグラデーションハートピン */
-                    <div className="flex flex-col items-center hover:scale-125 transition transform group">
-                      <div className="w-9 h-9 bg-gradient-to-tr from-pink-500 via-rose-500 to-purple-500 rounded-full shadow-lg border-2 border-white flex items-center justify-center animate-bounce">
-                        <Heart className="w-5 h-5 text-white fill-white" />
-                      </div>
-                      <div className="w-1.5 h-1.5 bg-rose-500 rounded-full shadow-sm -mt-0.5" />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
 
             {/* ピン選択時のポップアップ */}
             {selectedSpotPin && (
