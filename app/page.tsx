@@ -31,6 +31,10 @@ import {
   Film,
   Heart,
   Plus,
+  Crosshair,
+  HelpCircle,
+  MessageSquare,
+  Send,
 } from "lucide-react";
 
 // 国籍・地域データ
@@ -81,7 +85,7 @@ export default function Home() {
 
   const [activeTab, setActiveTab] = useState<"map" | "search" | "saved" | "profile">("map");
   const [mainMode, setMainMode] = useState<"public" | "friends" | "private">("public");
-  const [publicSubCategory, setPublicSubCategory] = useState<"view" | "rainy" | "food">("view");
+  const [publicSubCategory, setPublicSubCategory] = useState<string>("view");
   const [searchQuery, setSearchQuery] = useState("");
 
   const [friendsList] = useState([
@@ -89,43 +93,27 @@ export default function Home() {
     { id: 2, name: "ケンタ", code: "@kenta_tokyo", status: "オフライン", authorName: "Yuki" },
   ]);
 
-  // マップ上の投稿スポット
+  // マップ上の投稿スポット（初期データ）
   const [posts, setPosts] = useState([
     {
       id: 1,
-      title: "エッフェル塔前の絶景スポット",
-      location: "パリ, フランス",
-      lat: 48.8584,
-      lng: 2.2945,
-      category: "view",
+      title: "表参道の隠れ家オープンカフェ",
+      location: "東京都 渋谷区",
+      lat: 35.6652,
+      lng: 139.7123,
+      category: "food",
       mode: "public",
       views: 15400,
       likes: 1240,
       createdAt: "2026-08-01",
       mediaType: "video",
-      image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=600&auto=format&fit=crop",
+      image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&auto=format&fit=crop",
       author: "Takuya",
       saved: false,
     },
     {
       id: 2,
-      title: "絶品和牛ランチイタリアン",
-      location: "東京都 港区",
-      lat: 35.6586,
-      lng: 139.7454,
-      category: "food",
-      mode: "public",
-      views: 8900,
-      likes: 890,
-      createdAt: "2026-08-04",
-      mediaType: "video",
-      image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&auto=format&fit=crop",
-      author: "Ken",
-      saved: true,
-    },
-    {
-      id: 3,
-      title: "雨の日でも楽しめる癒しの水族館",
+      title: "雨の日でも映える秘密の水族館",
       location: "東京都 江東区",
       lat: 35.6308,
       lng: 139.793,
@@ -138,6 +126,22 @@ export default function Home() {
       image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&auto=format&fit=crop",
       author: "Yuki",
       saved: false,
+    },
+    {
+      id: 3,
+      title: "裏路地にあるレトロなバー＆隠れ家",
+      location: "東京都 新宿区",
+      lat: 35.6938,
+      lng: 139.7034,
+      category: "kakurega",
+      mode: "public",
+      views: 8900,
+      likes: 890,
+      createdAt: "2026-08-04",
+      mediaType: "video",
+      image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=600&auto=format&fit=crop",
+      author: "Ken",
+      saved: true,
     },
   ]);
 
@@ -170,7 +174,7 @@ export default function Home() {
 
   const [newTitle, setNewTitle] = useState("");
   const [postTargetMode, setPostTargetMode] = useState<"public" | "friends" | "private">("public");
-  const [postTargetCategory, setPostTargetCategory] = useState<"view" | "rainy" | "food">("view");
+  const [postTargetCategory, setPostTargetCategory] = useState<string>("view");
 
   const [isFriendModalOpen, setIsFriendModalOpen] = useState(false);
   const [friendCodeInput, setFriendCodeInput] = useState("");
@@ -178,21 +182,28 @@ export default function Home() {
     { id: 101, name: "サトシ", code: "FRIEND-8821" },
   ]);
 
-  // 地図リファレンス
+  // AI問合せモーダル
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Array<{ sender: "user" | "ai"; text: string }>>([
+    { sender: "ai", text: "こんにちは！WorldSnap AIサポートです。アプリの使い方や不具合についてご質問をどうぞ！" },
+  ]);
+  const [chatInput, setChatInput] = useState("");
+
+  // 地図（Leaflet）リファレンス
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
 
   const filteredPosts = posts.filter((post) => {
     if (post.mode !== mainMode) return false;
-    if (mainMode === "public" && post.category !== publicSubCategory) return false;
+    if (mainMode === "public" && publicSubCategory !== "all" && post.category !== publicSubCategory) return false;
     if (searchQuery && !post.title.includes(searchQuery) && !post.location.includes(searchQuery)) return false;
     return true;
   });
 
   const currentCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
 
-  // シンプルでピンクの線がないクリーンな地図のレンダリング
+  // 1. 地図（Leaflet.js）描画 & 座標完全固定マーカー
   useEffect(() => {
     if (activeTab !== "map" || !mapContainerRef.current) return;
 
@@ -214,7 +225,7 @@ export default function Home() {
           zoomControl: false,
         });
 
-        // 邪魔なピンク線や境界線を取り除いた「CartoDB Voyager」クリーンマップタイル
+        // 境界線やピンクの線のないシンプルな「CartoDB Voyager」スタイル
         L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
           maxZoom: 19,
           subdomains: "abcd",
@@ -228,6 +239,7 @@ export default function Home() {
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
 
+      // 地球上の絶対座標（緯度・経度）にマーカーを固定
       filteredPosts.forEach((spot) => {
         const customHtml = `
           <div style="cursor: pointer; transform: translate(-50%, -100%);">
@@ -263,7 +275,18 @@ export default function Home() {
     };
   }, [activeTab, mainMode, publicSubCategory, selectedCountry, currentLocation, posts]);
 
-  // カメラ機能
+  // GPS現在地へ再移動 (FAB)
+  const handleRecenterGPS = () => {
+    if (mapInstanceRef.current && currentLocation) {
+      mapInstanceRef.current.setView([currentLocation.lat, currentLocation.lng], 15, {
+        animate: true,
+      });
+    } else {
+      alert("GPS現在地を取得中か、位置情報がオフになっています");
+    }
+  };
+
+  // カメラ機能制御
   useEffect(() => {
     if (isPostFlowOpen && (postStep === "camera" || postStep === "recording")) {
       startCamera();
@@ -365,13 +388,13 @@ export default function Home() {
         id: Date.now(),
         title: newTitle,
         location: currentLocation ? "現在地周辺 (固定ピン)" : `${COUNTRY_COORDS[selectedCountry]?.name} (固定ピン)`,
-        lat: baseCoords.lat + (Math.random() - 0.5) * 0.015,
-        lng: baseCoords.lng + (Math.random() - 0.5) * 0.015,
+        lat: baseCoords.lat + (Math.random() - 0.5) * 0.012,
+        lng: baseCoords.lng + (Math.random() - 0.5) * 0.012,
         category: postTargetCategory,
         mode: postTargetMode,
         views: 1,
         likes: 0,
-        createdAt: "2026-08-05",
+        createdAt: "2026-08-08",
         mediaType: cameraType,
         image: capturedMediaUrl || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&auto=format&fit=crop",
         author: username,
@@ -389,6 +412,28 @@ export default function Home() {
     }, 2000);
   };
 
+  const handleSendChatMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+
+    const userText = chatInput;
+    setChatMessages((prev) => [...prev, { sender: "user", text: userText }]);
+    setChatInput("");
+
+    setTimeout(() => {
+      let aiResponse = "ご質問ありがとうございます！よくある操作方法はマイページの設定やFAQからご確認いただけます。";
+      if (userText.includes("投稿") || userText.includes("撮影")) {
+        aiResponse = "画面下中央の「＋」ボタンを押すとカメラが起動します。撮影後に動画のトリミングやジャンル設定をして投稿できますよ！";
+      } else if (userText.includes("保存")) {
+        aiResponse = "気になるスポットのカードにある「リボン（保存）アイコン」をタップすると、下部の『保存』タブからいつでも見返せます！";
+      } else if (userText.includes("フレンド")) {
+        aiResponse = "マイページの「フレンドを探す・承認」ボタンから友達のコードを入力して申請できます！";
+      }
+
+      setChatMessages((prev) => [...prev, { sender: "ai", text: aiResponse }]);
+    }, 1000);
+  };
+
   const getSortedDetailPosts = () => {
     let list = [...posts].filter((p) => p.mediaType === activeMediaTab);
     if (sortBy === "views") list.sort((a, b) => b.views - a.views);
@@ -397,6 +442,7 @@ export default function Home() {
     return list;
   };
 
+  // 永久固定広告バナー枠
   const PermanentAdBanner = () => (
     <div className="w-full bg-slate-200/80 border-t border-slate-300 py-1 px-3 text-center shrink-0">
       <span className="text-[8px] font-bold text-slate-400 block tracking-wider uppercase">
@@ -410,7 +456,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen w-screen bg-slate-50 text-slate-800 overflow-hidden font-sans">
-      {/* 1. 初回設定 */}
+      {/* 1. 初回訪問モーダル */}
       {isFirstVisit && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
           <form
@@ -458,49 +504,35 @@ export default function Home() {
         </div>
       )}
 
-      {/* 2. ヘッダー */}
+      {/* 2. ヘッダー（視線エリア） */}
       <header className="bg-white border-b border-slate-200 z-10 p-2 shadow-sm flex flex-col gap-2 shrink-0">
         <div className="flex items-center justify-between gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
             <input
               type="text"
-              placeholder="場所・キーワード..."
+              placeholder="場所・キーワードで検索..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full bg-slate-100 border border-slate-200 rounded-full pl-8 pr-3 py-1.5 text-xs text-slate-800"
             />
           </div>
 
-          {mainMode === "public" && (
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-full text-[11px] font-bold">
-              <button
-                onClick={() => setPublicSubCategory("view")}
-                className={`px-2.5 py-1 rounded-full transition ${publicSubCategory === "view" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
-              >
-                view
-              </button>
-              <button
-                onClick={() => setPublicSubCategory("rainy")}
-                className={`px-2.5 py-1 rounded-full transition ${publicSubCategory === "rainy" ? "bg-white text-blue-600 shadow-sm" : "text-slate-500"}`}
-              >
-                雨の日
-              </button>
-              <button
-                onClick={() => setPublicSubCategory("food")}
-                className={`px-2.5 py-1 rounded-full transition ${publicSubCategory === "food" ? "bg-white text-orange-600 shadow-sm" : "text-slate-500"}`}
-              >
-                フード
-              </button>
-            </div>
-          )}
+          <button
+            onClick={() => setIsHelpModalOpen(true)}
+            className="p-2 bg-slate-100 hover:bg-slate-200 rounded-full text-slate-600 transition shrink-0"
+            title="ヘルプ・AIサポート"
+          >
+            <HelpCircle className="w-4 h-4" />
+          </button>
         </div>
 
-        <div className="flex justify-center border-t border-slate-100 pt-1">
-          <div className="flex bg-slate-100 p-1 rounded-xl text-xs font-bold">
+        {/* モード切替 */}
+        <div className="flex justify-between items-center gap-2">
+          <div className="flex bg-slate-100 p-1 rounded-xl text-xs font-bold flex-1 justify-around">
             <button
               onClick={() => setMainMode("public")}
-              className={`flex items-center gap-1 px-4 py-1.5 rounded-lg transition ${
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg transition ${
                 mainMode === "public" ? "bg-blue-600 text-white shadow-sm" : "text-slate-600"
               }`}
             >
@@ -508,7 +540,7 @@ export default function Home() {
             </button>
             <button
               onClick={() => setMainMode("friends")}
-              className={`flex items-center gap-1 px-4 py-1.5 rounded-lg transition ${
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg transition ${
                 mainMode === "friends" ? "bg-indigo-600 text-white shadow-sm" : "text-slate-600"
               }`}
             >
@@ -516,7 +548,7 @@ export default function Home() {
             </button>
             <button
               onClick={() => setMainMode("private")}
-              className={`flex items-center gap-1 px-4 py-1.5 rounded-lg transition ${
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg transition ${
                 mainMode === "private" ? "bg-slate-800 text-white shadow-sm" : "text-slate-600"
               }`}
             >
@@ -524,16 +556,41 @@ export default function Home() {
             </button>
           </div>
         </div>
+
+        {/* 横スクロール可能なジャンルチップ */}
+        {mainMode === "public" && (
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-[11px] font-bold">
+            {[
+              { id: "all", label: "すべて" },
+              { id: "view", label: "絶景・view 🌄" },
+              { id: "rainy", label: "雨の日 ☔" },
+              { id: "food", label: "フード 🍔" },
+              { id: "kakurega", label: "隠れ家 🤫" },
+            ].map((chip) => (
+              <button
+                key={chip.id}
+                onClick={() => setPublicSubCategory(chip.id)}
+                className={`px-3 py-1 rounded-full whitespace-nowrap transition ${
+                  publicSubCategory === chip.id
+                    ? "bg-pink-500 text-white shadow-sm"
+                    : "bg-slate-100 text-slate-600 border border-slate-200"
+                }`}
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
+        )}
       </header>
 
       {/* 3. メインエリア */}
       <main className="flex-1 relative overflow-y-auto bg-slate-100">
         {activeTab === "map" && (
           <div className="w-full h-full relative overflow-hidden">
-            {/* クリーンで美しい地図 */}
+            {/* クリーンな地図 */}
             <div ref={mapContainerRef} className="w-full h-full z-0" />
 
-            {/* エイムポインター */}
+            {/* エイムポインター（中央固定） */}
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
               <div className="w-10 h-10 rounded-full border-2 border-blue-600 border-dashed flex items-center justify-center shadow-lg">
                 <div className="w-2 h-2 bg-blue-600 rounded-full" />
@@ -548,9 +605,18 @@ export default function Home() {
               </div>
             )}
 
-            {/* ピン選択時のポップアップ */}
+            {/* 浮遊ボタン (FAB): 右下の現在地へ戻るボタン */}
+            <button
+              onClick={handleRecenterGPS}
+              className="absolute bottom-6 right-4 z-20 w-12 h-12 bg-white text-blue-600 rounded-full shadow-2xl border border-slate-200 flex items-center justify-center active:scale-95 transition"
+              title="現在地に戻る"
+            >
+              <Crosshair className="w-6 h-6" />
+            </button>
+
+            {/* スポット詳細カード (ハーフシート Modal) */}
             {selectedSpotPin && (
-              <div className="absolute bottom-4 left-4 right-4 bg-white p-4 rounded-2xl shadow-2xl border-2 border-pink-500 animate-in zoom-in-95 duration-200 z-30">
+              <div className="absolute bottom-4 left-4 right-16 bg-white p-4 rounded-2xl shadow-2xl border-2 border-pink-500 animate-in zoom-in-95 duration-200 z-30">
                 <button
                   onClick={() => setSelectedSpotPin(null)}
                   className="absolute top-3 right-3 text-slate-400 hover:text-slate-600"
@@ -579,7 +645,7 @@ export default function Home() {
                         onClick={() => setIsDetailModalOpen(true)}
                         className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow hover:opacity-90 transition"
                       >
-                        動画・写真を見る
+                        動画を見る
                       </button>
                       <button
                         onClick={() =>
@@ -588,9 +654,9 @@ export default function Home() {
                             "_blank"
                           )
                         }
-                        className="bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-300 flex items-center gap-1 hover:bg-slate-200"
+                        className="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-300 flex items-center gap-1 hover:bg-slate-200"
                       >
-                        <ExternalLink className="w-3 h-3" /> Googleマップ
+                        <ExternalLink className="w-3 h-3" /> Map
                       </button>
                     </div>
                   </div>
@@ -667,17 +733,26 @@ export default function Home() {
             <h2 className="text-lg font-bold text-slate-800">{username}</h2>
             <p className="text-xs text-slate-400">@worldsnap_user</p>
 
-            <button
-              onClick={() => setIsFriendModalOpen(true)}
-              className="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl shadow flex items-center justify-center gap-2 text-xs transition"
-            >
-              <UserPlus className="w-4 h-4" /> フレンドを探す・承認
-              {friendRequests.length > 0 && (
-                <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                  {friendRequests.length}
-                </span>
-              )}
-            </button>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => setIsFriendModalOpen(true)}
+                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl shadow flex items-center justify-center gap-1.5 text-xs transition"
+              >
+                <UserPlus className="w-4 h-4" /> フレンド申請
+                {friendRequests.length > 0 && (
+                  <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                    {friendRequests.length}
+                  </span>
+                )}
+              </button>
+
+              <button
+                onClick={() => setIsHelpModalOpen(true)}
+                className="bg-slate-800 hover:bg-slate-900 text-white font-bold px-4 py-2.5 rounded-xl shadow flex items-center justify-center gap-1.5 text-xs transition"
+              >
+                <HelpCircle className="w-4 h-4" /> AIサポート
+              </button>
+            </div>
 
             <div className="mt-6 bg-white border border-slate-200 rounded-2xl p-4 text-left shadow-sm space-y-3">
               <h3 className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
@@ -853,14 +928,14 @@ export default function Home() {
                 }
                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl shadow flex items-center justify-center gap-2 text-xs transition"
               >
-                <ExternalLink className="w-4 h-4" /> Googleマップアプリでこの場所を開く
+                <ExternalLink className="w-4 h-4" /> Googleマップアプリで開く
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 6. カメラ撮影 ➔ 確認・トリミング ➔ フォーム投稿 */}
+      {/* 6. カメラ撮影 ➔ CapCut風編集 ➔ 投稿フォーム ➔ AI審査 */}
       {isPostFlowOpen && (
         <div className="fixed inset-0 z-50 bg-black flex flex-col justify-between p-4 text-white">
           {(postStep === "camera" || postStep === "recording") && (
@@ -1065,7 +1140,7 @@ export default function Home() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-600 block mb-1.5">① 投稿先のモードを選択 (1つ選択)</label>
+                <label className="text-xs font-bold text-slate-600 block mb-1.5">① 投稿先のモードを選択</label>
                 <div className="grid grid-cols-3 gap-2 text-xs font-semibold">
                   {[
                     { key: "public", label: "パブリック" },
@@ -1089,20 +1164,21 @@ export default function Home() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-600 block mb-1.5">② ジャンルを選択 (1つ選択)</label>
+                <label className="text-xs font-bold text-slate-600 block mb-1.5">② ジャンルを選択</label>
                 <div className="grid grid-cols-3 gap-2 text-xs font-semibold">
                   {[
-                    { key: "view", label: "view" },
+                    { key: "view", label: "絶景・view" },
                     { key: "rainy", label: "雨の日" },
                     { key: "food", label: "フード" },
+                    { key: "kakurega", label: "隠れ家" },
                   ].map((item) => (
                     <button
                       key={item.key}
                       type="button"
-                      onClick={() => setPostTargetCategory(item.key as any)}
+                      onClick={() => setPostTargetCategory(item.key)}
                       className={`py-2 px-2 rounded-xl border text-center transition ${
                         postTargetCategory === item.key
-                          ? "border-orange-500 bg-orange-50 text-orange-600 font-bold border-2"
+                          ? "border-pink-500 bg-pink-50 text-pink-600 font-bold border-2"
                           : "border-slate-200 text-slate-600"
                       }`}
                     >
@@ -1134,13 +1210,13 @@ export default function Home() {
             <div className="bg-white text-slate-800 rounded-3xl p-8 max-w-sm w-full mx-auto my-auto shadow-2xl text-center space-y-4">
               <Sparkles className="w-12 h-12 text-purple-600 mx-auto animate-spin" />
               <h3 className="font-bold text-lg text-slate-900">AIコンプライアンス自動審査中</h3>
-              <p className="text-xs text-slate-500 leading-relaxed">不適切なコンテンツがないかチェック中です...</p>
+              <p className="text-xs text-slate-500 leading-relaxed">不適切なコンテンツが含まれていないかAIがチェックしています...</p>
             </div>
           )}
         </div>
       )}
 
-      {/* 7. フレンド申請 */}
+      {/* 7. フレンド申請モーダル */}
       {isFriendModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-5 max-w-md w-full shadow-2xl relative space-y-4">
@@ -1200,8 +1276,62 @@ export default function Home() {
         </div>
       )}
 
+      {/* 8. AIお問い合わせ・サポートチャットモーダル */}
+      {isHelpModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full h-[80vh] flex flex-col shadow-2xl relative overflow-hidden">
+            <div className="p-4 border-b border-slate-200 bg-slate-900 text-white flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="w-5 h-5 text-purple-400" />
+                <h3 className="font-bold text-sm">WorldSnap AIサポート (1次対応)</h3>
+              </div>
+              <button onClick={() => setIsHelpModalOpen(false)} className="text-slate-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50 text-xs">
+              {chatMessages.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[80%] p-3 rounded-2xl leading-relaxed ${
+                      msg.sender === "user"
+                        ? "bg-blue-600 text-white rounded-br-none"
+                        : "bg-white border border-slate-200 text-slate-800 shadow-sm rounded-bl-none"
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <form onSubmit={handleSendChatMessage} className="p-3 border-t border-slate-200 bg-white flex gap-2">
+              <input
+                type="text"
+                placeholder="質問を入力（例: 投稿のやり方は？）"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                className="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="submit"
+                className="bg-blue-600 text-white p-2.5 rounded-xl shadow hover:bg-blue-700 transition"
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 9. 画面最下部：永久固定広告枠 */}
       <PermanentAdBanner />
 
+      {/* 10. 親指エリア（ボトムナビゲーション） */}
       <nav className="bg-white border-t border-slate-200 p-2 flex justify-around items-center z-10 shadow-lg shrink-0">
         <button
           onClick={() => setActiveTab("map")}
@@ -1223,12 +1353,14 @@ export default function Home() {
           <span className="text-[10px]">探す</span>
         </button>
 
+        {/* 中央突起の丸ボタン */}
         <button
           onClick={() => {
             setPostStep("camera");
             setIsPostFlowOpen(true);
           }}
           className="bg-blue-600 hover:bg-blue-700 text-white p-3.5 rounded-full shadow-lg shadow-blue-500/40 -mt-6 transition transform active:scale-95 border-2 border-white"
+          title="新規投稿"
         >
           <Plus className="w-6 h-6" />
         </button>
