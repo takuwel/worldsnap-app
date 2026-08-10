@@ -37,7 +37,7 @@ import {
   Send,
 } from "lucide-react";
 
-// 国籍・地域データ
+// 国籍・地域初期座標
 const COUNTRY_COORDS: Record<string, { lat: number; lng: number; name: string }> = {
   JP: { lat: 35.6812, lng: 139.7671, name: "日本 (東京)" },
   US: { lat: 40.7128, lng: -74.006, name: "アメリカ (ニューヨーク)" },
@@ -189,7 +189,7 @@ export default function Home() {
   ]);
   const [chatInput, setChatInput] = useState("");
 
-  // 地図リファレンス
+  // 地図（Leaflet）リファレンス
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -203,20 +203,21 @@ export default function Home() {
 
   const currentCoords = currentLocation || COUNTRY_COORDS[selectedCountry] || COUNTRY_COORDS["JP"];
 
-  // 地図描画
+  // 1. 地図（Leaflet.js）安全化レンダリング処理
   useEffect(() => {
     if (activeTab !== "map" || !mapContainerRef.current) return;
 
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-    document.head.appendChild(link);
+    // CSSの動的読み込み
+    if (!document.getElementById("leaflet-css")) {
+      const link = document.createElement("link");
+      link.id = "leaflet-css";
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      document.head.appendChild(link);
+    }
 
-    const script = document.createElement("script");
-    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-    script.onload = () => {
-      const L = (window as any).L;
-      if (!L) return;
+    const initMap = (L: any) => {
+      if (!mapContainerRef.current) return;
 
       if (!mapInstanceRef.current) {
         const map = L.map(mapContainerRef.current, {
@@ -235,9 +236,11 @@ export default function Home() {
         mapInstanceRef.current.setView([currentCoords.lat, currentCoords.lng]);
       }
 
+      // 既存マーカークリア
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
 
+      // ピンを地球上の絶対座標（緯度・経度）へプロット
       filteredPosts.forEach((spot) => {
         const customHtml = `
           <div style="cursor: pointer; transform: translate(-50%, -100%);">
@@ -263,7 +266,15 @@ export default function Home() {
         markersRef.current.push(marker);
       });
     };
-    document.body.appendChild(script);
+
+    if ((window as any).L) {
+      initMap((window as any).L);
+    } else {
+      const script = document.createElement("script");
+      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      script.onload = () => initMap((window as any).L);
+      document.body.appendChild(script);
+    }
 
     return () => {
       if (mapInstanceRef.current) {
@@ -273,6 +284,7 @@ export default function Home() {
     };
   }, [activeTab, mainMode, publicSubCategory, selectedCountry, currentLocation, posts]);
 
+  // GPS現在地へカメラを復帰させる
   const handleRecenterGPS = () => {
     if (mapInstanceRef.current && currentLocation) {
       mapInstanceRef.current.setView([currentLocation.lat, currentLocation.lng], 15, {
@@ -283,7 +295,7 @@ export default function Home() {
     }
   };
 
-  // カメラ機能制御
+  // カメラ起動・停止管理
   useEffect(() => {
     if (isPostFlowOpen && (postStep === "camera" || postStep === "recording")) {
       startCamera();
@@ -439,6 +451,7 @@ export default function Home() {
     return list;
   };
 
+  // 画面最下部：永久固定広告枠
   const PermanentAdBanner = () => (
     <div className="w-full bg-slate-200/80 border-t border-slate-300 py-1 px-3 text-center shrink-0">
       <span className="text-[8px] font-bold text-slate-400 block tracking-wider uppercase">
@@ -553,9 +566,9 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 横スクロールジャンルチップ（隠れ家削除済み） */}
+        {/* 横スクロールジャンルチップ */}
         {mainMode === "public" && (
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 text-[11px] font-bold">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 text-[11px] font-bold [ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {[
               { id: "all", label: "すべて" },
               { id: "view", label: "絶景・view 🌄" },
@@ -929,7 +942,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* 6. 投稿フロー（ジャンル選択の隠れ家も削除済み） */}
+      {/* 6. 投稿フロー */}
       {isPostFlowOpen && (
         <div className="fixed inset-0 z-50 bg-black flex flex-col justify-between p-4 text-white">
           {(postStep === "camera" || postStep === "recording") && (
