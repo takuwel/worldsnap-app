@@ -968,7 +968,7 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
                   onClick={() => setActiveMediaTab("video")}
                   className={`flex items-center gap-1 px-3 py-1 rounded-lg ${
                     activeMediaTab === "video" ? "bg-white text-blue-600 shadow" : "text-slate-600"
-                  }`}
+                  `}
                 >
                   <Video className="w-3.5 h-3.5" /> 動画
                 </button>
@@ -976,7 +976,7 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
                   onClick={() => setActiveMediaTab("photo")}
                   className={`flex items-center gap-1 px-3 py-1 rounded-lg ${
                     activeMediaTab === "photo" ? "bg-white text-blue-600 shadow" : "text-slate-600"
-                  }`}
+                  `}
                 >
                   <ImageIcon className="w-3.5 h-3.5" /> 写真
                 </button>
