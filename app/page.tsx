@@ -86,8 +86,13 @@ function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: num
   const [username, setUsername] = useState("ゲストユーザー");
   const [selectedCountry, setSelectedCountry] = useState("JP");
   const [isFirstVisit, setIsFirstVisit] = useState(true);
-
-  // GPS現在地
+const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (file) {
+    // 選択された画像ファイルの処理
+    console.log("選択されたファイル:", file);
+  }
+};  // GPS現在地
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
