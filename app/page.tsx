@@ -962,27 +962,21 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
               </button>
             </div>
 
-            <div className="p-3 bg-slate-100 flex items-center justify-between gap-2 border-b border-slate-200">
-              <div className="flex bg-slate-200 p-1 rounded-xl text-xs font-bold">
-                <button
-                  onClick={() => setActiveMediaTab("video")}
-                  className={`flex items-center gap-1 px-3 py-1 rounded-lg ${
-  activeMediaTab === "video" ? "bg-white text-blue-600 shadow" : "text-slate-600"
-}`}                >
-                  <Video className="w-3.5 h-3.5" /> 動画
-                </button>
-               <button
-  onClick={() => setActiveMediaTab("photo")}
-  className={`flex items-center gap-1 px-3 py-1 rounded-lg ${activeMediaTab === "photo" ? "bg-white text-blue-600 shadow" : "text-slate-600"}`}
->
-  <ImageIcon className="w-3.5 h-3.5" /> 写真
-</button>              </div>
-
-              <div className="flex items-center gap-1 text-xs font-bold text-slate-600">
-                <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
-                <select
-                  value={sortBy}
-                  onChange={(e: any) => setSortBy(e.target.value)}
+<div className="p-3 bg-slate-100 flex items-center justify-between gap-2 border-b border-slate-200">
+        <div className="flex bg-slate-200 p-1 rounded-xl text-xs font-bold">
+          <button
+            onClick={() => setActiveMediaTab("video")}
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg ${activeMediaTab === "video" ? "bg-white text-blue-600 shadow" : "text-slate-600"}`}
+          >
+            <Video className="w-3.5 h-3.5" /> 動画
+          </button>
+          <button
+            onClick={() => setActiveMediaTab("photo")}
+            className={`flex items-center gap-1 px-3 py-1 rounded-lg ${activeMediaTab === "photo" ? "bg-white text-blue-600 shadow" : "text-slate-600"}`}
+          >
+            <ImageIcon className="w-3.5 h-3.5" /> 写真
+          </button>
+        </div>
                   className="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs"
                 >
                   {activeMediaTab === "video" && <option value="views">再生回数順</option>}
