@@ -1,13 +1,10 @@
 "use client";
 import React, { useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
-
 import {
   Search,
   Compass,
-  MapPin,  Search,
-  Compass,
-  MapPin,
+  MapPin, 
   Bookmark,
   User,
   Map as MapIcon,
