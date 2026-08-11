@@ -44,8 +44,45 @@ const COUNTRY_COORDS: Record<string, { lat: number; lng: number; name: string }>
   KR: { lat: 37.5665, lng: 126.978, name: "韓国 (ソウル)" },
   UK: { lat: 51.5074, lng: -0.1278, name: "イギリス (ロンドン)" },
 };
+function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: number): number {
+      const R = 6371000;
+      const dLat = (lat2 - lat1) * (Math.PI / 180);
+      const dLon = (lon2 - lon1) * (Math.PI / 180);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) *
+          Math.cos(lat2 * (Math.PI / 180)) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
 
-export default function Home() {
+    function groupPostsByDistance(posts: any[], distanceThresholdMeters: number = 50) {
+      const groups: any[] = [];
+      posts.forEach((post) => {
+        const postLat = post.lat ?? post.latitude;
+        const postLng = post.lng ?? post.longitude;
+        if (postLat === undefined || postLng === undefined) return;
+
+        const existingGroup = groups.find((group) => {
+          const distance = getDistanceInMeters(group.lat, group.lng, postLat, postLng);
+          return distance <= distanceThresholdMeters;
+        });
+
+        if (existingGroup) {
+          existingGroup.posts.push(post);
+        } else {
+          groups.push({
+            id: `group-${post.id || Math.random()}`,
+            lat: postLat,
+            lng: postLng,
+            posts: [post],
+          });
+        }
+      });
+      return groups;
+    }export default function Home() {
   const [username, setUsername] = useState("ゲストユーザー");
   const [selectedCountry, setSelectedCountry] = useState("JP");
   const [isFirstVisit, setIsFirstVisit] = useState(true);
