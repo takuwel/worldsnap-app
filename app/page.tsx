@@ -1372,8 +1372,14 @@ function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: num
 
       {/* 9. 広告バナー */}
       <PermanentAdBanner />
-
-      {/* 10. ボトムナビゲーション */}
+<input
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleFileUpload}
+        className="hidden"
+        id="camera-input"
+      />      {/* 10. ボトムナビゲーション */}
       <nav className="bg-white border-t border-slate-200 p-2 flex justify-around items-center z-10 shadow-lg shrink-0">
         <button
           onClick={() => setActiveTab("map")}
