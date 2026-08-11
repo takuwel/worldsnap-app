@@ -977,13 +977,15 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
             <ImageIcon className="w-3.5 h-3.5" /> 写真
           </button>
         </div>
-                  className="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs"
-                >
-                  {activeMediaTab === "video" && <option value="views">再生回数順</option>}
-                  <option value="newest">新着順</option>
-                  <option value="likes">いいね数順</option>
-                </select>
-              </div>
+                 <select
+          value={sortBy}
+          onChange={(e: any) => setSortBy(e.target.value)}
+          className="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs"
+        >
+          {activeMediaTab === "video" && <option value="views">再生回数順</option>}
+          <option value="newest">新着順</option>
+          <option value="likes">いいね数順</option>
+        </select>              </div>
             </div>
 
             <div className="p-4 overflow-y-auto flex-1 grid grid-cols-2 gap-3">
