@@ -1,9 +1,11 @@
 "use client";
 import React, { useState } from 'react';
-const supabaseUrl = 'https://fczjqbzolxbldkqvflhe.supabase.co';
-const supabaseAnonKey = 'ここにコピーしたsb_publishable_から始まるキー';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);import {
+import { createClient } from '@supabase/supabase-js';
+
+import {
   Search,
+  Compass,
+  MapPin,  Search,
   Compass,
   MapPin,
   Bookmark,
