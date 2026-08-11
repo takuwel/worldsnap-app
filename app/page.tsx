@@ -971,14 +971,12 @@ const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 }`}                >
                   <Video className="w-3.5 h-3.5" /> 動画
                 </button>
-                <button
-                  onClick={() => setActiveMediaTab("photo")}
-                  className={`flex items-center gap-1 px-3 py-1 rounded-lg ${
-                   className={`flex items-center gap-1 px-3 py-1 rounded-lg ${
-  activeMediaTab === "photo" ? "bg-white text-blue-600 shadow" : "text-slate-600"
-}`}                  <ImageIcon className="w-3.5 h-3.5" /> 写真
-                </button>
-              </div>
+               <button
+  onClick={() => setActiveMediaTab("photo")}
+  className={`flex items-center gap-1 px-3 py-1 rounded-lg ${activeMediaTab === "photo" ? "bg-white text-blue-600 shadow" : "text-slate-600"}`}
+>
+  <ImageIcon className="w-3.5 h-3.5" /> 写真
+</button>              </div>
 
               <div className="flex items-center gap-1 text-xs font-bold text-slate-600">
                 <ArrowUpDown className="w-3.5 h-3.5 text-slate-400" />
