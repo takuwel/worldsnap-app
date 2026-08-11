@@ -82,17 +82,70 @@ function getDistanceInMeters(lat1: number, lon1: number, lat2: number, lon2: num
         }
       });
       return groups;
-    }export default function Home() {
+    }
+export default function Home() {
   const [username, setUsername] = useState("ゲストユーザー");
   const [selectedCountry, setSelectedCountry] = useState("JP");
   const [isFirstVisit, setIsFirstVisit] = useState(true);
-const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (file) {
-    // 選択された画像ファイルの処理
-    console.log("選択されたファイル:", file);
-  }
-};  // GPS現在地
+const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      // 1. ファイル名を重複しないようユニークに作成
+      const fileName = `${Date.now()}_${file.name}`;
+
+      // 2. Supabase Storage (photos) に画像をアップロード
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('photos')
+        .upload(fileName, file);
+
+      if (uploadError) throw uploadError;
+
+      // 3. アップロードした画像の公開URLを取得
+      const { data: urlData } = supabase.storage
+        .from('photos')
+        .getPublicUrl(fileName);
+
+      // 4. 現在の緯度経度と一緒にデータベース(pots)へ保存
+      const lat = currentLocation?.lat || 35.6812;
+      const lng = currentLocation?.lng || 139.7671;
+
+      const { error: dbError } = await supabase
+        .from('pots')
+        .insert([
+          {
+            lat: lat,
+            lng: lng,
+            image_url: urlData.publicUrl,
+            caption: '新しい写真',
+          },
+        ]);
+
+      if (dbError) throw dbError;
+
+      alert('写真をアップロードしました！');
+      window.location.reload();
+    } catch (err: any) {
+      console.error('アップロード失敗:', err);
+      alert('アップロードに失敗しました: ' + err.message);
+    }
+  };
+
+  // 5. アプリ起動時にSupabaseからデータを自動取得する処理
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const { data, error } = await supabase
+        .from('pots')
+        .select('*');
+
+      if (!error && data) {
+        // 投稿一覧のデータ更新用の関数（例: setPostsなど）があればここで呼び出します
+      }
+    };
+
+    fetchPosts();
+  }, []);}; // GPS現在地
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   useEffect(() => {
