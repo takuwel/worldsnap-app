@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import {
-  Search, Compass, MapPin, Bookmark, User, Globe, Eye,
-  Image as ImageIcon, RotateCcw, ExternalLink, Timer, X, Camera
+  Search, Compass, MapPin, Bookmark, User, Globe,
+  ExternalLink, X
 } from 'lucide-react';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
@@ -23,10 +23,9 @@ export default function Home() {
   const [username, setUsername] = useState("ゲストユーザー");
   const [selectedCountry, setSelectedCountry] = useState("JP");
   const [isFirstVisit, setIsFirstVisit] = useState(true);
-  const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [activeTab, setActiveTab] = useState<"map" | "search" | "saved" | "profile">("map");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSpotPin, setSelectedSpotPin] = useState<any>(null);
+  const [selectedSpotPin, setSelectedSpotPin] = useState<{ lat: number; lng: number; title: string } | null>(null);
 
   const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState<Array<{ sender: string; text: string }>>([
@@ -41,18 +40,6 @@ export default function Home() {
       setSelectedCountry(savedCountry);
       setIsFirstVisit(false);
     }
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setCurrentLocation({
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude
-          });
-        },
-        (err) => console.warn("GPSエラー:", err)
-      );
-    }
   }, []);
 
   const handleSaveInitialProfile = (e: React.FormEvent) => {
@@ -62,66 +49,17 @@ export default function Home() {
     setIsFirstVisit(false);
   };
 
-  const handleExifUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      const EXIFModule = await import('exif-js');
-      const EXIF = EXIFModule.default || EXIFModule;
-      const files = Array.from(e.target.files || []);
-      if (files.length === 0) return;
-
-      let noGpsCount = 0;
-      const processFiles = files.map((file) => {
-        return new Promise<void>((resolve) => {
-          if (!file.type.startsWith('image/')) {
-            resolve();
-            return;
-          }
-          EXIF.getData(file as any, function (this: any) {
-            const lat = EXIF.getTag(this, 'GPSLatitude');
-            const lon = EXIF.getTag(this, 'GPSLongitude');
-            if (!lat || !lon) {
-              noGpsCount++;
-            }
-            resolve();
-          });
-        });
-      });
-
-      await Promise.all(processFiles);
-      alert("写真を正常にアップロードしました！");
-      if (noGpsCount > 0) {
-        alert(`${noGpsCount}件のファイルに位置情報が含まれていなかったため、仮の場所に配置しました。`);
-      }
-    } catch (err: any) {
-      alert("アップロード処理に失敗しました: " + err.message);
-    }
-  };
-
-  const exportForSNS = async () => {
-    try {
-      const html2canvasModule = await import('html2canvas');
-      const html2canvas = html2canvasModule.default || html2canvasModule;
-      const element = document.getElementById('sns-card-template');
-      if (!element) {
-        alert("キャプチャ対象が見つかりません");
-        return;
-      }
-      const canvas = await html2canvas(element, { scale: 2 });
-      const image = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = image;
-      link.download = `travel-map-${Date.now()}.png`;
-      link.click();
-    } catch (err: any) {
-      alert("SNS書き出しに失敗しました: " + err.message);
-    }
+  const handleExifUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    alert(`${files.length}件のファイルを選択しました。`);
   };
 
   const handleSendChatMessage = (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim()) return;
-    setChatMessages(prev => [...prev, { sender: "user", text: chatInput }]);
     const userQ = chatInput;
+    setChatMessages(prev => [...prev, { sender: "user", text: userQ }]);
     setChatInput("");
     setTimeout(() => {
       setChatMessages(prev => [
@@ -206,19 +144,11 @@ export default function Home() {
               className="hidden"
             />
           </label>
-
-          <button
-            type="button"
-            onClick={exportForSNS}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow flex items-center gap-1 shrink-0 transition"
-          >
-            <span>✨ SNS保存</span>
-          </button>
         </div>
       </header>
 
       {/* 3. メインマップエリア */}
-      <main className="flex-1 relative overflow-hidden bg-slate-200 flex items-center justify-center" id="sns-card-template">
+      <main className="flex-1 relative overflow-hidden bg-slate-200 flex items-center justify-center">
         <div className="text-center p-6 bg-white/80 backdrop-blur rounded-2xl shadow-lg max-w-sm">
           <MapPin className="w-12 h-12 text-blue-600 mx-auto mb-2 animate-bounce" />
           <h3 className="font-bold text-slate-800 text-base">ワールドマップエリア</h3>
