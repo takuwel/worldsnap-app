@@ -37,10 +37,6 @@ import {
   Crosshair,
 } from 'lucide-react';
 
- React, { useState } from 'react';
-import EXIF from 'exif-js'; // 写真のExif(位置情報・撮影日時)解析用
-import html2canvas from 'html2canvas'; // 9:16 SNSカード書き出し用
-
 export default function TravelMapApp() {
   const [spots, setSpots] = useState([]);
   const [selectedSpot, setSelectedSpot] = useState(null);
