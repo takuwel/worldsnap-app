@@ -39,24 +39,17 @@ import {
 
 export default function TravelMapApp() {
   const [isMounted, setIsMounted] = useState(false);
+  const [spots, setSpots] = useState([]);
+  const [selectedSpot, setSelectedSpot] = useState(null);
+  const [isExportMode, setIsExportMode] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const [spots, setSpots] = useState([]);
-  const [selectedSpot, setSelectedSpot] = useState(null);
-  const [isExportMode, setIsExportMode] = useState(false);
-
   if (!isMounted) {
     return null;
-  }  const [spots, setSpots] = useState([]);
-  const [selectedSpot, setSelectedSpot] = useState(null);
-  const [isExportMode, setIsExportMode] = useState(false);
-
-  // 1. 自動ジオタグ解析による「一括マップ化」（Exif読み取り）
-  const handlePhotoUpload = (e) => {
-    const files = Array.from(e.target.files);
+  }    const files = Array.from(e.target.files);
     const parsedSpots = [];
 
     files.forEach((file) => {
