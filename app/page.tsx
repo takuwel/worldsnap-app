@@ -38,7 +38,20 @@ import {
 } from 'lucide-react';
 
 export default function TravelMapApp() {
+ export default function TravelMapApp() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const [spots, setSpots] = useState([]);
+  const [selectedSpot, setSelectedSpot] = useState(null);
+  const [isExportMode, setIsExportMode] = useState(false);
+
+  if (!isMounted) {
+    return null;
+  }  const [spots, setSpots] = useState([]);
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [isExportMode, setIsExportMode] = useState(false);
 
