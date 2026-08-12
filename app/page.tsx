@@ -1,46 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import EXIF from 'exif-js';
-import html2canvas from 'html2canvas';
-import {
-  Search,
-  Compass,
-  MapPin,
-  Bookmark,
-  User,
-  Map as MapIcon,
-  X,
-  Globe,
-  Eye,
-  ImageIcon,
-  RotateCcw,
-  Timer,
-  ExternalLink,
-  Users,
-  Lock,
-  Sparkles,
-  ArrowUpDown,
-  AlertTriangle,
-  Video,
-  Check,
-  UserPlus,
-  Scissors,
-  Play,
-  Pause,
-  Navigation,
-  Smile,
-  Film,
-  Heart,
-  Plus,
-  Crosshair,
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 
 export default function TravelMapApp() {
   const [isMounted, setIsMounted] = useState(false);
-  const [spots, setSpots] = useState([]);
-  const [selectedSpot, setSelectedSpot] = useState(null);
+  const [spots, setSpots] = useState<any[]>([]);
+  const [selectedSpot, setSelectedSpot] = useState<any>(null);
   const [isExportMode, setIsExportMode] = useState(false);
 
   useEffect(() => {
@@ -48,18 +13,19 @@ export default function TravelMapApp() {
   }, []);
 
   // 1. 自動ジオタグ解析による「一括マップ化」 (Exif読み取り)
-  const handlePhotoUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const parsedSpots = [];
+  const handlePhotoUpload = async (e: any) => {
+    const EXIFModule = await import('exif-js');
+    const EXIF = EXIFModule.default || EXIFModule;
+    const files = Array.from(e.target.files as FileList);
+    const parsedSpots: any[] = [];
 
     files.forEach((file) => {
-      EXIF.getData(file, function () {
+      EXIF.getData(file as any, function (this: any) {
         const lat = EXIF.getTag(this, 'GPSLatitude');
         const lon = EXIF.getTag(this, 'GPSLongitude');
         const dateTime = EXIF.getTag(this, 'DateTimeOriginal');
 
         if (lat && lon) {
-          // GPS度分秒(DMS)を十進法(Decimal Degree)に変換
           const latDecimal = convertDMSToDD(lat, EXIF.getTag(this, 'GPSLatitudeRef'));
           const lonDecimal = convertDMSToDD(lon, EXIF.getTag(this, 'GPSLongitudeRef'));
 
@@ -76,30 +42,29 @@ export default function TravelMapApp() {
       });
     });
 
-    // 撮影日時順にソートしてタイムライン化
     setTimeout(() => {
-      const sorted = parsedSpots.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+      const sorted = parsedSpots.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
       setSpots(sorted);
       if (sorted.length > 0) setSelectedSpot(sorted[0]);
     }, 500);
   };
 
-  // DMS(度分秒) -> Decimal Degree 変換ヘルパー
-  const convertDMSToDD = (dms, ref) => {
+  const convertDMSToDD = (dms: any, ref: string) => {
     let dd = dms[0] + dms[1] / 60 + dms[2] / 3600;
     if (ref === "S" || ref === "W") dd = dd * -1;
     return dd;
   };
 
-  // 3. SNS (Instagramストーリーズ/リール) 向け 9:16 画像書き出し
+  // 3. SNS 向け 9:16 画像書き出し
   const exportForSNS = async () => {
+    const html2canvasModule = await import('html2canvas');
+    const html2canvas = html2canvasModule.default || html2canvasModule;
     const element = document.getElementById('sns-card-template');
     if (!element) return;
 
     const canvas = await html2canvas(element, { scale: 2 });
     const image = canvas.toDataURL('image/png');
 
-    // ダウンロード処理またはWeb Share API呼び出し
     const link = document.createElement('a');
     link.href = image;
     link.download = `travel-map-${Date.now()}.png`;
@@ -116,7 +81,6 @@ export default function TravelMapApp() {
       <div className="relative flex-1 h-full">
         {/* ヘッダー・アクションバー */}
         <div className="absolute top-4 left-4 z-20 flex gap-3">
-          {/* カメラアプリ非依存：端末ライブラリから一括読み込み */}
           <label className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-full font-bold text-sm cursor-pointer shadow-lg flex items-center gap-2">
             <span>📷 写真/動画を選択して一括マップ化</span>
             <input
@@ -141,7 +105,6 @@ export default function TravelMapApp() {
         {/* 通常マップ画面 */}
         {!isExportMode ? (
           <div className="w-full h-full bg-slate-800 flex items-center justify-center relative">
-            {/* ※実際の実装では Mapbox GL JS や Leaflet の Map コンポーネントを配置 */}
             <div className="text-center text-slate-400">
               {spots.length === 0 ? (
                 <p>写真や動画をまとめて選択すると、Exif情報から自動でルートマップが生成されます</p>
@@ -150,7 +113,7 @@ export default function TravelMapApp() {
               )}
             </div>
 
-            {/* 2. 動画×マップ連動 ダイナミックプレビュー (画面下部シート) */}
+            {/* 2. 動画×マップ連動 ダイナミックプレビュー */}
             {selectedSpot && (
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-11/12 max-w-md bg-slate-800/90 backdrop-blur-md rounded-2xl p-4 border border-slate-700 shadow-2xl flex items-center gap-4">
                 <div className="w-24 h-32 rounded-xl overflow-hidden bg-black flex-shrink-0">
