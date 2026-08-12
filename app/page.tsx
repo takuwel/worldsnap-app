@@ -152,9 +152,8 @@ export default function Home() {
 
     await Promise.all(processFiles);
 
-    if (noGpsCount > 0) {
-      alert(`${noGpsCount}件のファイルに位置情報が含まれていなかったため、仮の場所に配置しました。`);
-    }
+    if (noGpsCount > 0)
+alert(`${noGpsCount}件のファイルに位置情報が含まれていなかったため、仮の場所に配置しました。`);    
   };
 
   const exportForSNS = async () => {
@@ -701,8 +700,8 @@ export default function Home() {
             onChange={handleExifUpload}
             className="hidden"
           />
-        </label>        <div className="flex items-center justify-between gap-2">
-          <div className="relative flex-1">
+        </label>
+        <div className="flex items-center justify-between gap-2">          <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
             <input
               type="text"
