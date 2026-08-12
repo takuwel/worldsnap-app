@@ -1,4 +1,43 @@
-import React, { useState } from 'react';
+"use client";
+
+import React, { useState, useEffect, useRef } from 'react';
+import { createClient } from '@supabase/supabase-js';
+import EXIF from 'exif-js';
+import html2canvas from 'html2canvas';
+import {
+  Search,
+  Compass,
+  MapPin,
+  Bookmark,
+  User,
+  Map as MapIcon,
+  X,
+  Globe,
+  Eye,
+  ImageIcon,
+  RotateCcw,
+  Timer,
+  ExternalLink,
+  Users,
+  Lock,
+  Sparkles,
+  ArrowUpDown,
+  AlertTriangle,
+  Video,
+  Check,
+  UserPlus,
+  Scissors,
+  Play,
+  Pause,
+  Navigation,
+  Smile,
+  Film,
+  Heart,
+  Plus,
+  Crosshair,
+} from 'lucide-react';
+
+ React, { useState } from 'react';
 import EXIF from 'exif-js'; // 写真のExif(位置情報・撮影日時)解析用
 import html2canvas from 'html2canvas'; // 9:16 SNSカード書き出し用
 
