@@ -47,9 +47,9 @@ export default function TravelMapApp() {
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) {
-    return null;
-  }    const files = Array.from(e.target.files);
+  // 1. 自動ジオタグ解析による「一括マップ化」 (Exif読み取り)
+  const handlePhotoUpload = (e) => {
+    const files = Array.from(e.target.files);
     const parsedSpots = [];
 
     files.forEach((file) => {
@@ -91,14 +91,14 @@ export default function TravelMapApp() {
     return dd;
   };
 
-  // 3. SNS（Instagramストーリーズ/リール）向け 9:16 画像書き出し
+  // 3. SNS (Instagramストーリーズ/リール) 向け 9:16 画像書き出し
   const exportForSNS = async () => {
     const element = document.getElementById('sns-card-template');
     if (!element) return;
-    
+
     const canvas = await html2canvas(element, { scale: 2 });
     const image = canvas.toDataURL('image/png');
-    
+
     // ダウンロード処理またはWeb Share API呼び出し
     const link = document.createElement('a');
     link.href = image;
@@ -106,30 +106,33 @@ export default function TravelMapApp() {
     link.click();
   };
 
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <div className="flex h-screen w-full bg-slate-900 text-white font-sans overflow-hidden">
-      
-      {/* メインエリア：マップ ＆ 動画連動UI */}
+      {/* メインエリア：マップ & 動画連動UI */}
       <div className="relative flex-1 h-full">
-        
         {/* ヘッダー・アクションバー */}
         <div className="absolute top-4 left-4 z-20 flex gap-3">
           {/* カメラアプリ非依存：端末ライブラリから一括読み込み */}
           <label className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-full font-bold text-sm cursor-pointer shadow-lg flex items-center gap-2">
             <span>📷 写真/動画を選択して一括マップ化</span>
-            <input 
-              type="file" 
-              multiple 
-              accept="image/*,video/*" 
-              onChange={handlePhotoUpload} 
-              className="hidden" 
+            <input
+              type="file"
+              multiple
+              accept="image/*,video/*"
+              onChange={handlePhotoUpload}
+              className="hidden"
             />
           </label>
 
           {spots.length > 0 && (
-            <button 
+            <button
               onClick={() => setIsExportMode(!isExportMode)}
-              className="bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded-full font-bold text-sm shadow-lg">
+              className="bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded-full font-bold text-sm shadow-lg"
+            >
               {isExportMode ? "マップに戻る" : "✨ SNS用に書き出し (9:16)"}
             </button>
           )}
@@ -147,9 +150,9 @@ export default function TravelMapApp() {
               )}
             </div>
 
-            {/* 2. 動画×マップ連動 ダイナミックプレビュー（画面下部シート） */}
+            {/* 2. 動画×マップ連動 ダイナミックプレビュー (画面下部シート) */}
             {selectedSpot && (
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-11/12 max-w-md bg-slate-800/90 backdrop-blur-md rounded-2xl p-4 border border-slate-700 shadow-2xl flex gap-4 items-center">
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-11/12 max-w-md bg-slate-800/90 backdrop-blur-md rounded-2xl p-4 border border-slate-700 shadow-2xl flex items-center gap-4">
                 <div className="w-24 h-32 rounded-xl overflow-hidden bg-black flex-shrink-0">
                   {selectedSpot.isVideo ? (
                     <video src={selectedSpot.mediaUrl} autoPlay loop muted className="w-full h-full object-cover" />
@@ -170,9 +173,9 @@ export default function TravelMapApp() {
         ) : (
           /* 3. 9:16 ストーリーズ型書き出しプレビュー表示 */
           <div className="w-full h-full bg-black flex flex-col items-center justify-center p-4">
-            <div 
-              id="sns-card-template" 
-              className="w-[360px] h-[640px] bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950 rounded-3xl p-6 flex flex-col justify-between border border-slate-700 shadow-2xl relative overflow-hidden"
+            <div
+              id="sns-card-template"
+              className="w-[360px] h-[640px] bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950 rounded-3xl p-6 flex flex-col justify-between shadow-2xl border border-slate-800 relative overflow-hidden"
             >
               <div>
                 <span className="text-xs font-bold tracking-widest text-purple-400 uppercase">MY TRAVEL LOG</span>
@@ -195,14 +198,14 @@ export default function TravelMapApp() {
               </div>
             </div>
 
-            <button 
+            <button
               onClick={exportForSNS}
-              className="mt-4 bg-purple-600 hover:bg-purple-500 px-6 py-2 rounded-full font-bold text-sm">
+              className="mt-4 bg-purple-600 hover:bg-purple-500 px-6 py-2 rounded-full font-bold text-sm"
+            >
               画像を保存する
             </button>
           </div>
         )}
-
       </div>
     </div>
   );
