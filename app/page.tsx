@@ -1,15 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import {
-  Search, Compass, MapPin, Bookmark, User, Globe,
-  ExternalLink, X
-} from 'lucide-react';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const COUNTRY_COORDS: Record<string, { lat: number; lng: number; name: string }> = {
   JP: { lat: 35.6812, lng: 139.7671, name: "日本" },
@@ -79,7 +70,7 @@ export default function Home() {
             onSubmit={handleSaveInitialProfile}
             className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center space-y-4"
           >
-            <Globe className="w-12 h-12 text-blue-600 mx-auto" />
+            <div className="text-4xl">🌐</div>
             <h2 className="text-xl font-bold text-slate-900">WorldSnap へようこそ！</h2>
             <p className="text-xs text-slate-500">プロフィールと初期エリアを設定してください。</p>
 
@@ -124,13 +115,12 @@ export default function Home() {
       <header className="bg-white border-b border-slate-200 z-10 p-2 shadow-sm flex flex-col gap-2 shrink-0">
         <div className="flex items-center justify-between gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-3.5 h-3.5" />
             <input
               type="text"
-              placeholder="場所・キーワードで検索..."
+              placeholder="🔍 場所・キーワードで検索..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-100 border border-slate-200 rounded-full pl-8 pr-3 py-1.5 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-slate-100 border border-slate-200 rounded-full px-4 py-1.5 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -150,7 +140,7 @@ export default function Home() {
       {/* 3. メインマップエリア */}
       <main className="flex-1 relative overflow-hidden bg-slate-200 flex items-center justify-center">
         <div className="text-center p-6 bg-white/80 backdrop-blur rounded-2xl shadow-lg max-w-sm">
-          <MapPin className="w-12 h-12 text-blue-600 mx-auto mb-2 animate-bounce" />
+          <div className="text-4xl mb-2 animate-bounce">📍</div>
           <h3 className="font-bold text-slate-800 text-base">ワールドマップエリア</h3>
           <p className="text-xs text-slate-500 mt-1">選択中の地域: {COUNTRY_COORDS[selectedCountry]?.name || "日本"}</p>
           <p className="text-xs text-slate-400 mt-2">ログイン中: {username}</p>
@@ -160,8 +150,8 @@ export default function Home() {
           <div className="absolute bottom-4 left-4 right-4 bg-white p-4 rounded-2xl shadow-xl z-20 border border-slate-200 space-y-2">
             <div className="flex justify-between items-center">
               <h4 className="font-bold text-sm text-slate-800">{selectedSpotPin.title || "スポット詳細"}</h4>
-              <button onClick={() => setSelectedSpotPin(null)} className="p-1 rounded-full hover:bg-slate-100">
-                <X className="w-4 h-4 text-slate-500" />
+              <button onClick={() => setSelectedSpotPin(null)} className="p-1 rounded-full hover:bg-slate-100 text-xs">
+                ✖
               </button>
             </div>
             <button
@@ -173,7 +163,7 @@ export default function Home() {
               }}
               className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1 shadow"
             >
-              <ExternalLink className="w-4 h-4" /> Googleマップアプリで開く
+              🔗 Googleマップアプリで開く
             </button>
           </div>
         )}
@@ -185,28 +175,28 @@ export default function Home() {
           onClick={() => setActiveTab("map")}
           className={`flex flex-col items-center text-xs ${activeTab === "map" ? "text-blue-600 font-bold" : "text-slate-400"}`}
         >
-          <Compass className="w-5 h-5 mb-0.5" />
+          <span className="text-base">🧭</span>
           マップ
         </button>
         <button
           onClick={() => setActiveTab("search")}
           className={`flex flex-col items-center text-xs ${activeTab === "search" ? "text-blue-600 font-bold" : "text-slate-400"}`}
         >
-          <Search className="w-5 h-5 mb-0.5" />
+          <span className="text-base">🔍</span>
           検索
         </button>
         <button
           onClick={() => setActiveTab("saved")}
           className={`flex flex-col items-center text-xs ${activeTab === "saved" ? "text-blue-600 font-bold" : "text-slate-400"}`}
         >
-          <Bookmark className="w-5 h-5 mb-0.5" />
+          <span className="text-base">🔖</span>
           保存
         </button>
         <button
           onClick={() => setActiveTab("profile")}
           className={`flex flex-col items-center text-xs ${activeTab === "profile" ? "text-blue-600 font-bold" : "text-slate-400"}`}
         >
-          <User className="w-5 h-5 mb-0.5" />
+          <span className="text-base">👤</span>
           マイページ
         </button>
       </nav>
