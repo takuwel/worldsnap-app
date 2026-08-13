@@ -1,17 +1,28 @@
 'use client';
 
 import React, { useState } from 'react';
+// ❌ 削除する
 import EXIF from 'exif-js';
 import html2canvas from 'html2canvas';
-
 export default function TravelMapPage() {
   const [spots, setSpots] = useState<any[]>([]);
   const [selectedSpot, setSelectedSpot] = useState<any>(null);
   const [isExportMode, setIsExportMode] = useState(false);
 
   // 1. 自動ジオタグ解析による「一括マップ化」（Exif読み取り）
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
+  // ⭕️ async を追加し、関数内で EXIF を動的インポートする
+const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (!e.target.files) return;
+
+  // ブラウザ上でのみ EXIF を読み込む
+  const EXIF = (await import('exif-js')).default;
+
+  const files = Array.from(e.target.files);
+  const parsedSpots: any[] = [];
+
+  files.forEach((file) => {
+    EXIF.getData(file as any, function (this: any) {
+      // （これ以降の処理はそのまま）    if (!e.target.files) return;
     const files = Array.from(e.target.files);
     const parsedSpots: any[] = [];
 
