@@ -1,244 +1,164 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import EXIF from 'exif-js';
+import html2canvas from 'html2canvas';
 
-const COUNTRY_COORDS: Record<string, { lat: number; lng: number; name: string }> = {
-  JP: { lat: 35.6812, lng: 139.7671, name: "日本" },
-  US: { lat: 37.0902, lng: -95.7129, name: "アメリカ" },
-  KR: { lat: 35.9078, lng: 127.7669, name: "韓国" },
-  UK: { lat: 55.3781, lng: -3.436, name: "イギリス" },
-  FR: { lat: 46.2276, lng: 2.2137, name: "フランス" },
-};
+export default function TravelMapPage() {
+  const [spots, setSpots] = useState<any[]>([]);
+  const [selectedSpot, setSelectedSpot] = useState<any>(null);
+  const [isExportMode, setIsExportMode] = useState(false);
 
-export default function Home() {
-  const [username, setUsername] = useState("ゲストユーザー");
-  const [selectedCountry, setSelectedCountry] = useState("JP");
-  const [isFirstVisit, setIsFirstVisit] = useState(true);
-  const [activeTab, setActiveTab] = useState<"map" | "search" | "saved" | "profile">("map");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSpotPin, setSelectedSpotPin] = useState<{ lat: number; lng: number; title: string } | null>(null);
+  // 1. 自動ジオタグ解析による「一括マップ化」（Exif読み取り）
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
+    const files = Array.from(e.target.files);
+    const parsedSpots: any[] = [];
 
-  const [chatInput, setChatInput] = useState("");
-  const [chatMessages, setChatMessages] = useState<Array<{ sender: string; text: string }>>([
-    { sender: "assistant", text: "こんにちは！旅の思い出やスポットについて何でも質問してください。" }
-  ]);
+    files.forEach((file) => {
+      EXIF.getData(file as any, function (this: any) {
+        const lat = EXIF.getTag(this, 'GPSLatitude');
+        const lon = EXIF.getTag(this, 'GPSLongitude');
+        const dateTime = EXIF.getTag(this, 'DateTimeOriginal');
 
-  useEffect(() => {
-    const savedName = localStorage.getItem("worldsnap_username");
-    const savedCountry = localStorage.getItem("worldsnap_country");
-    if (savedName && savedCountry) {
-      setUsername(savedName);
-      setSelectedCountry(savedCountry);
-      setIsFirstVisit(false);
-    }
-  }, []);
+        if (lat && lon) {
+          const latDecimal = convertDMSToDD(lat, EXIF.getTag(this, 'GPSLatitudeRef'));
+          const lonDecimal = convertDMSToDD(lon, EXIF.getTag(this, 'GPSLongitudeRef'));
 
-  const handleSaveInitialProfile = (e: React.FormEvent) => {
-    e.preventDefault();
-    localStorage.setItem("worldsnap_username", username);
-    localStorage.setItem("worldsnap_country", selectedCountry);
-    setIsFirstVisit(false);
-  };
+          parsedSpots.push({
+            id: Math.random().toString(36).substr(2, 9),
+            title: file.name.replace(/\.[^/.]+$/, ""),
+            lat: latDecimal,
+            lng: lonDecimal,
+            timestamp: dateTime || new Date().toISOString(),
+            mediaUrl: URL.createObjectURL(file),
+            isVideo: file.type.startsWith('video/')
+          });
+        }
+      });
+    });
 
-  const handleExifUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-    alert(`${files.length}件のファイルを選択しました。`);
-  };
-
-  const handleSendChatMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!chatInput.trim()) return;
-    const userQ = chatInput;
-    setChatMessages(prev => [...prev, { sender: "user", text: userQ }]);
-    setChatInput("");
     setTimeout(() => {
-      setChatMessages(prev => [
-        ...prev,
-        { sender: "assistant", text: `「${userQ}」についてですね！おすすめのスポットやルートを検索できます。` }
-      ]);
-    }, 600);
+      const sorted = parsedSpots.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+      setSpots(sorted);
+      if (sorted.length > 0) setSelectedSpot(sorted[0]);
+    }, 500);
+  };
+
+  // DMS(度分秒) -> 十進法(Decimal Degree) 変換
+  const convertDMSToDD = (dms: number[], ref: string) => {
+    let dd = dms[0] + dms[1] / 60 + dms[2] / 3600;
+    if (ref === "S" || ref === "W") dd = dd * -1;
+    return dd;
+  };
+
+  // 2. SNS向け 9:16 画像書き出し
+  const exportForSNS = async () => {
+    const element = document.getElementById('sns-card-template');
+    if (!element) return;
+    
+    const canvas = await html2canvas(element, { scale: 2 });
+    const image = canvas.toDataURL('image/png');
+    
+    const link = document.createElement('a');
+    link.href = image;
+    link.download = `travel-map-${Date.now()}.png`;
+    link.click();
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-slate-50 text-slate-800 overflow-hidden font-sans">
-      
-      {/* 1. 初回訪問モーダル */}
-      {isFirstVisit && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
-          <form
-            onSubmit={handleSaveInitialProfile}
-            className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center space-y-4"
-          >
-            <div className="text-4xl">🌐</div>
-            <h2 className="text-xl font-bold text-slate-900">WorldSnap へようこそ！</h2>
-            <p className="text-xs text-slate-500">プロフィールと初期エリアを設定してください。</p>
-
-            <div className="text-left space-y-1">
-              <label className="text-xs font-bold text-slate-600">ユーザー名</label>
-              <input
-                type="text"
-                required
-                placeholder="例: たろう"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-              />
-            </div>
-
-            <div className="text-left space-y-1">
-              <label className="text-xs font-bold text-slate-600">国籍・初期エリア</label>
-              <select
-                value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e.target.value)}
-                className="w-full bg-slate-100 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-              >
-                {Object.entries(COUNTRY_COORDS).map(([code, data]) => (
-                  <option key={code} value={code}>
-                    {data.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition mt-2"
-            >
-              始める
-            </button>
-          </form>
-        </div>
-      )}
-
-      {/* 2. ヘッダー */}
-      <header className="bg-white border-b border-slate-200 z-10 p-2 shadow-sm flex flex-col gap-2 shrink-0">
-        <div className="flex items-center justify-between gap-2">
-          <div className="relative flex-1">
-            <input
-              type="text"
-              placeholder="🔍 場所・キーワードで検索..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-100 border border-slate-200 rounded-full px-4 py-1.5 text-xs text-slate-800 outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <label className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-full text-xs font-bold cursor-pointer shadow flex items-center gap-1.5 shrink-0 transition">
-            <span>📷 写真追加</span>
-            <input
-              type="file"
-              multiple
-              accept="image/*,video/*"
-              onChange={handleExifUpload}
-              className="hidden"
+    <div className="flex h-screen w-full bg-slate-900 text-white font-sans overflow-hidden">
+      <div className="relative flex-1 h-full">
+        
+        {/* アクションバー */}
+        <div className="absolute top-4 left-4 z-20 flex gap-3">
+          <label className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-full font-bold text-sm cursor-pointer shadow-lg flex items-center gap-2">
+            <span>📷 写真/動画を選択して一括マップ化</span>
+            <input 
+              type="file" 
+              multiple 
+              accept="image/*,video/*" 
+              onChange={handlePhotoUpload} 
+              className="hidden" 
             />
           </label>
-        </div>
-      </header>
 
-      {/* 3. メインマップエリア */}
-      <main className="flex-1 relative overflow-hidden bg-slate-200 flex items-center justify-center">
-        <div className="text-center p-6 bg-white/80 backdrop-blur rounded-2xl shadow-lg max-w-sm">
-          <div className="text-4xl mb-2 animate-bounce">📍</div>
-          <h3 className="font-bold text-slate-800 text-base">ワールドマップエリア</h3>
-          <p className="text-xs text-slate-500 mt-1">選択中の地域: {COUNTRY_COORDS[selectedCountry]?.name || "日本"}</p>
-          <p className="text-xs text-slate-400 mt-2">ログイン中: {username}</p>
+          {spots.length > 0 && (
+            <button 
+              onClick={() => setIsExportMode(!isExportMode)}
+              className="bg-purple-600 hover:bg-purple-500 px-4 py-2 rounded-full font-bold text-sm shadow-lg">
+              {isExportMode ? "マップに戻る" : "✨ SNS用に書き出し (9:16)"}
+            </button>
+          )}
         </div>
 
-        {selectedSpotPin && (
-          <div className="absolute bottom-4 left-4 right-4 bg-white p-4 rounded-2xl shadow-xl z-20 border border-slate-200 space-y-2">
-            <div className="flex justify-between items-center">
-              <h4 className="font-bold text-sm text-slate-800">{selectedSpotPin.title || "スポット詳細"}</h4>
-              <button onClick={() => setSelectedSpotPin(null)} className="p-1 rounded-full hover:bg-slate-100 text-xs">
-                ✖
-              </button>
+        {/* メイン画面 */}
+        {!isExportMode ? (
+          <div className="w-full h-full bg-slate-800 flex items-center justify-center relative">
+            <div className="text-center text-slate-400">
+              {spots.length === 0 ? (
+                <p>写真や動画を選択すると、位置情報から自動でスポットが読み込まれます</p>
+              ) : (
+                <p>📍 {spots.length} 箇所のスポットを読み込みました</p>
+              )}
             </div>
-            <button
-              onClick={() => {
-                window.open(
-                  `https://www.google.com/maps/search/?api=1&query=${selectedSpotPin.lat},${selectedSpotPin.lng}`,
-                  "_blank"
-                );
-              }}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1 shadow"
+
+            {/* 動画/写真プレビューシート */}
+            {selectedSpot && (
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-11/12 max-w-md bg-slate-800/90 backdrop-blur-md rounded-2xl p-4 border border-slate-700 shadow-2xl flex gap-4 items-center">
+                <div className="w-24 h-32 rounded-xl overflow-hidden bg-black flex-shrink-0">
+                  {selectedSpot.isVideo ? (
+                    <video src={selectedSpot.mediaUrl} autoPlay loop muted className="w-full h-full object-cover" />
+                  ) : (
+                    <img src={selectedSpot.mediaUrl} alt={selectedSpot.title} className="w-full h-full object-cover" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <span className="text-xs text-blue-400 font-bold uppercase">選択中のスポット</span>
+                  <h3 className="font-bold text-lg leading-snug">{selectedSpot.title}</h3>
+                  <p className="text-xs text-slate-400 mt-1">
+                    {new Date(selectedSpot.timestamp).toLocaleString('ja-JP')}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          /* 9:16 書き出しプレビュー */
+          <div className="w-full h-full bg-black flex flex-col items-center justify-center p-4">
+            <div 
+              id="sns-card-template" 
+              className="w-[360px] h-[640px] bg-gradient-to-br from-indigo-900 via-slate-900 to-slate-950 rounded-3xl p-6 flex flex-col justify-between border border-slate-700 shadow-2xl relative overflow-hidden"
             >
-              🔗 Googleマップアプリで開く
+              <div>
+                <span className="text-xs font-bold tracking-widest text-purple-400 uppercase">MY TRAVEL LOG</span>
+                <h2 className="text-2xl font-black mt-1">TRIP MEMORIES</h2>
+                <p className="text-xs text-slate-400">{spots.length} SPOTS VISITED</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 my-auto">
+                {spots.slice(0, 4).map((spot) => (
+                  <div key={spot.id} className="h-28 rounded-xl overflow-hidden bg-slate-800 border border-slate-700">
+                    <img src={spot.mediaUrl} alt="" className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+
+              <div className="text-center pt-2 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
+                <span>Created with TravelMap</span>
+                <span>{new Date().toLocaleDateString()}</span>
+              </div>
+            </div>
+
+            <button 
+              onClick={exportForSNS}
+              className="mt-4 bg-purple-600 hover:bg-purple-500 px-6 py-2 rounded-full font-bold text-sm">
+              画像を保存する
             </button>
           </div>
         )}
-      </main>
 
-      {/* 4. ボトムナビゲーション */}
-      <nav className="bg-white border-t border-slate-200 z-10 px-4 py-2 flex justify-around items-center shrink-0">
-        <button
-          onClick={() => setActiveTab("map")}
-          className={`flex flex-col items-center text-xs ${activeTab === "map" ? "text-blue-600 font-bold" : "text-slate-400"}`}
-        >
-          <span className="text-base">🧭</span>
-          マップ
-        </button>
-        <button
-          onClick={() => setActiveTab("search")}
-          className={`flex flex-col items-center text-xs ${activeTab === "search" ? "text-blue-600 font-bold" : "text-slate-400"}`}
-        >
-          <span className="text-base">🔍</span>
-          検索
-        </button>
-        <button
-          onClick={() => setActiveTab("saved")}
-          className={`flex flex-col items-center text-xs ${activeTab === "saved" ? "text-blue-600 font-bold" : "text-slate-400"}`}
-        >
-          <span className="text-base">🔖</span>
-          保存
-        </button>
-        <button
-          onClick={() => setActiveTab("profile")}
-          className={`flex flex-col items-center text-xs ${activeTab === "profile" ? "text-blue-600 font-bold" : "text-slate-400"}`}
-        >
-          <span className="text-base">👤</span>
-          マイページ
-        </button>
-      </nav>
-
-      {/* 5. チャットアシスタント */}
-      <div className="bg-white border-t border-slate-200 flex flex-col max-h-48 shrink-0">
-        <div className="flex-1 p-3 overflow-y-auto space-y-2 text-xs bg-slate-50">
-          {chatMessages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-[80%] p-2.5 rounded-2xl leading-relaxed ${
-                  msg.sender === "user"
-                    ? "bg-blue-600 text-white rounded-br-none"
-                    : "bg-white border border-slate-200 text-slate-800 shadow-sm rounded-bl-none"
-                }`}
-              >
-                {msg.text}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <form onSubmit={handleSendChatMessage} className="p-2 border-t border-slate-200 bg-white flex gap-2">
-          <input
-            type="text"
-            placeholder="質問を入力..."
-            value={chatInput}
-            onChange={(e) => setChatInput(e.target.value)}
-            className="flex-1 border border-slate-300 rounded-xl px-3 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-          <button
-            type="submit"
-            className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 shadow"
-          >
-            送信
-          </button>
-        </form>
       </div>
-
     </div>
   );
 }
