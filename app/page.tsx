@@ -7,12 +7,14 @@ import React, { useState, useEffect, useRef } from 'react';
 // ==============================================================================
 export type SpotCategory = 'view' | 'gourmet' | 'rainy';
 export type VisibilityMode = 'world' | 'friends' | 'my';
-export type ActiveTab = 'home' | 'map' | 'gallery';
+export type ActiveTab = 'home' | 'map' | 'profile';
+export type ProfileSubTab = 'posts' | 'saved' | 'friends' | 'achievements';
 
 export interface Spot {
   id: string;
   userId: string;
   userName: string;
+  userAvatar?: string;
   title: string;
   description?: string;
   fileUrl: string;
@@ -24,6 +26,15 @@ export interface Spot {
   category: SpotCategory;
   visibility: 'public' | 'friends' | 'private';
   dateTime?: string;
+}
+
+export interface Friend {
+  id: string;
+  name: string;
+  code: string;
+  avatar: string;
+  visitedCountries: number;
+  status: 'friend' | 'pending';
 }
 
 export interface CountryConfig {
@@ -50,7 +61,7 @@ export const COUNTRIES: CountryConfig[] = [
   { code: 'CH', name: 'Switzerland', nativeName: 'Schweiz', flag: '🇨🇭', coords: [46.8182, 8.2275], zoom: 8, dict: { viewMode: 'Aussicht', gourmetMode: 'Gourmet', rainyMode: 'Regentag', addPhoto: 'Foto hinzufügen', saveMap: 'Karte speichern', visited: 'Besucht', countries: 'Länder' } },
   { code: 'US', name: 'United States', nativeName: 'United States', flag: '🇺🇸', coords: [37.0902, -95.7129], zoom: 4, dict: { viewMode: 'View', gourmetMode: 'Gourmet', rainyMode: 'Rainy Day', addPhoto: 'Add Memory', saveMap: 'Save Map', visited: 'Visited', countries: 'Countries' } },
   { code: 'FR', name: 'France', nativeName: 'France', flag: '🇫🇷', coords: [46.2276, 2.2137], zoom: 6, dict: { viewMode: 'Vue', gourmetMode: 'Gourmet', rainyMode: 'Jour de pluie', addPhoto: 'Ajouter photo', saveMap: 'Enregistrer', visited: 'Visités', countries: 'Pays' } },
-  { code: 'KR', name: 'South Korea', nativeName: '대한민국', flag: '🇰🇷', coords: [35.9078, 127.7669], zoom: 7, dict: { viewMode: '풍경', gourmetMode: '맛집', rainyMode: '비오는날', addPhoto: '사진 추가', saveMap: '지도 저장', visited: '방문 국가', countries: '개국' } },
+  { code: 'KR', name: 'South Korea', nativeName: '대한민국', flag: '🇰🇷', coords: [35.9078, 127.7669], zoom: 7, dict: { viewMode: '풍경', gourmetMode: '맛집', rainyMode: '비오는날', addPhoto: '사진 추가', saveMap: '지도 저장', visited: '방문 국가', countries: '개国' } },
   { code: 'DE', name: 'Germany', nativeName: 'Deutschland', flag: '🇩🇪', coords: [51.1657, 10.4515], zoom: 6, dict: { viewMode: 'Aussicht', gourmetMode: 'Gourmet', rainyMode: 'Regentag', addPhoto: 'Foto hinzufügen', saveMap: 'Karte speichern', visited: 'Besucht', countries: 'Länder' } },
   { code: 'IT', name: 'Italy', nativeName: 'Italia', flag: '🇮🇹', coords: [41.8719, 12.5674], zoom: 6, dict: { viewMode: 'Panorama', gourmetMode: 'Gourmet', rainyMode: 'Giorno di pioggia', addPhoto: 'Aggiungi foto', saveMap: 'Salva mappa', visited: 'Visitati', countries: 'Paesi' } },
   { code: 'ES', name: 'Spain', nativeName: 'España', flag: '🇪🇸', coords: [40.4637, -3.7492], zoom: 6, dict: { viewMode: 'Vistas', gourmetMode: 'Gourmet', rainyMode: 'Día de lluvia', addPhoto: 'Añadir foto', saveMap: 'Guardar mapa', visited: 'Visitados', countries: 'Países' } },
@@ -84,8 +95,8 @@ const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 's2',
-    userId: 'user_ken',
-    userName: 'Ken_Gourmet',
+    userId: 'my_user_id',
+    userName: 'MyTraveler',
     title: '京都 祇園の極上抹茶パフェ',
     description: '雨の日の古都散策で立ち寄った風情ある甘味処。濃厚な抹茶アイスと白玉の組み合わせが絶品。',
     fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=800&q=80',
@@ -100,8 +111,8 @@ const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 's3',
-    userId: 'user_sarah',
-    userName: 'Sarah_Tokyo',
+    userId: 'my_user_id',
+    userName: 'MyTraveler',
     title: '東京・お台場の夜景クルーズ',
     description: 'レインボーブリッジと東京タワーが一望できるロマンチックなデートスポット。',
     fileUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80',
@@ -132,28 +143,38 @@ const INITIAL_SPOTS: Spot[] = [
   },
 ];
 
+const INITIAL_FRIENDS: Friend[] = [
+  { id: 'f1', name: 'Yuki_Traveler', code: 'WS-1122-CH', avatar: '❄️', visitedCountries: 12, status: 'friend' },
+  { id: 'f2', name: 'Ken_Gourmet', code: 'WS-3344-JP', avatar: '🍵', visitedCountries: 5, status: 'friend' },
+  { id: 'f3', name: 'Sarah_World', code: 'WS-5566-US', avatar: '🗽', visitedCountries: 9, status: 'pending' },
+];
+
 // ==============================================================================
 // 2. メインコンポーネント
 // ==============================================================================
 export default function WorldSnapApp() {
-  const currentUserId = 'my_current_user_id';
+  const currentUserId = 'my_user_id';
+  const myFriendCode = 'WS-8823-X9';
 
   // 状態管理
   const [activeTab, setActiveTab] = useState<ActiveTab>('map');
   const [eulaAccepted, setEulaAccepted] = useState(true);
-  const [selectedCountry, setSelectedCountry] = useState<CountryConfig>(COUNTRIES[0]); // デフォルト: 世界全体
+  const [selectedCountry, setSelectedCountry] = useState<CountryConfig>(COUNTRIES[0]);
   const [categoryMode, setCategoryMode] = useState<SpotCategory>('view');
   const [visibilityMode, setVisibilityMode] = useState<VisibilityMode>('world');
   const [spots, setSpots] = useState<Spot[]>(INITIAL_SPOTS);
+  const [friends, setFriends] = useState<Friend[]>(INITIAL_FRIENDS);
   const [blockedUserIds, setBlockedUserIds] = useState<string[]>([]);
-  const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
-  const [galleryViewMode, setGalleryViewMode] = useState<'grid' | 'folder'>('grid');
+  const [savedSpotIds, setSavedSpotIds] = useState<string[]>(['s1']);
+  const [profileSubTab, setProfileSubTab] = useState<ProfileSubTab>('posts');
 
-  // モーダル・バナー
-  const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
+  // モーダル・画面遷移状態
+  const [focusedSpot, setFocusedSpot] = useState<Spot | null>(null); // ピンタップ時のフルスクリーン投稿画面
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [friendInputCode, setFriendInputCode] = useState('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // マップDOM・Leaflet参照
@@ -171,14 +192,16 @@ export default function WorldSnapApp() {
     return true;
   });
 
-  const visitedCount = new Set(spots.map((s) => s.country)).size;
+  const mySpots = spots.filter((s) => s.userId === currentUserId);
+  const savedSpots = spots.filter((s) => savedSpotIds.includes(s.id));
+  const visitedCount = new Set(mySpots.map((s) => s.country)).size;
+  const activeFriends = friends.filter((f) => f.status === 'friend');
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // 触覚フィードバック（Web Haptics API）
   const triggerHaptic = () => {
     if (typeof window !== 'undefined' && 'vibrate' in navigator) {
       navigator.vibrate(15);
@@ -186,7 +209,7 @@ export default function WorldSnapApp() {
   };
 
   // ----------------------------------------------------------------------------
-  // Leaflet 地図の初期化 (世界全体が見える広域ズーム & ダブルタップ地域拡大)
+  // Leaflet 地図初期化（世界全体広域ズーム ＆ ダブルタップ地域ズーム）
   // ----------------------------------------------------------------------------
   useEffect(() => {
     let isMounted = true;
@@ -206,17 +229,16 @@ export default function WorldSnapApp() {
       const L = (await import('leaflet')).default;
       if (!isMounted || !mapContainerRef.current) return;
 
-      // 世界地図全体を表示できる設定 (minZoom: 2, 世界ラップ有効)
       const map = L.map(mapContainerRef.current, {
-        center: [20, 0], // 世界中央
-        zoom: 2,         // 全世界が見渡せるズーム
+        center: [20, 0],
+        zoom: 2,
         minZoom: 2,
         maxZoom: 18,
         zoomControl: false,
-        doubleClickZoom: false, // カスタムのダブルタップズームを適用
+        doubleClickZoom: false,
       });
 
-      // ダブルタップ / ダブルクリックでその地域付近へスムーズにズームアップ（例: 関東へ拡大）
+      // ダブルタップでその地域付近へスムーズにズームアップ
       map.on('dblclick', (e: any) => {
         const nextZoom = Math.min(map.getZoom() + 4, 15);
         map.flyTo(e.latlng, nextZoom, { duration: 0.8 });
@@ -232,7 +254,7 @@ export default function WorldSnapApp() {
   }, []);
 
   // ----------------------------------------------------------------------------
-  // マップタイル切り替え (3大モード連動) & 国籍フォーカス移動
+  // マップスタイル切り替え (3大モード連動) & 国籍フォーカス
   // ----------------------------------------------------------------------------
   useEffect(() => {
     async function updateMapTiles() {
@@ -293,10 +315,13 @@ export default function WorldSnapApp() {
         });
 
         const marker = L.marker([spot.lat, spot.lng], { icon: customIcon }).addTo(map);
+
+        // ★ ピンを押した時：マップの表示を消して投稿画面（フルスクリーン）へとぶ
         marker.on('click', () => {
           triggerHaptic();
-          setSelectedSpot(spot);
+          setFocusedSpot(spot);
         });
+
         markersRef.current.push(marker);
       });
 
@@ -333,27 +358,24 @@ export default function WorldSnapApp() {
   };
 
   // ----------------------------------------------------------------------------
-  // ボトムナビゲーション タップ & リタップギミック
+  // ボトムナビゲーション タップ＆リタップギミック
   // ----------------------------------------------------------------------------
   const handleTabClick = (tab: ActiveTab) => {
     triggerHaptic();
+    setFocusedSpot(null); // タブ切り替え時は詳細を閉じる
+
     if (activeTab === tab) {
-      // 同一タブ再タップ（リタップ）ギミック
       if (tab === 'home' && feedScrollRef.current) {
         feedScrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
         showToast('🔄 タイムラインを更新しました');
       } else if (tab === 'map' && leafletMapRef.current) {
         leafletMapRef.current.flyTo(selectedCountry.coords, selectedCountry.zoom, { duration: 1 });
-      } else if (tab === 'gallery') {
-        setGalleryViewMode((prev) => (prev === 'grid' ? 'folder' : 'grid'));
-        showToast(galleryViewMode === 'grid' ? '📁 国別フォルダー表示' : '📸 写真グリッド表示');
       }
     } else {
       setActiveTab(tab);
     }
   };
 
-  // マップ長押しで現在地へ移動
   const handleMapLongPress = () => {
     triggerHaptic();
     if (navigator.geolocation && leafletMapRef.current) {
@@ -389,180 +411,447 @@ export default function WorldSnapApp() {
           <div className="bg-indigo-50 border border-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-bold">
             {selectedCountry.dict.visited}: {visitedCount} {selectedCountry.dict.countries}
           </div>
-          <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center font-bold text-xs shadow">
+          <button
+            onClick={() => handleTabClick('profile')}
+            className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center font-bold text-xs shadow active:scale-95 transition"
+          >
             Me
-          </div>
+          </button>
         </div>
       </header>
 
-      {/* 国籍フォーカス & 3大モード & 表示対象切替バー */}
-      <div className="bg-white/90 backdrop-blur-md px-4 py-2 border-b z-20 flex flex-wrap items-center justify-between gap-2 text-xs shrink-0">
-        {/* 国籍選択 */}
-        <select
-          value={selectedCountry.code}
-          onChange={(e) => {
-            const c = COUNTRIES.find((item) => item.code === e.target.value);
-            if (c) setSelectedCountry(c);
-          }}
-          className="font-semibold bg-gray-100 border-0 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-indigo-500"
-        >
-          {COUNTRIES.map((c) => (
-            <option key={c.code} value={c.code}>
-              {c.flag} {c.nativeName} ({c.name})
-            </option>
-          ))}
-        </select>
+      {/* 国籍フォーカス & 3大モード & 表示対象切替バー (マップ表示時のみ) */}
+      {!focusedSpot && activeTab === 'map' && (
+        <div className="bg-white/90 backdrop-blur-md px-4 py-2 border-b z-20 flex flex-wrap items-center justify-between gap-2 text-xs shrink-0 animate-in fade-in">
+          {/* 国籍選択 */}
+          <select
+            value={selectedCountry.code}
+            onChange={(e) => {
+              const c = COUNTRIES.find((item) => item.code === e.target.value);
+              if (c) setSelectedCountry(c);
+            }}
+            className="font-semibold bg-gray-100 border-0 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-indigo-500"
+          >
+            {COUNTRIES.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.flag} {c.nativeName} ({c.name})
+              </option>
+            ))}
+          </select>
 
-        {/* 3つの表示モード */}
-        <div className="flex bg-gray-200/80 p-0.5 rounded-lg font-bold">
-          <button
-            onClick={() => {
-              triggerHaptic();
-              setCategoryMode('view');
-            }}
-            className={`px-3 py-1 rounded-md transition ${categoryMode === 'view' ? 'bg-sky-500 text-white shadow-xs' : 'text-gray-600'}`}
-          >
-            🏔️ {selectedCountry.dict.viewMode}
-          </button>
-          <button
-            onClick={() => {
-              triggerHaptic();
-              setCategoryMode('gourmet');
-            }}
-            className={`px-3 py-1 rounded-md transition ${categoryMode === 'gourmet' ? 'bg-amber-500 text-white shadow-xs' : 'text-gray-600'}`}
-          >
-            🍔 {selectedCountry.dict.gourmetMode}
-          </button>
-          <button
-            onClick={() => {
-              triggerHaptic();
-              setCategoryMode('rainy');
-            }}
-            className={`px-3 py-1 rounded-md transition ${categoryMode === 'rainy' ? 'bg-slate-800 text-white shadow-xs' : 'text-gray-600'}`}
-          >
-            🌧️ {selectedCountry.dict.rainyMode}
-          </button>
-        </div>
+          {/* 3つの表示モード */}
+          <div className="flex bg-gray-200/80 p-0.5 rounded-lg font-bold">
+            <button
+              onClick={() => {
+                triggerHaptic();
+                setCategoryMode('view');
+              }}
+              className={`px-3 py-1 rounded-md transition ${categoryMode === 'view' ? 'bg-sky-500 text-white shadow-xs' : 'text-gray-600'}`}
+            >
+              🏔️ {selectedCountry.dict.viewMode}
+            </button>
+            <button
+              onClick={() => {
+                triggerHaptic();
+                setCategoryMode('gourmet');
+              }}
+              className={`px-3 py-1 rounded-md transition ${categoryMode === 'gourmet' ? 'bg-amber-500 text-white shadow-xs' : 'text-gray-600'}`}
+            >
+              🍔 {selectedCountry.dict.gourmetMode}
+            </button>
+            <button
+              onClick={() => {
+                triggerHaptic();
+                setCategoryMode('rainy');
+              }}
+              className={`px-3 py-1 rounded-md transition ${categoryMode === 'rainy' ? 'bg-slate-800 text-white shadow-xs' : 'text-gray-600'}`}
+            >
+              🌧️ {selectedCountry.dict.rainyMode}
+            </button>
+          </div>
 
-        {/* 表示対象切替 */}
-        <div className="flex bg-gray-100 p-0.5 rounded-lg font-semibold text-gray-600">
-          <button
-            onClick={() => setVisibilityMode('world')}
-            className={`px-2.5 py-1 rounded ${visibilityMode === 'world' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
-          >
-            🌐 ワールド
-          </button>
-          <button
-            onClick={() => setVisibilityMode('friends')}
-            className={`px-2.5 py-1 rounded ${visibilityMode === 'friends' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
-          >
-            👥 フレンド
-          </button>
-          <button
-            onClick={() => setVisibilityMode('my')}
-            className={`px-2.5 py-1 rounded ${visibilityMode === 'my' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
-          >
-            🔒 マイ
-          </button>
+          {/* 表示対象切替 */}
+          <div className="flex bg-gray-100 p-0.5 rounded-lg font-semibold text-gray-600">
+            <button
+              onClick={() => setVisibilityMode('world')}
+              className={`px-2.5 py-1 rounded ${visibilityMode === 'world' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
+            >
+              🌐 ワールド
+            </button>
+            <button
+              onClick={() => setVisibilityMode('friends')}
+              className={`px-2.5 py-1 rounded ${visibilityMode === 'friends' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
+            >
+              👥 フレンド
+            </button>
+            <button
+              onClick={() => setVisibilityMode('my')}
+              className={`px-2.5 py-1 rounded ${visibilityMode === 'my' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
+            >
+              🔒 マイ
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* メインコンテンツエリア */}
       <div className="flex-1 relative overflow-hidden">
-        {/* 1. 地図画面 (常にメモリ保持して高速切替) */}
-        <div className={`w-full h-full ${activeTab === 'map' ? 'block' : 'hidden'}`}>
-          <div ref={mapContainerRef} className="w-full h-full" />
+        {/* ★ 1. ピンを押した時の全画面・投稿詳細スクリーン (マップを隠して遷移) */}
+        {focusedSpot ? (
+          <FullSpotDetailView
+            spot={focusedSpot}
+            currentUserId={currentUserId}
+            isBookmarked={savedSpotIds.includes(focusedSpot.id)}
+            onBack={() => setFocusedSpot(null)}
+            onToggleBookmark={() => {
+              triggerHaptic();
+              const isSaved = savedSpotIds.includes(focusedSpot.id);
+              setSavedSpotIds((prev) =>
+                isSaved ? prev.filter((id) => id !== focusedSpot.id) : [...prev, focusedSpot.id]
+              );
+              showToast(isSaved ? 'ブックマークを解除しました' : '💛 行きたいリストに保存しました！');
+            }}
+            onReport={() => setIsReportModalOpen(true)}
+            onBlockUser={(targetUserId) => {
+              if (confirm('このユーザーをブロックしますか？相手の投稿がすべて非表示になります。')) {
+                setBlockedUserIds((prev) => [...prev, targetUserId]);
+                setFocusedSpot(null);
+                showToast('🚫 ユーザーをブロックしました');
+              }
+            }}
+            onDeleteSpot={(spotId) => {
+              if (confirm('このピンを完全に削除しますか？')) {
+                setSpots((prev) => prev.filter((s) => s.id !== spotId));
+                setFocusedSpot(null);
+                showToast('🗑️ ピンを削除しました');
+              }
+            }}
+          />
+        ) : (
+          <>
+            {/* 2. 地図画面 (メモリ保持) */}
+            <div className={`w-full h-full ${activeTab === 'map' ? 'block' : 'hidden'}`}>
+              <div ref={mapContainerRef} className="w-full h-full" />
 
-          {/* フローティングアクションボタン */}
-          <div className="absolute right-4 bottom-28 z-20 flex flex-col space-y-3">
-            <button
-              onClick={handleSaveMap}
-              className="w-12 h-12 bg-white text-gray-800 rounded-full shadow-xl flex items-center justify-center font-bold hover:bg-gray-50 active:scale-95 transition border"
-              title={selectedCountry.dict.saveMap}
-            >
-              💾
-            </button>
-            <button
-              onClick={() => setIsPostModalOpen(true)}
-              className="px-4 py-3 bg-gradient-to-r from-indigo-600 to-sky-500 text-white rounded-full shadow-xl flex items-center gap-2 font-bold hover:opacity-95 active:scale-95 transition text-xs"
-            >
-              📷＋ {selectedCountry.dict.addPhoto}
-            </button>
-          </div>
-        </div>
-
-        {/* 2. ホーム（フィード・タイムライン） */}
-        {activeTab === 'home' && (
-          <div ref={feedScrollRef} className="w-full h-full bg-slate-50 overflow-y-auto p-4 space-y-4 pb-28">
-            <h2 className="font-extrabold text-base text-slate-800">✨ 世界の最新フォトジャーナル</h2>
-            {displaySpots.map((spot) => (
-              <div
-                key={spot.id}
-                onClick={() => setSelectedSpot(spot)}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 cursor-pointer active:scale-98 transition"
-              >
-                <div className="aspect-16/9 bg-slate-900 relative">
-                  <img src={spot.fileUrl} alt={spot.title} className="w-full h-full object-cover" />
-                  <span className="absolute top-2 left-2 px-2.5 py-1 bg-black/60 text-white text-[10px] font-bold rounded-full backdrop-blur-xs">
-                    {spot.country} {spot.countryFlag}
-                  </span>
-                </div>
-                <div className="p-3.5 space-y-1">
-                  <h3 className="font-bold text-sm text-slate-900">{spot.title}</h3>
-                  <p className="text-xs text-slate-500 line-clamp-2">{spot.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* 3. ギャラリー（国別アルバム / グリッド） */}
-        {activeTab === 'gallery' && (
-          <div className="w-full h-full bg-slate-50 overflow-y-auto p-4 pb-28 space-y-3">
-            <div className="flex justify-between items-center">
-              <h2 className="font-extrabold text-base text-slate-800">🖼️ 旅のアルバム ({displaySpots.length}枚)</h2>
-              <span className="text-xs text-indigo-600 font-bold bg-indigo-50 px-2 py-1 rounded-md">
-                {galleryViewMode === 'grid' ? '📸 グリッド' : '📁 国別フォルダー'}
-              </span>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              {displaySpots.map((spot) => (
-                <div
-                  key={spot.id}
-                  onClick={() => setSelectedSpot(spot)}
-                  className="aspect-square bg-slate-200 rounded-xl overflow-hidden shadow-2xs relative cursor-pointer group"
+              {/* フローティングアクションボタン */}
+              <div className="absolute right-4 bottom-28 z-20 flex flex-col space-y-3">
+                <button
+                  onClick={handleSaveMap}
+                  className="w-12 h-12 bg-white text-gray-800 rounded-full shadow-xl flex items-center justify-center font-bold hover:bg-gray-50 active:scale-95 transition border"
+                  title={selectedCountry.dict.saveMap}
                 >
-                  <img src={spot.fileUrl} alt={spot.title} className="w-full h-full object-cover group-hover:scale-105 transition" />
-                  <span className="absolute bottom-1 right-1 text-xs">{spot.countryFlag}</span>
-                </div>
-              ))}
+                  💾
+                </button>
+                <button
+                  onClick={() => setIsPostModalOpen(true)}
+                  className="px-4 py-3 bg-gradient-to-r from-indigo-600 to-sky-500 text-white rounded-full shadow-xl flex items-center gap-2 font-bold hover:opacity-95 active:scale-95 transition text-xs"
+                >
+                  📷＋ {selectedCountry.dict.addPhoto}
+                </button>
+              </div>
             </div>
-          </div>
-        )}
 
-        {/* 📢 目立たない広告バナー枠（UXを邪魔しないネイティブスポンサー枠） */}
-        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 w-[92%] max-w-md bg-white/85 hover:bg-white backdrop-blur-md border border-slate-200/80 rounded-xl px-3 py-1.5 shadow-md flex items-center justify-between text-[11px] text-slate-600 transition">
-          <div className="flex items-center gap-2 overflow-hidden">
-            <span className="bg-slate-200 text-slate-600 font-bold px-1.5 py-0.5 rounded text-[9px]">PR</span>
-            <span className="truncate font-medium">🏨 次の旅をお得に予約｜厳選ホテル・航空券比較</span>
-          </div>
-          <button
-            onClick={() => window.open('https://www.google.com/travel', '_blank')}
-            className="text-indigo-600 font-bold hover:underline shrink-0 ml-2"
-          >
-            見る ›
-          </button>
-        </div>
+            {/* 3. ホーム（タイムライン・フィード） */}
+            {activeTab === 'home' && (
+              <div ref={feedScrollRef} className="w-full h-full bg-slate-50 overflow-y-auto p-4 space-y-4 pb-28">
+                <h2 className="font-extrabold text-base text-slate-800">✨ 世界の最新フォトジャーナル</h2>
+                {displaySpots.map((spot) => (
+                  <div
+                    key={spot.id}
+                    onClick={() => {
+                      triggerHaptic();
+                      setFocusedSpot(spot);
+                    }}
+                    className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 cursor-pointer active:scale-98 transition"
+                  >
+                    <div className="aspect-16/9 bg-slate-900 relative">
+                      <img src={spot.fileUrl} alt={spot.title} className="w-full h-full object-cover" />
+                      <span className="absolute top-2 left-2 px-2.5 py-1 bg-black/60 text-white text-[10px] font-bold rounded-full backdrop-blur-xs">
+                        {spot.country} {spot.countryFlag}
+                      </span>
+                    </div>
+                    <div className="p-3.5 space-y-1">
+                      <h3 className="font-bold text-sm text-slate-900">{spot.title}</h3>
+                      <p className="text-xs text-slate-500 line-clamp-2">{spot.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* 4. 👤 マイページ画面（完全仕様） */}
+            {activeTab === 'profile' && (
+              <div className="w-full h-full bg-slate-50 overflow-y-auto p-4 pb-28 space-y-4">
+                {/* プロフィールヘッダー */}
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center font-extrabold text-lg shadow-md">
+                        Me
+                      </div>
+                      <div>
+                        <h3 className="font-extrabold text-base text-slate-900">MyTraveler (@taku_snap)</h3>
+                        <p className="text-xs text-slate-500">世界中を旅して記録中 🌏✈️</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setIsSettingsModalOpen(true)}
+                      className="p-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl text-xs font-bold"
+                    >
+                      ⚙️ 設定
+                    </button>
+                  </div>
+
+                  {/* 投稿・訪問国・フレンドカウンター */}
+                  <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl text-center text-xs font-bold text-slate-700">
+                    <div>
+                      <span className="text-[10px] text-slate-400 block font-normal">📸 投稿</span>
+                      {mySpots.length}
+                    </div>
+                    <div className="border-x border-slate-200">
+                      <span className="text-[10px] text-slate-400 block font-normal">🗺️ 訪問国</span>
+                      {visitedCount} カ国
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block font-normal">👥 フレンド</span>
+                      {activeFriends.length} 人
+                    </div>
+                  </div>
+
+                  {/* 🆔 フレンドコードバナー */}
+                  <div className="p-3 bg-gradient-to-r from-indigo-50 to-sky-50 border border-indigo-100 rounded-xl flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] text-indigo-500 font-bold block">🆔 マイ フレンドコード</span>
+                      <span className="font-mono font-extrabold text-xs text-indigo-900">{myFriendCode}</span>
+                    </div>
+                    <div className="flex space-x-1.5">
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(myFriendCode);
+                          showToast('📋 フレンドコードをコピーしました！');
+                        }}
+                        className="px-2.5 py-1.5 bg-white text-indigo-600 rounded-lg text-xs font-bold border shadow-2xs hover:bg-indigo-50"
+                      >
+                        コピー
+                      </button>
+                      <button
+                        onClick={() => setIsQrModalOpen(true)}
+                        className="px-2.5 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold shadow-2xs hover:bg-indigo-700"
+                      >
+                        QR表示
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* マイページ内 サブタブ ([📸 記録] [💛 保存] [👥 フレンド] [🏆 実績]) */}
+                <div className="flex bg-slate-200/80 p-1 rounded-xl text-xs font-bold text-slate-600">
+                  <button
+                    onClick={() => setProfileSubTab('posts')}
+                    className={`flex-1 py-2 rounded-lg transition ${profileSubTab === 'posts' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
+                  >
+                    📸 記録
+                  </button>
+                  <button
+                    onClick={() => setProfileSubTab('saved')}
+                    className={`flex-1 py-2 rounded-lg transition ${profileSubTab === 'saved' ? 'bg-white text-rose-500 shadow-xs' : ''}`}
+                  >
+                    💛 保存
+                  </button>
+                  <button
+                    onClick={() => setProfileSubTab('friends')}
+                    className={`flex-1 py-2 rounded-lg transition ${profileSubTab === 'friends' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
+                  >
+                    👥 フレンド
+                  </button>
+                  <button
+                    onClick={() => setProfileSubTab('achievements')}
+                    className={`flex-1 py-2 rounded-lg transition ${profileSubTab === 'achievements' ? 'bg-white text-amber-600 shadow-xs' : ''}`}
+                  >
+                    🏆 実績
+                  </button>
+                </div>
+
+                {/* 1. 記録タブ */}
+                {profileSubTab === 'posts' && (
+                  <div className="grid grid-cols-2 gap-3">
+                    {mySpots.map((spot) => (
+                      <div
+                        key={spot.id}
+                        onClick={() => {
+                          triggerHaptic();
+                          setFocusedSpot(spot);
+                        }}
+                        className="bg-white rounded-xl overflow-hidden shadow-2xs border border-slate-100 cursor-pointer group"
+                      >
+                        <div className="aspect-4/3 bg-slate-900 relative">
+                          <img src={spot.fileUrl} alt={spot.title} className="w-full h-full object-cover group-hover:scale-105 transition" />
+                          <span className="absolute bottom-1 right-1 text-xs">{spot.countryFlag}</span>
+                        </div>
+                        <div className="p-2">
+                          <p className="text-xs font-bold text-slate-800 truncate">{spot.title}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 2. 保存タブ */}
+                {profileSubTab === 'saved' && (
+                  <div className="space-y-2">
+                    {savedSpots.length === 0 ? (
+                      <p className="text-center text-xs text-slate-400 py-10">まだ保存されたスポットがありません 💛</p>
+                    ) : (
+                      savedSpots.map((spot) => (
+                        <div
+                          key={spot.id}
+                          onClick={() => {
+                            triggerHaptic();
+                            setFocusedSpot(spot);
+                          }}
+                          className="bg-white p-3 rounded-xl border border-slate-100 shadow-2xs flex items-center justify-between cursor-pointer"
+                        >
+                          <div className="flex items-center space-x-3">
+                            <img src={spot.fileUrl} alt={spot.title} className="w-12 h-12 rounded-lg object-cover" />
+                            <div>
+                              <p className="text-xs font-bold text-slate-800">{spot.title}</p>
+                              <p className="text-[10px] text-slate-400">📍 {spot.country} {spot.countryFlag}</p>
+                            </div>
+                          </div>
+                          <span className="text-rose-500 text-sm">💛</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+
+                {/* 3. フレンドタブ */}
+                {profileSubTab === 'friends' && (
+                  <div className="space-y-4 text-xs">
+                    {/* フレンド追加入力 */}
+                    <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-2xs space-y-2">
+                      <h4 className="font-bold text-slate-900">➕ 友達を追加する</h4>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="相手のフレンドコード (例: WS-1122-CH)"
+                          value={friendInputCode}
+                          onChange={(e) => setFriendInputCode(e.target.value)}
+                          className="flex-1 p-2 border rounded-lg uppercase font-mono text-xs"
+                        />
+                        <button
+                          onClick={() => {
+                            if (!friendInputCode) return;
+                            setFriends((prev) => [
+                              ...prev,
+                              { id: Date.now().toString(), name: `Traveler_${friendInputCode.slice(-4)}`, code: friendInputCode, avatar: '✈️', visitedCountries: 1, status: 'friend' },
+                            ]);
+                            setFriendInputCode('');
+                            showToast('🎉 フレンドを追加しました！');
+                          }}
+                          className="px-3 bg-indigo-600 text-white rounded-lg font-bold shrink-0"
+                        >
+                          申請/追加
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* フレンド一覧 */}
+                    <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-2xs space-y-2">
+                      <h4 className="font-bold text-slate-900">👥 相互フォロー中の友達 ({activeFriends.length})</h4>
+                      <div className="space-y-2">
+                        {activeFriends.map((f) => (
+                          <div key={f.id} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-lg">{f.avatar}</span>
+                              <div>
+                                <span className="font-bold text-slate-800 block">{f.name}</span>
+                                <span className="text-[10px] text-slate-400 font-mono">{f.code} · {f.visitedCountries}カ国訪問</span>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => {
+                                handleTabClick('map');
+                                setVisibilityMode('friends');
+                                showToast(`🗺️ ${f.name} のマップにフォーカスしました`);
+                              }}
+                              className="px-2.5 py-1 bg-white border border-slate-200 text-indigo-600 rounded-md font-bold text-[11px] hover:bg-indigo-50"
+                            >
+                              マップを見る
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 4. 実績タブ */}
+                {profileSubTab === 'achievements' && (
+                  <div className="space-y-3 text-xs">
+                    <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-2xs space-y-3">
+                      <h4 className="font-bold text-slate-900">🏆 旅の称号 & 実績コレクション</h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center space-x-2">
+                          <span className="text-2xl">🌍</span>
+                          <div>
+                            <span className="font-bold text-amber-900 block">ワールドワンダラー</span>
+                            <span className="text-[10px] text-amber-700">訪問国 {visitedCount}カ国達成</span>
+                          </div>
+                        </div>
+                        <div className="p-3 bg-sky-50 border border-sky-200 rounded-xl flex items-center space-x-2">
+                          <span className="text-2xl">🏔️</span>
+                          <div>
+                            <span className="font-bold text-sky-900 block">絶景マイスター</span>
+                            <span className="text-[10px] text-sky-700">View投稿 {mySpots.filter(s => s.category === 'view').length}件</span>
+                          </div>
+                        </div>
+                        <div className="p-3 bg-orange-50 border border-orange-200 rounded-xl flex items-center space-x-2">
+                          <span className="text-2xl">☕</span>
+                          <div>
+                            <span className="font-bold text-orange-900 block">グルメトラベラー</span>
+                            <span className="text-[10px] text-orange-700">グルメ投稿 {mySpots.filter(s => s.category === 'gourmet').length}件</span>
+                          </div>
+                        </div>
+                        <div className="p-3 bg-purple-50 border border-purple-200 rounded-xl flex items-center space-x-2">
+                          <span className="text-2xl">🌧️</span>
+                          <div>
+                            <span className="font-bold text-purple-900 block">雨の日エキスパート</span>
+                            <span className="text-[10px] text-purple-700">雨天スポット {mySpots.filter(s => s.category === 'rainy').length}件</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 📢 目立たない広告バナー枠（最下部に配置） */}
+            <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 w-[92%] max-w-md bg-white/85 hover:bg-white backdrop-blur-md border border-slate-200/80 rounded-xl px-3 py-1.5 shadow-md flex items-center justify-between text-[11px] text-slate-600 transition">
+              <div className="flex items-center gap-2 overflow-hidden">
+                <span className="bg-slate-200 text-slate-600 font-bold px-1.5 py-0.5 rounded text-[9px]">PR</span>
+                <span className="truncate font-medium">🏨 次の旅をお得に予約｜厳選ホテル・航空券比較</span>
+              </div>
+              <button
+                onClick={() => window.open('https://www.google.com/travel', '_blank')}
+                className="text-indigo-600 font-bold hover:underline shrink-0 ml-2"
+              >
+                見る ›
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       {/* ==================================================================== */}
-      {/* 📱 ボトムナビゲーション (スプリングインジケーター & リタップ連動) */}
+      {/* 📱 ボトムナビゲーション (ホーム / マップ / マイページ) */}
       {/* ==================================================================== */}
       <nav className="h-14 bg-white border-t flex items-center justify-around z-30 text-gray-500 text-xs shrink-0 shadow-lg relative">
         <button
           onClick={() => handleTabClick('home')}
           className={`flex-1 py-1 flex flex-col items-center gap-0.5 transition-transform duration-150 active:scale-90 ${
-            activeTab === 'home' ? 'text-indigo-600 font-bold scale-105' : 'text-slate-400'
+            activeTab === 'home' && !focusedSpot ? 'text-indigo-600 font-bold scale-105' : 'text-slate-400'
           }`}
         >
           <span className="text-base">🏠</span> ホーム
@@ -575,73 +864,77 @@ export default function WorldSnapApp() {
             handleMapLongPress();
           }}
           className={`flex-1 py-1 flex flex-col items-center gap-0.5 transition-transform duration-150 active:scale-90 ${
-            activeTab === 'map' ? 'text-indigo-600 font-bold scale-105' : 'text-slate-400'
+            activeTab === 'map' && !focusedSpot ? 'text-indigo-600 font-bold scale-105' : 'text-slate-400'
           }`}
         >
           <span className="text-base">🗺️</span> マップ
         </button>
 
         <button
-          onClick={() => handleTabClick('gallery')}
+          onClick={() => handleTabClick('profile')}
           className={`flex-1 py-1 flex flex-col items-center gap-0.5 transition-transform duration-150 active:scale-90 ${
-            activeTab === 'gallery' ? 'text-indigo-600 font-bold scale-105' : 'text-slate-400'
+            activeTab === 'profile' && !focusedSpot ? 'text-indigo-600 font-bold scale-105' : 'text-slate-400'
           }`}
         >
-          <span className="text-base">🖼️</span> ギャラリー
+          <span className="text-base">👤</span> マイページ
         </button>
       </nav>
 
       {/* ==================================================================== */}
-      {/* 📱 ピン詳細ボトムバナー (ギミック完全実装) */}
+      {/* モーダル群 (EULA / QRコード / 設定 / 投稿 / 通報) */}
       {/* ==================================================================== */}
-      {selectedSpot && (
-        <SpotDetailBanner
-          spot={selectedSpot}
-          currentUserId={currentUserId}
-          isBookmarked={savedSpotIds.includes(selectedSpot.id)}
-          onClose={() => setSelectedSpot(null)}
-          onOpenMedia={() => setIsLightboxOpen(true)}
-          onToggleBookmark={() => {
-            triggerHaptic();
-            const isSaved = savedSpotIds.includes(selectedSpot.id);
-            setSavedSpotIds((prev) =>
-              isSaved ? prev.filter((id) => id !== selectedSpot.id) : [...prev, selectedSpot.id]
-            );
-            showToast(isSaved ? 'ブックマークを解除しました' : '💛 行きたいリストに保存しました！');
-          }}
-          onReport={() => setIsReportModalOpen(true)}
-          onBlockUser={(targetUserId) => {
-            if (confirm('このユーザーをブロックしますか？相手の投稿がすべて非表示になります。')) {
-              setBlockedUserIds((prev) => [...prev, targetUserId]);
-              setSelectedSpot(null);
-              showToast('🚫 ユーザーをブロックしました');
-            }
-          }}
-          onDeleteSpot={(spotId) => {
-            if (confirm('このピンを完全に削除しますか？')) {
-              setSpots((prev) => prev.filter((s) => s.id !== spotId));
-              setSelectedSpot(null);
-              showToast('🗑️ ピンを削除しました');
-            }
-          }}
-        />
-      )}
 
-      {/* フルスクリーン拡大 (Lightbox) */}
-      {isLightboxOpen && selectedSpot && (
-        <div
-          onClick={() => setIsLightboxOpen(false)}
-          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-2 cursor-zoom-out animate-in fade-in"
-        >
-          <div className="relative max-w-4xl max-h-screen">
-            <img src={selectedSpot.fileUrl} alt={selectedSpot.title} className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl" />
-            <p className="text-white text-center mt-3 text-sm font-semibold">{selectedSpot.title}</p>
-            <span className="absolute top-4 right-4 text-white text-xl bg-black/50 w-8 h-8 rounded-full flex items-center justify-center">✕</span>
+      {/* QRコードモーダル */}
+      {isQrModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs" onClick={() => setIsQrModalOpen(false)}>
+          <div className="bg-white rounded-2xl max-w-xs w-full p-6 text-center space-y-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h4 className="font-bold text-slate-900 text-sm">📱 マイQRコード</h4>
+            <div className="w-44 h-44 bg-slate-100 border-2 border-dashed border-indigo-300 rounded-xl mx-auto flex items-center justify-center font-mono text-xs text-indigo-600 font-bold p-4">
+              [QR CODE: {myFriendCode}]
+            </div>
+            <p className="text-xs text-slate-500 font-mono font-bold">{myFriendCode}</p>
+            <button onClick={() => setIsQrModalOpen(false)} className="w-full py-2 bg-indigo-600 text-white rounded-xl font-bold text-xs">
+              閉じる
+            </button>
           </div>
         </div>
       )}
 
-      {/* 規約同意 (EULA) */}
+      {/* 設定・アカウント削除モーダル */}
+      {isSettingsModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs" onClick={() => setIsSettingsModalOpen(false)}>
+          <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-xs" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center">
+              <h3 className="font-bold text-sm text-slate-900">⚙️ 設定・アカウント管理</h3>
+              <button onClick={() => setIsSettingsModalOpen(false)} className="text-slate-400 font-bold text-sm">✕</button>
+            </div>
+            <div className="space-y-2">
+              <div className="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
+                <span>利用規約 (EULA) を確認</span>
+                <button onClick={() => setEulaAccepted(false)} className="text-indigo-600 font-bold">表示</button>
+              </div>
+            </div>
+            <div className="pt-3 border-t border-slate-100 space-y-2">
+              <h4 className="font-bold text-red-600">アカウント削除 (Apple Guideline)</h4>
+              <p className="text-[11px] text-slate-500">アカウントおよびすべての写真ピン、フレンド情報が消去されます。</p>
+              <button
+                onClick={() => {
+                  if (confirm('【警告】アカウントおよび全データを完全に削除しますか？')) {
+                    setSpots((prev) => prev.filter((s) => s.userId !== currentUserId));
+                    setIsSettingsModalOpen(false);
+                    showToast('アカウントを完全に削除しました');
+                  }
+                }}
+                className="w-full py-2.5 bg-red-50 text-red-600 font-bold rounded-xl border border-red-200 hover:bg-red-100"
+              >
+                アカウントと全データを削除する
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* EULA同意ダイアログ */}
       {!eulaAccepted && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-xs">
           <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
@@ -711,14 +1004,13 @@ export default function WorldSnapApp() {
 }
 
 // ==============================================================================
-// 3. 詳細ボトムバナー (ギミック完全実装)
+// 3. ★ フルスクリーン投稿詳細画面 (ピンタップ時にマップを隠して遷移)
 // ==============================================================================
-function SpotDetailBanner({
+function FullSpotDetailView({
   spot,
   currentUserId,
   isBookmarked,
-  onClose,
-  onOpenMedia,
+  onBack,
   onToggleBookmark,
   onReport,
   onBlockUser,
@@ -727,8 +1019,7 @@ function SpotDetailBanner({
   spot: Spot;
   currentUserId: string;
   isBookmarked: boolean;
-  onClose: () => void;
-  onOpenMedia: () => void;
+  onBack: () => void;
   onToggleBookmark: () => void;
   onReport: () => void;
   onBlockUser: (userId: string) => void;
@@ -749,98 +1040,96 @@ function SpotDetailBanner({
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 backdrop-blur-2xs" onClick={onClose}>
-      <div
-        className="w-full max-w-lg bg-white rounded-t-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-200 border-t border-gray-100 flex flex-col max-h-[85vh]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* 上部ドラッグバー */}
-        <div className="w-full flex justify-center pt-2.5 pb-1 cursor-pointer" onClick={onClose}>
-          <div className="w-10 h-1.5 bg-gray-300 rounded-full hover:bg-gray-400 transition" />
-        </div>
+    <div className="w-full h-full bg-slate-900 flex flex-col overflow-y-auto z-40 text-white pb-20 animate-in slide-in-from-right duration-200">
+      {/* 上部ナビゲーションバー */}
+      <div className="h-14 px-4 flex items-center justify-between border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-10 shrink-0">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1 text-xs font-bold text-slate-300 hover:text-white bg-slate-800/80 px-3 py-1.5 rounded-full"
+        >
+          ‹ マップへ戻る
+        </button>
+        <span className="text-xs font-bold text-slate-400">
+          {spot.category === 'view' ? '🏔️ VIEW' : spot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ RAINY'}
+        </span>
+      </div>
 
-        {/* 📸 写真 / メディア枠 */}
-        <div className="relative mx-4 mt-1 aspect-16/9 bg-slate-900 rounded-2xl overflow-hidden cursor-zoom-in group shadow-inner" onClick={onOpenMedia}>
-          <img src={spot.fileUrl} alt={spot.title} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-          <span className="absolute top-2.5 left-2.5 px-2.5 py-1 bg-black/60 backdrop-blur-md text-white text-[11px] font-bold rounded-full border border-white/20">
-            {spot.category === 'view' ? '🏔️ VIEW' : spot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ RAINY'}
-          </span>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onClose();
-            }}
-            className="absolute top-2.5 right-2.5 w-7 h-7 bg-black/50 hover:bg-black/80 backdrop-blur-md text-white rounded-full flex items-center justify-center font-bold text-xs transition"
-          >
-            ✕
-          </button>
-        </div>
+      {/* メインメディア（写真・動画） */}
+      <div className="w-full aspect-4/3 bg-black relative shrink-0">
+        <img src={spot.fileUrl} alt={spot.title} className="w-full h-full object-cover" />
+        <span className="absolute bottom-3 left-3 px-3 py-1 bg-black/60 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/20">
+          {spot.country} {spot.countryFlag}
+        </span>
+      </div>
 
-        {/* 詳細テキスト & アクション */}
-        <div className="p-5 overflow-y-auto space-y-3.5">
-          <div className="flex justify-between items-start gap-2">
-            <div>
-              <h3 className="font-extrabold text-lg text-slate-900 leading-tight">{spot.title}</h3>
-              <p className="text-xs text-slate-500 flex items-center gap-1 mt-1 font-medium">
-                📍 {spot.lat.toFixed(4)}, {spot.lng.toFixed(4)} ({spot.country} {spot.countryFlag}) · {spot.dateTime || '2026'}
-              </p>
-            </div>
-
-            <button
-              onClick={handleBookmarkClick}
-              className={`p-2.5 rounded-full border shadow-xs transition-all duration-200 ${
-                bounce ? 'scale-125' : 'scale-100'
-              } ${
-                isBookmarked
-                  ? 'bg-rose-50 border-rose-300 text-rose-500 shadow-rose-100'
-                  : 'bg-slate-50 border-slate-200 text-slate-400 hover:text-rose-500'
-              }`}
-            >
-              <span className="text-xl leading-none">{isBookmarked ? '💛' : '🤍'}</span>
-            </button>
-          </div>
-
-          {spot.description && (
-            <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
-              {spot.description}
+      {/* 投稿コンテンツ詳細 */}
+      <div className="p-5 space-y-4 bg-slate-950 flex-1">
+        {/* タイトル & いいね保存 */}
+        <div className="flex justify-between items-start gap-3">
+          <div>
+            <h2 className="font-extrabold text-xl text-white leading-tight">{spot.title}</h2>
+            <p className="text-xs text-slate-400 flex items-center gap-1 mt-1 font-medium">
+              📍 {spot.lat.toFixed(4)}, {spot.lng.toFixed(4)} · 撮影日時: {spot.dateTime || '2026/08'}
             </p>
-          )}
+          </div>
 
           <button
-            onClick={handleOpenGoogleMaps}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 active:scale-98 text-white rounded-xl font-bold flex items-center justify-center gap-2 text-xs shadow-lg shadow-blue-500/30 transition duration-150"
+            onClick={handleBookmarkClick}
+            className={`p-3 rounded-full border shadow-sm transition-all duration-200 ${
+              bounce ? 'scale-125' : 'scale-100'
+            } ${
+              isBookmarked
+                ? 'bg-rose-500/20 border-rose-500 text-rose-500'
+                : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-rose-500'
+            }`}
           >
-            <span className="text-sm">🧭</span>
-            Googleマップでルート案内を開く
+            <span className="text-xl leading-none">{isBookmarked ? '💛' : '🤍'}</span>
           </button>
+        </div>
 
-          <div className="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
-            <span className="text-slate-500 font-medium">👤 {spot.userName}</span>
+        {/* 説明文・思い出テキスト */}
+        {spot.description && (
+          <p className="text-sm text-slate-300 leading-relaxed bg-slate-900 p-4 rounded-2xl border border-slate-800">
+            {spot.description}
+          </p>
+        )}
 
-            {isOwner ? (
+        {/* 🧭 Googleマップ ルート案内ボタン (CTA) */}
+        <button
+          onClick={handleOpenGoogleMaps}
+          className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-98 text-white rounded-xl font-bold flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-500/30 transition duration-150"
+        >
+          <span>🧭</span>
+          Googleマップでルート案内を開く
+        </button>
+
+        {/* フッター（投稿者情報・UGC安全機能） */}
+        <div className="pt-4 border-t border-slate-800 flex justify-between items-center text-xs">
+          <span className="text-slate-400 font-medium">👤 投稿者: {spot.userName}</span>
+
+          {isOwner ? (
+            <button
+              onClick={() => onDeleteSpot(spot.id)}
+              className="text-red-400 hover:text-red-300 font-bold flex items-center gap-1 hover:underline"
+            >
+              🗑️ このピンを削除
+            </button>
+          ) : (
+            <div className="flex space-x-3">
               <button
-                onClick={() => onDeleteSpot(spot.id)}
-                className="text-red-500 hover:text-red-700 font-bold flex items-center gap-1 hover:underline"
+                onClick={onReport}
+                className="text-amber-500 hover:text-amber-400 font-semibold flex items-center gap-0.5 hover:underline"
               >
-                🗑️ ピンを削除
+                ⚠️ 通報
               </button>
-            ) : (
-              <div className="flex space-x-3">
-                <button
-                  onClick={onReport}
-                  className="text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-0.5 hover:underline"
-                >
-                  ⚠️ 通報
-                </button>
-                <button
-                  onClick={() => onBlockUser(spot.userId)}
-                  className="text-slate-400 hover:text-red-500 font-semibold flex items-center gap-0.5 hover:underline"
-                >
-                  🚫 ブロック
-                </button>
-              </div>
-            )}
-          </div>
+              <button
+                onClick={() => onBlockUser(spot.userId)}
+                className="text-slate-500 hover:text-red-400 font-semibold flex items-center gap-0.5 hover:underline"
+              >
+                🚫 ブロック
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -848,7 +1137,7 @@ function SpotDetailBanner({
 }
 
 // ==============================================================================
-// 4. 写真投稿 & Exif動的解析モーダル
+// 4. 写真アップロード & Exif動的抽出モーダル
 // ==============================================================================
 function PostUploadModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (data: any) => void }) {
   const [fileUrl, setFileUrl] = useState<string | null>(null);
