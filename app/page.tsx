@@ -8,7 +8,7 @@ import React, { useState, useEffect, useRef } from 'react';
 export type SpotCategory = 'view' | 'gourmet' | 'rainy';
 export type VisibilityMode = 'world' | 'friends' | 'my';
 export type ActiveTab = 'home' | 'map' | 'profile';
-export type ProfileSubTab = 'posts' | 'saved' | 'friends' | 'achievements';
+export type ProfileSubTab = 'posts' | 'saved' | 'friends';
 
 export interface Spot {
   id: string;
@@ -156,7 +156,7 @@ export default function WorldSnapApp() {
   const currentUserId = 'my_user_id';
   const myFriendCode = 'WS-8823-X9';
 
-  // 状態管理
+  // State管理
   const [activeTab, setActiveTab] = useState<ActiveTab>('map');
   const [eulaAccepted, setEulaAccepted] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState<CountryConfig>(COUNTRIES[0]);
@@ -168,8 +168,8 @@ export default function WorldSnapApp() {
   const [savedSpotIds, setSavedSpotIds] = useState<string[]>(['s1']);
   const [profileSubTab, setProfileSubTab] = useState<ProfileSubTab>('posts');
 
-  // モーダル・画面遷移状態
-  const [focusedSpot, setFocusedSpot] = useState<Spot | null>(null); // ピンタップ時のフルスクリーン投稿画面
+  // モーダル・画面遷移
+  const [focusedSpot, setFocusedSpot] = useState<Spot | null>(null); // ピンタップ時のフルスクリーン詳細画面
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
@@ -177,14 +177,14 @@ export default function WorldSnapApp() {
   const [friendInputCode, setFriendInputCode] = useState('');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // マップDOM・Leaflet参照
+  // マップDOM＆Leafletインスタンス参照
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const leafletMapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const polylineRef = useRef<any>(null);
   const feedScrollRef = useRef<HTMLDivElement>(null);
 
-  // 表示スポット抽出
+  // 表示スポットの絞り込み
   const displaySpots = spots.filter((spot) => {
     if (blockedUserIds.includes(spot.userId)) return false;
     if (spot.category !== categoryMode) return false;
@@ -209,7 +209,7 @@ export default function WorldSnapApp() {
   };
 
   // ----------------------------------------------------------------------------
-  // Leaflet 地図初期化（世界全体広域ズーム ＆ ダブルタップ地域ズーム）
+  // Leaflet 地図初期化（世界全体広域ズーム ＆ ダブルタップ地域拡大）
   // ----------------------------------------------------------------------------
   useEffect(() => {
     let isMounted = true;
@@ -254,7 +254,7 @@ export default function WorldSnapApp() {
   }, []);
 
   // ----------------------------------------------------------------------------
-  // マップスタイル切り替え (3大モード連動) & 国籍フォーカス
+  // マップタイル切り替え (3大モード連動) & 国籍フォーカス移動
   // ----------------------------------------------------------------------------
   useEffect(() => {
     async function updateMapTiles() {
@@ -283,7 +283,7 @@ export default function WorldSnapApp() {
   }, [categoryMode, selectedCountry]);
 
   // ----------------------------------------------------------------------------
-  // マーカー & アーク線の再描画
+  // マーカー & アーク線（破線ルート）の再描画
   // ----------------------------------------------------------------------------
   useEffect(() => {
     async function renderMarkers() {
@@ -362,7 +362,7 @@ export default function WorldSnapApp() {
   // ----------------------------------------------------------------------------
   const handleTabClick = (tab: ActiveTab) => {
     triggerHaptic();
-    setFocusedSpot(null); // タブ切り替え時は詳細を閉じる
+    setFocusedSpot(null); // タブ切り替え時は投稿画面から復帰
 
     if (activeTab === tab) {
       if (tab === 'home' && feedScrollRef.current) {
@@ -401,7 +401,12 @@ export default function WorldSnapApp() {
       {/* ヘッダー */}
       <header className="h-14 bg-white/95 backdrop-blur-md border-b flex items-center justify-between px-4 z-20 shadow-xs shrink-0">
         <div className="flex items-center space-x-2">
-          <button className="p-1.5 text-gray-700 hover:bg-gray-100 rounded-lg text-lg">☰</button>
+          <button
+            onClick={() => setIsSettingsModalOpen(true)}
+            className="p-1.5 text-gray-700 hover:bg-gray-100 rounded-lg text-lg"
+          >
+            ☰
+          </button>
           <span className="font-black text-lg tracking-tight bg-gradient-to-r from-indigo-600 to-sky-500 bg-clip-text text-transparent">
             🗺️ WorldSnap
           </span>
@@ -644,7 +649,7 @@ export default function WorldSnapApp() {
                   </div>
                 </div>
 
-                {/* マイページ内 サブタブ ([📸 記録] [💛 保存] [👥 フレンド] [🏆 実績]) */}
+                {/* マイページ内 サブタブ ([📸 記録] [💛 保存] [👥 フレンド]) */}
                 <div className="flex bg-slate-200/80 p-1 rounded-xl text-xs font-bold text-slate-600">
                   <button
                     onClick={() => setProfileSubTab('posts')}
@@ -663,12 +668,6 @@ export default function WorldSnapApp() {
                     className={`flex-1 py-2 rounded-lg transition ${profileSubTab === 'friends' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
                   >
                     👥 フレンド
-                  </button>
-                  <button
-                    onClick={() => setProfileSubTab('achievements')}
-                    className={`flex-1 py-2 rounded-lg transition ${profileSubTab === 'achievements' ? 'bg-white text-amber-600 shadow-xs' : ''}`}
-                  >
-                    🏆 実績
                   </button>
                 </div>
 
@@ -785,45 +784,6 @@ export default function WorldSnapApp() {
                     </div>
                   </div>
                 )}
-
-                {/* 4. 実績タブ */}
-                {profileSubTab === 'achievements' && (
-                  <div className="space-y-3 text-xs">
-                    <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-2xs space-y-3">
-                      <h4 className="font-bold text-slate-900">🏆 旅の称号 & 実績コレクション</h4>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center space-x-2">
-                          <span className="text-2xl">🌍</span>
-                          <div>
-                            <span className="font-bold text-amber-900 block">ワールドワンダラー</span>
-                            <span className="text-[10px] text-amber-700">訪問国 {visitedCount}カ国達成</span>
-                          </div>
-                        </div>
-                        <div className="p-3 bg-sky-50 border border-sky-200 rounded-xl flex items-center space-x-2">
-                          <span className="text-2xl">🏔️</span>
-                          <div>
-                            <span className="font-bold text-sky-900 block">絶景マイスター</span>
-                            <span className="text-[10px] text-sky-700">View投稿 {mySpots.filter(s => s.category === 'view').length}件</span>
-                          </div>
-                        </div>
-                        <div className="p-3 bg-orange-50 border border-orange-200 rounded-xl flex items-center space-x-2">
-                          <span className="text-2xl">☕</span>
-                          <div>
-                            <span className="font-bold text-orange-900 block">グルメトラベラー</span>
-                            <span className="text-[10px] text-orange-700">グルメ投稿 {mySpots.filter(s => s.category === 'gourmet').length}件</span>
-                          </div>
-                        </div>
-                        <div className="p-3 bg-purple-50 border border-purple-200 rounded-xl flex items-center space-x-2">
-                          <span className="text-2xl">🌧️</span>
-                          <div>
-                            <span className="font-bold text-purple-900 block">雨の日エキスパート</span>
-                            <span className="text-[10px] text-purple-700">雨天スポット {mySpots.filter(s => s.category === 'rainy').length}件</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
 
@@ -881,8 +841,159 @@ export default function WorldSnapApp() {
       </nav>
 
       {/* ==================================================================== */}
-      {/* モーダル群 (EULA / QRコード / 設定 / 投稿 / 通報) */}
+      {/* モーダル群 (設定 / QRコード / EULA / 投稿 / 通報) */}
       {/* ==================================================================== */}
+
+      {/* ⚙️ 設定画面モーダル（完全版仕様） */}
+      {isSettingsModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in"
+          onClick={() => setIsSettingsModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-xs max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center border-b pb-2">
+              <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-1.5">
+                ⚙️ 設定 (Settings)
+              </h3>
+              <button
+                onClick={() => setIsSettingsModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 font-bold text-sm"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* ▼ アカウント設定 */}
+            <div className="space-y-2">
+              <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">▼ アカウント設定</span>
+              <div className="p-2.5 bg-slate-50 rounded-xl space-y-2">
+                <div className="flex justify-between items-center cursor-pointer hover:text-indigo-600">
+                  <span>👤 プロフィール編集（表示名・紹介文）</span>
+                  <span className="text-slate-400 font-bold">›</span>
+                </div>
+                <div className="flex justify-between items-center cursor-pointer hover:text-indigo-600 border-t pt-1.5 border-slate-200">
+                  <span>🌐 言語 / 国籍の初期設定</span>
+                  <span className="font-semibold text-slate-500">日本語 (JP)</span>
+                </div>
+                <div className="flex justify-between items-center cursor-pointer hover:text-indigo-600 border-t pt-1.5 border-slate-200">
+                  <span>🔒 公開範囲の初期値</span>
+                  <span className="font-semibold text-slate-500">ワールド</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ▼ マップ・表示カスタマイズ */}
+            <div className="space-y-2">
+              <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">▼ マップ・表示カスタマイズ</span>
+              <div className="p-2.5 bg-slate-50 rounded-xl space-y-2">
+                <div className="flex justify-between items-center">
+                  <span>🗺️ デフォルトの地図スタイル</span>
+                  <span className="font-semibold text-sky-600">View</span>
+                </div>
+                <div className="flex justify-between items-center border-t pt-1.5 border-slate-200">
+                  <span>📏 距離単位の切り替え</span>
+                  <span className="font-semibold text-slate-500">km (キロメートル)</span>
+                </div>
+                <div
+                  onClick={() => showToast('🧹 地図キャッシュをクリアしました')}
+                  className="flex justify-between items-center border-t pt-1.5 border-slate-200 cursor-pointer text-indigo-600 font-bold hover:underline"
+                >
+                  <span>🧹 地図キャッシュのクリア</span>
+                  <span>実行</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ▼ プライバシー & UGC安全対策【審査必須】 */}
+            <div className="space-y-2">
+              <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">▼ プライバシー & UGC安全対策</span>
+              <div className="p-2.5 bg-slate-50 rounded-xl space-y-2">
+                <div
+                  onClick={() => {
+                    setBlockedUserIds([]);
+                    showToast('ブロックリストをリセットしました');
+                  }}
+                  className="flex justify-between items-center cursor-pointer hover:text-indigo-600"
+                >
+                  <span>🚫 ブロック中ユーザーの管理</span>
+                  <span className="font-bold text-slate-400">{blockedUserIds.length}人 ›</span>
+                </div>
+                <div
+                  onClick={() => {
+                    setIsSettingsModalOpen(false);
+                    setEulaAccepted(false);
+                  }}
+                  className="flex justify-between items-center border-t pt-1.5 border-slate-200 cursor-pointer text-indigo-600 font-bold hover:underline"
+                >
+                  <span>📜 利用規約 (EULA) の確認</span>
+                  <span>開く</span>
+                </div>
+                <div
+                  onClick={() => showToast('プライバシーポリシーは最新です')}
+                  className="flex justify-between items-center border-t pt-1.5 border-slate-200 cursor-pointer text-indigo-600 font-bold hover:underline"
+                >
+                  <span>🛡️ プライバシーポリシー</span>
+                  <span>開く</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ▼ サポート & その他 */}
+            <div className="space-y-2">
+              <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">▼ サポート & その他</span>
+              <div className="p-2.5 bg-slate-50 rounded-xl space-y-2">
+                <div
+                  onClick={() => showToast('お問い合わせフォームを開きました')}
+                  className="flex justify-between items-center cursor-pointer hover:text-indigo-600"
+                >
+                  <span>💬 ご意見・不具合の報告</span>
+                  <span className="text-slate-400 font-bold">›</span>
+                </div>
+                <div
+                  onClick={() => showToast('⭐ レビューありがとうございます！')}
+                  className="flex justify-between items-center border-t pt-1.5 border-slate-200 cursor-pointer hover:text-indigo-600"
+                >
+                  <span>⭐ アプリを評価する</span>
+                  <span className="text-slate-400 font-bold">›</span>
+                </div>
+                <div className="flex justify-between items-center border-t pt-1.5 border-slate-200 text-slate-400">
+                  <span>ℹ️ アプリバージョン</span>
+                  <span className="font-mono">v1.0.0 (Build 2026)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* 🚪 ログアウト & ⚠️ アカウント削除 (Apple審査必須要件) */}
+            <div className="pt-2 border-t border-slate-200 space-y-2">
+              <button
+                onClick={() => {
+                  showToast('ログアウトしました');
+                  setIsSettingsModalOpen(false);
+                }}
+                className="w-full py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition"
+              >
+                🚪 ログアウト
+              </button>
+              <button
+                onClick={() => {
+                  if (confirm('【警告】アカウントおよびすべての投稿データ、保存リストを完全に削除しますか？この操作は取り消せません。')) {
+                    setSpots((prev) => prev.filter((s) => s.userId !== currentUserId));
+                    setSavedSpotIds([]);
+                    setIsSettingsModalOpen(false);
+                    showToast('⚠️ アカウントと全データを完全に削除しました');
+                  }
+                }}
+                className="w-full py-2.5 bg-red-50 text-red-600 font-bold rounded-xl border border-red-200 hover:bg-red-100 transition"
+              >
+                ⚠️ アカウントの削除（退会処理）
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* QRコードモーダル */}
       {isQrModalOpen && (
@@ -900,41 +1011,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* 設定・アカウント削除モーダル */}
-      {isSettingsModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs" onClick={() => setIsSettingsModalOpen(false)}>
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-xs" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center">
-              <h3 className="font-bold text-sm text-slate-900">⚙️ 設定・アカウント管理</h3>
-              <button onClick={() => setIsSettingsModalOpen(false)} className="text-slate-400 font-bold text-sm">✕</button>
-            </div>
-            <div className="space-y-2">
-              <div className="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
-                <span>利用規約 (EULA) を確認</span>
-                <button onClick={() => setEulaAccepted(false)} className="text-indigo-600 font-bold">表示</button>
-              </div>
-            </div>
-            <div className="pt-3 border-t border-slate-100 space-y-2">
-              <h4 className="font-bold text-red-600">アカウント削除 (Apple Guideline)</h4>
-              <p className="text-[11px] text-slate-500">アカウントおよびすべての写真ピン、フレンド情報が消去されます。</p>
-              <button
-                onClick={() => {
-                  if (confirm('【警告】アカウントおよび全データを完全に削除しますか？')) {
-                    setSpots((prev) => prev.filter((s) => s.userId !== currentUserId));
-                    setIsSettingsModalOpen(false);
-                    showToast('アカウントを完全に削除しました');
-                  }
-                }}
-                className="w-full py-2.5 bg-red-50 text-red-600 font-bold rounded-xl border border-red-200 hover:bg-red-100"
-              >
-                アカウントと全データを削除する
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* EULA同意ダイアログ */}
+      {/* EULA規約同意ダイアログ */}
       {!eulaAccepted && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-xs">
           <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
@@ -1045,7 +1122,7 @@ function FullSpotDetailView({
       <div className="h-14 px-4 flex items-center justify-between border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-10 shrink-0">
         <button
           onClick={onBack}
-          className="flex items-center gap-1 text-xs font-bold text-slate-300 hover:text-white bg-slate-800/80 px-3 py-1.5 rounded-full"
+          className="flex items-center gap-1 text-xs font-bold text-slate-300 hover:text-white bg-slate-800/80 px-3 py-1.5 rounded-full transition"
         >
           ‹ マップへ戻る
         </button>
