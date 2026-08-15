@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 
-// ==============================================================================
-// 1. 型定義 & 定数
-// ==============================================================================
-export type SpotCategory = 'view' | 'gourmet' | 'rainy';
-export type VisibilityMode = 'world' | 'friends' | 'my';
-export type ActiveTab = 'home' | 'map' | 'profile';
-export type ProfileSubTab = 'posts' | 'saved' | 'friends';
+// ==========================================
+// 1. 型定義 & 言語・国籍マスターデータ
+// ==========================================
+export type ViewCategory = 'view' | 'gourmet' | 'rain';
+export type DisplayScope = 'my' | 'friends' | 'world';
+export type TabType = 'home' | 'map' | 'profile';
 
 export interface Spot {
   id: string;
@@ -16,1316 +16,1449 @@ export interface Spot {
   userName: string;
   userAvatar?: string;
   title: string;
-  description?: string;
+  description: string;
+  fileName: string;
   fileUrl: string;
   fileType: 'image' | 'video';
   lat: number;
-  lng: number;
-  country: string;
-  countryFlag: string;
-  category: SpotCategory;
-  visibility: 'public' | 'friends' | 'private';
+  lon: number;
+  countryCode: string;
+  category: ViewCategory;
+  createdAt: string;
+  isSaved?: boolean;
+}
+
+export interface PendingFile {
+  id: string;
+  file: File;
+  fileUrl: string;
+  fileType: 'image' | 'video';
   dateTime?: string;
 }
 
-export interface Friend {
-  id: string;
-  name: string;
-  code: string;
-  avatar: string;
-  visitedCountries: number;
-  status: 'friend' | 'pending';
-}
+// 18カ国の国籍・中心座標・言語リソース定義
+export const COUNTRIES: Record<
+  string,
+  {
+    name: string;
+    flag: string;
+    lang: string;
+    lat: number;
+    lon: number;
+    zoom: number;
+    dict: Record<string, string>;
+  }
+> = {
+  CH: {
+    name: 'スイス (Schweiz)',
+    flag: '🇨🇭',
+    lang: 'de',
+    lat: 46.8182,
+    lon: 8.2275,
+    zoom: 8,
+    dict: { home: 'Start', map: 'Karte', profile: 'Profil', addPhoto: 'Foto hinzufügen', exportMap: 'Karte speichern', view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen', openGoogleMaps: 'In Google Maps öffnen', saveSpot: 'Merken', report: 'Melden', block: 'Blockieren', visited: 'Besucht', countriesUnit: 'Länder' },
+  },
+  JP: {
+    name: '日本 (Japan)',
+    flag: '🇯🇵',
+    lang: 'ja',
+    lat: 36.2048,
+    lon: 138.2529,
+    zoom: 5,
+    dict: { home: 'ホーム', map: 'マップ', profile: 'マイページ', addPhoto: '写真/動画を追加', exportMap: 'マップ保存', view: 'View', gourmet: 'グルメ', rain: '雨の日', openGoogleMaps: 'Googleマップでルート案内を開く', saveSpot: '行きたい保存', report: '通報', block: 'ブロック', visited: '訪問', countriesUnit: 'カ国' },
+  },
+  KR: {
+    name: '韓国 (대한민국)',
+    flag: '🇰🇷',
+    lang: 'ko',
+    lat: 35.9078,
+    lon: 127.7669,
+    zoom: 7,
+    dict: { home: '홈', map: '지도', profile: '프로필', addPhoto: '사진/동영상 추가', exportMap: '지도 저장', view: '경치', gourmet: '맛집', rain: '비오는날', openGoogleMaps: 'Google 지도에서 길찾기', saveSpot: '저장', report: '신고', block: '차단', visited: '방문', countriesUnit: '개국' },
+  },
+  AU: {
+    name: 'オーストラリア (Australia)',
+    flag: '🇦🇺',
+    lang: 'en',
+    lat: -25.2744,
+    lon: 133.7751,
+    zoom: 4,
+    dict: { home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps', saveSpot: 'Save', report: 'Report', block: 'Block', visited: 'Visited', countriesUnit: 'countries' },
+  },
+  DE: {
+    name: 'ドイツ (Deutschland)',
+    flag: '🇩🇪',
+    lang: 'de',
+    lat: 51.1657,
+    lon: 10.4515,
+    zoom: 6,
+    dict: { home: 'Start', map: 'Karte', profile: 'Profil', addPhoto: 'Medien hinzufügen', exportMap: 'Karte speichern', view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen', openGoogleMaps: 'In Google Maps öffnen', saveSpot: 'Speichern', report: 'Melden', block: 'Blockieren', visited: 'Besucht', countriesUnit: 'Länder' },
+  },
+  US: {
+    name: 'アメリカ (USA)',
+    flag: '🇺🇸',
+    lang: 'en',
+    lat: 37.0902,
+    lon: -95.7129,
+    zoom: 4,
+    dict: { home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps', saveSpot: 'Save', report: 'Report', block: 'Block', visited: 'Visited', countriesUnit: 'countries' },
+  },
+  FR: {
+    name: 'フランス (France)',
+    flag: '🇫🇷',
+    lang: 'fr',
+    lat: 46.2276,
+    lon: 2.2137,
+    zoom: 6,
+    dict: { home: 'Accueil', map: 'Carte', profile: 'Profil', addPhoto: 'Ajouter média', exportMap: 'Enregistrer la carte', view: 'Paysage', gourmet: 'Gourmet', rain: 'Pluie', openGoogleMaps: 'Ouvrir dans Google Maps', saveSpot: 'Enregistrer', report: 'Signaler', block: 'Bloquer', visited: 'Visité', countriesUnit: 'pays' },
+  },
+  TH: {
+    name: 'タイ (ไทย)',
+    flag: '🇹🇭',
+    lang: 'th',
+    lat: 15.87,
+    lon: 100.9925,
+    zoom: 6,
+    dict: { home: 'หน้าแรก', map: 'แผนที่', profile: 'โปรไฟล์', addPhoto: 'เพิ่มรูปภาพ', exportMap: 'บันทึกแผนที่', view: 'วิว', gourmet: 'ของกิน', rain: 'วันฝนตก', openGoogleMaps: 'เปิดใน Google Maps', saveSpot: 'บันทึก', report: 'รายงาน', block: 'บล็อก', visited: 'เยือนแล้ว', countriesUnit: 'ประเทศ' },
+  },
+  IT: {
+    name: 'イタリア (Italia)',
+    flag: '🇮🇹',
+    lang: 'it',
+    lat: 41.8719,
+    lon: 12.5674,
+    zoom: 6,
+    dict: { home: 'Home', map: 'Mappa', profile: 'Profilo', addPhoto: 'Aggiungi foto', exportMap: 'Salva mappa', view: 'Panorama', gourmet: 'Gourmet', rain: 'Pioggia', openGoogleMaps: 'Apri su Google Maps', saveSpot: 'Salva', report: 'Segnala', block: 'Blocca', visited: 'Visitati', countriesUnit: 'paesi' },
+  },
+  GB: {
+    name: 'イギリス (UK)',
+    flag: '🇬🇧',
+    lang: 'en',
+    lat: 55.3781,
+    lon: -3.436,
+    zoom: 5,
+    dict: { home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps', saveSpot: 'Save', report: 'Report', block: 'Block', visited: 'Visited', countriesUnit: 'countries' },
+  },
+  ES: {
+    name: 'スペイン (España)',
+    flag: '🇪🇸',
+    lang: 'es',
+    lat: 40.4637,
+    lon: -3.7492,
+    zoom: 6,
+    dict: { home: 'Inicio', map: 'Mapa', profile: 'Perfil', addPhoto: 'Añadir foto', exportMap: 'Guardar mapa', view: 'Vistas', gourmet: 'Gourmet', rain: 'Lluvia', openGoogleMaps: 'Abrir en Google Maps', saveSpot: 'Guardar', report: 'Denunciar', block: 'Bloquear', visited: 'Visitados', countriesUnit: 'países' },
+  },
+  NZ: {
+    name: 'ニュージーランド (NZ)',
+    flag: '🇳🇿',
+    lang: 'en',
+    lat: -40.9006,
+    lon: 174.886,
+    zoom: 5,
+    dict: { home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps', saveSpot: 'Save', report: 'Report', block: 'Block', visited: 'Visited', countriesUnit: 'countries' },
+  },
+  AT: {
+    name: 'オーストリア (Österreich)',
+    flag: '🇦🇹',
+    lang: 'de',
+    lat: 47.5162,
+    lon: 14.5501,
+    zoom: 7,
+    dict: { home: 'Start', map: 'Karte', profile: 'Profil', addPhoto: 'Medien hinzufügen', exportMap: 'Karte speichern', view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen', openGoogleMaps: 'In Google Maps öffnen', saveSpot: 'Speichern', report: 'Melden', block: 'Blockieren', visited: 'Besucht', countriesUnit: 'Länder' },
+  },
+  SG: {
+    name: 'シンガポール (Singapore)',
+    flag: '🇸🇬',
+    lang: 'en',
+    lat: 1.3521,
+    lon: 103.8198,
+    zoom: 11,
+    dict: { home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps', saveSpot: 'Save', report: 'Report', block: 'Block', visited: 'Visited', countriesUnit: 'countries' },
+  },
+  CA: {
+    name: 'カナダ (Canada)',
+    flag: '🇨🇦',
+    lang: 'en',
+    lat: 56.1304,
+    lon: -106.3468,
+    zoom: 4,
+    dict: { home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps', saveSpot: 'Save', report: 'Report', block: 'Block', visited: 'Visited', countriesUnit: 'countries' },
+  },
+  AE: {
+    name: 'UAE ドバイ (Dubai)',
+    flag: '🇦🇪',
+    lang: 'ar',
+    lat: 25.2048,
+    lon: 55.2708,
+    zoom: 9,
+    dict: { home: 'الرئيسية', map: 'الخريطة', profile: 'الملف الشخصي', addPhoto: 'إضافة وسائط', exportMap: 'حفظ الخريطة', view: 'إطلالة', gourmet: 'مطاعم', rain: 'ممطر', openGoogleMaps: 'فتح في خرائط Google', saveSpot: 'حفظ', report: 'إبلاغ', block: 'حظر', visited: 'الدول التي زرتها', countriesUnit: 'دولة' },
+  },
+  MV: {
+    name: 'モルディブ (Maldives)',
+    flag: '🇲🇻',
+    lang: 'en',
+    lat: 3.2028,
+    lon: 73.2207,
+    zoom: 7,
+    dict: { home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps', saveSpot: 'Save', report: 'Report', block: 'Block', visited: 'Visited', countriesUnit: 'countries' },
+  },
+  TW: {
+    name: '台湾 (Taiwan)',
+    flag: '🇹🇼',
+    lang: 'zh',
+    lat: 23.6978,
+    lon: 120.9605,
+    zoom: 7,
+    dict: { home: '首頁', map: '地圖', profile: '個人主頁', addPhoto: '新增照片', exportMap: '儲存地圖', view: '景觀', gourmet: '美食', rain: '雨天', openGoogleMaps: '在 Google 地圖中開啟', saveSpot: '收藏', report: '檢舉', block: '封鎖', visited: '造訪過', countriesUnit: '個國家' },
+  },
+};
 
-export interface CountryConfig {
-  code: string;
-  name: string;
-  nativeName: string;
-  flag: string;
-  coords: [number, number];
-  zoom: number;
-  dict: {
-    viewMode: string;
-    gourmetMode: string;
-    rainyMode: string;
-    addPhoto: string;
-    saveMap: string;
-    visited: string;
-    countries: string;
-  };
-}
-
-export const COUNTRIES: CountryConfig[] = [
-  { code: 'WORLD', name: 'World Wide', nativeName: '世界全体', flag: '🌐', coords: [20, 0], zoom: 2, dict: { viewMode: '絶景', gourmetMode: 'グルメ', rainyMode: '雨の日', addPhoto: '写真を追加', saveMap: 'マップ保存', visited: '訪問国数', countries: 'カ国' } },
-  { code: 'JP', name: 'Japan', nativeName: '日本', flag: '🇯🇵', coords: [36.2048, 138.2529], zoom: 5, dict: { viewMode: '絶景', gourmetMode: 'グルメ', rainyMode: '雨の日', addPhoto: '写真を追加', saveMap: 'マップ保存', visited: '訪問国数', countries: 'カ国' } },
-  { code: 'CH', name: 'Switzerland', nativeName: 'Schweiz', flag: '🇨🇭', coords: [46.8182, 8.2275], zoom: 8, dict: { viewMode: 'Aussicht', gourmetMode: 'Gourmet', rainyMode: 'Regentag', addPhoto: 'Foto hinzufügen', saveMap: 'Karte speichern', visited: 'Besucht', countries: 'Länder' } },
-  { code: 'US', name: 'United States', nativeName: 'United States', flag: '🇺🇸', coords: [37.0902, -95.7129], zoom: 4, dict: { viewMode: 'View', gourmetMode: 'Gourmet', rainyMode: 'Rainy Day', addPhoto: 'Add Memory', saveMap: 'Save Map', visited: 'Visited', countries: 'Countries' } },
-  { code: 'FR', name: 'France', nativeName: 'France', flag: '🇫🇷', coords: [46.2276, 2.2137], zoom: 6, dict: { viewMode: 'Vue', gourmetMode: 'Gourmet', rainyMode: 'Jour de pluie', addPhoto: 'Ajouter photo', saveMap: 'Enregistrer', visited: 'Visités', countries: 'Pays' } },
-  { code: 'KR', name: 'South Korea', nativeName: '대한민국', flag: '🇰🇷', coords: [35.9078, 127.7669], zoom: 7, dict: { viewMode: '풍경', gourmetMode: '맛집', rainyMode: '비오는날', addPhoto: '사진 추가', saveMap: '지도 저장', visited: '방문 국가', countries: '개国' } },
-  { code: 'DE', name: 'Germany', nativeName: 'Deutschland', flag: '🇩🇪', coords: [51.1657, 10.4515], zoom: 6, dict: { viewMode: 'Aussicht', gourmetMode: 'Gourmet', rainyMode: 'Regentag', addPhoto: 'Foto hinzufügen', saveMap: 'Karte speichern', visited: 'Besucht', countries: 'Länder' } },
-  { code: 'IT', name: 'Italy', nativeName: 'Italia', flag: '🇮🇹', coords: [41.8719, 12.5674], zoom: 6, dict: { viewMode: 'Panorama', gourmetMode: 'Gourmet', rainyMode: 'Giorno di pioggia', addPhoto: 'Aggiungi foto', saveMap: 'Salva mappa', visited: 'Visitati', countries: 'Paesi' } },
-  { code: 'ES', name: 'Spain', nativeName: 'España', flag: '🇪🇸', coords: [40.4637, -3.7492], zoom: 6, dict: { viewMode: 'Vistas', gourmetMode: 'Gourmet', rainyMode: 'Día de lluvia', addPhoto: 'Añadir foto', saveMap: 'Guardar mapa', visited: 'Visitados', countries: 'Países' } },
-  { code: 'TH', name: 'Thailand', nativeName: 'ประเทศไทย', flag: '🇹🇭', coords: [15.8700, 100.9925], zoom: 6, dict: { viewMode: 'วิวสวย', gourmetMode: 'ของกิน', rainyMode: 'วันฝนตก', addPhoto: 'เพิ่มรูปภาพ', saveMap: 'บันทึกแผนที่', visited: 'ประเทศที่ไป', countries: 'ประเทศ' } },
-  { code: 'GB', name: 'United Kingdom', nativeName: 'United Kingdom', flag: '🇬🇧', coords: [55.3781, -3.4360], zoom: 6, dict: { viewMode: 'View', gourmetMode: 'Gourmet', rainyMode: 'Rainy Day', addPhoto: 'Add Memory', saveMap: 'Save Map', visited: 'Visited', countries: 'Countries' } },
-  { code: 'AU', name: 'Australia', nativeName: 'Australia', flag: '🇦🇺', coords: [-25.2744, 133.7751], zoom: 4, dict: { viewMode: 'View', gourmetMode: 'Gourmet', rainyMode: 'Rainy Day', addPhoto: 'Add Memory', saveMap: 'Save Map', visited: 'Visited', countries: 'Countries' } },
-  { code: 'NZ', name: 'New Zealand', nativeName: 'New Zealand', flag: '🇳🇿', coords: [-40.9006, 174.8860], zoom: 5, dict: { viewMode: 'View', gourmetMode: 'Gourmet', rainyMode: 'Rainy Day', addPhoto: 'Add Memory', saveMap: 'Save Map', visited: 'Visited', countries: 'Countries' } },
-  { code: 'AT', name: 'Austria', nativeName: 'Österreich', flag: '🇦🇹', coords: [47.5162, 14.5501], zoom: 7, dict: { viewMode: 'Aussicht', gourmetMode: 'Gourmet', rainyMode: 'Regentag', addPhoto: 'Foto hinzufügen', saveMap: 'Karte speichern', visited: 'Besucht', countries: 'Länder' } },
-  { code: 'SG', name: 'Singapore', nativeName: 'Singapore', flag: '🇸🇬', coords: [1.3521, 103.8198], zoom: 11, dict: { viewMode: 'View', gourmetMode: 'Gourmet', rainyMode: 'Rainy Day', addPhoto: 'Add Memory', saveMap: 'Save Map', visited: 'Visited', countries: 'Countries' } },
-  { code: 'CA', name: 'Canada', nativeName: 'Canada', flag: '🇨🇦', coords: [56.1304, -106.3468], zoom: 4, dict: { viewMode: 'View', gourmetMode: 'Gourmet', rainyMode: 'Rainy Day', addPhoto: 'Add Memory', saveMap: 'Save Map', visited: 'Visited', countries: 'Countries' } },
-  { code: 'AE', name: 'UAE (Dubai)', nativeName: 'الإمارات', flag: '🇦🇪', coords: [23.4241, 53.8478], zoom: 7, dict: { viewMode: 'مناظر', gourmetMode: 'مطاعم', rainyMode: 'يوم ممطر', addPhoto: 'إضافة صورة', saveMap: 'حفظ الخريطة', visited: 'الدول التي زرتها', countries: 'دول' } },
-  { code: 'MV', name: 'Maldives', nativeName: 'Dhivehi Raajje', flag: '🇲🇻', coords: [3.2028, 73.2207], zoom: 7, dict: { viewMode: 'View', gourmetMode: 'Gourmet', rainyMode: 'Rainy Day', addPhoto: 'Add Photo', saveMap: 'Save Map', visited: 'Visited', countries: 'Atolls' } }
-];
-
+// 初期サンプル投稿（世界・フレンドのモックデータ）
 const INITIAL_SPOTS: Spot[] = [
   {
-    id: 's1',
-    userId: 'user_yuki',
+    id: 'mock-1',
+    userId: 'user-yuki',
     userName: 'Yuki_Traveler',
     title: 'マッターホルンの絶景朝焼け',
-    description: '早朝のツェルマットから眺める黄金色の山頂。息をのむ美しさでした！展望台へは始発電車がおすすめ。',
-    fileUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=800&q=80',
+    description: '早朝のツェルマットから眺める黄金色の山頂。展望台へは始発電車がおすすめ！',
+    fileName: 'matterhorn.jpg',
+    fileUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=600&auto=format&fit=crop',
     fileType: 'image',
     lat: 45.9765,
-    lng: 7.7491,
-    country: 'スイス',
-    countryFlag: '🇨🇭',
+    lon: 7.7491,
+    countryCode: 'CH',
     category: 'view',
-    visibility: 'public',
-    dateTime: '2026/08/14',
+    createdAt: '2026-08-14',
   },
   {
-    id: 's2',
-    userId: 'my_user_id',
-    userName: 'MyTraveler',
-    title: '京都 祇園の極上抹茶パフェ',
-    description: '雨の日の古都散策で立ち寄った風情ある甘味処。濃厚な抹茶アイスと白玉の組み合わせが絶品。',
-    fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=800&q=80',
+    id: 'mock-2',
+    userId: 'user-ken',
+    userName: 'Ken_Gourmet',
+    title: '京都 鴨川沿いの絶品抹茶パフェ',
+    description: '川床を眺めながらいただく濃厚な宇治抹茶。デートにも最高です。',
+    fileName: 'matcha.jpg',
+    fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&auto=format&fit=crop',
     fileType: 'image',
     lat: 35.0037,
-    lng: 135.7772,
-    country: '日本',
-    countryFlag: '🇯🇵',
+    lon: 135.7712,
+    countryCode: 'JP',
     category: 'gourmet',
-    visibility: 'public',
-    dateTime: '2026/08/10',
+    createdAt: '2026-08-10',
   },
   {
-    id: 's3',
-    userId: 'my_user_id',
-    userName: 'MyTraveler',
-    title: '東京・お台場の夜景クルーズ',
-    description: 'レインボーブリッジと東京タワーが一望できるロマンチックなデートスポット。',
-    fileUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80',
+    id: 'mock-3',
+    userId: 'user-lisa',
+    userName: 'Lisa_Rain',
+    title: '雨のルーヴル美術館とガラスのピラミッド',
+    description: '雨の日は幻想的な光に包まれます。地下入口から入ると混雑回避できます！',
+    fileName: 'louvre.jpg',
+    fileUrl: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&auto=format&fit=crop',
     fileType: 'image',
-    lat: 35.6298,
-    lng: 139.7745,
-    country: '日本',
-    countryFlag: '🇯🇵',
-    category: 'view',
-    visibility: 'public',
-    dateTime: '2026/08/05',
-  },
-  {
-    id: 's4',
-    userId: 'user_rainy',
-    userName: 'RainyArtLover',
-    title: '雨の日も楽しめる国立新美術館',
-    description: '建築美と静けさが魅力的な雨の日のオアシス。館内カフェの居心地も抜群です。',
-    fileUrl: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=800&q=80',
-    fileType: 'image',
-    lat: 35.6653,
-    lng: 139.7264,
-    country: '日本',
-    countryFlag: '🇯🇵',
-    category: 'rainy',
-    visibility: 'public',
-    dateTime: '2026/08/02',
+    lat: 48.8606,
+    lon: 2.3376,
+    countryCode: 'FR',
+    category: 'rain',
+    createdAt: '2026-08-01',
   },
 ];
 
-const INITIAL_FRIENDS: Friend[] = [
-  { id: 'f1', name: 'Yuki_Traveler', code: 'WS-1122-CH', avatar: '❄️', visitedCountries: 12, status: 'friend' },
-  { id: 'f2', name: 'Ken_Gourmet', code: 'WS-3344-JP', avatar: '🍵', visitedCountries: 5, status: 'friend' },
-  { id: 'f3', name: 'Sarah_World', code: 'WS-5566-US', avatar: '🗽', visitedCountries: 9, status: 'pending' },
-];
+function convertDMSToDD(dms: number[], ref: string): number {
+  if (!dms || dms.length < 3) return 0;
+  let dd = dms[0] + dms[1] / 60 + dms[2] / 3600;
+  if (ref === 'S' || ref === 'W') dd *= -1;
+  return dd;
+}
 
-// ==============================================================================
-// 2. メインコンポーネント
-// ==============================================================================
+// ==========================================
+// 2. Leaflet 動的読み込みコンポーネント (SSR回避)
+// ==========================================
+const MapComponent = dynamic(
+  () =>
+    Promise.resolve(
+      ({
+        spots,
+        center,
+        zoom,
+        mode,
+        onSelectSpot,
+        onDoubleTap,
+      }: {
+        spots: Spot[];
+        center: [number, number];
+        zoom: number;
+        mode: ViewCategory;
+        onSelectSpot: (s: Spot) => void;
+        onDoubleTap: (lat: number, lon: number) => void;
+      }) => {
+        const { MapContainer, TileLayer, Marker, Polyline, useMapEvents, useMap } = require('react-leaflet');
+        const L = require('leaflet');
+        require('leaflet/dist/leaflet.css');
+
+        // 地図移動用
+        const MapController = ({ center, zoom }: { center: [number, number]; zoom: number }) => {
+          const map = useMap();
+          useEffect(() => {
+            map.flyTo(center, zoom, { duration: 1.2 });
+          }, [center, zoom, map]);
+          return null;
+        };
+
+        // ダブルクリック/タップで周辺ズーム
+        const MapEventHandler = () => {
+          useMapEvents({
+            dblclick(e: any) {
+              onDoubleTap(e.latlng.lat, e.latlng.lng);
+            },
+          });
+          return null;
+        };
+
+        const tileUrl =
+          mode === 'rain'
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : mode === 'gourmet'
+            ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+
+        const polylineCoords = spots.map((s) => [s.lat, s.lon] as [number, number]);
+
+        return (
+          <MapContainer
+            center={center}
+            zoom={zoom}
+            minZoom={2}
+            maxBounds={[[-90, -180], [90, 180]]}
+            maxBoundsViscosity={1.0}
+            doubleClickZoom={false}
+            style={{ width: '100%', height: '100%', minHeight: '480px', borderRadius: '16px', background: '#070d1e' }}
+            scrollWheelZoom={true}
+          >
+            <MapController center={center} zoom={zoom} />
+            <MapEventHandler />
+            <TileLayer url={tileUrl} attribution='&copy; CARTO' />
+
+            {/* ルートライン (アーク破線) */}
+            {polylineCoords.length > 1 && (
+              <Polyline
+                positions={polylineCoords}
+                pathOptions={{
+                  color: mode === 'gourmet' ? '#ea580c' : mode === 'rain' ? '#38bdf8' : '#0284c7',
+                  weight: 3,
+                  dashArray: '6, 8',
+                  opacity: 0.85,
+                }}
+              />
+            )}
+
+            {/* 写真ピン */}
+            {spots.map((spot) => {
+              const borderCol = mode === 'gourmet' ? '#ea580c' : mode === 'rain' ? '#38bdf8' : '#0284c7';
+              const iconHtml = `
+                <div style="
+                  position: relative;
+                  width: 48px;
+                  height: 48px;
+                  border-radius: 50%;
+                  border: 3px solid ${borderCol};
+                  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+                  overflow: hidden;
+                  background: #111;
+                  cursor: pointer;
+                  transform: scale(1);
+                  transition: transform 0.2s ease;
+                ">
+                  <img src="${spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" />
+                </div>
+              `;
+              const customIcon = L.divIcon({
+                className: 'ws-marker-pin',
+                html: iconHtml,
+                iconSize: [48, 48],
+                iconAnchor: [24, 24],
+              });
+
+              return (
+                <Marker
+                  key={spot.id}
+                  position={[spot.lat, spot.lon]}
+                  icon={customIcon}
+                  eventHandlers={{
+                    click: () => onSelectSpot(spot),
+                  }}
+                />
+              );
+            })}
+          </MapContainer>
+        );
+      }
+    ),
+  { ssr: false, loading: () => <div style={{ height: '480px', background: '#0f172a', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>🗺️ マップを読み込み中...</div> }
+);
+
+// ==========================================
+// 3. メインコンポーネント (WorldSnap)
+// ==========================================
 export default function WorldSnapApp() {
-  const currentUserId = 'my_user_id';
-  const myFriendCode = 'WS-8823-X9';
+  // ユーザー・設定ステート
+  const [userCountry, setUserCountry] = useState<string>('JP');
+  const [userName, setUserName] = useState<string>('taku_snap');
+  const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
+  const [friendCode] = useState<string>('WS-8823-X9');
 
-  // State管理
-  const [activeTab, setActiveTab] = useState<ActiveTab>('map');
-  const [eulaAccepted, setEulaAccepted] = useState(true);
-  const [selectedCountry, setSelectedCountry] = useState<CountryConfig>(COUNTRIES[0]);
-  const [categoryMode, setCategoryMode] = useState<SpotCategory>('view');
-  const [visibilityMode, setVisibilityMode] = useState<VisibilityMode>('world');
+  // タブ・表示モード・公開範囲
+  const [currentTab, setCurrentTab] = useState<TabType>('map');
+  const [viewMode, setViewMode] = useState<ViewCategory>('view');
+  const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
+
+  // 地図状態
+  const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
+  const [mapCenter, setMapCenter] = useState<[number, number]>([currentConfig.lat, currentConfig.lon]);
+  const [mapZoom, setMapZoom] = useState<number>(currentConfig.zoom);
+
+  // コンテンツ・データステート
   const [spots, setSpots] = useState<Spot[]>(INITIAL_SPOTS);
-  const [friends, setFriends] = useState<Friend[]>(INITIAL_FRIENDS);
-  const [blockedUserIds, setBlockedUserIds] = useState<string[]>([]);
-  const [savedSpotIds, setSavedSpotIds] = useState<string[]>(['s1']);
-  const [profileSubTab, setProfileSubTab] = useState<ProfileSubTab>('posts');
+  const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
+  const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
+  const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
 
-  // モーダル・画面遷移
-  const [focusedSpot, setFocusedSpot] = useState<Spot | null>(null); // ピンタップ時のフルスクリーン詳細画面
-  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
-  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [friendInputCode, setFriendInputCode] = useState('');
+  // UGC・安全対策・設定モーダル
+  const [hasAgreedEULA, setHasAgreedEULA] = useState<boolean>(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
+  const [reportReason, setReportReason] = useState<string>('不適切な画像');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // マップDOM＆Leafletインスタンス参照
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-  const leafletMapRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-  const polylineRef = useRef<any>(null);
-  const feedScrollRef = useRef<HTMLDivElement>(null);
+  // アップロード・位置未設定ファイルキュー
+  const [unlocatedFiles, setUnlocatedFiles] = useState<PendingFile[]>([]);
+  const [currentPendingIndex, setCurrentPendingIndex] = useState<number>(0);
+  const [uploadCategory, setUploadCategory] = useState<ViewCategory>('view');
+  const [manualTitle, setManualTitle] = useState('');
+  const [manualLat, setManualLat] = useState('');
+  const [manualLon, setManualLon] = useState('');
 
-  // 表示スポットの絞り込み
-  const displaySpots = spots.filter((spot) => {
-    if (blockedUserIds.includes(spot.userId)) return false;
-    if (spot.category !== categoryMode) return false;
-    if (visibilityMode === 'my') return spot.userId === currentUserId;
-    return true;
-  });
+  // マイページ内サブタブ
+  const [profileSubTab, setProfileSubTab] = useState<'posts' | 'saved' | 'friends'>('posts');
+  const [friendsList, setFriendsList] = useState<{ id: string; name: string; avatar: string }[]>([
+    { id: 'user-yuki', name: 'Yuki_Traveler', avatar: '🌸' },
+    { id: 'user-ken', name: 'Ken_Gourmet', avatar: '☕' },
+  ]);
+  const [inputFriendCode, setInputFriendCode] = useState('');
 
-  const mySpots = spots.filter((s) => s.userId === currentUserId);
-  const savedSpots = spots.filter((s) => savedSpotIds.includes(s.id));
-  const visitedCount = new Set(mySpots.map((s) => s.country)).size;
-  const activeFriends = friends.filter((f) => f.status === 'friend');
+  const exportRef = useRef<HTMLDivElement>(null);
+  const t = currentConfig.dict;
 
+  // 国籍変更時の地図自動フォーカス
+  useEffect(() => {
+    const target = COUNTRIES[userCountry];
+    if (target) {
+      setMapCenter([target.lat, target.lon]);
+      setMapZoom(target.zoom);
+    }
+  }, [userCountry]);
+
+  // トースト通知表示関数
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const triggerHaptic = () => {
-    if (typeof window !== 'undefined' && 'vibrate' in navigator) {
-      navigator.vibrate(15);
+  // フィルタリング後のスポット一覧
+  const filteredSpots = spots.filter((s) => {
+    if (blockedUsers.includes(s.userId)) return false;
+    if (s.category !== viewMode) return false;
+    if (displayScope === 'my') return s.userId === 'me';
+    if (displayScope === 'friends') return s.userId === 'me' || friendsList.some((f) => f.id === s.userId);
+    return true;
+  });
+
+  // 訪問国数（ユニーク数）
+  const visitedCountryCount = new Set(spots.filter((s) => s.userId === 'me').map((s) => s.countryCode)).size;
+
+  // ダブルタップでの周辺ズームイン
+  const handleMapDoubleTap = (lat: number, lon: number) => {
+    setMapCenter([lat, lon]);
+    setMapZoom((prev) => Math.min(prev + 3, 14));
+  };
+
+  // 写真・動画のアップロード
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+
+    const EXIFModule = await import('exif-js');
+    const EXIF = EXIFModule.default || EXIFModule;
+
+    const files = Array.from(e.target.files);
+    const newSpots: Spot[] = [];
+    const pendingList: PendingFile[] = [];
+
+    for (const file of files) {
+      const fileUrl = URL.createObjectURL(file);
+      const isVideo = file.type.startsWith('video/');
+      const fileId = 'spot-' + Math.random().toString(36).substring(2, 9);
+
+      if (isVideo) {
+        pendingList.push({ id: fileId, file, fileUrl, fileType: 'video', dateTime: new Date().toLocaleDateString() });
+        continue;
+      }
+
+      await new Promise<void>((resolve) => {
+        EXIF.getData(file as any, function (this: any) {
+          const lat = EXIF.getTag(this, 'GPSLatitude');
+          const lon = EXIF.getTag(this, 'GPSLongitude');
+          const latRef = EXIF.getTag(this, 'GPSLatitudeRef');
+          const lonRef = EXIF.getTag(this, 'GPSLongitudeRef');
+
+          if (lat && lon) {
+            const latDecimal = convertDMSToDD(lat, latRef);
+            const lonDecimal = convertDMSToDD(lon, lonRef);
+            newSpots.push({
+              id: fileId,
+              userId: 'me',
+              userName,
+              title: file.name.replace(/\.[^/.]+$/, ''),
+              description: '旅の思い出',
+              fileName: file.name,
+              fileUrl,
+              fileType: 'image',
+              lat: latDecimal,
+              lon: lonDecimal,
+              countryCode: userCountry,
+              category: uploadCategory,
+              createdAt: new Date().toLocaleDateString(),
+            });
+          } else {
+            pendingList.push({ id: fileId, file, fileUrl, fileType: 'image', dateTime: new Date().toLocaleDateString() });
+          }
+          resolve();
+        });
+      });
+    }
+
+    if (newSpots.length > 0) {
+      setSpots((prev) => [...newSpots, ...prev]);
+      showToast(`📸 ${newSpots.length}件のスポットを追加しました`);
+    }
+    if (pendingList.length > 0) {
+      setUnlocatedFiles((prev) => [...prev, ...pendingList]);
+      setCurrentPendingIndex(0);
     }
   };
 
-  // ----------------------------------------------------------------------------
-  // Leaflet 地図初期化（世界全体広域ズーム ＆ ダブルタップ地域拡大）
-  // ----------------------------------------------------------------------------
-  useEffect(() => {
-    let isMounted = true;
+  // 手動で位置情報を割り当て
+  const handleAssignLocation = (latVal: number, lonVal: number, titleVal?: string) => {
+    if (unlocatedFiles.length === 0) return;
+    const current = unlocatedFiles[currentPendingIndex];
+    if (!current) return;
 
-    async function initMap() {
-      if (typeof window === 'undefined' || !mapContainerRef.current) return;
-      if (leafletMapRef.current) return;
-
-      if (!document.getElementById('leaflet-css')) {
-        const link = document.createElement('link');
-        link.id = 'leaflet-css';
-        link.rel = 'stylesheet';
-        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-        document.head.appendChild(link);
-      }
-
-      const L = (await import('leaflet')).default;
-      if (!isMounted || !mapContainerRef.current) return;
-
-      const map = L.map(mapContainerRef.current, {
-        center: [20, 0],
-        zoom: 2,
-        minZoom: 2,
-        maxZoom: 18,
-        zoomControl: false,
-        doubleClickZoom: false,
-      });
-
-      // ダブルタップでその地域付近へスムーズにズームアップ
-      map.on('dblclick', (e: any) => {
-        const nextZoom = Math.min(map.getZoom() + 4, 15);
-        map.flyTo(e.latlng, nextZoom, { duration: 0.8 });
-      });
-
-      leafletMapRef.current = map;
-    }
-
-    initMap();
-    return () => {
-      isMounted = false;
+    const newSpot: Spot = {
+      id: current.id,
+      userId: 'me',
+      userName,
+      title: titleVal || manualTitle || current.file.name,
+      description: '旅の思い出（手動設定）',
+      fileName: current.file.name,
+      fileUrl: current.fileUrl,
+      fileType: current.fileType,
+      lat: latVal,
+      lon: lonVal,
+      countryCode: userCountry,
+      category: uploadCategory,
+      createdAt: current.dateTime || new Date().toLocaleDateString(),
     };
-  }, []);
 
-  // ----------------------------------------------------------------------------
-  // マップタイル切り替え (3大モード連動) & 国籍フォーカス移動
-  // ----------------------------------------------------------------------------
-  useEffect(() => {
-    async function updateMapTiles() {
-      if (!leafletMapRef.current) return;
-      const L = (await import('leaflet')).default;
-      const map = leafletMapRef.current;
+    setSpots((prev) => [newSpot, ...prev]);
+    const rem = unlocatedFiles.filter((_, idx) => idx !== currentPendingIndex);
+    setUnlocatedFiles(rem);
+    setManualTitle('');
+    setManualLat('');
+    setManualLon('');
+    showToast('📍 スポットをマップに配置しました');
+  };
 
-      map.eachLayer((layer: any) => {
-        if (layer instanceof L.TileLayer) {
-          map.removeLayer(layer);
-        }
-      });
-
-      let tileUrl = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'; // View
-      if (categoryMode === 'gourmet') {
-        tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'; // グルメ
-      } else if (categoryMode === 'rainy') {
-        tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'; // 雨の日
-      }
-
-      L.tileLayer(tileUrl, { attribution: '&copy; OpenStreetMap &copy; CARTO' }).addTo(map);
-      map.flyTo(selectedCountry.coords, selectedCountry.zoom, { duration: 1.2 });
-    }
-
-    updateMapTiles();
-  }, [categoryMode, selectedCountry]);
-
-  // ----------------------------------------------------------------------------
-  // マーカー & アーク線（破線ルート）の再描画
-  // ----------------------------------------------------------------------------
-  useEffect(() => {
-    async function renderMarkers() {
-      if (!leafletMapRef.current) return;
-      const L = (await import('leaflet')).default;
-      const map = leafletMapRef.current;
-
-      markersRef.current.forEach((m) => map.removeLayer(m));
-      markersRef.current = [];
-      if (polylineRef.current) {
-        map.removeLayer(polylineRef.current);
-        polylineRef.current = null;
-      }
-
-      const borderColor =
-        categoryMode === 'view' ? '#0ea5e9' : categoryMode === 'gourmet' ? '#f59e0b' : '#a855f7';
-
-      displaySpots.forEach((spot) => {
-        const customIcon = L.divIcon({
-          className: 'custom-pin-wrapper',
-          html: `
-            <div style="width:44px; height:44px; border-radius:50%; border:3px solid ${borderColor}; box-shadow:0 6px 14px rgba(0,0,0,0.3); overflow:hidden; background:#fff; cursor:pointer; transform:scale(1); transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">
-              <img src="${spot.fileUrl}" style="width:100%; height:100%; object-fit:cover;" />
-            </div>
-            <div style="width:8px; height:8px; background:#1e293b; border-radius:50%; margin:-3px auto 0; box-shadow:0 2px 4px rgba(0,0,0,0.4);"></div>
-          `,
-          iconSize: [44, 48],
-          iconAnchor: [22, 48],
-        });
-
-        const marker = L.marker([spot.lat, spot.lng], { icon: customIcon }).addTo(map);
-
-        // ★ ピンを押した時：マップの表示を消して投稿画面（フルスクリーン）へとぶ
-        marker.on('click', () => {
-          triggerHaptic();
-          setFocusedSpot(spot);
-        });
-
-        markersRef.current.push(marker);
-      });
-
-      if (displaySpots.length > 1) {
-        const latlngs: [number, number][] = displaySpots.map((s) => [s.lat, s.lng]);
-        polylineRef.current = L.polyline(latlngs, {
-          color: borderColor,
-          weight: 3,
-          dashArray: '6, 8',
-          opacity: 0.85,
-        }).addTo(map);
-      }
-    }
-
-    renderMarkers();
-  }, [displaySpots, categoryMode]);
-
-  // ----------------------------------------------------------------------------
-  // マップ画像保存 (html2canvas)
-  // ----------------------------------------------------------------------------
-  const handleSaveMap = async () => {
+  // マップ画像保存 (PNG)
+  const handleExportMap = async () => {
+    if (!exportRef.current) return;
     try {
-      const html2canvas = (await import('html2canvas')).default;
-      if (!mapContainerRef.current) return;
-      const canvas = await html2canvas(mapContainerRef.current, { useCORS: true });
-      const link = document.createElement('a');
-      link.download = `WorldSnap_${selectedCountry.code}_${categoryMode}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      showToast('📸 マップ画像を保存しました！');
-    } catch {
-      alert('マップの保存に失敗しました');
+      const html2canvasModule = await import('html2canvas');
+      const html2canvas = html2canvasModule.default || html2canvasModule;
+      const canvas = await html2canvas(exportRef.current, { useCORS: true, scale: 2 });
+      const img = canvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = img;
+      a.download = `WorldSnap-${userCountry}.png`;
+      a.click();
+      showToast('💾 マップ画像を保存しました');
+    } catch (e) {
+      showToast('❌ 保存に失敗しました');
     }
   };
 
-  // ----------------------------------------------------------------------------
-  // ボトムナビゲーション タップ＆リタップギミック
-  // ----------------------------------------------------------------------------
-  const handleTabClick = (tab: ActiveTab) => {
-    triggerHaptic();
-    setFocusedSpot(null); // タブ切り替え時は投稿画面から復帰
-
-    if (activeTab === tab) {
-      if (tab === 'home' && feedScrollRef.current) {
-        feedScrollRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-        showToast('🔄 タイムラインを更新しました');
-      } else if (tab === 'map' && leafletMapRef.current) {
-        leafletMapRef.current.flyTo(selectedCountry.coords, selectedCountry.zoom, { duration: 1 });
-      }
+  // ブックマーク（行きたい保存）
+  const toggleSaveSpot = (spotId: string) => {
+    if (savedSpotIds.includes(spotId)) {
+      setSavedSpotIds((prev) => prev.filter((id) => id !== spotId));
+      showToast('行きたいリストから解除しました');
     } else {
-      setActiveTab(tab);
+      setSavedSpotIds((prev) => [...prev, spotId]);
+      showToast('💛 行きたいリストに保存しました！');
     }
   };
 
-  const handleMapLongPress = () => {
-    triggerHaptic();
-    if (navigator.geolocation && leafletMapRef.current) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          leafletMapRef.current.flyTo([pos.coords.latitude, pos.coords.longitude], 12, { duration: 1.5 });
-          showToast('📍 現在地に移動しました');
-        },
-        () => showToast('位置情報の取得に失敗しました')
-      );
+  // ユーザーブロック
+  const handleBlockUser = (userId: string) => {
+    if (confirm('このユーザーをブロックしますか？\n相手の投稿がすべて非表示になります。')) {
+      setBlockedUsers((prev) => [...prev, userId]);
+      setSelectedSpot(null);
+      showToast('🚫 ユーザーをブロックしました');
     }
   };
+
+  // 投稿通報
+  const handleSubmitReport = () => {
+    setIsReportModalOpen(false);
+    showToast('✅ 通報を受け付けました。調査いたします。');
+  };
+
+  // 自分の投稿削除
+  const handleDeleteSpot = (spotId: string) => {
+    if (confirm('このピンを削除しますか？')) {
+      setSpots((prev) => prev.filter((s) => s.id !== spotId));
+      setSelectedSpot(null);
+      showToast('🗑️ ピンを削除しました');
+    }
+  };
+
+  // テーマ別スタイル
+  const themeBg = viewMode === 'rain' ? '#0a0f1d' : viewMode === 'gourmet' ? '#fff7ed' : '#f8fafc';
+  const themeCard = viewMode === 'rain' ? '#131c31' : '#ffffff';
+  const themeText = viewMode === 'rain' ? '#f8fafc' : '#0f172a';
+  const themeSubText = viewMode === 'rain' ? '#94a3b8' : '#64748b';
+  const themeAccent = viewMode === 'rain' ? '#38bdf8' : viewMode === 'gourmet' ? '#ea580c' : '#0284c7';
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-slate-950 overflow-hidden font-sans select-none text-slate-800 relative">
-      {/* トースト通知 */}
+    <div style={{ background: themeBg, color: themeText, minHeight: '100vh', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', paddingBottom: '90px' }}>
+      {/* ── トースト通知 ── */}
       {toastMessage && (
-        <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 backdrop-blur-md text-white px-4 py-2 rounded-full text-xs font-semibold shadow-2xl border border-slate-700 animate-bounce">
+        <div style={{ position: 'fixed', top: '16px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,23,42,0.92)', color: '#fff', padding: '10px 20px', borderRadius: '30px', zIndex: 9999, fontSize: '13px', fontWeight: 'bold', boxShadow: '0 8px 24px rgba(0,0,0,0.3)', backdropFilter: 'blur(6px)' }}>
           {toastMessage}
         </div>
       )}
 
-      {/* ヘッダー */}
-      <header className="h-14 bg-white/95 backdrop-blur-md border-b flex items-center justify-between px-4 z-20 shadow-xs shrink-0">
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => setIsSettingsModalOpen(true)}
-            className="p-1.5 text-gray-700 hover:bg-gray-100 rounded-lg text-lg"
-          >
-            ☰
-          </button>
-          <span className="font-black text-lg tracking-tight bg-gradient-to-r from-indigo-600 to-sky-500 bg-clip-text text-transparent">
-            🗺️ WorldSnap
-          </span>
-        </div>
-
-        <div className="flex items-center space-x-3 text-xs">
-          <div className="bg-indigo-50 border border-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-bold">
-            {selectedCountry.dict.visited}: {visitedCount} {selectedCountry.dict.countries}
-          </div>
-          <button
-            onClick={() => handleTabClick('profile')}
-            className="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center font-bold text-xs shadow active:scale-95 transition"
-          >
-            Me
-          </button>
-        </div>
-      </header>
-
-      {/* 国籍フォーカス & 3大モード & 表示対象切替バー (マップ表示時のみ) */}
-      {!focusedSpot && activeTab === 'map' && (
-        <div className="bg-white/90 backdrop-blur-md px-4 py-2 border-b z-20 flex flex-wrap items-center justify-between gap-2 text-xs shrink-0 animate-in fade-in">
-          {/* 国籍選択 */}
-          <select
-            value={selectedCountry.code}
-            onChange={(e) => {
-              const c = COUNTRIES.find((item) => item.code === e.target.value);
-              if (c) setSelectedCountry(c);
-            }}
-            className="font-semibold bg-gray-100 border-0 rounded-lg px-2.5 py-1.5 focus:ring-2 focus:ring-indigo-500"
-          >
-            {COUNTRIES.map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.flag} {c.nativeName} ({c.name})
-              </option>
-            ))}
-          </select>
-
-          {/* 3つの表示モード */}
-          <div className="flex bg-gray-200/80 p-0.5 rounded-lg font-bold">
-            <button
-              onClick={() => {
-                triggerHaptic();
-                setCategoryMode('view');
-              }}
-              className={`px-3 py-1 rounded-md transition ${categoryMode === 'view' ? 'bg-sky-500 text-white shadow-xs' : 'text-gray-600'}`}
-            >
-              🏔️ {selectedCountry.dict.viewMode}
-            </button>
-            <button
-              onClick={() => {
-                triggerHaptic();
-                setCategoryMode('gourmet');
-              }}
-              className={`px-3 py-1 rounded-md transition ${categoryMode === 'gourmet' ? 'bg-amber-500 text-white shadow-xs' : 'text-gray-600'}`}
-            >
-              🍔 {selectedCountry.dict.gourmetMode}
-            </button>
-            <button
-              onClick={() => {
-                triggerHaptic();
-                setCategoryMode('rainy');
-              }}
-              className={`px-3 py-1 rounded-md transition ${categoryMode === 'rainy' ? 'bg-slate-800 text-white shadow-xs' : 'text-gray-600'}`}
-            >
-              🌧️ {selectedCountry.dict.rainyMode}
-            </button>
-          </div>
-
-          {/* 表示対象切替 */}
-          <div className="flex bg-gray-100 p-0.5 rounded-lg font-semibold text-gray-600">
-            <button
-              onClick={() => setVisibilityMode('world')}
-              className={`px-2.5 py-1 rounded ${visibilityMode === 'world' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
-            >
-              🌐 ワールド
-            </button>
-            <button
-              onClick={() => setVisibilityMode('friends')}
-              className={`px-2.5 py-1 rounded ${visibilityMode === 'friends' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
-            >
-              👥 フレンド
-            </button>
-            <button
-              onClick={() => setVisibilityMode('my')}
-              className={`px-2.5 py-1 rounded ${visibilityMode === 'my' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
-            >
-              🔒 マイ
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* メインコンテンツエリア */}
-      <div className="flex-1 relative overflow-hidden">
-        {/* ★ 1. ピンを押した時の全画面・投稿詳細スクリーン (マップを隠して遷移) */}
-        {focusedSpot ? (
-          <FullSpotDetailView
-            spot={focusedSpot}
-            currentUserId={currentUserId}
-            isBookmarked={savedSpotIds.includes(focusedSpot.id)}
-            onBack={() => setFocusedSpot(null)}
-            onToggleBookmark={() => {
-              triggerHaptic();
-              const isSaved = savedSpotIds.includes(focusedSpot.id);
-              setSavedSpotIds((prev) =>
-                isSaved ? prev.filter((id) => id !== focusedSpot.id) : [...prev, focusedSpot.id]
-              );
-              showToast(isSaved ? 'ブックマークを解除しました' : '💛 行きたいリストに保存しました！');
-            }}
-            onReport={() => setIsReportModalOpen(true)}
-            onBlockUser={(targetUserId) => {
-              if (confirm('このユーザーをブロックしますか？相手の投稿がすべて非表示になります。')) {
-                setBlockedUserIds((prev) => [...prev, targetUserId]);
-                setFocusedSpot(null);
-                showToast('🚫 ユーザーをブロックしました');
-              }
-            }}
-            onDeleteSpot={(spotId) => {
-              if (confirm('このピンを完全に削除しますか？')) {
-                setSpots((prev) => prev.filter((s) => s.id !== spotId));
-                setFocusedSpot(null);
-                showToast('🗑️ ピンを削除しました');
-              }
-            }}
-          />
-        ) : (
-          <>
-            {/* 2. 地図画面 (メモリ保持) */}
-            <div className={`w-full h-full ${activeTab === 'map' ? 'block' : 'hidden'}`}>
-              <div ref={mapContainerRef} className="w-full h-full" />
-
-              {/* フローティングアクションボタン */}
-              <div className="absolute right-4 bottom-28 z-20 flex flex-col space-y-3">
-                <button
-                  onClick={handleSaveMap}
-                  className="w-12 h-12 bg-white text-gray-800 rounded-full shadow-xl flex items-center justify-center font-bold hover:bg-gray-50 active:scale-95 transition border"
-                  title={selectedCountry.dict.saveMap}
-                >
-                  💾
-                </button>
-                <button
-                  onClick={() => setIsPostModalOpen(true)}
-                  className="px-4 py-3 bg-gradient-to-r from-indigo-600 to-sky-500 text-white rounded-full shadow-xl flex items-center gap-2 font-bold hover:opacity-95 active:scale-95 transition text-xs"
-                >
-                  📷＋ {selectedCountry.dict.addPhoto}
-                </button>
-              </div>
-            </div>
-
-            {/* 3. ホーム（タイムライン・フィード） */}
-            {activeTab === 'home' && (
-              <div ref={feedScrollRef} className="w-full h-full bg-slate-50 overflow-y-auto p-4 space-y-4 pb-28">
-                <h2 className="font-extrabold text-base text-slate-800">✨ 世界の最新フォトジャーナル</h2>
-                {displaySpots.map((spot) => (
-                  <div
-                    key={spot.id}
-                    onClick={() => {
-                      triggerHaptic();
-                      setFocusedSpot(spot);
-                    }}
-                    className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 cursor-pointer active:scale-98 transition"
-                  >
-                    <div className="aspect-16/9 bg-slate-900 relative">
-                      <img src={spot.fileUrl} alt={spot.title} className="w-full h-full object-cover" />
-                      <span className="absolute top-2 left-2 px-2.5 py-1 bg-black/60 text-white text-[10px] font-bold rounded-full backdrop-blur-xs">
-                        {spot.country} {spot.countryFlag}
-                      </span>
-                    </div>
-                    <div className="p-3.5 space-y-1">
-                      <h3 className="font-bold text-sm text-slate-900">{spot.title}</h3>
-                      <p className="text-xs text-slate-500 line-clamp-2">{spot.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* 4. 👤 マイページ画面（完全仕様） */}
-            {activeTab === 'profile' && (
-              <div className="w-full h-full bg-slate-50 overflow-y-auto p-4 pb-28 space-y-4">
-                {/* プロフィールヘッダー */}
-                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 text-white flex items-center justify-center font-extrabold text-lg shadow-md">
-                        Me
-                      </div>
-                      <div>
-                        <h3 className="font-extrabold text-base text-slate-900">MyTraveler (@taku_snap)</h3>
-                        <p className="text-xs text-slate-500">世界中を旅して記録中 🌏✈️</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setIsSettingsModalOpen(true)}
-                      className="p-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl text-xs font-bold"
-                    >
-                      ⚙️ 設定
-                    </button>
-                  </div>
-
-                  {/* 投稿・訪問国・フレンドカウンター */}
-                  <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl text-center text-xs font-bold text-slate-700">
-                    <div>
-                      <span className="text-[10px] text-slate-400 block font-normal">📸 投稿</span>
-                      {mySpots.length}
-                    </div>
-                    <div className="border-x border-slate-200">
-                      <span className="text-[10px] text-slate-400 block font-normal">🗺️ 訪問国</span>
-                      {visitedCount} カ国
-                    </div>
-                    <div>
-                      <span className="text-[10px] text-slate-400 block font-normal">👥 フレンド</span>
-                      {activeFriends.length} 人
-                    </div>
-                  </div>
-
-                  {/* 🆔 フレンドコードバナー */}
-                  <div className="p-3 bg-gradient-to-r from-indigo-50 to-sky-50 border border-indigo-100 rounded-xl flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] text-indigo-500 font-bold block">🆔 マイ フレンドコード</span>
-                      <span className="font-mono font-extrabold text-xs text-indigo-900">{myFriendCode}</span>
-                    </div>
-                    <div className="flex space-x-1.5">
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(myFriendCode);
-                          showToast('📋 フレンドコードをコピーしました！');
-                        }}
-                        className="px-2.5 py-1.5 bg-white text-indigo-600 rounded-lg text-xs font-bold border shadow-2xs hover:bg-indigo-50"
-                      >
-                        コピー
-                      </button>
-                      <button
-                        onClick={() => setIsQrModalOpen(true)}
-                        className="px-2.5 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold shadow-2xs hover:bg-indigo-700"
-                      >
-                        QR表示
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* マイページ内 サブタブ ([📸 記録] [💛 保存] [👥 フレンド]) */}
-                <div className="flex bg-slate-200/80 p-1 rounded-xl text-xs font-bold text-slate-600">
-                  <button
-                    onClick={() => setProfileSubTab('posts')}
-                    className={`flex-1 py-2 rounded-lg transition ${profileSubTab === 'posts' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
-                  >
-                    📸 記録
-                  </button>
-                  <button
-                    onClick={() => setProfileSubTab('saved')}
-                    className={`flex-1 py-2 rounded-lg transition ${profileSubTab === 'saved' ? 'bg-white text-rose-500 shadow-xs' : ''}`}
-                  >
-                    💛 保存
-                  </button>
-                  <button
-                    onClick={() => setProfileSubTab('friends')}
-                    className={`flex-1 py-2 rounded-lg transition ${profileSubTab === 'friends' ? 'bg-white text-indigo-600 shadow-xs' : ''}`}
-                  >
-                    👥 フレンド
-                  </button>
-                </div>
-
-                {/* 1. 記録タブ */}
-                {profileSubTab === 'posts' && (
-                  <div className="grid grid-cols-2 gap-3">
-                    {mySpots.map((spot) => (
-                      <div
-                        key={spot.id}
-                        onClick={() => {
-                          triggerHaptic();
-                          setFocusedSpot(spot);
-                        }}
-                        className="bg-white rounded-xl overflow-hidden shadow-2xs border border-slate-100 cursor-pointer group"
-                      >
-                        <div className="aspect-4/3 bg-slate-900 relative">
-                          <img src={spot.fileUrl} alt={spot.title} className="w-full h-full object-cover group-hover:scale-105 transition" />
-                          <span className="absolute bottom-1 right-1 text-xs">{spot.countryFlag}</span>
-                        </div>
-                        <div className="p-2">
-                          <p className="text-xs font-bold text-slate-800 truncate">{spot.title}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* 2. 保存タブ */}
-                {profileSubTab === 'saved' && (
-                  <div className="space-y-2">
-                    {savedSpots.length === 0 ? (
-                      <p className="text-center text-xs text-slate-400 py-10">まだ保存されたスポットがありません 💛</p>
-                    ) : (
-                      savedSpots.map((spot) => (
-                        <div
-                          key={spot.id}
-                          onClick={() => {
-                            triggerHaptic();
-                            setFocusedSpot(spot);
-                          }}
-                          className="bg-white p-3 rounded-xl border border-slate-100 shadow-2xs flex items-center justify-between cursor-pointer"
-                        >
-                          <div className="flex items-center space-x-3">
-                            <img src={spot.fileUrl} alt={spot.title} className="w-12 h-12 rounded-lg object-cover" />
-                            <div>
-                              <p className="text-xs font-bold text-slate-800">{spot.title}</p>
-                              <p className="text-[10px] text-slate-400">📍 {spot.country} {spot.countryFlag}</p>
-                            </div>
-                          </div>
-                          <span className="text-rose-500 text-sm">💛</span>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                )}
-
-                {/* 3. フレンドタブ */}
-                {profileSubTab === 'friends' && (
-                  <div className="space-y-4 text-xs">
-                    {/* フレンド追加入力 */}
-                    <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-2xs space-y-2">
-                      <h4 className="font-bold text-slate-900">➕ 友達を追加する</h4>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          placeholder="相手のフレンドコード (例: WS-1122-CH)"
-                          value={friendInputCode}
-                          onChange={(e) => setFriendInputCode(e.target.value)}
-                          className="flex-1 p-2 border rounded-lg uppercase font-mono text-xs"
-                        />
-                        <button
-                          onClick={() => {
-                            if (!friendInputCode) return;
-                            setFriends((prev) => [
-                              ...prev,
-                              { id: Date.now().toString(), name: `Traveler_${friendInputCode.slice(-4)}`, code: friendInputCode, avatar: '✈️', visitedCountries: 1, status: 'friend' },
-                            ]);
-                            setFriendInputCode('');
-                            showToast('🎉 フレンドを追加しました！');
-                          }}
-                          className="px-3 bg-indigo-600 text-white rounded-lg font-bold shrink-0"
-                        >
-                          申請/追加
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* フレンド一覧 */}
-                    <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-2xs space-y-2">
-                      <h4 className="font-bold text-slate-900">👥 相互フォロー中の友達 ({activeFriends.length})</h4>
-                      <div className="space-y-2">
-                        {activeFriends.map((f) => (
-                          <div key={f.id} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
-                            <div className="flex items-center space-x-2">
-                              <span className="text-lg">{f.avatar}</span>
-                              <div>
-                                <span className="font-bold text-slate-800 block">{f.name}</span>
-                                <span className="text-[10px] text-slate-400 font-mono">{f.code} · {f.visitedCountries}カ国訪問</span>
-                              </div>
-                            </div>
-                            <button
-                              onClick={() => {
-                                handleTabClick('map');
-                                setVisibilityMode('friends');
-                                showToast(`🗺️ ${f.name} のマップにフォーカスしました`);
-                              }}
-                              className="px-2.5 py-1 bg-white border border-slate-200 text-indigo-600 rounded-md font-bold text-[11px] hover:bg-indigo-50"
-                            >
-                              マップを見る
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* 📢 目立たない広告バナー枠（最下部に配置） */}
-            <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-20 w-[92%] max-w-md bg-white/85 hover:bg-white backdrop-blur-md border border-slate-200/80 rounded-xl px-3 py-1.5 shadow-md flex items-center justify-between text-[11px] text-slate-600 transition">
-              <div className="flex items-center gap-2 overflow-hidden">
-                <span className="bg-slate-200 text-slate-600 font-bold px-1.5 py-0.5 rounded text-[9px]">PR</span>
-                <span className="truncate font-medium">🏨 次の旅をお得に予約｜厳選ホテル・航空券比較</span>
-              </div>
-              <button
-                onClick={() => window.open('https://www.google.com/travel', '_blank')}
-                className="text-indigo-600 font-bold hover:underline shrink-0 ml-2"
-              >
-                見る ›
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* ==================================================================== */}
-      {/* 📱 ボトムナビゲーション (ホーム / マップ / マイページ) */}
-      {/* ==================================================================== */}
-      <nav className="h-14 bg-white border-t flex items-center justify-around z-30 text-gray-500 text-xs shrink-0 shadow-lg relative">
-        <button
-          onClick={() => handleTabClick('home')}
-          className={`flex-1 py-1 flex flex-col items-center gap-0.5 transition-transform duration-150 active:scale-90 ${
-            activeTab === 'home' && !focusedSpot ? 'text-indigo-600 font-bold scale-105' : 'text-slate-400'
-          }`}
-        >
-          <span className="text-base">🏠</span> ホーム
-        </button>
-
-        <button
-          onClick={() => handleTabClick('map')}
-          onContextMenu={(e) => {
-            e.preventDefault();
-            handleMapLongPress();
-          }}
-          className={`flex-1 py-1 flex flex-col items-center gap-0.5 transition-transform duration-150 active:scale-90 ${
-            activeTab === 'map' && !focusedSpot ? 'text-indigo-600 font-bold scale-105' : 'text-slate-400'
-          }`}
-        >
-          <span className="text-base">🗺️</span> マップ
-        </button>
-
-        <button
-          onClick={() => handleTabClick('profile')}
-          className={`flex-1 py-1 flex flex-col items-center gap-0.5 transition-transform duration-150 active:scale-90 ${
-            activeTab === 'profile' && !focusedSpot ? 'text-indigo-600 font-bold scale-105' : 'text-slate-400'
-          }`}
-        >
-          <span className="text-base">👤</span> マイページ
-        </button>
-      </nav>
-
-      {/* ==================================================================== */}
-      {/* モーダル群 (設定 / QRコード / EULA / 投稿 / 通報) */}
-      {/* ==================================================================== */}
-
-      {/* ⚙️ 設定画面モーダル（完全版仕様） */}
-      {isSettingsModalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in"
-          onClick={() => setIsSettingsModalOpen(false)}
-        >
-          <div
-            className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-xs max-h-[85vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center border-b pb-2">
-              <h3 className="font-extrabold text-sm text-slate-900 flex items-center gap-1.5">
-                ⚙️ 設定 (Settings)
-              </h3>
-              <button
-                onClick={() => setIsSettingsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 font-bold text-sm"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* ▼ アカウント設定 */}
-            <div className="space-y-2">
-              <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">▼ アカウント設定</span>
-              <div className="p-2.5 bg-slate-50 rounded-xl space-y-2">
-                <div className="flex justify-between items-center cursor-pointer hover:text-indigo-600">
-                  <span>👤 プロフィール編集（表示名・紹介文）</span>
-                  <span className="text-slate-400 font-bold">›</span>
-                </div>
-                <div className="flex justify-between items-center cursor-pointer hover:text-indigo-600 border-t pt-1.5 border-slate-200">
-                  <span>🌐 言語 / 国籍の初期設定</span>
-                  <span className="font-semibold text-slate-500">日本語 (JP)</span>
-                </div>
-                <div className="flex justify-between items-center cursor-pointer hover:text-indigo-600 border-t pt-1.5 border-slate-200">
-                  <span>🔒 公開範囲の初期値</span>
-                  <span className="font-semibold text-slate-500">ワールド</span>
-                </div>
-              </div>
-            </div>
-
-            {/* ▼ マップ・表示カスタマイズ */}
-            <div className="space-y-2">
-              <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">▼ マップ・表示カスタマイズ</span>
-              <div className="p-2.5 bg-slate-50 rounded-xl space-y-2">
-                <div className="flex justify-between items-center">
-                  <span>🗺️ デフォルトの地図スタイル</span>
-                  <span className="font-semibold text-sky-600">View</span>
-                </div>
-                <div className="flex justify-between items-center border-t pt-1.5 border-slate-200">
-                  <span>📏 距離単位の切り替え</span>
-                  <span className="font-semibold text-slate-500">km (キロメートル)</span>
-                </div>
-                <div
-                  onClick={() => showToast('🧹 地図キャッシュをクリアしました')}
-                  className="flex justify-between items-center border-t pt-1.5 border-slate-200 cursor-pointer text-indigo-600 font-bold hover:underline"
-                >
-                  <span>🧹 地図キャッシュのクリア</span>
-                  <span>実行</span>
-                </div>
-              </div>
-            </div>
-
-            {/* ▼ プライバシー & UGC安全対策【審査必須】 */}
-            <div className="space-y-2">
-              <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">▼ プライバシー & UGC安全対策</span>
-              <div className="p-2.5 bg-slate-50 rounded-xl space-y-2">
-                <div
-                  onClick={() => {
-                    setBlockedUserIds([]);
-                    showToast('ブロックリストをリセットしました');
-                  }}
-                  className="flex justify-between items-center cursor-pointer hover:text-indigo-600"
-                >
-                  <span>🚫 ブロック中ユーザーの管理</span>
-                  <span className="font-bold text-slate-400">{blockedUserIds.length}人 ›</span>
-                </div>
-                <div
-                  onClick={() => {
-                    setIsSettingsModalOpen(false);
-                    setEulaAccepted(false);
-                  }}
-                  className="flex justify-between items-center border-t pt-1.5 border-slate-200 cursor-pointer text-indigo-600 font-bold hover:underline"
-                >
-                  <span>📜 利用規約 (EULA) の確認</span>
-                  <span>開く</span>
-                </div>
-                <div
-                  onClick={() => showToast('プライバシーポリシーは最新です')}
-                  className="flex justify-between items-center border-t pt-1.5 border-slate-200 cursor-pointer text-indigo-600 font-bold hover:underline"
-                >
-                  <span>🛡️ プライバシーポリシー</span>
-                  <span>開く</span>
-                </div>
-              </div>
-            </div>
-
-            {/* ▼ サポート & その他 */}
-            <div className="space-y-2">
-              <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">▼ サポート & その他</span>
-              <div className="p-2.5 bg-slate-50 rounded-xl space-y-2">
-                <div
-                  onClick={() => showToast('お問い合わせフォームを開きました')}
-                  className="flex justify-between items-center cursor-pointer hover:text-indigo-600"
-                >
-                  <span>💬 ご意見・不具合の報告</span>
-                  <span className="text-slate-400 font-bold">›</span>
-                </div>
-                <div
-                  onClick={() => showToast('⭐ レビューありがとうございます！')}
-                  className="flex justify-between items-center border-t pt-1.5 border-slate-200 cursor-pointer hover:text-indigo-600"
-                >
-                  <span>⭐ アプリを評価する</span>
-                  <span className="text-slate-400 font-bold">›</span>
-                </div>
-                <div className="flex justify-between items-center border-t pt-1.5 border-slate-200 text-slate-400">
-                  <span>ℹ️ アプリバージョン</span>
-                  <span className="font-mono">v1.0.0 (Build 2026)</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 🚪 ログアウト & ⚠️ アカウント削除 (Apple審査必須要件) */}
-            <div className="pt-2 border-t border-slate-200 space-y-2">
-              <button
-                onClick={() => {
-                  showToast('ログアウトしました');
-                  setIsSettingsModalOpen(false);
-                }}
-                className="w-full py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition"
-              >
-                🚪 ログアウト
-              </button>
-              <button
-                onClick={() => {
-                  if (confirm('【警告】アカウントおよびすべての投稿データ、保存リストを完全に削除しますか？この操作は取り消せません。')) {
-                    setSpots((prev) => prev.filter((s) => s.userId !== currentUserId));
-                    setSavedSpotIds([]);
-                    setIsSettingsModalOpen(false);
-                    showToast('⚠️ アカウントと全データを完全に削除しました');
-                  }
-                }}
-                className="w-full py-2.5 bg-red-50 text-red-600 font-bold rounded-xl border border-red-200 hover:bg-red-100 transition"
-              >
-                ⚠️ アカウントの削除（退会処理）
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* QRコードモーダル */}
-      {isQrModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs" onClick={() => setIsQrModalOpen(false)}>
-          <div className="bg-white rounded-2xl max-w-xs w-full p-6 text-center space-y-4 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <h4 className="font-bold text-slate-900 text-sm">📱 マイQRコード</h4>
-            <div className="w-44 h-44 bg-slate-100 border-2 border-dashed border-indigo-300 rounded-xl mx-auto flex items-center justify-center font-mono text-xs text-indigo-600 font-bold p-4">
-              [QR CODE: {myFriendCode}]
-            </div>
-            <p className="text-xs text-slate-500 font-mono font-bold">{myFriendCode}</p>
-            <button onClick={() => setIsQrModalOpen(false)} className="w-full py-2 bg-indigo-600 text-white rounded-xl font-bold text-xs">
-              閉じる
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* EULA規約同意ダイアログ */}
-      {!eulaAccepted && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
-            <h3 className="font-bold text-lg text-indigo-600">🛡️ 利用規約 (EULA) への同意</h3>
-            <p className="text-xs text-gray-600 leading-relaxed">
-              WorldSnapでは安心・安全な旅行コミュニティのため、不快なコンテンツ・誹謗中傷・ハラスメントを固く禁止しています。違反した場合はアカウントが即座に停止されます。
+      {/* ── 初回EULA同意モーダル ── */}
+      {!hasAgreedEULA && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ background: '#1e293b', color: '#fff', padding: '24px', borderRadius: '20px', maxWidth: '440px', width: '100%' }}>
+            <h2 style={{ margin: '0 0 12px 0', fontSize: '18px', color: '#38bdf8' }}>利用規約 (EULA) の同意</h2>
+            <p style={{ fontSize: '13px', color: '#cbd5e1', lineHeight: '1.6' }}>
+              WorldSnapでは、嫌がらせ、誹謗中傷、不適切な写真・動画の投稿を固く禁じています。違反者は即時アカウント停止となります。
             </p>
-            <button
-              onClick={() => setEulaAccepted(true)}
-              className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm shadow-md"
-            >
+            <button onClick={() => setHasAgreedEULA(true)} style={{ width: '100%', marginTop: '16px', padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
               利用規約に同意して始める
             </button>
           </div>
         </div>
       )}
 
-      {/* 写真投稿モーダル */}
-      {isPostModalOpen && (
-        <PostUploadModal
-          onClose={() => setIsPostModalOpen(false)}
-          onSubmit={(newSpotData) => {
-            const newSpot: Spot = {
-              id: Date.now().toString(),
-              userId: currentUserId,
-              userName: 'MyTraveler',
-              ...newSpotData,
-            };
-            setSpots((prev) => [newSpot, ...prev]);
-            setIsPostModalOpen(false);
-            showToast('📍 新しい思い出をピン留めしました！');
+      {/* ── ヘッダー ── */}
+      <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px', background: themeCard, borderBottom: '1px solid rgba(0,0,0,0.06)', position: 'sticky', top: 0, zIndex: 100 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '20px' }}>🗺️</span>
+          <h1 style={{ margin: 0, fontSize: '20px', fontWeight: '900', color: themeAccent, letterSpacing: '-0.5px' }}>WorldSnap</h1>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '20px', cursor: 'pointer', padding: '6px' }}>
+            ⚙️
+          </button>
+        </div>
+      </header>
+
+      {/* ── メインコンテンツ ── */}
+      <main style={{ maxWidth: '960px', margin: '0 auto', padding: '16px 14px' }}>
+        {/* ==================================================== */}
+        {/* TAB 1: 🗺️ メインマップ画面 */}
+        {/* ==================================================== */}
+        {currentTab === 'map' && (
+          <div>
+            {/* ユーザー＆国籍・言語フォーカスバナー */}
+            <section style={{ marginBottom: '14px', padding: '14px 18px', background: themeCard, borderRadius: '16px', boxShadow: '0 2px 10px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: themeAccent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                  👤
+                </div>
+                <div>
+                  <div style={{ fontWeight: 'bold', fontSize: '15px' }}>{userName}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                    <span style={{ fontSize: '12px', color: themeSubText }}>フォーカス:</span>
+                    <select
+                      value={userCountry}
+                      onChange={(e) => setUserCountry(e.target.value)}
+                      style={{ background: 'transparent', color: themeText, border: '1px solid rgba(128,128,128,0.3)', borderRadius: '6px', padding: '2px 6px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+                    >
+                      {Object.entries(COUNTRIES).map(([code, c]) => (
+                        <option key={code} value={code} style={{ background: '#1e293b', color: '#fff' }}>
+                          {c.flag} {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '11px', color: themeSubText }}>{t.visited}</div>
+                <div style={{ fontSize: '20px', fontWeight: '900', color: themeAccent }}>
+                  {visitedCountryCount} <span style={{ fontSize: '12px', color: themeSubText }}>{t.countriesUnit}</span>
+                </div>
+              </div>
+            </section>
+
+            {/* モード切替タブ (View / グルメ / 雨の日) & 公開スコープ */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', background: themeCard, padding: '4px', borderRadius: '30px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                {(['view', 'gourmet', 'rain'] as const).map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => setViewMode(m)}
+                    style={{
+                      padding: '6px 14px',
+                      borderRadius: '20px',
+                      border: 'none',
+                      background: viewMode === m ? themeAccent : 'transparent',
+                      color: viewMode === m ? '#fff' : themeSubText,
+                      fontWeight: 'bold',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      transition: '0.2s ease',
+                    }}
+                  >
+                    {m === 'view' ? `🏔️ ${t.view}` : m === 'gourmet' ? `🍔 ${t.gourmet}` : `🌧️ ${t.rain}`}
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ display: 'flex', background: themeCard, padding: '4px', borderRadius: '30px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                {(['world', 'friends', 'my'] as const).map((scope) => (
+                  <button
+                    key={scope}
+                    onClick={() => setDisplayScope(scope)}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '20px',
+                      border: 'none',
+                      background: displayScope === scope ? (viewMode === 'rain' ? '#334155' : '#0f172a') : 'transparent',
+                      color: displayScope === scope ? '#fff' : themeSubText,
+                      fontWeight: 'bold',
+                      fontSize: '11px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {scope === 'world' ? '🌐 全体' : scope === 'friends' ? '👥 フレンド' : '👤 自分'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* インタラクティブ・マップ本体 */}
+            <div ref={exportRef} style={{ position: 'relative', height: '500px', borderRadius: '20px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.12)' }}>
+              <MapComponent
+                spots={filteredSpots}
+                center={mapCenter}
+                zoom={mapZoom}
+                mode={viewMode}
+                onSelectSpot={setSelectedSpot}
+                onDoubleTap={handleMapDoubleTap}
+              />
+
+              {/* 地図上のフローティング操作ボタン */}
+              <div style={{ position: 'absolute', bottom: '20px', right: '16px', zIndex: 400, display: 'flex', gap: '10px' }}>
+                <label
+                  style={{
+                    padding: '10px 18px',
+                    background: themeAccent,
+                    color: '#fff',
+                    borderRadius: '30px',
+                    fontWeight: 'bold',
+                    fontSize: '13px',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  <span>📷＋</span>
+                  <span>{t.addPhoto}</span>
+                  <input type="file" accept="image/*,video/*" multiple onChange={handlePhotoUpload} style={{ display: 'none' }} />
+                </label>
+
+                <button
+                  onClick={handleExportMap}
+                  style={{
+                    padding: '10px 16px',
+                    background: '#0f172a',
+                    color: '#fff',
+                    borderRadius: '30px',
+                    fontWeight: 'bold',
+                    fontSize: '13px',
+                    border: 'none',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.25)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  💾 {t.exportMap}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================== */}
+        {/* TAB 2: 🏠 おすすめ旅フィード */}
+        {/* ==================================================== */}
+        {currentTab === 'home' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h2 style={{ fontSize: '18px', margin: '0 0 4px 0' }}>✨ おすすめ旅フィード</h2>
+            {spots.map((spot) => (
+              <div
+                key={spot.id}
+                onClick={() => setSelectedSpot(spot)}
+                style={{
+                  background: themeCard,
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
+                  cursor: 'pointer',
+                }}
+              >
+                <div style={{ height: '220px', background: '#000' }}>
+                  <img src={spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div style={{ padding: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 'bold', color: themeAccent }}>📍 {COUNTRIES[spot.countryCode]?.flag} {spot.title}</span>
+                    <span style={{ fontSize: '11px', color: themeSubText }}>{spot.createdAt}</span>
+                  </div>
+                  <p style={{ margin: '6px 0 0 0', fontSize: '13px', color: themeSubText }}>{spot.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ==================================================== */}
+        {/* TAB 3: 👤 マイページ */}
+        {/* ==================================================== */}
+        {currentTab === 'profile' && (
+          <div>
+            <div style={{ background: themeCard, borderRadius: '20px', padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.06)', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                  <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: themeAccent, color: '#fff', fontSize: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    👤
+                  </div>
+                  <div>
+                    <h2 style={{ margin: 0, fontSize: '18px' }}>{userName}</h2>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: themeSubText }}>{userBio}</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '6px 14px', background: 'transparent', border: `1px solid ${themeSubText}`, borderRadius: '20px', fontSize: '12px', color: themeText, cursor: 'pointer' }}>
+                  編集
+                </button>
+              </div>
+
+              {/* 統計バナー */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', margin: '20px 0', textAlign: 'center' }}>
+                <div style={{ background: themeBg, padding: '10px', borderRadius: '12px' }}>
+                  <div style={{ fontSize: '16px', fontWeight: 'bold' }}>{spots.filter((s) => s.userId === 'me').length}</div>
+                  <div style={{ fontSize: '11px', color: themeSubText }}>📸 投稿</div>
+                </div>
+                <div style={{ background: themeBg, padding: '10px', borderRadius: '12px' }}>
+                  <div style={{ fontSize: '16px', fontWeight: 'bold' }}>{visitedCountryCount}</div>
+                  <div style={{ fontSize: '11px', color: themeSubText }}>🗺️ 訪問国</div>
+                </div>
+                <div style={{ background: themeBg, padding: '10px', borderRadius: '12px' }}>
+                  <div style={{ fontSize: '16px', fontWeight: 'bold' }}>{friendsList.length}</div>
+                  <div style={{ fontSize: '11px', color: themeSubText }}>👥 友達</div>
+                </div>
+              </div>
+
+              {/* フレンドコード枠 */}
+              <div style={{ background: themeBg, padding: '12px 16px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <span style={{ fontSize: '11px', color: themeSubText }}>🆔 フレンドコード: </span>
+                  <span style={{ fontWeight: 'bold', fontSize: '13px' }}>{friendCode}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    navigator.clipboard?.writeText(friendCode);
+                    showToast('📋 フレンドコードをコピーしました！');
+                  }}
+                  style={{ padding: '4px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}
+                >
+                  コピー
+                </button>
+              </div>
+            </div>
+
+            {/* サブタブ (記録 / 保存 / フレンド) */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+              {(['posts', 'saved', 'friends'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setProfileSubTab(tab)}
+                  style={{
+                    flex: 1,
+                    padding: '10px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: profileSubTab === tab ? themeAccent : themeCard,
+                    color: profileSubTab === tab ? '#fff' : themeSubText,
+                    fontWeight: 'bold',
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {tab === 'posts' ? '📸 記録' : tab === 'saved' ? '💛 保存' : '👥 フレンド'}
+                </button>
+              ))}
+            </div>
+
+            {/* サブタブ内容 */}
+            {profileSubTab === 'posts' && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '10px' }}>
+                {spots
+                  .filter((s) => s.userId === 'me')
+                  .map((s) => (
+                    <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '140px', borderRadius: '12px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
+                      <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                  ))}
+              </div>
+            )}
+
+            {profileSubTab === 'saved' && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '10px' }}>
+                {spots
+                  .filter((s) => savedSpotIds.includes(s.id))
+                  .map((s) => (
+                    <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '140px', borderRadius: '12px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
+                      <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                  ))}
+              </div>
+            )}
+
+            {profileSubTab === 'friends' && (
+              <div style={{ background: themeCard, borderRadius: '16px', padding: '16px' }}>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                  <input
+                    type="text"
+                    placeholder="友達のコード (例: WS-XXXX-XX)"
+                    value={inputFriendCode}
+                    onChange={(e) => setInputFriendCode(e.target.value)}
+                    style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(128,128,128,0.3)', background: themeBg, color: themeText }}
+                  />
+                  <button
+                    onClick={() => {
+                      if (!inputFriendCode) return;
+                      setFriendsList((prev) => [...prev, { id: 'user-' + Date.now(), name: 'Travel_Buddy', avatar: '✈️' }]);
+                      setInputFriendCode('');
+                      showToast('👥 フレンドを追加しました！');
+                    }}
+                    style={{ padding: '8px 16px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
+                  >
+                    追加
+                  </button>
+                </div>
+
+                <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', color: themeSubText }}>相互フォロー中の友達</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {friendsList.map((f) => (
+                    <div key={f.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid rgba(128,128,128,0.1)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '20px' }}>{f.avatar}</span>
+                        <span style={{ fontWeight: 'bold', fontSize: '14px' }}>{f.name}</span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setCurrentTab('map');
+                          setDisplayScope('friends');
+                        }}
+                        style={{ padding: '4px 10px', background: themeBg, color: themeAccent, border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: 'bold' }}
+                      >
+                        マップを見る
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── 目立たない広告バナースペース ── */}
+        <div style={{ marginTop: '24px', padding: '12px', background: themeCard, borderRadius: '12px', textAlign: 'center', border: '1px dashed rgba(128,128,128,0.3)' }}>
+          <span style={{ fontSize: '10px', color: themeSubText, letterSpacing: '1px' }}>SPONSORED</span>
+          <div style={{ fontSize: '12px', color: themeSubText, marginTop: '2px' }}>✈️ Booking.com / Klook で世界中のホテルとツアーをお得に予約</div>
+        </div>
+      </main>
+
+      {/* ==================================================== */}
+      {/* 4. ピン詳細バナー (スライドイン / モーダル) */}
+      {/* ==================================================== */}
+      {selectedSpot && (
+        <div
+          onClick={() => setSelectedSpot(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.65)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            zIndex: 1000,
           }}
-        />
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: themeCard,
+              width: '100%',
+              maxWidth: '540px',
+              borderTopLeftRadius: '24px',
+              borderTopRightRadius: '24px',
+              padding: '20px 24px 32px 24px',
+              boxShadow: '0 -10px 40px rgba(0,0,0,0.3)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+            }}
+          >
+            {/* スワイプバー */}
+            <div style={{ width: '40px', height: '4px', background: 'rgba(128,128,128,0.4)', borderRadius: '2px', margin: '0 auto 16px auto' }} />
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <span style={{ fontSize: '11px', fontWeight: 'bold', padding: '4px 10px', borderRadius: '20px', background: themeAccent, color: '#fff' }}>
+                {selectedSpot.category === 'view' ? '🏔️ VIEW' : selectedSpot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ RAIN'}
+              </span>
+              <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '18px', color: themeSubText, cursor: 'pointer' }}>
+                ✕
+              </button>
+            </div>
+
+            {/* メディア枠 */}
+            <div style={{ width: '100%', height: '240px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '14px' }}>
+              {selectedSpot.fileType === 'image' ? (
+                <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <video src={selectedSpot.fileUrl} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              )}
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <h3 style={{ margin: '0 0 4px 0', fontSize: '18px' }}>{selectedSpot.title}</h3>
+                <div style={{ fontSize: '12px', color: themeSubText }}>
+                  📍 {selectedSpot.lat.toFixed(4)}, {selectedSpot.lon.toFixed(4)} ({COUNTRIES[selectedSpot.countryCode]?.name || selectedSpot.countryCode}) · {selectedSpot.createdAt}
+                </div>
+              </div>
+              <button
+                onClick={() => toggleSaveSpot(selectedSpot.id)}
+                style={{
+                  padding: '8px 14px',
+                  borderRadius: '20px',
+                  border: 'none',
+                  background: savedSpotIds.includes(selectedSpot.id) ? '#f43f5e' : themeBg,
+                  color: savedSpotIds.includes(selectedSpot.id) ? '#fff' : themeText,
+                  fontWeight: 'bold',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                }}
+              >
+                {savedSpotIds.includes(selectedSpot.id) ? '❤️ 保存済み' : `💛 ${t.saveSpot}`}
+              </button>
+            </div>
+
+            <p style={{ fontSize: '14px', color: themeSubText, lineHeight: '1.6', margin: '14px 0' }}>{selectedSpot.description}</p>
+
+            {/* Googleマップ連携ボタン (最重要CTA) */}
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${selectedSpot.lat},${selectedSpot.lon}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                width: '100%',
+                padding: '14px',
+                background: '#2563eb',
+                color: '#fff',
+                fontWeight: 'bold',
+                fontSize: '14px',
+                borderRadius: '14px',
+                textDecoration: 'none',
+                boxShadow: '0 4px 16px rgba(37,99,235,0.3)',
+                marginBottom: '16px',
+              }}
+            >
+              🧭 {t.openGoogleMaps}
+            </a>
+
+            <hr style={{ borderColor: 'rgba(128,128,128,0.2)', margin: '16px 0' }} />
+
+            {/* 投稿者情報 & UGC安全機能 (通報・ブロック・削除) */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: themeAccent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
+                  👤
+                </div>
+                <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{selectedSpot.userName}</span>
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {selectedSpot.userId === 'me' ? (
+                  <button onClick={() => handleDeleteSpot(selectedSpot.id)} style={{ padding: '6px 10px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
+                    🗑️ ピンを削除
+                  </button>
+                ) : (
+                  <>
+                    <button onClick={() => setIsReportModalOpen(true)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #f59e0b', color: '#f59e0b', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
+                      ⚠️ {t.report}
+                    </button>
+                    <button onClick={() => handleBlockUser(selectedSpot.userId)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
+                      🚫 {t.block}
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
-      {/* 通報モーダル */}
-      {isReportModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl max-w-xs w-full p-5 space-y-3 text-xs shadow-2xl">
-            <h4 className="font-bold text-gray-900 text-sm">⚠️ 投稿を通報する</h4>
-            <p className="text-[11px] text-gray-500">該当する通報理由を選択してください：</p>
-            <select className="w-full p-2 border rounded-lg bg-gray-50 font-medium">
-              <option>不適切な写真・公序良俗に反する内容</option>
-              <option>嫌がらせ・ハラスメント</option>
-              <option>スパム・商業目的の無断宣伝</option>
-              <option>著作権侵害・無断転載</option>
-            </select>
-            <div className="flex space-x-2 pt-2">
-              <button onClick={() => setIsReportModalOpen(false)} className="flex-1 py-2 bg-gray-100 rounded-lg font-semibold">
-                キャンセル
+      {/* ==================================================== */}
+      {/* 5. 位置情報未設定ダイアログ */}
+      {/* ==================================================== */}
+      {unlocatedFiles.length > 0 && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: themeCard, padding: '24px', borderRadius: '20px', maxWidth: '440px', width: '100%' }}>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', color: '#f59e0b' }}>⚠️ 位置情報のないファイル ({currentPendingIndex + 1}/{unlocatedFiles.length})</h3>
+            <p style={{ fontSize: '12px', color: themeSubText, margin: '0 0 14px 0' }}>主要都市を選ぶか、スポット名・緯度経度を入力してマップに配置してください。</p>
+
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '14px' }}>
+              <button onClick={() => handleAssignLocation(35.6812, 139.7671, '東京')} style={{ padding: '6px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' }}>
+                📍 東京
+              </button>
+              <button onClick={() => handleAssignLocation(35.0116, 135.7681, '京都')} style={{ padding: '6px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' }}>
+                📍 京都
+              </button>
+              <button onClick={() => handleAssignLocation(47.3769, 8.5417, 'チューリッヒ')} style={{ padding: '6px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' }}>
+                📍 チューリッヒ
+              </button>
+              <button onClick={() => handleAssignLocation(37.5665, 126.978, 'ソウル')} style={{ padding: '6px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' }}>
+                📍 ソウル
+              </button>
+            </div>
+
+            <input
+              type="text"
+              placeholder="スポット名 (例: エッフェル塔)"
+              value={manualTitle}
+              onChange={(e) => setManualTitle(e.target.value)}
+              style={{ width: '100%', padding: '8px 12px', marginBottom: '8px', borderRadius: '8px', border: '1px solid rgba(128,128,128,0.3)', background: themeBg, color: themeText }}
+            />
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+              <input
+                type="number"
+                step="any"
+                placeholder="緯度 (例: 48.8584)"
+                value={manualLat}
+                onChange={(e) => setManualLat(e.target.value)}
+                style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(128,128,128,0.3)', background: themeBg, color: themeText }}
+              />
+              <input
+                type="number"
+                step="any"
+                placeholder="経度 (例: 2.2945)"
+                value={manualLon}
+                onChange={(e) => setManualLon(e.target.value)}
+                style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(128,128,128,0.3)', background: themeBg, color: themeText }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={() => setUnlocatedFiles((prev) => prev.filter((_, i) => i !== currentPendingIndex))}
+                style={{ flex: 1, padding: '10px', background: themeBg, border: 'none', borderRadius: '8px', color: themeText, cursor: 'pointer' }}
+              >
+                スキップ
               </button>
               <button
-                onClick={() => {
-                  setIsReportModalOpen(false);
-                  showToast('✅ 通報を受理しました。24時間以内に審査します。');
-                }}
-                className="flex-1 py-2 bg-amber-600 text-white rounded-lg font-bold shadow-md"
+                onClick={() => handleAssignLocation(parseFloat(manualLat) || currentConfig.lat, parseFloat(manualLon) || currentConfig.lon, manualTitle)}
+                style={{ flex: 1, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
               >
+                配置する
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================================================== */}
+      {/* 6. 通報モーダル (UGC安全対策) */}
+      {/* ==================================================== */}
+      {isReportModalOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: themeCard, padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%' }}>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '16px' }}>⚠️ 投稿の通報</h3>
+            <p style={{ fontSize: '12px', color: themeSubText, margin: '0 0 12px 0' }}>通報理由を選択してください。24時間以内にモデレーターが確認します。</p>
+            <select
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid rgba(128,128,128,0.3)', background: themeBg, color: themeText, marginBottom: '16px' }}
+            >
+              <option value="不適切な画像">不適切な画像・ポルノ</option>
+              <option value="スパム・広告">スパム・宣伝行為</option>
+              <option value="誹謗中傷・嫌がらせ">誹謗中傷・ハラスメント</option>
+              <option value="著作権侵害">無断転載・著作権侵害</option>
+            </select>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button onClick={() => setIsReportModalOpen(false)} style={{ flex: 1, padding: '10px', background: themeBg, border: 'none', borderRadius: '8px', color: themeText, cursor: 'pointer' }}>
+                キャンセル
+              </button>
+              <button onClick={handleSubmitReport} style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                 送信する
               </button>
             </div>
           </div>
         </div>
       )}
-    </div>
-  );
-}
 
-// ==============================================================================
-// 3. ★ フルスクリーン投稿詳細画面 (ピンタップ時にマップを隠して遷移)
-// ==============================================================================
-function FullSpotDetailView({
-  spot,
-  currentUserId,
-  isBookmarked,
-  onBack,
-  onToggleBookmark,
-  onReport,
-  onBlockUser,
-  onDeleteSpot,
-}: {
-  spot: Spot;
-  currentUserId: string;
-  isBookmarked: boolean;
-  onBack: () => void;
-  onToggleBookmark: () => void;
-  onReport: () => void;
-  onBlockUser: (userId: string) => void;
-  onDeleteSpot: (spotId: string) => void;
-}) {
-  const [bounce, setBounce] = useState(false);
-  const isOwner = spot.userId === currentUserId;
-
-  const handleBookmarkClick = () => {
-    setBounce(true);
-    setTimeout(() => setBounce(false), 400);
-    onToggleBookmark();
-  };
-
-  const handleOpenGoogleMaps = () => {
-    const googleMapUrl = `https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`;
-    window.open(googleMapUrl, '_blank');
-  };
-
-  return (
-    <div className="w-full h-full bg-slate-900 flex flex-col overflow-y-auto z-40 text-white pb-20 animate-in slide-in-from-right duration-200">
-      {/* 上部ナビゲーションバー */}
-      <div className="h-14 px-4 flex items-center justify-between border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-10 shrink-0">
-        <button
-          onClick={onBack}
-          className="flex items-center gap-1 text-xs font-bold text-slate-300 hover:text-white bg-slate-800/80 px-3 py-1.5 rounded-full transition"
-        >
-          ‹ マップへ戻る
-        </button>
-        <span className="text-xs font-bold text-slate-400">
-          {spot.category === 'view' ? '🏔️ VIEW' : spot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ RAINY'}
-        </span>
-      </div>
-
-      {/* メインメディア（写真・動画） */}
-      <div className="w-full aspect-4/3 bg-black relative shrink-0">
-        <img src={spot.fileUrl} alt={spot.title} className="w-full h-full object-cover" />
-        <span className="absolute bottom-3 left-3 px-3 py-1 bg-black/60 backdrop-blur-md text-white text-xs font-bold rounded-full border border-white/20">
-          {spot.country} {spot.countryFlag}
-        </span>
-      </div>
-
-      {/* 投稿コンテンツ詳細 */}
-      <div className="p-5 space-y-4 bg-slate-950 flex-1">
-        {/* タイトル & いいね保存 */}
-        <div className="flex justify-between items-start gap-3">
-          <div>
-            <h2 className="font-extrabold text-xl text-white leading-tight">{spot.title}</h2>
-            <p className="text-xs text-slate-400 flex items-center gap-1 mt-1 font-medium">
-              📍 {spot.lat.toFixed(4)}, {spot.lng.toFixed(4)} · 撮影日時: {spot.dateTime || '2026/08'}
-            </p>
-          </div>
-
-          <button
-            onClick={handleBookmarkClick}
-            className={`p-3 rounded-full border shadow-sm transition-all duration-200 ${
-              bounce ? 'scale-125' : 'scale-100'
-            } ${
-              isBookmarked
-                ? 'bg-rose-500/20 border-rose-500 text-rose-500'
-                : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-rose-500'
-            }`}
-          >
-            <span className="text-xl leading-none">{isBookmarked ? '💛' : '🤍'}</span>
-          </button>
-        </div>
-
-        {/* 説明文・思い出テキスト */}
-        {spot.description && (
-          <p className="text-sm text-slate-300 leading-relaxed bg-slate-900 p-4 rounded-2xl border border-slate-800">
-            {spot.description}
-          </p>
-        )}
-
-        {/* 🧭 Googleマップ ルート案内ボタン (CTA) */}
-        <button
-          onClick={handleOpenGoogleMaps}
-          className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-98 text-white rounded-xl font-bold flex items-center justify-center gap-2 text-sm shadow-lg shadow-blue-500/30 transition duration-150"
-        >
-          <span>🧭</span>
-          Googleマップでルート案内を開く
-        </button>
-
-        {/* フッター（投稿者情報・UGC安全機能） */}
-        <div className="pt-4 border-t border-slate-800 flex justify-between items-center text-xs">
-          <span className="text-slate-400 font-medium">👤 投稿者: {spot.userName}</span>
-
-          {isOwner ? (
-            <button
-              onClick={() => onDeleteSpot(spot.id)}
-              className="text-red-400 hover:text-red-300 font-bold flex items-center gap-1 hover:underline"
-            >
-              🗑️ このピンを削除
-            </button>
-          ) : (
-            <div className="flex space-x-3">
-              <button
-                onClick={onReport}
-                className="text-amber-500 hover:text-amber-400 font-semibold flex items-center gap-0.5 hover:underline"
-              >
-                ⚠️ 通報
-              </button>
-              <button
-                onClick={() => onBlockUser(spot.userId)}
-                className="text-slate-500 hover:text-red-400 font-semibold flex items-center gap-0.5 hover:underline"
-              >
-                🚫 ブロック
+      {/* ==================================================== */}
+      {/* 7. 設定画面 (Settings モーダル) */}
+      {/* ==================================================== */}
+      {isSettingsOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 3000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px' }}>
+          <div style={{ background: themeCard, width: '100%', maxWidth: '480px', borderRadius: '24px', padding: '24px', maxHeight: '85vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ margin: 0, fontSize: '18px' }}>⚙️ 設定 (Settings)</h2>
+              <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '18px', color: themeSubText, cursor: 'pointer' }}>
+                ✕
               </button>
             </div>
-          )}
+
+            {/* アカウント設定 */}
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 'bold', color: themeSubText, marginBottom: '8px' }}>▼ アカウント設定</div>
+              <div onClick={() => setIsEditProfileOpen(true)} style={{ padding: '12px', background: themeBg, borderRadius: '10px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer', marginBottom: '6px' }}>
+                <span>👤 プロフィール編集</span>
+                <span style={{ color: themeSubText }}>&gt;</span>
+              </div>
+              <div style={{ padding: '12px', background: themeBg, borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>🌐 言語 / 国籍の初期設定</span>
+                <select value={userCountry} onChange={(e) => setUserCountry(e.target.value)} style={{ background: 'transparent', color: themeText, border: 'none', fontWeight: 'bold' }}>
+                  {Object.entries(COUNTRIES).map(([code, c]) => (
+                    <option key={code} value={code} style={{ background: '#1e293b', color: '#fff' }}>
+                      {c.flag} {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* マップ設定 */}
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 'bold', color: themeSubText, marginBottom: '8px' }}>▼ マップカスタマイズ</div>
+              <div
+                onClick={() => {
+                  showToast('🧹 地図キャッシュをクリアしました (約12MB)');
+                }}
+                style={{ padding: '12px', background: themeBg, borderRadius: '10px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
+              >
+                <span>🧹 地図キャッシュのクリア</span>
+                <span style={{ color: themeAccent, fontWeight: 'bold' }}>実行</span>
+              </div>
+            </div>
+
+            {/* 安全対策 */}
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 'bold', color: themeSubText, marginBottom: '8px' }}>▼ プライバシー & UGC安全対策</div>
+              <div
+                onClick={() => {
+                  if (blockedUsers.length === 0) {
+                    showToast('現在ブロック中のユーザーはいません');
+                  } else {
+                    setBlockedUsers([]);
+                    showToast('ブロックをすべて解除しました');
+                  }
+                }}
+                style={{ padding: '12px', background: themeBg, borderRadius: '10px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer', marginBottom: '6px' }}
+              >
+                <span>🚫 ブロック中ユーザーの管理</span>
+                <span style={{ color: themeSubText }}>{blockedUsers.length}人 &gt;</span>
+              </div>
+              <div
+                onClick={() => alert('WorldSnap 利用規約 (EULA):\n1. 不適切な投稿は即時削除されます。\n2. 他ユーザーへの嫌がらせは禁止です。')}
+                style={{ padding: '12px', background: themeBg, borderRadius: '10px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
+              >
+                <span>📜 利用規約 (EULA) の確認</span>
+                <span style={{ color: themeAccent }}>開く</span>
+              </div>
+            </div>
+
+            {/* 危険操作 */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '24px' }}>
+              <button
+                onClick={() => {
+                  if (confirm('ログアウトしますか？')) {
+                    showToast('🚪 ログアウトしました');
+                    setIsSettingsOpen(false);
+                  }
+                }}
+                style={{ width: '100%', padding: '12px', background: themeBg, border: 'none', borderRadius: '12px', color: themeText, fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                🚪 ログアウト
+              </button>
+              <button
+                onClick={() => {
+                  const check = prompt('アカウントを完全削除する場合は「削除する」と入力してください:');
+                  if (check === '削除する') {
+                    setSpots([]);
+                    showToast('⚠️ アカウントと全データを削除しました');
+                    setIsSettingsOpen(false);
+                  }
+                }}
+                style={{ width: '100%', padding: '12px', background: '#fee2e2', border: 'none', borderRadius: '12px', color: '#dc2626', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                ⚠️ アカウントの削除 (退会処理)
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  );
-}
+      )}
 
-// ==============================================================================
-// 4. 写真アップロード & Exif動的抽出モーダル
-// ==============================================================================
-function PostUploadModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (data: any) => void }) {
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState<SpotCategory>('view');
-  const [coords, setCoords] = useState<{ lat: number; lng: number }>({ lat: 35.6895, lng: 139.6917 });
-  const [isManual, setIsManual] = useState(false);
-
-  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setFileUrl(URL.createObjectURL(file));
-
-    try {
-      const EXIF = (await import('exif-js')).default;
-      EXIF.getData(file as any, function (this: any) {
-        const lat = EXIF.getTag(this, 'GPSLatitude');
-        const latRef = EXIF.getTag(this, 'GPSLatitudeRef');
-        const lng = EXIF.getTag(this, 'GPSLongitude');
-        const lngRef = EXIF.getTag(this, 'GPSLongitudeRef');
-
-        if (lat && lng && latRef && lngRef) {
-          const latDec = (lat[0] + lat[1] / 60 + lat[2] / 3600) * (latRef === 'N' ? 1 : -1);
-          const lngDec = (lng[0] + lng[1] / 60 + lng[2] / 3600) * (lngRef === 'E' ? 1 : -1);
-          setCoords({ lat: latDec, lng: lngDec });
-          setIsManual(false);
-        } else {
-          setIsManual(true);
-        }
-      });
-    } catch {
-      setIsManual(true);
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
-      <div className="bg-white rounded-2xl max-w-sm w-full p-5 space-y-3 text-xs shadow-2xl">
-        <div className="flex justify-between items-center">
-          <h3 className="font-bold text-sm text-gray-900">思い出の写真を追加</h3>
-          <button onClick={onClose} className="text-gray-400 font-bold text-sm">✕</button>
+      {/* ==================================================== */}
+      {/* 8. プロフィール編集モーダル */}
+      {/* ==================================================== */}
+      {isEditProfileOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 3100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: themeCard, padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '16px' }}>👤 プロフィール編集</h3>
+            <label style={{ fontSize: '12px', color: themeSubText }}>表示名</label>
+            <input
+              type="text"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              style={{ width: '100%', padding: '10px', margin: '4px 0 12px 0', borderRadius: '8px', border: '1px solid rgba(128,128,128,0.3)', background: themeBg, color: themeText }}
+            />
+            <label style={{ fontSize: '12px', color: themeSubText }}>自己紹介文</label>
+            <textarea
+              value={userBio}
+              onChange={(e) => setUserBio(e.target.value)}
+              rows={3}
+              style={{ width: '100%', padding: '10px', margin: '4px 0 16px 0', borderRadius: '8px', border: '1px solid rgba(128,128,128,0.3)', background: themeBg, color: themeText }}
+            />
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button onClick={() => setIsEditProfileOpen(false)} style={{ flex: 1, padding: '10px', background: themeBg, border: 'none', borderRadius: '8px', color: themeText, cursor: 'pointer' }}>
+                キャンセル
+              </button>
+              <button
+                onClick={() => {
+                  setIsEditProfileOpen(false);
+                  showToast('✨ プロフィールを更新しました');
+                }}
+                style={{ flex: 1, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                保存する
+              </button>
+            </div>
+          </div>
         </div>
+      )}
 
-        <div className="border-2 border-dashed border-gray-300 rounded-xl p-3 text-center cursor-pointer hover:border-indigo-400">
-          {fileUrl ? (
-            <img src={fileUrl} alt="Preview" className="h-32 w-full object-cover rounded-lg" />
-          ) : (
-            <label className="cursor-pointer block py-4">
-              <span className="text-indigo-600 font-bold">📷 写真を選択</span>
-              <input type="file" accept="image/*,video/*" onChange={handleFile} className="hidden" />
-            </label>
-          )}
-        </div>
-
-        <div className="p-2 bg-gray-50 rounded-lg text-gray-600">
-          📍 {isManual ? '位置情報を手動設定中 (東京)' : 'Exif位置情報を自動検出'}
-          <div className="text-[10px] text-gray-400">{coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}</div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-1 font-bold">
-          {(['view', 'gourmet', 'rainy'] as SpotCategory[]).map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setCategory(c)}
-              className={`py-1.5 rounded-lg border transition ${category === c ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-gray-50 text-gray-600'}`}
-            >
-              {c === 'view' ? '🏔️ 絶景' : c === 'gourmet' ? '🍔 グルメ' : '🌧️ 雨の日'}
-            </button>
-          ))}
-        </div>
-
-        <input
-          type="text"
-          placeholder="スポット名 (例: 富士山 忍野八海)"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-2 border rounded-lg"
-          required
-        />
-        <textarea
-          placeholder="旅の思い出やおすすめポイント..."
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={2}
-          className="w-full p-2 border rounded-lg"
-        />
+      {/* ==================================================== */}
+      {/* 9. ボトムナビゲーション (画面最下部固定) */}
+      {/* ==================================================== */}
+      <nav
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '70px',
+          background: themeCard,
+          borderTop: '1px solid rgba(0,0,0,0.06)',
+          display: 'flex',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          zIndex: 500,
+          boxShadow: '0 -4px 20px rgba(0,0,0,0.05)',
+        }}
+      >
+        <button
+          onClick={() => setCurrentTab('home')}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '3px',
+            color: currentTab === 'home' ? themeAccent : themeSubText,
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{ fontSize: '20px' }}>🏠</span>
+          <span style={{ fontSize: '11px', fontWeight: currentTab === 'home' ? 'bold' : 'normal' }}>{t.home}</span>
+        </button>
 
         <button
           onClick={() => {
-            if (!fileUrl || !title) return;
-            onSubmit({
-              title,
-              description,
-              fileUrl,
-              fileType: 'image',
-              lat: coords.lat,
-              lng: coords.lng,
-              country: '日本',
-              countryFlag: '🇯🇵',
-              category,
-              visibility: 'public',
-              dateTime: '2026/08/14',
-            });
+            if (currentTab === 'map') {
+              const target = COUNTRIES[userCountry];
+              if (target) {
+                setMapCenter([target.lat, target.lon]);
+                setMapZoom(target.zoom);
+              }
+            } else {
+              setCurrentTab('map');
+            }
           }}
-          className="w-full py-2.5 bg-indigo-600 text-white rounded-xl font-bold shadow-md hover:bg-indigo-700 active:scale-98 transition"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '3px',
+            color: currentTab === 'map' ? themeAccent : themeSubText,
+            cursor: 'pointer',
+          }}
         >
-          マップにピン留めする
+          <span style={{ fontSize: '20px' }}>🗺️</span>
+          <span style={{ fontSize: '11px', fontWeight: currentTab === 'map' ? 'bold' : 'normal' }}>{t.map}</span>
         </button>
-      </div>
+
+        <button
+          onClick={() => setCurrentTab('profile')}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '3px',
+            color: currentTab === 'profile' ? themeAccent : themeSubText,
+            cursor: 'pointer',
+          }}
+        >
+          <span style={{ fontSize: '20px' }}>👤</span>
+          <span style={{ fontSize: '11px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal' }}>{t.profile}</span>
+        </button>
+      </nav>
     </div>
   );
 }
