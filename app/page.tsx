@@ -4,11 +4,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 
 // ==========================================
-// 1. 型定義 & 言語・国籍マスターデータ
+// 1. 型定義 & 17カ国マスターデータ (言語・辞書・タイル連動)
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
-export type TabType = 'home' | 'map' | 'profile';
+export type TabType = 'map' | 'home' | 'gallery';
 
 export interface Spot {
   id: string;
@@ -23,8 +23,10 @@ export interface Spot {
   lat: number;
   lon: number;
   countryCode: string;
+  cityName: string;
   category: ViewCategory;
   createdAt: string;
+  isSaved?: boolean;
 }
 
 export interface PendingFile {
@@ -35,7 +37,6 @@ export interface PendingFile {
   dateTime?: string;
 }
 
-// 厳選20カ国（国旗・中心座標・言語コード・UI翻訳辞書・タイルマップ言語設定）
 export const COUNTRIES: Record<
   string,
   {
@@ -48,23 +49,6 @@ export const COUNTRIES: Record<
     dict: Record<string, string>;
   }
 > = {
-  ALL: {
-    name: '世界地図 (World)',
-    flag: '🌍',
-    lang: 'ja',
-    lat: 20.0,
-    lon: 0.0,
-    zoom: 2,
-    dict: {
-      home: 'ホーム', map: 'マップ', profile: 'マイページ', addPhoto: '写真を追加', exportMap: '保存',
-      view: 'View (絶景)', gourmet: 'グルメ', rain: '雨の日', openGoogleMaps: 'Googleマップでルート案内を開く',
-      saveSpot: '行きたい保存', saved: '保存済み', report: '通報', block: 'ブロック', delete: '削除',
-      visited: '訪問国数', countriesUnit: 'カ国', posts: '投稿', friends: 'フレンド', settings: '設定',
-      feedTitle: '✨ おすすめ旅フィード', friendCode: 'フレンドコード', copy: 'コピー', add: '追加',
-      terms: '利用規約 (EULA)', agree: '利用規約に同意して始める', startApp: 'WorldSnap をはじめる',
-      clearCache: '地図キャッシュのクリア', blockedUsers: 'ブロック中ユーザー管理', logout: 'ログアウト', deleteAccount: 'アカウントの削除 (退会)'
-    },
-  },
   JP: {
     name: '日本 (Japan)',
     flag: '🇯🇵',
@@ -73,13 +57,16 @@ export const COUNTRIES: Record<
     lon: 138.2529,
     zoom: 5,
     dict: {
-      home: 'ホーム', map: 'マップ', profile: 'マイページ', addPhoto: '写真を追加', exportMap: '保存',
-      view: 'View (絶景)', gourmet: 'グルメ', rain: '雨の日', openGoogleMaps: 'Googleマップでルート案内を開く',
-      saveSpot: '行きたい保存', saved: '保存済み', report: '通報', block: 'ブロック', delete: '削除',
-      visited: '訪問国数', countriesUnit: 'カ国', posts: '投稿', friends: 'フレンド', settings: '設定',
-      feedTitle: '✨ おすすめ旅フィード', friendCode: 'フレンドコード', copy: 'コピー', add: '追加',
-      terms: '利用規約 (EULA)', agree: '利用規約に同意して始める', startApp: 'WorldSnap をはじめる',
-      clearCache: '地図キャッシュのクリア', blockedUsers: 'ブロック中ユーザー管理', logout: 'ログアウト', deleteAccount: 'アカウントの削除 (退会)'
+      home: 'ホーム', map: 'マップ', gallery: 'ギャラリー', myPage: 'マイページ',
+      addPhoto: '写真 / 動画を追加', exportMap: 'マップ保存', view: 'View', gourmet: 'グルメ', rain: '雨の日',
+      myMap: 'マイマップ', friends: 'フレンド', world: 'ワールド',
+      openGoogleMaps: '🧭 Googleマップで開く', saveSpot: '❤️ 行きたい', saved: '❤️ 保存済み',
+      report: '⚠️ 通報', block: '🚫 ブロック', delete: '🗑️ 削除', edit: '✏️ 編集',
+      visited: '訪問国', countriesUnit: 'カ国', posts: '投稿', friendCode: 'フレンドコード',
+      startApp: '🚀 WorldSnap をはじめる', eulaAgree: '利用規約およびプライバシーポリシーに同意する',
+      termsTitle: '📜 WorldSnap 利用規約 (EULA)', close: '閉じる', back: '戻る',
+      searchPlaceholder: '🔍 スポットを検索（例: 東京 夜景、京都 カフェ）',
+      cacheClear: '🧹 地図キャッシュ削除', deleteAccount: '⚠️ アカウントの削除 (退会処理)', logout: '🚪 ログアウト'
     },
   },
   CH: {
@@ -90,13 +77,16 @@ export const COUNTRIES: Record<
     lon: 8.2275,
     zoom: 8,
     dict: {
-      home: 'Start', map: 'Karte', profile: 'Profil', addPhoto: 'Foto', exportMap: 'Speichern',
-      view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen', openGoogleMaps: 'In Google Maps öffnen',
-      saveSpot: 'Merken', saved: 'Gemerkt', report: 'Melden', block: 'Blockieren', delete: 'Löschen',
-      visited: 'Besuchte Länder', countriesUnit: 'Länder', posts: 'Beiträge', friends: 'Freunde', settings: 'Einstellungen',
-      feedTitle: '✨ Entdecken Feed', friendCode: 'Freundescode', copy: 'Kopieren', add: 'Hinzufügen',
-      terms: 'Nutzungsbedingungen', agree: 'Zustimmen und Starten', startApp: 'WorldSnap Starten',
-      clearCache: 'Karten-Cache leeren', blockedUsers: 'Blockierte Nutzer', logout: 'Abmelden', deleteAccount: 'Konto löschen'
+      home: 'Start', map: 'Karte', gallery: 'Galerie', myPage: 'Profil',
+      addPhoto: 'Medien hinzufügen', exportMap: 'Speichern', view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen',
+      myMap: 'Meine Karte', friends: 'Freunde', world: 'Weltweit',
+      openGoogleMaps: '🧭 In Google Maps öffnen', saveSpot: '❤️ Merken', saved: '❤️ Gemerkt',
+      report: '⚠️ Melden', block: '🚫 Blockieren', delete: '🗑️ Löschen', edit: '✏️ Bearbeiten',
+      visited: 'Länder', countriesUnit: 'Länder', posts: 'Beiträge', friendCode: 'Freundescode',
+      startApp: '🚀 WorldSnap starten', eulaAgree: 'Nutzungsbedingungen und Datenschutz zustimmen',
+      termsTitle: '📜 Nutzungsbedingungen (EULA)', close: 'Schließen', back: 'Zurück',
+      searchPlaceholder: '🔍 Suchen (z.B. Zermatt Aussicht)',
+      cacheClear: '🧹 Cache leeren', deleteAccount: '⚠️ Konto löschen', logout: '🚪 Abmelden'
     },
   },
   KR: {
@@ -107,13 +97,16 @@ export const COUNTRIES: Record<
     lon: 127.7669,
     zoom: 7,
     dict: {
-      home: '홈', map: '지도', profile: '프로필', addPhoto: '사진 추가', exportMap: '저장',
-      view: '경치', gourmet: '맛집', rain: '비오는날', openGoogleMaps: 'Google 지도에서 길찾기',
-      saveSpot: '저장', saved: '저장됨', report: '신고', block: '차단', delete: '삭제',
-      visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friends: '친구', settings: '설정',
-      feedTitle: '✨ 추천 피드', friendCode: '친구 코드', copy: '복사', add: '추가',
-      terms: '이용약관', agree: '동의하고 시작', startApp: 'WorldSnap 시작하기',
-      clearCache: '지도 캐시 삭제', blockedUsers: '차단 목록', logout: '로그아웃', deleteAccount: '회원 탈퇴'
+      home: '홈', map: '지도', gallery: '갤러리', myPage: '마이페이지',
+      addPhoto: '사진/동영상 추가', exportMap: '지도 저장', view: '경치', gourmet: '맛집', rain: '비오는날',
+      myMap: '내 지도', friends: '친구', world: '전체',
+      openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
+      report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
+      visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
+      startApp: '🚀 WorldSnap 시작하기', eulaAgree: '이용약관 및 개인정보처리방침에 동의합니다',
+      termsTitle: '📜 이용약관 (EULA)', close: '닫기', back: '뒤로',
+      searchPlaceholder: '🔍 명소 검색 (예: 서울 맛집)',
+      cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃'
     },
   },
   US: {
@@ -124,13 +117,16 @@ export const COUNTRIES: Record<
     lon: -95.7129,
     zoom: 4,
     dict: {
-      home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Photo', exportMap: 'Save',
-      view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps',
-      saveSpot: 'Bookmark', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete',
-      visited: 'Visited Countries', countriesUnit: 'countries', posts: 'Posts', friends: 'Friends', settings: 'Settings',
-      feedTitle: '✨ Travel Inspiration', friendCode: 'Friend Code', copy: 'Copy', add: 'Add',
-      terms: 'Terms of Service', agree: 'Agree and Continue', startApp: 'Start WorldSnap',
-      clearCache: 'Clear Map Cache', blockedUsers: 'Blocked Users', logout: 'Log Out', deleteAccount: 'Delete Account'
+      home: 'Home', map: 'Map', gallery: 'Gallery', myPage: 'Profile',
+      addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day',
+      myMap: 'My Map', friends: 'Friends', world: 'World',
+      openGoogleMaps: '🧭 Open in Google Maps', saveSpot: '❤️ Want to go', saved: '❤️ Saved',
+      report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit',
+      visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code',
+      startApp: '🚀 Start WorldSnap', eulaAgree: 'I agree to the Terms of Service and Privacy Policy',
+      termsTitle: '📜 Terms of Service (EULA)', close: 'Close', back: 'Back',
+      searchPlaceholder: '🔍 Search spots (e.g., NYC Night View)',
+      cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out'
     },
   },
   FR: {
@@ -141,13 +137,16 @@ export const COUNTRIES: Record<
     lon: 2.2137,
     zoom: 6,
     dict: {
-      home: 'Accueil', map: 'Carte', profile: 'Profil', addPhoto: 'Ajouter photo', exportMap: 'Sauvegarder',
-      view: 'Paysage', gourmet: 'Gourmet', rain: 'Pluie', openGoogleMaps: 'Ouvrir dans Google Maps',
-      saveSpot: 'Enregistrer', saved: 'Enregistré', report: 'Signaler', block: 'Bloquer', delete: 'Supprimer',
-      visited: 'Pays visités', countriesUnit: 'pays', posts: 'Publications', friends: 'Amis', settings: 'Paramètres',
-      feedTitle: '✨ Découvertes', friendCode: 'Code ami', copy: 'Copier', add: 'Ajouter',
-      terms: 'Conditions d’utilisation', agree: 'Accepter et démarrer', startApp: 'Démarrer WorldSnap',
-      clearCache: 'Vider le cache de la carte', blockedUsers: 'Utilisateurs bloqués', logout: 'Déconnexion', deleteAccount: 'Supprimer le compte'
+      home: 'Accueil', map: 'Carte', gallery: 'Galerie', myPage: 'Profil',
+      addPhoto: 'Ajouter média', exportMap: 'Enregistrer', view: 'Paysage', gourmet: 'Gourmet', rain: 'Pluie',
+      myMap: 'Ma carte', friends: 'Amis', world: 'Monde',
+      openGoogleMaps: '🧭 Ouvrir dans Google Maps', saveSpot: '❤️ Enregistrer', saved: '❤️ Enregistré',
+      report: '⚠️ Signaler', block: '🚫 Bloquer', delete: '🗑️ Supprimer', edit: '✏️ Modifier',
+      visited: 'Pays visités', countriesUnit: 'pays', posts: 'Publications', friendCode: 'Code ami',
+      startApp: '🚀 Démarrer WorldSnap', eulaAgree: 'J’accepte les conditions d’utilisation',
+      termsTitle: '📜 Conditions d’utilisation (EULA)', close: 'Fermer', back: 'Retour',
+      searchPlaceholder: '🔍 Rechercher un lieu (ex: Paris Tour Eiffel)',
+      cacheClear: '🧹 Vider le cache', deleteAccount: '⚠️ Supprimer le compte', logout: '🚪 Déconnexion'
     },
   },
   DE: {
@@ -158,81 +157,16 @@ export const COUNTRIES: Record<
     lon: 10.4515,
     zoom: 6,
     dict: {
-      home: 'Start', map: 'Karte', profile: 'Profil', addPhoto: 'Foto', exportMap: 'Speichern',
-      view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen', openGoogleMaps: 'In Google Maps öffnen',
-      saveSpot: 'Merken', saved: 'Gemerkt', report: 'Melden', block: 'Blockieren', delete: 'Löschen',
-      visited: 'Besuchte Länder', countriesUnit: 'Länder', posts: 'Beiträge', friends: 'Freunde', settings: 'Einstellungen',
-      feedTitle: '✨ Entdecken', friendCode: 'Freundescode', copy: 'Kopieren', add: 'Hinzufügen',
-      terms: 'Nutzungsbedingungen', agree: 'Zustimmen', startApp: 'WorldSnap Starten',
-      clearCache: 'Karten-Cache leeren', blockedUsers: 'Blockierte Nutzer', logout: 'Abmelden', deleteAccount: 'Konto löschen'
-    },
-  },
-  IT: {
-    name: 'Italia (イタリア)',
-    flag: '🇮🇹',
-    lang: 'it',
-    lat: 41.8719,
-    lon: 12.5674,
-    zoom: 6,
-    dict: {
-      home: 'Home', map: 'Mappa', profile: 'Profilo', addPhoto: 'Aggiungi foto', exportMap: 'Salva',
-      view: 'Panorama', gourmet: 'Gourmet', rain: 'Pioggia', openGoogleMaps: 'Apri su Google Maps',
-      saveSpot: 'Salva', saved: 'Salvato', report: 'Segnala', block: 'Blocca', delete: 'Elimina',
-      visited: 'Paesi visitati', countriesUnit: 'paesi', posts: 'Post', friends: 'Amici', settings: 'Impostazioni',
-      feedTitle: '✨ Ispirazione Viaggi', friendCode: 'Codice amico', copy: 'Copia', add: 'Aggiungi',
-      terms: 'Termini di servizio', agree: 'Accetta e inizia', startApp: 'Avvia WorldSnap',
-      clearCache: 'Svuota cache mappa', blockedUsers: 'Utenti bloccati', logout: 'Disconnetti', deleteAccount: 'Elimina account'
-    },
-  },
-  GB: {
-    name: 'United Kingdom (イギリス)',
-    flag: '🇬🇧',
-    lang: 'en',
-    lat: 55.3781,
-    lon: -3.436,
-    zoom: 5,
-    dict: {
-      home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Photo', exportMap: 'Save',
-      view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps',
-      saveSpot: 'Bookmark', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete',
-      visited: 'Visited Countries', countriesUnit: 'countries', posts: 'Posts', friends: 'Friends', settings: 'Settings',
-      feedTitle: '✨ Travel Inspiration', friendCode: 'Friend Code', copy: 'Copy', add: 'Add',
-      terms: 'Terms of Service', agree: 'Agree and Continue', startApp: 'Start WorldSnap',
-      clearCache: 'Clear Map Cache', blockedUsers: 'Blocked Users', logout: 'Log Out', deleteAccount: 'Delete Account'
-    },
-  },
-  ES: {
-    name: 'España (スペイン)',
-    flag: '🇪🇸',
-    lang: 'es',
-    lat: 40.4637,
-    lon: -3.7492,
-    zoom: 6,
-    dict: {
-      home: 'Inicio', map: 'Mapa', profile: 'Perfil', addPhoto: 'Añadir foto', exportMap: 'Guardar',
-      view: 'Vistas', gourmet: 'Gourmet', rain: 'Lluvia', openGoogleMaps: 'Abrir en Google Maps',
-      saveSpot: 'Guardar', saved: 'Guardado', report: 'Denunciar', block: 'Bloquear', delete: 'Eliminar',
-      visited: 'Países visitados', countriesUnit: 'países', posts: 'Publicaciones', friends: 'Amigos', settings: 'Ajustes',
-      feedTitle: '✨ Inspiración de viaje', friendCode: 'Código de amigo', copy: 'Copiar', add: 'Añadir',
-      terms: 'Términos de servicio', agree: 'Aceptar y empezar', startApp: 'Comenzar WorldSnap',
-      clearCache: 'Borrar caché del mapa', blockedUsers: 'Usuarios bloqueados', logout: 'Cerrar sesión', deleteAccount: 'Eliminar cuenta'
-    },
-  },
-  TH: {
-    name: 'ไทย (タイ)',
-    flag: '🇹🇭',
-    lang: 'th',
-    lat: 15.87,
-    lon: 100.9925,
-    zoom: 6,
-    dict: {
-      home: 'หน้าแรก', map: 'แผนที่', profile: 'โปรไฟล์', addPhoto: 'เพิ่มรูป', exportMap: 'บันทึก',
-      view: 'วิวทิวทัศน์', gourmet: 'ของกิน', rain: 'วันฝนตก', openGoogleMaps: 'เปิดใน Google Maps',
-      saveSpot: 'บันทึก', saved: 'บันทึกแล้ว', report: 'รายงาน', block: 'บล็อก', delete: 'ลบ',
-      visited: 'ประเทศที่เยือน', countriesUnit: 'ประเทศ', posts: 'โพสต์', friends: 'เพื่อน', settings: 'การตั้งค่า',
-      feedTitle: '✨ แรงบันดาลใจการเดินทาง', friendCode: 'รหัสเพื่อน', copy: 'คัดลอก', add: 'เพิ่ม',
-      terms: 'ข้อกำหนดการใช้งาน', agree: 'ยอมรับและเริ่ม', startApp: 'เริ่ม WorldSnap',
-      clearCache: 'ล้างแคชแผนที่', blockedUsers: 'ผู้ใช้ที่ถูกบล็อก', logout: 'ออกจากระบบ', deleteAccount: 'ลบบัญชี'
+      home: 'Start', map: 'Karte', gallery: 'Galerie', myPage: 'Profil',
+      addPhoto: 'Medien hinzufügen', exportMap: 'Speichern', view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen',
+      myMap: 'Meine Karte', friends: 'Freunde', world: 'Weltweit',
+      openGoogleMaps: '🧭 In Google Maps öffnen', saveSpot: '❤️ Merken', saved: '❤️ Gemerkt',
+      report: '⚠️ Melden', block: '🚫 Blockieren', delete: '🗑️ Löschen', edit: '✏️ Bearbeiten',
+      visited: 'Länder', countriesUnit: 'Länder', posts: 'Beiträge', friendCode: 'Freundescode',
+      startApp: '🚀 WorldSnap starten', eulaAgree: 'Nutzungsbedingungen zustimmen',
+      termsTitle: '📜 Nutzungsbedingungen (EULA)', close: 'Schließen', back: 'Zurück',
+      searchPlaceholder: '🔍 Orte suchen (z.B. Berlin)',
+      cacheClear: '🧹 Cache leeren', deleteAccount: '⚠️ Konto löschen', logout: '🚪 Abmelden'
     },
   },
   AU: {
@@ -243,30 +177,116 @@ export const COUNTRIES: Record<
     lon: 133.7751,
     zoom: 4,
     dict: {
-      home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Photo', exportMap: 'Save',
-      view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps',
-      saveSpot: 'Bookmark', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete',
-      visited: 'Visited Countries', countriesUnit: 'countries', posts: 'Posts', friends: 'Friends', settings: 'Settings',
-      feedTitle: '✨ Travel Feed', friendCode: 'Friend Code', copy: 'Copy', add: 'Add',
-      terms: 'Terms of Service', agree: 'Agree and Continue', startApp: 'Start WorldSnap',
-      clearCache: 'Clear Map Cache', blockedUsers: 'Blocked Users', logout: 'Log Out', deleteAccount: 'Delete Account'
+      home: 'Home', map: 'Map', gallery: 'Gallery', myPage: 'Profile',
+      addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day',
+      myMap: 'My Map', friends: 'Friends', world: 'World',
+      openGoogleMaps: '🧭 Open in Google Maps', saveSpot: '❤️ Save', saved: '❤️ Saved',
+      report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit',
+      visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code',
+      startApp: '🚀 Start WorldSnap', eulaAgree: 'I agree to Terms & Conditions',
+      termsTitle: '📜 Terms of Service', close: 'Close', back: 'Back',
+      searchPlaceholder: '🔍 Search spots',
+      cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out'
+    },
+  },
+  IT: {
+    name: 'Italia (イタリア)',
+    flag: '🇮🇹',
+    lang: 'it',
+    lat: 41.8719,
+    lon: 12.5674,
+    zoom: 6,
+    dict: {
+      home: 'Home', map: 'Mappa', gallery: 'Galleria', myPage: 'Profilo',
+      addPhoto: 'Aggiungi foto', exportMap: 'Salva', view: 'Panorama', gourmet: 'Gourmet', rain: 'Pioggia',
+      myMap: 'Mia mappa', friends: 'Amici', world: 'Mondo',
+      openGoogleMaps: '🧭 Apri su Google Maps', saveSpot: '❤️ Salva', saved: '❤️ Salvato',
+      report: '⚠️ Segnala', block: '🚫 Blocca', delete: '🗑️ Elimina', edit: '✏️ Modifica',
+      visited: 'Paesi visitati', countriesUnit: 'paesi', posts: 'Post', friendCode: 'Codice amico',
+      startApp: '🚀 Avvia WorldSnap', eulaAgree: 'Accetto i termini di servizio',
+      termsTitle: '📜 Termini di servizio', close: 'Chiudi', back: 'Indietro',
+      searchPlaceholder: '🔍 Cerca luoghi (es. Roma)',
+      cacheClear: '🧹 Svuota cache', deleteAccount: '⚠️ Elimina account', logout: '🚪 Esci'
+    },
+  },
+  GB: {
+    name: 'UK (イギリス)',
+    flag: '🇬🇧',
+    lang: 'en',
+    lat: 55.3781,
+    lon: -3.436,
+    zoom: 5,
+    dict: {
+      home: 'Home', map: 'Map', gallery: 'Gallery', myPage: 'Profile',
+      addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day',
+      myMap: 'My Map', friends: 'Friends', world: 'World',
+      openGoogleMaps: '🧭 Open in Google Maps', saveSpot: '❤️ Save', saved: '❤️ Saved',
+      report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit',
+      visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code',
+      startApp: '🚀 Start WorldSnap', eulaAgree: 'I agree to the Terms',
+      termsTitle: '📜 Terms of Service', close: 'Close', back: 'Back',
+      searchPlaceholder: '🔍 Search spots (e.g. London)',
+      cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out'
+    },
+  },
+  ES: {
+    name: 'España (スペイン)',
+    flag: '🇪🇸',
+    lang: 'es',
+    lat: 40.4637,
+    lon: -3.7492,
+    zoom: 6,
+    dict: {
+      home: 'Inicio', map: 'Mapa', gallery: 'Galería', myPage: 'Perfil',
+      addPhoto: 'Añadir foto', exportMap: 'Guardar', view: 'Vistas', gourmet: 'Gourmet', rain: 'Lluvia',
+      myMap: 'Mi mapa', friends: 'Amigos', world: 'Mundo',
+      openGoogleMaps: '🧭 Abrir en Google Maps', saveSpot: '❤️ Guardar', saved: '❤️ Guardado',
+      report: '⚠️ Denunciar', block: '🚫 Bloquear', delete: '🗑️ Eliminar', edit: '✏️ Editar',
+      visited: 'Países visitados', countriesUnit: 'países', posts: 'Publicaciones', friendCode: 'Código amigo',
+      startApp: '🚀 Comenzar WorldSnap', eulaAgree: 'Acepto los términos de servicio',
+      termsTitle: '📜 Términos de servicio', close: 'Cerrar', back: 'Volver',
+      searchPlaceholder: '🔍 Buscar lugares (ej. Barcelona)',
+      cacheClear: '🧹 Borrar caché', deleteAccount: '⚠️ Eliminar cuenta', logout: '🚪 Salir'
+    },
+  },
+  TH: {
+    name: 'ไทย (タイ)',
+    flag: '🇹🇭',
+    lang: 'th',
+    lat: 15.87,
+    lon: 100.9925,
+    zoom: 6,
+    dict: {
+      home: 'หน้าแรก', map: 'แผนที่', gallery: 'แกลเลอรี', myPage: 'โปรไฟล์',
+      addPhoto: 'เพิ่มรูป/วิดีโอ', exportMap: 'บันทึกแผนที่', view: 'วิว', gourmet: 'ของกิน', rain: 'วันฝนตก',
+      myMap: 'แผนที่ของฉัน', friends: 'เพื่อน', world: 'ทั่วโลก',
+      openGoogleMaps: '🧭 เปิดใน Google Maps', saveSpot: '❤️ บันทึก', saved: '❤️ บันทึกแล้ว',
+      report: '⚠️ รายงาน', block: '🚫 บล็อก', delete: '🗑️ ลบ', edit: '✏️ แก้ไข',
+      visited: 'ประเทศที่เยือน', countriesUnit: 'ประเทศ', posts: 'โพสต์', friendCode: 'รหัสเพื่อน',
+      startApp: '🚀 เริ่ม WorldSnap', eulaAgree: 'ฉันยอมรับข้อกำหนดการใช้งาน',
+      termsTitle: '📜 ข้อกำหนดการใช้งาน (EULA)', close: 'ปิด', back: 'ย้อนกลับ',
+      searchPlaceholder: '🔍 ค้นหาสถานที่ (เช่น กรุงเทพ)',
+      cacheClear: '🧹 ล้างแคช', deleteAccount: '⚠️ ลบบัญชี', logout: '🚪 ออกจากระบบ'
     },
   },
   NZ: {
-    name: 'New Zealand (NZ)',
+    name: 'NZ (ニュージーランド)',
     flag: '🇳🇿',
     lang: 'en',
     lat: -40.9006,
     lon: 174.886,
     zoom: 5,
     dict: {
-      home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Photo', exportMap: 'Save',
-      view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps',
-      saveSpot: 'Bookmark', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete',
-      visited: 'Visited Countries', countriesUnit: 'countries', posts: 'Posts', friends: 'Friends', settings: 'Settings',
-      feedTitle: '✨ Travel Feed', friendCode: 'Friend Code', copy: 'Copy', add: 'Add',
-      terms: 'Terms of Service', agree: 'Agree and Continue', startApp: 'Start WorldSnap',
-      clearCache: 'Clear Map Cache', blockedUsers: 'Blocked Users', logout: 'Log Out', deleteAccount: 'Delete Account'
+      home: 'Home', map: 'Map', gallery: 'Gallery', myPage: 'Profile',
+      addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day',
+      myMap: 'My Map', friends: 'Friends', world: 'World',
+      openGoogleMaps: '🧭 Open in Google Maps', saveSpot: '❤️ Save', saved: '❤️ Saved',
+      report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit',
+      visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code',
+      startApp: '🚀 Start WorldSnap', eulaAgree: 'I agree to the Terms',
+      termsTitle: '📜 Terms of Service', close: 'Close', back: 'Back',
+      searchPlaceholder: '🔍 Search spots',
+      cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out'
     },
   },
   AT: {
@@ -277,13 +297,16 @@ export const COUNTRIES: Record<
     lon: 14.5501,
     zoom: 7,
     dict: {
-      home: 'Start', map: 'Karte', profile: 'Profil', addPhoto: 'Foto', exportMap: 'Speichern',
-      view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen', openGoogleMaps: 'In Google Maps öffnen',
-      saveSpot: 'Merken', saved: 'Gemerkt', report: 'Melden', block: 'Blockieren', delete: 'Löschen',
-      visited: 'Besuchte Länder', countriesUnit: 'Länder', posts: 'Beiträge', friends: 'Freunde', settings: 'Einstellungen',
-      feedTitle: '✨ Inspiration', friendCode: 'Freundescode', copy: 'Kopieren', add: 'Hinzufügen',
-      terms: 'Nutzungsbedingungen', agree: 'Zustimmen', startApp: 'WorldSnap Starten',
-      clearCache: 'Karten-Cache leeren', blockedUsers: 'Blockierte Nutzer', logout: 'Abmelden', deleteAccount: 'Konto löschen'
+      home: 'Start', map: 'Karte', gallery: 'Galerie', myPage: 'Profil',
+      addPhoto: 'Medien hinzufügen', exportMap: 'Speichern', view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen',
+      myMap: 'Meine Karte', friends: 'Freunde', world: 'Weltweit',
+      openGoogleMaps: '🧭 In Google Maps öffnen', saveSpot: '❤️ Merken', saved: '❤️ Gemerkt',
+      report: '⚠️ Melden', block: '🚫 Blockieren', delete: '🗑️ Löschen', edit: '✏️ Bearbeiten',
+      visited: 'Länder', countriesUnit: 'Länder', posts: 'Beiträge', friendCode: 'Freundescode',
+      startApp: '🚀 WorldSnap starten', eulaAgree: 'Nutzungsbedingungen zustimmen',
+      termsTitle: '📜 Nutzungsbedingungen', close: 'Schließen', back: 'Zurück',
+      searchPlaceholder: '🔍 Orte suchen',
+      cacheClear: '🧹 Cache leeren', deleteAccount: '⚠️ Konto löschen', logout: '🚪 Abmelden'
     },
   },
   SG: {
@@ -294,13 +317,16 @@ export const COUNTRIES: Record<
     lon: 103.8198,
     zoom: 11,
     dict: {
-      home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Photo', exportMap: 'Save',
-      view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps',
-      saveSpot: 'Bookmark', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete',
-      visited: 'Visited Countries', countriesUnit: 'countries', posts: 'Posts', friends: 'Friends', settings: 'Settings',
-      feedTitle: '✨ Travel Inspiration', friendCode: 'Friend Code', copy: 'Copy', add: 'Add',
-      terms: 'Terms of Service', agree: 'Agree and Continue', startApp: 'Start WorldSnap',
-      clearCache: 'Clear Map Cache', blockedUsers: 'Blocked Users', logout: 'Log Out', deleteAccount: 'Delete Account'
+      home: 'Home', map: 'Map', gallery: 'Gallery', myPage: 'Profile',
+      addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day',
+      myMap: 'My Map', friends: 'Friends', world: 'World',
+      openGoogleMaps: '🧭 Open in Google Maps', saveSpot: '❤️ Save', saved: '❤️ Saved',
+      report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit',
+      visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code',
+      startApp: '🚀 Start WorldSnap', eulaAgree: 'I agree to the Terms',
+      termsTitle: '📜 Terms of Service', close: 'Close', back: 'Back',
+      searchPlaceholder: '🔍 Search spots',
+      cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out'
     },
   },
   CA: {
@@ -311,30 +337,36 @@ export const COUNTRIES: Record<
     lon: -106.3468,
     zoom: 4,
     dict: {
-      home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Photo', exportMap: 'Save',
-      view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps',
-      saveSpot: 'Bookmark', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete',
-      visited: 'Visited Countries', countriesUnit: 'countries', posts: 'Posts', friends: 'Friends', settings: 'Settings',
-      feedTitle: '✨ Travel Feed', friendCode: 'Friend Code', copy: 'Copy', add: 'Add',
-      terms: 'Terms of Service', agree: 'Agree and Continue', startApp: 'Start WorldSnap',
-      clearCache: 'Clear Map Cache', blockedUsers: 'Blocked Users', logout: 'Log Out', deleteAccount: 'Delete Account'
+      home: 'Home', map: 'Map', gallery: 'Gallery', myPage: 'Profile',
+      addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day',
+      myMap: 'My Map', friends: 'Friends', world: 'World',
+      openGoogleMaps: '🧭 Open in Google Maps', saveSpot: '❤️ Save', saved: '❤️ Saved',
+      report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit',
+      visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code',
+      startApp: '🚀 Start WorldSnap', eulaAgree: 'I agree to the Terms',
+      termsTitle: '📜 Terms of Service', close: 'Close', back: 'Back',
+      searchPlaceholder: '🔍 Search spots',
+      cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out'
     },
   },
   AE: {
-    name: 'Dubai / الإمارات (UAE)',
+    name: 'Dubai / UAE (ドバイ)',
     flag: '🇦🇪',
     lang: 'ar',
     lat: 25.2048,
     lon: 55.2708,
     zoom: 9,
     dict: {
-      home: 'الرئيسية', map: 'الخريطة', profile: 'الملف', addPhoto: 'إضافة صورة', exportMap: 'حفظ',
-      view: 'إطلالة', gourmet: 'مطاعم', rain: 'ممطر', openGoogleMaps: 'خرائط Google',
-      saveSpot: 'حفظ', saved: 'محفوظ', report: 'إبلاغ', block: 'حظر', delete: 'حذف',
-      visited: 'الدول التي زرتها', countriesUnit: 'دولة', posts: 'منشورات', friends: 'أصدقاء', settings: 'إعدادات',
-      feedTitle: '✨ الإلهام', friendCode: 'رمز الصديق', copy: 'نسخ', add: 'إضافة',
-      terms: 'شروط الخدمة', agree: 'موافقة وبدء', startApp: 'ابدأ WorldSnap',
-      clearCache: 'مسح الذاكرة المؤقتة', blockedUsers: 'المحظورون', logout: 'خروج', deleteAccount: 'حذف الحساب'
+      home: 'الرئيسية', map: 'الخريطة', gallery: 'المعرض', myPage: 'الملف',
+      addPhoto: 'إضافة صورة', exportMap: 'حفظ الخريطة', view: 'إطلالة', gourmet: 'مطاعم', rain: 'ممطر',
+      myMap: 'خريطتي', friends: 'الأصدقاء', world: 'العالم',
+      openGoogleMaps: '🧭 خرائط Google', saveSpot: '❤️ حفظ', saved: '❤️ تم الحفظ',
+      report: '⚠️ إبلاغ', block: '🚫 حظر', delete: '🗑️ حذف', edit: '✏️ تعديل',
+      visited: 'الدول', countriesUnit: 'دولة', posts: 'منشورات', friendCode: 'رمز الصديق',
+      startApp: '🚀 ابدأ WorldSnap', eulaAgree: 'أوافق على الشروط',
+      termsTitle: '📜 شروط الخدمة (EULA)', close: 'إغلاق', back: 'رجوع',
+      searchPlaceholder: '🔍 بحث عن مكان',
+      cacheClear: '🧹 مسح الذاكرة', deleteAccount: '⚠️ حذف الحساب', logout: '🚪 خروج'
     },
   },
   MV: {
@@ -345,30 +377,16 @@ export const COUNTRIES: Record<
     lon: 73.2207,
     zoom: 7,
     dict: {
-      home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Photo', exportMap: 'Save',
-      view: 'View', gourmet: 'Gourmet', rain: 'Rainy', openGoogleMaps: 'Open in Google Maps',
-      saveSpot: 'Bookmark', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete',
-      visited: 'Visited Countries', countriesUnit: 'countries', posts: 'Posts', friends: 'Friends', settings: 'Settings',
-      feedTitle: '✨ Travel Inspiration', friendCode: 'Friend Code', copy: 'Copy', add: 'Add',
-      terms: 'Terms of Service', agree: 'Agree and Continue', startApp: 'Start WorldSnap',
-      clearCache: 'Clear Map Cache', blockedUsers: 'Blocked Users', logout: 'Log Out', deleteAccount: 'Delete Account'
-    },
-  },
-  TW: {
-    name: '台灣 (台湾)',
-    flag: '🇹🇼',
-    lang: 'zh',
-    lat: 23.6978,
-    lon: 120.9605,
-    zoom: 7,
-    dict: {
-      home: '首頁', map: '地圖', profile: '個人主頁', addPhoto: '新增照片', exportMap: '儲存',
-      view: '絕景', gourmet: '美食', rain: '雨天景點', openGoogleMaps: 'Google 地圖導航',
-      saveSpot: '想去收藏', saved: '已收藏', report: '檢舉', block: '封鎖', delete: '刪除',
-      visited: '造訪國家', countriesUnit: '個國家', posts: '貼文', friends: '好友', settings: '設定',
-      feedTitle: '✨ 探索推薦', friendCode: '好友代碼', copy: '複製', add: '新增',
-      terms: '服務條款 (EULA)', agree: '同意條款並開始', startApp: '開啟 WorldSnap',
-      clearCache: '清除地圖快取', blockedUsers: '封鎖名單', logout: '登出', deleteAccount: '刪除帳號 (註銷)'
+      home: 'Home', map: 'Map', gallery: 'Gallery', myPage: 'Profile',
+      addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day',
+      myMap: 'My Map', friends: 'Friends', world: 'World',
+      openGoogleMaps: '🧭 Open in Google Maps', saveSpot: '❤️ Save', saved: '❤️ Saved',
+      report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit',
+      visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code',
+      startApp: '🚀 Start WorldSnap', eulaAgree: 'I agree to the Terms',
+      termsTitle: '📜 Terms of Service', close: 'Close', back: 'Back',
+      searchPlaceholder: '🔍 Search resorts',
+      cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out'
     },
   },
 };
@@ -378,16 +396,17 @@ const INITIAL_SPOTS: Spot[] = [
     id: 'mock-1',
     userId: 'user-yuki',
     userName: 'Yuki_Traveler',
-    title: 'マッターホルン 黄金の朝焼け',
-    description: '早朝のツェルマットから眺める山頂。息をのむ美しさでした！展望台へは始発電車がおすすめ。',
+    title: 'マッターホルンの絶景朝焼け',
+    description: '早朝のツェルマットから眺める黄金色の山頂。息をのむ美しさでした！展望台へは始発電車がおすすめ。',
     fileName: 'matterhorn.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&auto=format&fit=crop',
     fileType: 'image',
     lat: 45.9765,
     lon: 7.7491,
     countryCode: 'CH',
+    cityName: 'Zermatt',
     category: 'view',
-    createdAt: '2026-08-14',
+    createdAt: '2026/08/14',
   },
   {
     id: 'mock-2',
@@ -401,8 +420,9 @@ const INITIAL_SPOTS: Spot[] = [
     lat: 35.0037,
     lon: 135.7712,
     countryCode: 'JP',
+    cityName: 'Kyoto',
     category: 'gourmet',
-    createdAt: '2026-08-10',
+    createdAt: '2026/08/10',
   },
   {
     id: 'mock-3',
@@ -416,14 +436,15 @@ const INITIAL_SPOTS: Spot[] = [
     lat: 48.8606,
     lon: 2.3376,
     countryCode: 'FR',
+    cityName: 'Paris',
     category: 'rain',
-    createdAt: '2026-08-01',
+    createdAt: '2026/08/01',
   },
   {
     id: 'mock-4',
     userId: 'user-ny',
     userName: 'Alex_NYC',
-    title: 'ニューヨーク タイムズスクエア',
+    title: 'タイムズスクエアの夜景',
     description: '夜景とネオンが輝く街。活気あふれる世界最高のストリート！',
     fileName: 'nyc.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop',
@@ -431,10 +452,35 @@ const INITIAL_SPOTS: Spot[] = [
     lat: 40.758,
     lon: -73.9855,
     countryCode: 'US',
+    cityName: 'New York',
     category: 'view',
-    createdAt: '2026-08-05',
+    createdAt: '2026/08/05',
   },
 ];
+
+const EULA_FULL_TEXT = `【WorldSnap 利用規約 (EULA)】
+
+第1条（適用および同意）
+本規約は、当サービスを利用するすべてのユーザーに適用されます。利用規約およびプライバシーポリシーに同意いただけない場合、投稿および共有機能はご利用いただけません。
+
+第2条（ユーザー生成コンテンツの安全方針と禁止事項）
+当サービスは、すべてのユーザーが安全かつ快適に旅の思い出を記録・共有できる環境を重視しています。ユーザーは以下のコンテンツの投稿および行為を行ってはなりません。
+・性的、暴力的、過度にグロテスク、差別的、または他者に不快感を与える画像・動画・テキストの投稿
+・特定の個人・団体への嫌がらせ、名誉毀損、脅迫、いじめ、ストーカー行為
+・法令または公序良俗に反する行為、犯罪行為を助長する行為
+・第三者の著作権、肖像権、商標権その他の権利を侵害する行為（無断転載・立入禁止区域の撮影等）
+・個人情報の無断開示、スパム目的の連投
+
+第3条（不適切なコンテンツへの対処・モデレーション）
+・通報機能（Report）：ユーザーは不適切な写真・ピンを通報できます。通報されたコンテンツは24時間以内にモデレーターが確認・削除します。
+・ブロック機能（Block）：ユーザーは特定の他ユーザーをブロックでき、ブロックされたユーザーの投稿は即座に非表示となります。
+・利用停止・削除：本規約に違反したユーザーは事前の通知なくアカウント停止処分を実施します。
+
+第4条（位置情報およびコンテンツの権利）
+投稿写真に含まれる位置情報の公開はユーザー自身の責任において管理するものとします。
+
+第5条（アカウント削除・退会）
+ユーザーは設定画面より、いつでもアカウントおよび投稿データを完全に削除（退会）することができます。`;
 
 function convertDMSToDD(dms: number[], ref: string): number {
   if (!dms || dms.length < 3) return 0;
@@ -471,7 +517,7 @@ const MapComponent = dynamic(
         const MapController = ({ center, zoom }: { center: [number, number]; zoom: number }) => {
           const map = useMap();
           useEffect(() => {
-            map.flyTo(center, zoom, { duration: 1.4, easeLinearity: 0.25 });
+            map.flyTo(center, zoom, { duration: 1.5, easeLinearity: 0.25 });
           }, [center, zoom, map]);
           return null;
         };
@@ -485,7 +531,6 @@ const MapComponent = dynamic(
           return null;
         };
 
-        // 写真のような淡い白・ライトグレー基調（CartoDB Positron / 雨の日はDarkMatter）
         const tileUrl =
           mode === 'rain'
             ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
@@ -500,30 +545,30 @@ const MapComponent = dynamic(
             maxBoundsViscosity={1.0}
             doubleClickZoom={false}
             zoomControl={false}
-            style={{ width: '100%', height: '100%', background: '#f1f5f9' }}
+            style={{ width: '100%', height: '100%', background: '#e2e8f0' }}
             scrollWheelZoom={true}
           >
             <MapController center={center} zoom={zoom} />
             <MapEventHandler />
             <TileLayer url={tileUrl} attribution='&copy; CARTO' />
 
-            {/* 写真ピン（ポラロイド風カードピン・接続ラインなし） */}
+            {/* 写真ピン（ポラロイド風カードピン・接続線なし） */}
             {spots.map((spot) => {
               const rot = ((spot.lat * 10) % 8) - 4;
               const iconHtml = `
                 <div style="
                   position: relative;
-                  width: 48px;
-                  height: 56px;
+                  width: 50px;
+                  height: 58px;
                   background: #ffffff;
                   border-radius: 6px;
-                  box-shadow: 0 8px 20px rgba(0,0,0,0.22);
+                  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
                   padding: 4px 4px 14px 4px;
                   cursor: pointer;
                   transform: translateY(-50%) rotate(${rot}deg);
                   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
                 ">
-                  <div style="width: 100%; height: 38px; border-radius: 3px; overflow: hidden; background: #e2e8f0;">
+                  <div style="width: 100%; height: 40px; border-radius: 3px; overflow: hidden; background: #e2e8f0;">
                     <img src="${spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" />
                   </div>
                   <div style="
@@ -542,8 +587,8 @@ const MapComponent = dynamic(
               const customIcon = L.divIcon({
                 className: 'polaroid-marker',
                 html: iconHtml,
-                iconSize: [48, 56],
-                iconAnchor: [24, 28],
+                iconSize: [50, 58],
+                iconAnchor: [25, 29],
               });
 
               return (
@@ -565,14 +610,15 @@ const MapComponent = dynamic(
 );
 
 // ==========================================
-// 3. メインコンポーネント
+// 3. メインコンポーネント (WorldSnap)
 // ==========================================
 export default function WorldSnapApp() {
-  // 初回起動オンボーディング状態
-  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(true);
-  const [onboardingEULA, setOnboardingEULA] = useState<boolean>(false);
+  // 初回オンボーディング ステート (Step 1 -> Step 2 -> Step 3)
+  const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
+  const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3>(1);
+  const [eulaChecked, setEulaChecked] = useState<boolean>(false);
 
-  // ユーザー・国籍・言語状態
+  // ユーザー設定 & 国籍・言語
   const [userCountry, setUserCountry] = useState<string>('JP');
   const [userName, setUserName] = useState<string>('taku_snap');
   const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
@@ -582,19 +628,20 @@ export default function WorldSnapApp() {
   const [currentTab, setCurrentTab] = useState<TabType>('map');
   const [viewMode, setViewMode] = useState<ViewCategory>('view');
   const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
 
   // 地図状態
-  const currentConfig = COUNTRIES[userCountry] || COUNTRIES.ALL;
   const [mapCenter, setMapCenter] = useState<[number, number]>([20.0, 0.0]);
   const [mapZoom, setMapZoom] = useState<number>(2);
 
-  // コンテンツ・データ状態
+  // 投稿データ & モーダル状態
   const [spots, setSpots] = useState<Spot[]>(INITIAL_SPOTS);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
+  const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
 
-  // モーダル・トースト
+  // UGC・設定・通報・アップロード
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
   const [isEulaModalOpen, setIsEulaModalOpen] = useState<boolean>(false);
@@ -602,15 +649,15 @@ export default function WorldSnapApp() {
   const [reportReason, setReportReason] = useState<string>('不適切な画像');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // アップロード・手動位置設定
+  // 位置未設定ファイル
   const [unlocatedFiles, setUnlocatedFiles] = useState<PendingFile[]>([]);
   const [currentPendingIndex, setCurrentPendingIndex] = useState<number>(0);
   const [manualTitle, setManualTitle] = useState('');
   const [manualLat, setManualLat] = useState('');
   const [manualLon, setManualLon] = useState('');
 
-  // マイページ内タブ
-  const [profileSubTab, setProfileSubTab] = useState<'posts' | 'saved' | 'friends'>('posts');
+  // ギャラリー・マイページ サブタブ
+  const [galleryCategory, setGalleryCategory] = useState<'all' | ViewCategory | 'saved'>('all');
   const [friendsList, setFriendsList] = useState<{ id: string; name: string; avatar: string }[]>([
     { id: 'user-yuki', name: 'Yuki_Traveler', avatar: '🌸' },
     { id: 'user-ken', name: 'Ken_Gourmet', avatar: '☕' },
@@ -618,50 +665,45 @@ export default function WorldSnapApp() {
   const [inputFriendCode, setInputFriendCode] = useState('');
 
   const exportRef = useRef<HTMLDivElement>(null);
+  const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
   const t = currentConfig.dict;
-
-  // 国籍変更時の地図移動
-  useEffect(() => {
-    if (!isFirstLaunch) {
-      const target = COUNTRIES[userCountry];
-      if (target) {
-        setMapCenter([target.lat, target.lon]);
-        setMapZoom(target.zoom);
-      }
-    }
-  }, [userCountry, isFirstLaunch]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  // フィルタリング処理
   const filteredSpots = spots.filter((s) => {
     if (blockedUsers.includes(s.userId)) return false;
     if (s.category !== viewMode) return false;
     if (displayScope === 'my') return s.userId === 'me';
     if (displayScope === 'friends') return s.userId === 'me' || friendsList.some((f) => f.id === s.userId);
+    if (searchKeyword) {
+      const kw = searchKeyword.toLowerCase();
+      return s.title.toLowerCase().includes(kw) || s.description.toLowerCase().includes(kw) || s.cityName.toLowerCase().includes(kw);
+    }
     return true;
   });
 
   const visitedCountryCount = new Set(spots.filter((s) => s.userId === 'me').map((s) => s.countryCode)).size;
 
-  // ダブルタップでの周辺ズーム
+  // ダブルタップズーム (FlyTo)
   const handleMapDoubleTap = (lat: number, lon: number) => {
     setMapCenter([lat, lon]);
     setMapZoom((prev) => Math.min(prev + 3, 13));
   };
 
-  // オンボーディング完了・アプリ開始
-  const handleStartApp = () => {
-    setIsFirstLaunch(false);
+  // オンボーディング完了・選択国へFlyTo
+  const handleCompleteOnboarding = () => {
+    setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setMapCenter([target.lat, target.lon]);
     setMapZoom(target.zoom);
-    showToast(`🌍 ${target.name} にフォーカスしました！`);
+    showToast(`🌍 ${target.name} へフォーカスしました！`);
   };
 
-  // 写真・動画アップロード
+  // 写真・動画アップロード (EXIF解析 & dynamic import)
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -703,7 +745,8 @@ export default function WorldSnapApp() {
               fileType: 'image',
               lat: latDecimal,
               lon: lonDecimal,
-              countryCode: userCountry === 'ALL' ? 'JP' : userCountry,
+              countryCode: userCountry,
+              cityName: currentConfig.name.split(' ')[0],
               category: viewMode,
               createdAt: new Date().toLocaleDateString(),
             });
@@ -737,11 +780,12 @@ export default function WorldSnapApp() {
       title: titleVal || manualTitle || current.file.name,
       description: '旅の思い出（手動配置）',
       fileName: current.file.name,
-      fileUrl,
+      fileUrl: current.fileUrl,
       fileType: current.fileType,
       lat: latVal,
       lon: lonVal,
-      countryCode: userCountry === 'ALL' ? 'JP' : userCountry,
+      countryCode: userCountry,
+      cityName: titleVal || 'カスタム',
       category: viewMode,
       createdAt: current.dateTime || new Date().toLocaleDateString(),
     };
@@ -755,6 +799,7 @@ export default function WorldSnapApp() {
     showToast('📍 スポットを配置しました');
   };
 
+  // マップ画像保存 (PNG)
   const handleExportMap = async () => {
     if (!exportRef.current) return;
     try {
@@ -764,7 +809,7 @@ export default function WorldSnapApp() {
       const img = canvas.toDataURL('image/png');
       const a = document.createElement('a');
       a.href = img;
-      a.download = `WorldSnap-Map.png`;
+      a.download = `WorldSnap-Map-${userCountry}.png`;
       a.click();
       showToast('💾 マップを保存しました');
     } catch (e) {
@@ -778,7 +823,7 @@ export default function WorldSnapApp() {
       showToast('行きたい保存を解除しました');
     } else {
       setSavedSpotIds((prev) => [...prev, spotId]);
-      showToast('💛 行きたいリストに保存しました');
+      showToast('💛 行きたいリストに保存しました！');
     }
   };
 
@@ -804,96 +849,140 @@ export default function WorldSnapApp() {
     <div style={{ background: '#f8fafc', color: '#0f172a', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       {/* ── トースト通知 ── */}
       {toastMessage && (
-        <div style={{ position: 'fixed', top: '14px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,23,42,0.92)', color: '#fff', padding: '8px 18px', borderRadius: '30px', zIndex: 9999, fontSize: '12px', fontWeight: 'bold', boxShadow: '0 6px 20px rgba(0,0,0,0.25)', backdropFilter: 'blur(6px)' }}>
+        <div style={{ position: 'fixed', top: '14px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,23,42,0.94)', color: '#fff', padding: '10px 20px', borderRadius: '30px', zIndex: 99999, fontSize: '13px', fontWeight: 'bold', boxShadow: '0 8px 24px rgba(0,0,0,0.3)', backdropFilter: 'blur(6px)' }}>
           {toastMessage}
         </div>
       )}
 
       {/* ==================================================== */}
-      {/* 0. 初回オンボーディング画面（Step 1 & Step 2 EULA同意） */}
+      {/* 0. 初回オンボーディング (3ステップ・EULA全文・FlyTo遷移) */}
       {/* ==================================================== */}
-      {isFirstLaunch && (
-        <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+      {isOnboarding && (
+        <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
-            <div style={{ fontSize: '32px', marginBottom: '4px' }}>🗺️</div>
-            <h1 style={{ margin: 0, fontSize: '22px', fontWeight: '900', color: '#0284c7' }}>WorldSnap</h1>
-            <p style={{ margin: '4px 0 16px 0', fontSize: '12px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
+            <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
+            <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>WorldSnap</h1>
+            <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
 
+            {/* プログレスバー */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#0284c7' }}></span>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e2e8f0' }}></span>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#e2e8f0' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 1 ? '#0284c7' : '#e2e8f0' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 2 ? '#0284c7' : '#e2e8f0' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 3 ? '#0284c7' : '#e2e8f0' }}></span>
             </div>
 
-            <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div>
-                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>👤 ユーザー名</label>
+            {/* Step 1: 国籍選択 */}
+            {onboardingStep === 1 && (
+              <div style={{ textAlign: 'left' }}>
+                <h3 style={{ fontSize: '15px', margin: '0 0 10px 0' }}>Step 1: あなたの国籍を選択</h3>
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>アプリの言語と地図上の表記がすべて選択した国にローカライズされます。</p>
+                <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+                  {Object.entries(COUNTRIES).map(([code, c]) => (
+                    <div
+                      key={code}
+                      onClick={() => setUserCountry(code)}
+                      style={{
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: `2px solid ${userCountry === code ? '#0284c7' : '#e2e8f0'}`,
+                        background: userCountry === code ? '#f0f9ff' : '#ffffff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.name}</span>
+                      {userCountry === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
+                    </div>
+                  ))}
+                </div>
+                <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                  次へ進む
+                </button>
+              </div>
+            )}
+
+            {/* Step 2: プロフィール設定 */}
+            {onboardingStep === 2 && (
+              <div style={{ textAlign: 'left' }}>
+                <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>Step 2: プロフィール設定</h3>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                  <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: '#0284c7', color: '#fff', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 16px rgba(2,132,199,0.3)' }}>
+                    👤
+                  </div>
+                </div>
+                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>ユーザー名 (表示名)</label>
                 <input
                   type="text"
+                  maxLength={20}
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', marginTop: '4px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '14px', fontWeight: 'bold' }}
+                  style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '14px', fontWeight: 'bold' }}
                 />
+                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>自己紹介</label>
+                <input
+                  type="text"
+                  value={userBio}
+                  onChange={(e) => setUserBio(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px' }}
+                />
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    戻る
+                  </button>
+                  <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    次へ進む
+                  </button>
+                </div>
               </div>
+            )}
 
-              <div>
-                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🌐 あなたの国籍・メインの国</label>
-                <select
-                  value={userCountry}
-                  onChange={(e) => setUserCountry(e.target.value)}
-                  style={{ width: '100%', padding: '10px 12px', marginTop: '4px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold', background: '#f8fafc' }}
-                >
-                  {Object.entries(COUNTRIES).map(([code, c]) => (
-                    <option key={code} value={code}>
-                      {c.flag} {c.name}
-                    </option>
-                  ))}
-                </select>
-                <span style={{ fontSize: '10px', color: '#94a3b8', marginTop: '2px', display: 'block' }}>※地図の初期表示や言語表記に反映されます</span>
-              </div>
-
-              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a', marginBottom: '4px' }}>📜 コミュニティガイドライン (EULA)</div>
-                <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 8px 0', lineHeight: '1.4' }}>
-                  誹謗中傷や不適切な画像の投稿は禁止されています。違反者は即座にアカウント停止となります。
-                </p>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', color: '#0284c7' }}>
-                  <input type="checkbox" checked={onboardingEULA} onChange={(e) => setOnboardingEULA(e.target.checked)} />
-                  <span>利用規約 (EULA) に同意する</span>
+            {/* Step 3: 利用規約 (EULA) 同意 */}
+            {onboardingStep === 3 && (
+              <div style={{ textAlign: 'left' }}>
+                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>Step 3: {t.termsTitle}</h3>
+                <div style={{ maxHeight: '160px', overflowY: 'auto', background: '#f8fafc', padding: '10px 12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.5', whiteSpace: 'pre-line', marginBottom: '14px' }}>
+                  {EULA_FULL_TEXT}
+                </div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', color: '#0284c7', marginBottom: '20px' }}>
+                  <input type="checkbox" checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
+                  <span>{t.eulaAgree}</span>
                 </label>
-                <span onClick={() => setIsEulaModalOpen(true)} style={{ fontSize: '10px', color: '#94a3b8', textDecoration: 'underline', cursor: 'pointer', display: 'block', marginTop: '4px' }}>
-                  利用規約の全文を確認する
-                </span>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    戻る
+                  </button>
+                  <button
+                    disabled={!eulaChecked}
+                    onClick={handleCompleteOnboarding}
+                    style={{
+                      flex: 2,
+                      padding: '12px',
+                      background: eulaChecked ? '#0284c7' : '#94a3b8',
+                      color: '#fff',
+                      fontWeight: 'bold',
+                      border: 'none',
+                      borderRadius: '12px',
+                      cursor: eulaChecked ? 'pointer' : 'not-allowed',
+                      boxShadow: eulaChecked ? '0 6px 20px rgba(2,132,199,0.35)' : 'none',
+                    }}
+                  >
+                    {t.startApp}
+                  </button>
+                </div>
               </div>
-            </div>
-
-            <button
-              disabled={!onboardingEULA}
-              onClick={handleStartApp}
-              style={{
-                width: '100%',
-                marginTop: '20px',
-                padding: '14px',
-                background: onboardingEULA ? '#0284c7' : '#94a3b8',
-                color: '#ffffff',
-                fontWeight: 'bold',
-                fontSize: '14px',
-                border: 'none',
-                borderRadius: '14px',
-                cursor: onboardingEULA ? 'pointer' : 'not-allowed',
-                boxShadow: onboardingEULA ? '0 6px 20px rgba(2,132,199,0.35)' : 'none',
-                transition: '0.2s',
-              }}
-            >
-              🚀 {t.startApp}
-            </button>
+            )}
           </div>
         </div>
       )}
 
-      {/* ── ヘッダー（コンパクト設計） ── */}
+      {/* ── ヘッダー ── */}
       <header style={{ height: '52px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '20px', cursor: 'pointer' }}>
+            ☰
+          </button>
           <h1 style={{ margin: 0, fontSize: '18px', fontWeight: '900', color: themeAccent, letterSpacing: '-0.5px' }}>WorldSnap</h1>
           <select
             value={userCountry}
@@ -908,344 +997,266 @@ export default function WorldSnapApp() {
           </select>
         </div>
 
-        <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '6px' }}>
-          ⚙️
+        <button onClick={() => setCurrentTab('gallery')} style={{ width: '32px', height: '32px', borderRadius: '50%', background: themeAccent, color: '#fff', border: 'none', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          👤
         </button>
       </header>
 
-      {/* ── メイン画面（タブ切替） ── */}
+      {/* ── メインコンテナ（マップインスタンスを常時保持） ── */}
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         {/* ==================================================== */}
-        {/* TAB 1: 🗺️ メインマップ (画面の約7割を専有する 7:3 レイアウト) */}
+        {/* TAB 1: 🗺️ メインマップ (70% マップ + 30% 操作パネル) */}
         {/* ==================================================== */}
-        {currentTab === 'map' && (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', position: 'relative' }}>
-            {/* 上部フィルターバー（フロート式） */}
-            <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', zIndex: 400, display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
-              {/* モード選択 (View / グルメ / 雨の日) */}
-              <div style={{ display: 'flex', background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', padding: '4px', borderRadius: '30px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)', pointerEvents: 'auto' }}>
-                {(['view', 'gourmet', 'rain'] as const).map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => setViewMode(m)}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '20px',
-                      border: 'none',
-                      background: viewMode === m ? themeAccent : 'transparent',
-                      color: viewMode === m ? '#fff' : '#64748b',
-                      fontWeight: 'bold',
-                      fontSize: '11px',
-                      cursor: 'pointer',
-                      transition: '0.2s',
-                    }}
-                  >
-                    {m === 'view' ? `🏔️ ${t.view}` : m === 'gourmet' ? `🍔 ${t.gourmet}` : `🌧️ ${t.rain}`}
-                  </button>
-                ))}
-              </div>
-
-              {/* 表示スコープ (全体 / フレンド / 自分) */}
-              <div style={{ display: 'flex', background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', padding: '4px', borderRadius: '30px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)', pointerEvents: 'auto' }}>
-                {(['world', 'friends', 'my'] as const).map((scope) => (
-                  <button
-                    key={scope}
-                    onClick={() => setDisplayScope(scope)}
-                    style={{
-                      padding: '6px 10px',
-                      borderRadius: '20px',
-                      border: 'none',
-                      background: displayScope === scope ? '#0f172a' : 'transparent',
-                      color: displayScope === scope ? '#fff' : '#64748b',
-                      fontWeight: 'bold',
-                      fontSize: '10px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {scope === 'world' ? '🌐 全体' : scope === 'friends' ? '👥 友達' : '👤 自分'}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 7割以上を占める広大なマップ本体 */}
-            <div ref={exportRef} style={{ flex: 1, width: '100%', height: '100%', position: 'relative' }}>
-              <MapComponent
-                spots={filteredSpots}
-                center={mapCenter}
-                zoom={mapZoom}
-                mode={viewMode}
-                onSelectSpot={setSelectedSpot}
-                onDoubleTap={handleMapDoubleTap}
-              />
-
-              {/* 地図上の右下アクションボタン */}
-              <div style={{ position: 'absolute', bottom: '80px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <label
-                  style={{
-                    padding: '12px 18px',
-                    background: themeAccent,
-                    color: '#fff',
-                    borderRadius: '30px',
-                    fontWeight: 'bold',
-                    fontSize: '13px',
-                    boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                  }}
-                >
-                  <span>📷＋</span>
-                  <span>{t.addPhoto}</span>
-                  <input type="file" accept="image/*,video/*" multiple onChange={handlePhotoUpload} style={{ display: 'none' }} />
-                </label>
-
+        <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', position: 'relative' }}>
+          {/* 上部マップモード切替 & 公開範囲セレクタ */}
+          <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', zIndex: 400, display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
+            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', padding: '4px', borderRadius: '30px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)', pointerEvents: 'auto' }}>
+              {(['view', 'gourmet', 'rain'] as const).map((m) => (
                 <button
-                  onClick={handleExportMap}
+                  key={m}
+                  onClick={() => setViewMode(m)}
                   style={{
-                    padding: '10px 14px',
-                    background: 'rgba(15,23,42,0.85)',
-                    backdropFilter: 'blur(6px)',
-                    color: '#fff',
-                    borderRadius: '30px',
-                    fontWeight: 'bold',
-                    fontSize: '12px',
+                    padding: '6px 12px',
+                    borderRadius: '20px',
                     border: 'none',
-                    boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
-                    cursor: 'pointer',
-                  }}
-                >
-                  💾 {t.exportMap}
-                </button>
-              </div>
-
-              {/* 控えめなスポンサーバナー */}
-              <div style={{ position: 'absolute', bottom: '80px', left: '16px', zIndex: 400, background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(6px)', padding: '4px 10px', borderRadius: '12px', fontSize: '10px', color: '#64748b', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-                ✈️ Booking.com / Klook 提携中
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ==================================================== */}
-        {/* TAB 2: 🏠 フィード画面 */}
-        {/* ==================================================== */}
-        {currentTab === 'home' && (
-          <div style={{ flex: 1, overflowY: 'auto', padding: '16px 14px 90px 14px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <h2 style={{ fontSize: '16px', margin: '0 0 4px 0' }}>{t.feedTitle}</h2>
-            {spots.map((spot) => (
-              <div
-                key={spot.id}
-                onClick={() => setSelectedSpot(spot)}
-                style={{ background: '#ffffff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 14px rgba(0,0,0,0.05)', cursor: 'pointer' }}
-              >
-                <div style={{ height: '200px', background: '#000' }}>
-                  <img src={spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </div>
-                <div style={{ padding: '14px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 'bold', color: themeAccent }}>📍 {COUNTRIES[spot.countryCode]?.flag} {spot.title}</span>
-                    <span style={{ fontSize: '11px', color: '#94a3b8' }}>{spot.createdAt}</span>
-                  </div>
-                  <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b' }}>{spot.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* ==================================================== */}
-        {/* TAB 3: 👤 マイページ */}
-        {/* ==================================================== */}
-        {currentTab === 'profile' && (
-          <div style={{ flex: 1, overflowY: 'auto', padding: '16px 14px 90px 14px' }}>
-            <div style={{ background: '#ffffff', borderRadius: '20px', padding: '20px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
-                  <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: themeAccent, color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    👤
-                  </div>
-                  <div>
-                    <h2 style={{ margin: 0, fontSize: '16px' }}>{userName}</h2>
-                    <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748b' }}>{userBio}</p>
-                  </div>
-                </div>
-                <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '6px 12px', background: '#f1f5f9', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
-                  編集
-                </button>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', margin: '16px 0', textAlign: 'center' }}>
-                <div style={{ background: '#f8fafc', padding: '8px', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 'bold' }}>{spots.filter((s) => s.userId === 'me').length}</div>
-                  <div style={{ fontSize: '10px', color: '#64748b' }}>📸 {t.posts}</div>
-                </div>
-                <div style={{ background: '#f8fafc', padding: '8px', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 'bold' }}>{visitedCountryCount}</div>
-                  <div style={{ fontSize: '10px', color: '#64748b' }}>🗺️ {t.visited}</div>
-                </div>
-                <div style={{ background: '#f8fafc', padding: '8px', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 'bold' }}>{friendsList.length}</div>
-                  <div style={{ fontSize: '10px', color: '#64748b' }}>👥 {t.friends}</div>
-                </div>
-              </div>
-
-              <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <span style={{ fontSize: '11px', color: '#64748b' }}>🆔 {t.friendCode}: </span>
-                  <span style={{ fontWeight: 'bold', fontSize: '12px' }}>{friendCode}</span>
-                </div>
-                <button
-                  onClick={() => {
-                    navigator.clipboard?.writeText(friendCode);
-                    showToast('📋 コードをコピーしました');
-                  }}
-                  style={{ padding: '4px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}
-                >
-                  {t.copy}
-                </button>
-              </div>
-            </div>
-
-            {/* サブタブ */}
-            <div style={{ display: 'flex', gap: '6px', marginBottom: '12px' }}>
-              {(['posts', 'saved', 'friends'] as const).map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setProfileSubTab(tab)}
-                  style={{
-                    flex: 1,
-                    padding: '8px',
-                    borderRadius: '10px',
-                    border: 'none',
-                    background: profileSubTab === tab ? themeAccent : '#ffffff',
-                    color: profileSubTab === tab ? '#fff' : '#64748b',
+                    background: viewMode === m ? themeAccent : 'transparent',
+                    color: viewMode === m ? '#fff' : '#64748b',
                     fontWeight: 'bold',
-                    fontSize: '12px',
+                    fontSize: '11px',
                     cursor: 'pointer',
+                    transition: '0.2s',
                   }}
                 >
-                  {tab === 'posts' ? `📸 ${t.posts}` : tab === 'saved' ? `💛 ${t.saved}` : `👥 ${t.friends}`}
+                  {m === 'view' ? `🏔️ ${t.view}` : m === 'gourmet' ? `🍔 ${t.gourmet}` : `🌧️ ${t.rain}`}
                 </button>
               ))}
             </div>
 
-            {profileSubTab === 'posts' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '8px' }}>
-                {spots
-                  .filter((s) => s.userId === 'me')
-                  .map((s) => (
-                    <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '110px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
-                      <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                  ))}
-              </div>
-            )}
-
-            {profileSubTab === 'saved' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '8px' }}>
-                {spots
-                  .filter((s) => savedSpotIds.includes(s.id))
-                  .map((s) => (
-                    <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '110px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
-                      <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                  ))}
-              </div>
-            )}
-
-            {profileSubTab === 'friends' && (
-              <div style={{ background: '#ffffff', borderRadius: '14px', padding: '14px' }}>
-                <div style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
-                  <input
-                    type="text"
-                    placeholder="友達コードを入力"
-                    value={inputFriendCode}
-                    onChange={(e) => setInputFriendCode(e.target.value)}
-                    style={{ flex: 1, padding: '8px 10px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc', fontSize: '12px' }}
-                  />
-                  <button
-                    onClick={() => {
-                      if (!inputFriendCode) return;
-                      setFriendsList((prev) => [...prev, { id: 'user-' + Date.now(), name: 'Traveler_Buddy', avatar: '✈️' }]);
-                      setInputFriendCode('');
-                      showToast('👥 友達を追加しました！');
-                    }}
-                    style={{ padding: '8px 14px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-                  >
-                    {t.add}
-                  </button>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {friendsList.map((f) => (
-                    <div key={f.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span>{f.avatar}</span>
-                        <span style={{ fontWeight: 'bold', fontSize: '13px' }}>{f.name}</span>
-                      </div>
-                      <button
-                        onClick={() => {
-                          setCurrentTab('map');
-                          setDisplayScope('friends');
-                        }}
-                        style={{ padding: '4px 8px', background: '#f1f5f9', color: themeAccent, border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
-                      >
-                        {t.map}
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', padding: '4px', borderRadius: '30px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)', pointerEvents: 'auto' }}>
+              <select
+                value={displayScope}
+                onChange={(e) => setDisplayScope(e.target.value as DisplayScope)}
+                style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '4px 6px' }}
+              >
+                <option value="world">🌎 {t.world}</option>
+                <option value="friends">👥 {t.friends}</option>
+                <option value="my">📍 {t.myMap}</option>
+              </select>
+            </div>
           </div>
-        )}
-      </div>
 
-      {/* ==================================================== */}
-      {/* 4. ピン詳細バナー (スライドアップ) */}
-      {/* ==================================================== */}
-      {selectedSpot && (
-        <div
-          onClick={() => setSelectedSpot(null)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.6)',
-            backdropFilter: 'blur(4px)',
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'center',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              background: '#ffffff',
-              width: '100%',
-              maxWidth: '520px',
-              borderTopLeftRadius: '24px',
-              borderTopRightRadius: '24px',
-              padding: '16px 20px 28px 20px',
-              boxShadow: '0 -10px 40px rgba(0,0,0,0.25)',
-              maxHeight: '85vh',
-              overflowY: 'auto',
-            }}
-          >
-            <div style={{ width: '36px', height: '4px', background: '#cbd5e1', borderRadius: '2px', margin: '0 auto 12px auto' }} />
+          {/* 70% 専有の広大なインタラクティブ・マップ本体 */}
+          <div ref={exportRef} style={{ flex: '7 1 0%', width: '100%', position: 'relative' }}>
+            <MapComponent
+              spots={filteredSpots}
+              center={mapCenter}
+              zoom={mapZoom}
+              mode={viewMode}
+              onSelectSpot={setSelectedSpot}
+              onDoubleTap={handleMapDoubleTap}
+            />
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <span style={{ fontSize: '11px', fontWeight: 'bold', padding: '3px 8px', borderRadius: '12px', background: themeAccent, color: '#fff' }}>
-                {selectedSpot.category === 'view' ? '🏔️ VIEW' : selectedSpot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ RAIN'}
-              </span>
-              <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '18px', color: '#94a3b8', cursor: 'pointer' }}>
-                ✕
+            {/* 地図右下の現在地ボタン & 保存ボタン */}
+            <div style={{ position: 'absolute', bottom: '12px', right: '12px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button
+                onClick={() => {
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition((pos) => {
+                      setMapCenter([pos.coords.latitude, pos.coords.longitude]);
+                      setMapZoom(12);
+                      showToast('📍 現在地へ移動しました');
+                    });
+                  }
+                }}
+                style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#ffffff', border: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.2)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                🎯
+              </button>
+              <button
+                onClick={handleExportMap}
+                style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#0f172a', color: '#fff', border: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.2)', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                💾
+              </button>
+            </div>
+          </div>
+
+          {/* 30% 専有のクイック操作 & スポットサマリーパネル */}
+          <div style={{ flex: '3 1 0%', background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 'bold' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
+                <div style={{ fontSize: '11px', color: '#64748b' }}>表示中のスポット: {filteredSpots.length}件</div>
+              </div>
+              <label
+                style={{
+                  padding: '10px 18px',
+                  background: themeAccent,
+                  color: '#fff',
+                  borderRadius: '30px',
+                  fontWeight: 'bold',
+                  fontSize: '13px',
+                  boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                }}
+              >
+                <span>📷＋</span>
+                <span>{t.addPhoto}</span>
+                <input type="file" accept="image/*,video/*" multiple onChange={handlePhotoUpload} style={{ display: 'none' }} />
+              </label>
+            </div>
+
+            {/* 控えめな広告バナースペース */}
+            <div style={{ background: '#f8fafc', padding: '6px 10px', borderRadius: '8px', border: '1px dashed #cbd5e1', textAlign: 'center', fontSize: '11px', color: '#64748b' }}>
+              ✈️ Booking.com / Klook 提携：近くのホテルやツアーをワンタップ予約
+            </div>
+          </div>
+        </div>
+
+        {/* ==================================================== */}
+        {/* TAB 2: 🏠 フィード画面 */}
+        {/* ==================================================== */}
+        <div style={{ display: currentTab === 'home' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '14px 14px 80px 14px', gap: '12px' }}>
+          <input
+            type="text"
+            placeholder={t.searchPlaceholder}
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            style={{ width: '100%', padding: '10px 14px', borderRadius: '12px', border: '1px solid #cbd5e1', background: '#ffffff', fontSize: '13px' }}
+          />
+
+          {spots.map((spot) => (
+            <div
+              key={spot.id}
+              onClick={() => setSelectedSpot(spot)}
+              style={{ background: '#ffffff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.06)', cursor: 'pointer' }}
+            >
+              <div style={{ height: '200px', background: '#000' }}>
+                <img src={spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+              <div style={{ padding: '14px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 'bold', color: themeAccent }}>📍 {COUNTRIES[spot.countryCode]?.flag} {spot.title}</span>
+                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>{spot.createdAt}</span>
+                </div>
+                <p style={{ margin: '6px 0 0 0', fontSize: '12px', color: '#64748b', lineHeight: '1.4' }}>{spot.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ==================================================== */}
+        {/* TAB 3: 🖼️ ギャラリー & マイページ */}
+        {/* ==================================================== */}
+        <div style={{ display: currentTab === 'gallery' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '14px 14px 80px 14px' }}>
+          <div style={{ background: '#ffffff', borderRadius: '20px', padding: '20px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '14px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: themeAccent, color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  👤
+                </div>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: '16px' }}>{userName}</h2>
+                  <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748b' }}>{userBio}</p>
+                </div>
+              </div>
+              <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '6px 12px', background: '#f1f5f9', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
+                編集
               </button>
             </div>
 
-            <div style={{ width: '100%', height: '210px', background: '#000', borderRadius: '14px', overflow: 'hidden', marginBottom: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', margin: '16px 0', textAlign: 'center' }}>
+              <div style={{ background: '#f8fafc', padding: '8px', borderRadius: '10px' }}>
+                <div style={{ fontSize: '15px', fontWeight: 'bold' }}>{spots.filter((s) => s.userId === 'me').length}</div>
+                <div style={{ fontSize: '10px', color: '#64748b' }}>📸 {t.posts}</div>
+              </div>
+              <div style={{ background: '#f8fafc', padding: '8px', borderRadius: '10px' }}>
+                <div style={{ fontSize: '15px', fontWeight: 'bold' }}>{visitedCountryCount}</div>
+                <div style={{ fontSize: '10px', color: '#64748b' }}>🗺️ {t.visited}</div>
+              </div>
+              <div style={{ background: '#f8fafc', padding: '8px', borderRadius: '10px' }}>
+                <div style={{ fontSize: '15px', fontWeight: 'bold' }}>{friendsList.length}</div>
+                <div style={{ fontSize: '10px', color: '#64748b' }}>👥 {t.friends}</div>
+              </div>
+            </div>
+
+            <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <span style={{ fontSize: '11px', color: '#64748b' }}>🆔 {t.friendCode}: </span>
+                <span style={{ fontWeight: 'bold', fontSize: '12px' }}>{friendCode}</span>
+              </div>
+              <button
+                onClick={() => {
+                  navigator.clipboard?.writeText(friendCode);
+                  showToast('📋 フレンドコードをコピーしました');
+                }}
+                style={{ padding: '4px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}
+              >
+                コピー
+              </button>
+            </div>
+          </div>
+
+          {/* ギャラリーフィルター */}
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '12px' }}>
+            {(['all', 'view', 'gourmet', 'rain', 'saved'] as const).map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setGalleryCategory(cat)}
+                style={{
+                  flex: 1,
+                  padding: '8px',
+                  borderRadius: '10px',
+                  border: 'none',
+                  background: galleryCategory === cat ? themeAccent : '#ffffff',
+                  color: galleryCategory === cat ? '#fff' : '#64748b',
+                  fontWeight: 'bold',
+                  fontSize: '11px',
+                  cursor: 'pointer',
+                }}
+              >
+                {cat === 'all' ? 'すべて' : cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? '🍔 グルメ' : cat === 'rain' ? '🌧️ 雨' : '❤️ 保存'}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(105px, 1fr))', gap: '8px' }}>
+            {spots
+              .filter((s) => {
+                if (galleryCategory === 'saved') return savedSpotIds.includes(s.id);
+                if (galleryCategory === 'all') return s.userId === 'me';
+                return s.userId === 'me' && s.category === galleryCategory;
+              })
+              .map((s) => (
+                <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '110px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
+                  <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ==================================================== */}
+      {/* 4. 投稿詳細画面 (マップを隠して全画面スライド遷移) */}
+      {/* ==================================================== */}
+      {selectedSpot && (
+        <div style={{ position: 'fixed', inset: 0, background: '#ffffff', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+          {/* ヘッダー */}
+          <div style={{ height: '52px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
+            <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer' }}>
+              ← {t.back}
+            </button>
+            <span style={{ fontSize: '12px', fontWeight: 'bold', padding: '4px 10px', borderRadius: '20px', background: themeAccent, color: '#fff' }}>
+              {selectedSpot.category === 'view' ? '🏔️ VIEW' : selectedSpot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ RAIN'}
+            </span>
+          </div>
+
+          <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
+            {/* 写真枠 (タップでフルスクリーンLightbox) */}
+            <div onClick={() => setIsLightboxOpen(true)} style={{ width: '100%', height: '300px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '14px', cursor: 'zoom-in' }}>
               {selectedSpot.fileType === 'image' ? (
                 <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
@@ -1255,30 +1266,31 @@ export default function WorldSnapApp() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <h3 style={{ margin: '0 0 2px 0', fontSize: '16px' }}>{selectedSpot.title}</h3>
-                <div style={{ fontSize: '11px', color: '#64748b' }}>
-                  📍 {selectedSpot.lat.toFixed(4)}, {selectedSpot.lon.toFixed(4)} ({COUNTRIES[selectedSpot.countryCode]?.flag} {selectedSpot.countryCode}) · {selectedSpot.createdAt}
+                <h2 style={{ margin: '0 0 4px 0', fontSize: '20px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
+                <div style={{ fontSize: '12px', color: '#64748b' }}>
+                  📍 {selectedSpot.lat.toFixed(4)}, {selectedSpot.lon.toFixed(4)} ({COUNTRIES[selectedSpot.countryCode]?.flag} {selectedSpot.cityName}) · {selectedSpot.createdAt}
                 </div>
               </div>
               <button
                 onClick={() => toggleSaveSpot(selectedSpot.id)}
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: '16px',
+                  padding: '8px 14px',
+                  borderRadius: '20px',
                   border: 'none',
                   background: savedSpotIds.includes(selectedSpot.id) ? '#f43f5e' : '#f1f5f9',
                   color: savedSpotIds.includes(selectedSpot.id) ? '#fff' : '#0f172a',
                   fontWeight: 'bold',
-                  fontSize: '11px',
+                  fontSize: '12px',
                   cursor: 'pointer',
                 }}
               >
-                {savedSpotIds.includes(selectedSpot.id) ? '❤️ 保存済み' : `💛 ${t.saveSpot}`}
+                {savedSpotIds.includes(selectedSpot.id) ? t.saved : t.saveSpot}
               </button>
             </div>
 
-            <p style={{ fontSize: '13px', color: '#475569', lineHeight: '1.5', margin: '10px 0 14px 0' }}>{selectedSpot.description}</p>
+            <p style={{ fontSize: '14px', color: '#334155', lineHeight: '1.6', margin: '14px 0 20px 0' }}>{selectedSpot.description}</p>
 
+            {/* Googleマップ連携 (CTAボタン) */}
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${selectedSpot.lat},${selectedSpot.lon}`}
               target="_blank"
@@ -1289,40 +1301,41 @@ export default function WorldSnapApp() {
                 justifyContent: 'center',
                 gap: '8px',
                 width: '100%',
-                padding: '12px',
+                padding: '14px',
                 background: '#2563eb',
                 color: '#fff',
                 fontWeight: 'bold',
-                fontSize: '13px',
-                borderRadius: '12px',
+                fontSize: '14px',
+                borderRadius: '14px',
                 textDecoration: 'none',
-                boxShadow: '0 4px 14px rgba(37,99,235,0.25)',
-                marginBottom: '14px',
+                boxShadow: '0 4px 16px rgba(37,99,235,0.3)',
+                marginBottom: '20px',
               }}
             >
-              🧭 {t.openGoogleMaps}
+              {t.openGoogleMaps}
             </a>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid #f1f5f9' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: themeAccent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
+            {/* 投稿者情報 & UGC安全機能 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '14px', borderTop: '1px solid #f1f5f9' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: themeAccent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
                   👤
                 </div>
-                <span style={{ fontSize: '12px', fontWeight: 'bold' }}>{selectedSpot.userName}</span>
+                <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{selectedSpot.userName}</span>
               </div>
 
-              <div style={{ display: 'flex', gap: '6px' }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
                 {selectedSpot.userId === 'me' ? (
-                  <button onClick={() => handleDeleteSpot(selectedSpot.id)} style={{ padding: '4px 8px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '6px', fontSize: '10px', fontWeight: 'bold', cursor: 'pointer' }}>
-                    🗑️ {t.delete}
+                  <button onClick={() => handleDeleteSpot(selectedSpot.id)} style={{ padding: '6px 12px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
+                    {t.delete}
                   </button>
                 ) : (
                   <>
-                    <button onClick={() => setIsReportModalOpen(true)} style={{ padding: '4px 8px', background: 'transparent', border: '1px solid #f59e0b', color: '#f59e0b', borderRadius: '6px', fontSize: '10px', cursor: 'pointer' }}>
-                      ⚠️ {t.report}
+                    <button onClick={() => setIsReportModalOpen(true)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #f59e0b', color: '#f59e0b', borderRadius: '8px', fontSize: '11px', cursor: 'pointer' }}>
+                      {t.report}
                     </button>
-                    <button onClick={() => handleBlockUser(selectedSpot.userId)} style={{ padding: '4px 8px', background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', borderRadius: '6px', fontSize: '10px', cursor: 'pointer' }}>
-                      🚫 {t.block}
+                    <button onClick={() => handleBlockUser(selectedSpot.userId)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', borderRadius: '8px', fontSize: '11px', cursor: 'pointer' }}>
+                      {t.block}
                     </button>
                   </>
                 )}
@@ -1333,25 +1346,37 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 5. 位置未設定ファイル補完ダイアログ */}
+      {/* 5. フルスクリーン Lightbox */}
+      {/* ==================================================== */}
+      {isLightboxOpen && selectedSpot && (
+        <div onClick={() => setIsLightboxOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ maxWidth: '100%', maxHeight: '90%', objectFit: 'contain' }} />
+          <button onClick={() => setIsLightboxOpen(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: '#fff', fontSize: '28px', cursor: 'pointer' }}>
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* ==================================================== */}
+      {/* 6. 位置未設定ファイル補完ダイアログ */}
       {/* ==================================================== */}
       {unlocatedFiles.length > 0 && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '400px', width: '100%' }}>
             <h3 style={{ margin: '0 0 6px 0', fontSize: '15px', color: '#f59e0b' }}>⚠️ 位置情報なし ({currentPendingIndex + 1}/{unlocatedFiles.length})</h3>
             <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 10px 0' }}>主要都市を選択するか、直接座標を入力して配置してください。</p>
 
             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '12px' }}>
-              <button onClick={() => handleAssignLocation(35.6812, 139.7671, '東京')} style={{ padding: '4px 8px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
+              <button onClick={() => handleAssignLocation(35.6812, 139.7671, '東京')} style={{ padding: '6px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
                 📍 東京
               </button>
-              <button onClick={() => handleAssignLocation(35.0116, 135.7681, '京都')} style={{ padding: '4px 8px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
+              <button onClick={() => handleAssignLocation(35.0116, 135.7681, '京都')} style={{ padding: '6px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
                 📍 京都
               </button>
-              <button onClick={() => handleAssignLocation(47.3769, 8.5417, 'チューリッヒ')} style={{ padding: '4px 8px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
+              <button onClick={() => handleAssignLocation(47.3769, 8.5417, 'チューリッヒ')} style={{ padding: '6px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
                 📍 チューリッヒ
               </button>
-              <button onClick={() => handleAssignLocation(40.7128, -74.006, 'ニューヨーク')} style={{ padding: '4px 8px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
+              <button onClick={() => handleAssignLocation(40.7128, -74.006, 'ニューヨーク')} style={{ padding: '6px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
                 📍 NY
               </button>
             </div>
@@ -1401,11 +1426,11 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 6. 設定画面 (Settings モーダル) */}
+      {/* 7. 設定画面 (Settings モーダル) */}
       {/* ==================================================== */}
       {isSettingsOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 3000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', width: '100%', maxWidth: '440px', borderRadius: '20px', padding: '20px', maxHeight: '80vh', overflowY: 'auto' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px' }}>
+          <div style={{ background: '#ffffff', width: '100%', maxWidth: '440px', borderRadius: '20px', padding: '20px', maxHeight: '85vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ margin: 0, fontSize: '16px' }}>⚙️ {t.settings}</h2>
               <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', color: '#94a3b8', cursor: 'pointer' }}>
@@ -1429,7 +1454,7 @@ export default function WorldSnapApp() {
                 }}
                 style={{ padding: '10px', background: '#f8fafc', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer', marginBottom: '6px', fontSize: '13px' }}
               >
-                <span>🧹 {t.clearCache}</span>
+                <span>{t.cacheClear}</span>
                 <span style={{ color: themeAccent, fontWeight: 'bold' }}>実行</span>
               </div>
               <div
@@ -1442,14 +1467,14 @@ export default function WorldSnapApp() {
                 }}
                 style={{ padding: '10px', background: '#f8fafc', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer', marginBottom: '6px', fontSize: '13px' }}
               >
-                <span>🚫 {t.blockedUsers}</span>
+                <span>🚫 ブロック管理</span>
                 <span style={{ color: '#94a3b8' }}>{blockedUsers.length}人 &gt;</span>
               </div>
               <div
                 onClick={() => setIsEulaModalOpen(true)}
                 style={{ padding: '10px', background: '#f8fafc', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer', fontSize: '13px' }}
               >
-                <span>📜 {t.terms}</span>
+                <span>📜 {t.termsTitle}</span>
                 <span style={{ color: themeAccent, fontWeight: 'bold' }}>開く</span>
               </div>
             </div>
@@ -1470,6 +1495,7 @@ export default function WorldSnapApp() {
                     setSpots([]);
                     showToast('⚠️ アカウントを削除しました');
                     setIsSettingsOpen(false);
+                    setIsOnboarding(true);
                   }
                 }}
                 style={{ width: '100%', padding: '10px', background: '#fee2e2', border: 'none', borderRadius: '10px', color: '#dc2626', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
@@ -1482,10 +1508,10 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 7. プロフィール編集モーダル */}
+      {/* 8. プロフィール編集モーダル */}
       {/* ==================================================== */}
       {isEditProfileOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 3100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '360px', width: '100%' }}>
             <h3 style={{ margin: '0 0 12px 0', fontSize: '15px' }}>👤 プロフィール編集</h3>
             <label style={{ fontSize: '11px', color: '#64748b' }}>名前</label>
@@ -1521,44 +1547,30 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 8. 利用規約 (EULA) 確認モーダル */}
+      {/* 9. 利用規約 (EULA) 確認モーダル */}
       {/* ==================================================== */}
       {isEulaModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', padding: '24px', borderRadius: '20px', maxWidth: '480px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
-            <h3 style={{ margin: '0 0 12px 0', fontSize: '16px' }}>WorldSnap 利用規約 (EULA)</h3>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '16px' }}>{t.termsTitle}</h3>
             <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
-              {`第1条（適用および同意）
-本規約は、当サービスを利用するすべてのユーザーに適用されます。
-
-第2条（禁止事項）
-以下のコンテンツの投稿を固く禁じます：
-・性的、暴力的、過度に不快なコンテンツ
-・他者への嫌がらせ、誹謗中傷、名誉毀損
-・法令または公序良俗に反する行為
-・第三者の著作権や肖像権を侵害する行為
-
-第3条（モデレーションとアカウント停止）
-通報された不適切なコンテンツは24時間以内にモデレーターが確認し削除します。違反ユーザーは事前の通知なくアカウント停止処置を行います。
-
-第4条（退会・アカウント削除）
-設定画面よりいつでも全データを即時削除して退会できます。`}
+              {EULA_FULL_TEXT}
             </div>
             <button
               onClick={() => setIsEulaModalOpen(false)}
               style={{ width: '100%', marginTop: '16px', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
             >
-              閉じる
+              {t.close}
             </button>
           </div>
         </div>
       )}
 
       {/* ==================================================== */}
-      {/* 9. 通報モーダル (UGC安全対策) */}
+      {/* 10. 通報モーダル (UGC安全対策) */}
       {/* ==================================================== */}
       {isReportModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '360px', width: '100%' }}>
             <h3 style={{ margin: '0 0 10px 0', fontSize: '15px' }}>⚠️ 投稿の通報</h3>
             <select
@@ -1569,6 +1581,7 @@ export default function WorldSnapApp() {
               <option value="不適切な画像">不適切な画像・ポルノ</option>
               <option value="スパム・広告">スパム・宣伝行為</option>
               <option value="誹謗中傷">誹謗中傷・ハラスメント</option>
+              <option value="著作権侵害">無断転載・著作権侵害</option>
             </select>
             <div style={{ display: 'flex', gap: '6px' }}>
               <button onClick={() => setIsReportModalOpen(false)} style={{ flex: 1, padding: '8px', background: '#f1f5f9', border: 'none', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' }}>
@@ -1577,7 +1590,7 @@ export default function WorldSnapApp() {
               <button
                 onClick={() => {
                   setIsReportModalOpen(false);
-                  showToast('✅ 通報を受理しました');
+                  showToast('✅ 通報を受け付けました');
                 }}
                 style={{ flex: 1, padding: '8px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
               >
@@ -1589,7 +1602,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 10. ボトムナビゲーション (固定) */}
+      {/* 11. ボトムナビゲーション (固定) */}
       {/* ==================================================== */}
       <nav
         style={{
@@ -1648,7 +1661,7 @@ export default function WorldSnapApp() {
         </button>
 
         <button
-          onClick={() => setCurrentTab('profile')}
+          onClick={() => setCurrentTab('gallery')}
           style={{
             background: 'transparent',
             border: 'none',
@@ -1656,12 +1669,12 @@ export default function WorldSnapApp() {
             flexDirection: 'column',
             alignItems: 'center',
             gap: '2px',
-            color: currentTab === 'profile' ? themeAccent : '#94a3b8',
+            color: currentTab === 'gallery' ? themeAccent : '#94a3b8',
             cursor: 'pointer',
           }}
         >
-          <span style={{ fontSize: '18px' }}>👤</span>
-          <span style={{ fontSize: '10px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal' }}>{t.profile}</span>
+          <span style={{ fontSize: '18px' }}>🖼️</span>
+          <span style={{ fontSize: '10px', fontWeight: currentTab === 'gallery' ? 'bold' : 'normal' }}>{t.gallery}</span>
         </button>
       </nav>
     </div>
