@@ -25,7 +25,7 @@ export interface Spot {
   countryCode: string;
   cityName: string;
   category: ViewCategory;
-  scopes: DisplayScope[]; // 複数選択対応 (マイマップ / フレンド / ワールド)
+  scopes: DisplayScope[];
   createdAt: string;
 }
 
@@ -328,7 +328,7 @@ const SafeMapComponent = dynamic(
         const MapController = ({ center, zoom }: { center: [number, number]; zoom: number }) => {
           const map = useMap();
           useEffect(() => {
-            map.flyTo(center, zoom, { duration: 1.4 });
+            map.flyTo(center, zoom, { duration: 1.2 });
           }, [center, zoom, map]);
           return null;
         };
@@ -351,7 +351,7 @@ const SafeMapComponent = dynamic(
           <MapContainer
             center={center}
             zoom={zoom}
-            minZoom={2}
+            minZoom={1.5}
             maxBounds={[[-85, -180], [85, 180]]}
             maxBoundsViscosity={1.0}
             doubleClickZoom={false}
@@ -430,7 +430,7 @@ export default function WorldSnapApp() {
   const [userCountry, setUserCountry] = useState<string>('JP');
   const [userName, setUserName] = useState<string>('taku_snap');
   const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
-  const [userAvatar, setUserAvatar] = useState<string>(''); // カスタムアイコン
+  const [userAvatar, setUserAvatar] = useState<string>('');
   const [friendCode] = useState<string>('WS-8823-X9');
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
@@ -448,13 +448,13 @@ export default function WorldSnapApp() {
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
 
-  // 投稿作成・複数反映先選択モーダル用ステート
+  // 投稿作成モーダル用ステート
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
   const [postTitle, setPostTitle] = useState<string>('');
   const [postDesc, setPostDesc] = useState<string>('');
   const [postCategory, setPostCategory] = useState<ViewCategory>('view');
-  const [selectedScopes, setSelectedScopes] = useState<DisplayScope[]>(['world', 'my']); // 複数選択
+  const [selectedScopes, setSelectedScopes] = useState<DisplayScope[]>(['world', 'my']);
   const [manualLat, setManualLat] = useState<string>('');
   const [manualLon, setManualLon] = useState<string>('');
 
@@ -481,7 +481,7 @@ export default function WorldSnapApp() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // フィルタリング処理（複数スコープ対応）
+  // フィルタリング
   const filteredSpots = spots.filter((s) => {
     if (blockedUsers.includes(s.userId)) return false;
     if (s.category !== viewMode) return false;
@@ -505,26 +505,30 @@ export default function WorldSnapApp() {
 
   const handleMapDoubleTap = (lat: number, lon: number) => {
     setMapCenter([lat, lon]);
-    setMapZoom((prev) => Math.min(prev + 3, 13));
+    setMapZoom((prev) => Math.min(prev + 3, 14));
   };
 
-  // 🪟 段階的ズームアウト機能（市・県 → 国 → 世界全体）
+  // 🪟 段階的ズームアウト機能（市内 → 都道府県 → 地方 → 国 → 世界全体）
   const handleStepZoomOut = () => {
-    if (mapZoom > 8) {
-      // 地方・都道府県レベルへ引く
-      setMapZoom(7);
-      showToast('🗺️ 県・地方エリアに引き戻しました');
-    } else if (mapZoom > 4) {
-      // 国全体レベルへ引く
+    if (mapZoom >= 12) {
+      // 市内レベル → 都道府県レベル
+      setMapZoom(9);
+      showToast('🏙️ 都道府県レベルへ引き戻しました');
+    } else if (mapZoom >= 8) {
+      // 都道府県レベル → 地方レベル
+      setMapZoom(6);
+      showToast('🗺️ 地方エリアへ引き戻しました');
+    } else if (mapZoom >= 5) {
+      // 地方レベル → 国全体レベル
       const conf = COUNTRIES[userCountry] || COUNTRIES.JP;
       setMapCenter([conf.lat, conf.lon]);
       setMapZoom(conf.zoom);
-      showToast(`🌍 ${conf.name} 全体に引き戻しました`);
+      showToast(`🇯🇵 ${conf.name} 全体へ引き戻しました`);
     } else {
-      // 世界全体レベルへ引く
+      // 国レベル → 世界全体レベル（写真2枚目のように全体俯瞰）
       setMapCenter([20.0, 0.0]);
       setMapZoom(2);
-      showToast('🌎 世界全体に引き戻しました');
+      showToast('🌎 世界全体マップへ引き戻しました');
     }
   };
 
@@ -536,17 +540,15 @@ export default function WorldSnapApp() {
     showToast(`🌍 ${target.name} へフォーカスしました！`);
   };
 
-  // アイコン画像のアップロード
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const url = URL.createObjectURL(file);
       setUserAvatar(url);
-      showToast('🖼️ アイコン画像を設定しました！');
+      showToast('🖼️ アイコン画像を変更しました！');
     }
   };
 
-  // 写真・動画選択時
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -599,7 +601,6 @@ export default function WorldSnapApp() {
     }
   };
 
-  // 複数選択トグル
   const toggleScopeSelection = (scope: DisplayScope) => {
     if (selectedScopes.includes(scope)) {
       if (selectedScopes.length === 1) {
@@ -612,7 +613,6 @@ export default function WorldSnapApp() {
     }
   };
 
-  // 投稿確定
   const handleConfirmPost = () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current) return;
@@ -761,8 +761,6 @@ export default function WorldSnapApp() {
             {onboardingStep === 2 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t.step2Title}</h3>
-                
-                {/* アイコン選択 */}
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
                   <div
                     onClick={() => avatarInputRef.current?.click()}
@@ -846,9 +844,9 @@ export default function WorldSnapApp() {
       )}
 
       {/* ── ヘッダー ── */}
-      <header style={{ height: '52px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100 }}>
+      <header style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '20px', cursor: 'pointer' }}>
+          <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer' }}>
             ☰
           </button>
           <h1 style={{ margin: 0, fontSize: '18px', fontWeight: '900', color: themeAccent, letterSpacing: '-0.5px' }}>WorldSnap</h1>
@@ -862,7 +860,7 @@ export default function WorldSnapApp() {
                 setMapZoom(conf.zoom);
               }
             }}
-            style={{ background: '#f1f5f9', border: 'none', borderRadius: '8px', padding: '4px 8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+            style={{ background: '#f1f5f9', border: 'none', borderRadius: '8px', padding: '3px 6px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
           >
             {Object.entries(COUNTRIES).map(([code, c]) => (
               <option key={code} value={code}>
@@ -875,9 +873,9 @@ export default function WorldSnapApp() {
         <button
           onClick={() => setCurrentTab('profile')}
           style={{
-            width: '34px', height: '34px', borderRadius: '50%',
+            width: '32px', height: '32px', borderRadius: '50%',
             background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
-            color: '#fff', border: 'none', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+            color: '#fff', border: 'none', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}
         >
           {!userAvatar && '👤'}
@@ -887,25 +885,25 @@ export default function WorldSnapApp() {
       {/* ── メインコンテナ ── */}
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         {/* ==================================================== */}
-        {/* TAB 1: 🗺️ メインマップ (70% マップ + 30% 操作パネル) */}
+        {/* TAB 1: 🗺️ メインマップ (余白を削りマップを最大化) */}
         {/* ==================================================== */}
         <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', position: 'relative' }}>
           
           {/* マップ上部の3大モード切替 & 表示スコープ バー */}
-          <div style={{ position: 'absolute', top: '12px', left: '12px', right: '12px', zIndex: 500, display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
-            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '4px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
+          <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 500, display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
+            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '3px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
               {(['view', 'gourmet', 'rain'] as const).map((m) => (
                 <button
                   key={m}
                   onClick={() => setViewMode(m)}
                   style={{
-                    padding: '8px 14px',
-                    borderRadius: '24px',
+                    padding: '6px 12px',
+                    borderRadius: '20px',
                     border: 'none',
                     background: viewMode === m ? themeAccent : 'transparent',
                     color: viewMode === m ? '#ffffff' : '#64748b',
                     fontWeight: 'bold',
-                    fontSize: '12px',
+                    fontSize: '11px',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     boxShadow: viewMode === m ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
@@ -916,11 +914,11 @@ export default function WorldSnapApp() {
               ))}
             </div>
 
-            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '4px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
+            <div style={{ display: 'flex', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '3px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
               <select
                 value={displayScope}
                 onChange={(e) => setDisplayScope(e.target.value as DisplayScope)}
-                style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '6px 8px' }}
+                style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '4px 6px' }}
               >
                 <option value="world">🌎 {t.world}</option>
                 <option value="friends">👥 {t.friends}</option>
@@ -929,8 +927,8 @@ export default function WorldSnapApp() {
             </div>
           </div>
 
-          {/* 70% 専有のマップ本体 */}
-          <div ref={exportRef} style={{ flex: '7 1 0%', width: '100%', position: 'relative' }}>
+          {/* 画面のほぼ全体を専有するマップ本体 */}
+          <div ref={exportRef} style={{ flex: 1, width: '100%', height: '100%', position: 'relative' }}>
             <SafeMapComponent
               spots={filteredSpots}
               center={mapCenter}
@@ -940,30 +938,15 @@ export default function WorldSnapApp() {
               onDoubleTap={handleMapDoubleTap}
             />
 
-            {/* 地図右下のコントロール（段階的引きボタン・現在地ボタン・保存ボタン） */}
-            <div style={{ position: 'absolute', bottom: '12px', right: '12px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {/* 🪟 ズームしすぎた時に段階的に引き戻すボタン */}
+            {/* 地図右下のコントロール（🪟 窓ボタンで段階的ズームアウト・保存ボタン） */}
+            <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {/* 🪟 段階的ズームアウトボタン (市内→都道府県→地方→国→世界全体) */}
               <button
-                title="県・国・世界へ段階的に引き戻す"
+                title="市内・都道府県・地方・国・世界全体へ段階的に引き戻す"
                 onClick={handleStepZoomOut}
                 style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 🪟
-              </button>
-              <button
-                title="現在地へ移動"
-                onClick={() => {
-                  if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition((pos) => {
-                      setMapCenter([pos.coords.latitude, pos.coords.longitude]);
-                      setMapZoom(12);
-                      showToast('📍 現在地へ移動しました');
-                    });
-                  }
-                }}
-                style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.2)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              >
-                🎯
               </button>
               <button
                 title="マップを保存"
@@ -975,27 +958,27 @@ export default function WorldSnapApp() {
             </div>
           </div>
 
-          {/* 30% 専有のクイック操作 & スポットサマリーパネル */}
-          <div style={{ flex: '3 1 0%', background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
-              <div>
-                <div style={{ fontSize: '13px', fontWeight: 'bold' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
-                <div style={{ fontSize: '11px', color: '#64748b' }}>表示中: {filteredSpots.length}件のスポット</div>
-              </div>
+          {/* コンパクト化した下部バー（余白を削減） */}
+          <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', zIndex: 450 }}>
+            <div>
+              <div style={{ fontSize: '12px', fontWeight: 'bold' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
+              <div style={{ fontSize: '10px', color: '#64748b' }}>表示中: {filteredSpots.length}件</div>
+            </div>
 
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <label
                 style={{
-                  padding: '10px 18px',
+                  padding: '8px 16px',
                   background: themeAccent,
                   color: '#fff',
-                  borderRadius: '30px',
+                  borderRadius: '24px',
                   fontWeight: 'bold',
-                  fontSize: '13px',
-                  boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+                  fontSize: '12px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px',
+                  gap: '4px',
                 }}
               >
                 <span>📷＋</span>
@@ -1003,17 +986,13 @@ export default function WorldSnapApp() {
                 <input type="file" accept="image/*,video/*" multiple onChange={handlePhotoSelect} style={{ display: 'none' }} />
               </label>
             </div>
-
-            <div style={{ background: '#f8fafc', padding: '6px 10px', borderRadius: '8px', border: '1px dashed #cbd5e1', textAlign: 'center', fontSize: '11px', color: '#64748b' }}>
-              ✈️ Booking.com / Klook 提携：近くのホテルやツアーをワンタップ予約
-            </div>
           </div>
         </div>
 
         {/* ==================================================== */}
         {/* TAB 2: 🏠 フィード画面 */}
         {/* ==================================================== */}
-        <div style={{ display: currentTab === 'home' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '14px 14px 80px 14px', gap: '12px' }}>
+        <div style={{ display: currentTab === 'home' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', gap: '10px' }}>
           <input
             type="text"
             placeholder={t.searchPlaceholder}
@@ -1031,12 +1010,12 @@ export default function WorldSnapApp() {
               <div style={{ height: '200px', background: '#000' }}>
                 <img src={spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '14px' }}>
+              <div style={{ padding: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '13px', fontWeight: 'bold', color: themeAccent }}>📍 {COUNTRIES[spot.countryCode]?.flag} {spot.title}</span>
                   <span style={{ fontSize: '11px', color: '#94a3b8' }}>{spot.createdAt}</span>
                 </div>
-                <p style={{ margin: '6px 0 0 0', fontSize: '12px', color: '#64748b', lineHeight: '1.4' }}>{spot.description}</p>
+                <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b', lineHeight: '1.4' }}>{spot.description}</p>
               </div>
             </div>
           ))}
@@ -1045,16 +1024,16 @@ export default function WorldSnapApp() {
         {/* ==================================================== */}
         {/* TAB 3: 👤 マイページ */}
         {/* ==================================================== */}
-        <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '14px 14px 80px 14px' }}>
-          <div style={{ background: '#ffffff', borderRadius: '20px', padding: '20px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '14px' }}>
+        <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px' }}>
+          <div style={{ background: '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <div
                   onClick={() => setIsEditProfileOpen(true)}
                   style={{
-                    width: '60px', height: '60px', borderRadius: '50%',
+                    width: '56px', height: '56px', borderRadius: '50%',
                     background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
-                    color: '#fff', fontSize: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                   }}
                 >
@@ -1065,12 +1044,12 @@ export default function WorldSnapApp() {
                   <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748b' }}>{userBio}</p>
                 </div>
               </div>
-              <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '6px 12px', background: '#f1f5f9', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
+              <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '5px 12px', background: '#f1f5f9', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
                 編集
               </button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', margin: '16px 0', textAlign: 'center' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', margin: '14px 0', textAlign: 'center' }}>
               <div style={{ background: '#f8fafc', padding: '8px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '15px', fontWeight: 'bold' }}>{spots.filter((s) => s.userId === 'me').length}</div>
                 <div style={{ fontSize: '10px', color: '#64748b' }}>📸 {t.posts}</div>
@@ -1085,7 +1064,7 @@ export default function WorldSnapApp() {
               </div>
             </div>
 
-            <div style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <span style={{ fontSize: '11px', color: '#64748b' }}>🆔 {t.friendCode}: </span>
                 <span style={{ fontWeight: 'bold', fontSize: '12px' }}>{friendCode}</span>
@@ -1102,7 +1081,7 @@ export default function WorldSnapApp() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '6px', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', gap: '6px', marginBottom: '10px' }}>
             {(['posts', 'saved', 'friends'] as const).map((tab) => (
               <button
                 key={tab}
@@ -1115,7 +1094,7 @@ export default function WorldSnapApp() {
                   background: profileSubTab === tab ? themeAccent : '#ffffff',
                   color: profileSubTab === tab ? '#fff' : '#64748b',
                   fontWeight: 'bold',
-                  fontSize: '12px',
+                  fontSize: '11px',
                   cursor: 'pointer',
                 }}
               >
@@ -1125,11 +1104,11 @@ export default function WorldSnapApp() {
           </div>
 
           {profileSubTab === 'posts' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(105px, 1fr))', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
               {spots
                 .filter((s) => s.userId === 'me')
                 .map((s) => (
-                  <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '110px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
+                  <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
                     <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                 ))}
@@ -1137,11 +1116,11 @@ export default function WorldSnapApp() {
           )}
 
           {profileSubTab === 'saved' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(105px, 1fr))', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
               {spots
                 .filter((s) => savedSpotIds.includes(s.id))
                 .map((s) => (
-                  <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '110px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
+                  <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
                     <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   </div>
                 ))}
@@ -1196,21 +1175,21 @@ export default function WorldSnapApp() {
       </div>
 
       {/* ==================================================== */}
-      {/* 4. 投稿詳細画面 (マップを隠して全画面遷移) */}
+      {/* 4. 投稿詳細画面 */}
       {/* ==================================================== */}
       {selectedSpot && (
         <div style={{ position: 'fixed', inset: 0, background: '#ffffff', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-          <div style={{ height: '52px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
-            <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer' }}>
+          <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
+            <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
               ← {t.back}
             </button>
-            <span style={{ fontSize: '12px', fontWeight: 'bold', padding: '4px 10px', borderRadius: '20px', background: themeAccent, color: '#fff' }}>
+            <span style={{ fontSize: '11px', fontWeight: 'bold', padding: '3px 8px', borderRadius: '20px', background: themeAccent, color: '#fff' }}>
               {selectedSpot.category === 'view' ? '🏔️ VIEW' : selectedSpot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ RAIN'}
             </span>
           </div>
 
           <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
-            <div onClick={() => setIsLightboxOpen(true)} style={{ width: '100%', height: '300px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '14px', cursor: 'zoom-in' }}>
+            <div onClick={() => setIsLightboxOpen(true)} style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '14px', cursor: 'zoom-in' }}>
               {selectedSpot.fileType === 'image' ? (
                 <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
@@ -1220,7 +1199,7 @@ export default function WorldSnapApp() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <h2 style={{ margin: '0 0 4px 0', fontSize: '20px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
+                <h2 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
                 <div style={{ fontSize: '12px', color: '#64748b' }}>
                   📍 {selectedSpot.lat.toFixed(4)}, {selectedSpot.lon.toFixed(4)} ({COUNTRIES[selectedSpot.countryCode]?.flag} {selectedSpot.cityName}) · {selectedSpot.createdAt}
                 </div>
@@ -1242,7 +1221,7 @@ export default function WorldSnapApp() {
               </button>
             </div>
 
-            <p style={{ fontSize: '14px', color: '#334155', lineHeight: '1.6', margin: '14px 0 20px 0' }}>{selectedSpot.description}</p>
+            <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', margin: '14px 0 20px 0' }}>{selectedSpot.description}</p>
 
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${selectedSpot.lat},${selectedSpot.lon}`}
@@ -1254,27 +1233,27 @@ export default function WorldSnapApp() {
                 justifyContent: 'center',
                 gap: '8px',
                 width: '100%',
-                padding: '14px',
+                padding: '12px',
                 background: '#2563eb',
                 color: '#fff',
                 fontWeight: 'bold',
-                fontSize: '14px',
-                borderRadius: '14px',
+                fontSize: '13px',
+                borderRadius: '12px',
                 textDecoration: 'none',
-                boxShadow: '0 4px 16px rgba(37,99,235,0.3)',
+                boxShadow: '0 4px 14px rgba(37,99,235,0.25)',
                 marginBottom: '20px',
               }}
             >
               {t.openGoogleMaps}
             </a>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '14px', borderTop: '1px solid #f1f5f9' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div
                   style={{
-                    width: '34px', height: '34px', borderRadius: '50%',
+                    width: '32px', height: '32px', borderRadius: '50%',
                     background: selectedSpot.userAvatar ? `url(${selectedSpot.userAvatar}) center/cover` : themeAccent,
-                    color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px'
+                    color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px'
                   }}
                 >
                   {!selectedSpot.userAvatar && '👤'}
@@ -1282,17 +1261,17 @@ export default function WorldSnapApp() {
                 <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{selectedSpot.userName}</span>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '6px' }}>
                 {selectedSpot.userId === 'me' ? (
-                  <button onClick={() => handleDeleteSpot(selectedSpot.id)} style={{ padding: '6px 12px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
+                  <button onClick={() => handleDeleteSpot(selectedSpot.id)} style={{ padding: '5px 10px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
                     {t.delete}
                   </button>
                 ) : (
                   <>
-                    <button onClick={() => setIsReportModalOpen(true)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #f59e0b', color: '#f59e0b', borderRadius: '8px', fontSize: '11px', cursor: 'pointer' }}>
+                    <button onClick={() => setIsReportModalOpen(true)} style={{ padding: '5px 8px', background: 'transparent', border: '1px solid #f59e0b', color: '#f59e0b', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
                       {t.report}
                     </button>
-                    <button onClick={() => handleBlockUser(selectedSpot.userId)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', borderRadius: '8px', fontSize: '11px', cursor: 'pointer' }}>
+                    <button onClick={() => handleBlockUser(selectedSpot.userId)} style={{ padding: '5px 8px', background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
                       {t.block}
                     </button>
                   </>
@@ -1304,16 +1283,16 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 5. 投稿前・複数反映先選択モーダル (新仕様) */}
+      {/* 5. 投稿前・複数反映先選択モーダル */}
       {/* ==================================================== */}
       {pendingUploads.length > 0 && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', padding: '24px', borderRadius: '24px', maxWidth: '440px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h3 style={{ margin: '0 0 14px 0', fontSize: '17px', fontWeight: 'bold' }}>
+          <div style={{ background: '#ffffff', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 'bold' }}>
               📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
             </h3>
 
-            <div style={{ width: '100%', height: '160px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '14px' }}>
+            <div style={{ width: '100%', height: '150px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '12px' }}>
               {pendingUploads[currentUploadIndex].fileType === 'image' ? (
                 <img src={pendingUploads[currentUploadIndex].fileUrl} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
@@ -1321,11 +1300,10 @@ export default function WorldSnapApp() {
               )}
             </div>
 
-            {/* ① 反映先マップ（複数選択可能） */}
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '6px' }}>
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
               🌐 どのマップに反映させますか？（複数選択可能）
             </label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '12px' }}>
               {(['my', 'friends', 'world'] as const).map((sc) => {
                 const isSelected = selectedScopes.includes(sc);
                 return (
@@ -1334,7 +1312,7 @@ export default function WorldSnapApp() {
                     type="button"
                     onClick={() => toggleScopeSelection(sc)}
                     style={{
-                      padding: '10px 4px',
+                      padding: '8px 4px',
                       borderRadius: '10px',
                       border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
                       background: isSelected ? '#f0f9ff' : '#ffffff',
@@ -1355,18 +1333,17 @@ export default function WorldSnapApp() {
               })}
             </div>
 
-            {/* ② カテゴリ選択 */}
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '6px' }}>
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
               🏷️ 投稿カテゴリ
             </label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '12px' }}>
               {(['view', 'gourmet', 'rain'] as const).map((cat) => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setPostCategory(cat)}
                   style={{
-                    padding: '8px 4px',
+                    padding: '6px 4px',
                     borderRadius: '10px',
                     border: `2px solid ${postCategory === cat ? themeAccent : '#e2e8f0'}`,
                     background: postCategory === cat ? '#f0f9ff' : '#ffffff',
@@ -1381,38 +1358,37 @@ export default function WorldSnapApp() {
               ))}
             </div>
 
-            {/* ③ スポット名・キャプション */}
             <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
             <input
               type="text"
-              placeholder="例: マッターホルンの展望台"
+              placeholder="例: マッターホルン展望台"
               value={postTitle}
               onChange={(e) => setPostTitle(e.target.value)}
-              style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px' }}
+              style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
             <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ</label>
             <textarea
-              placeholder="写真についての感想やおすすめポイント"
+              placeholder="おすすめポイントや感想"
               rows={2}
               value={postDesc}
               onChange={(e) => setPostDesc(e.target.value)}
-              style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px' }}
+              style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
             {!pendingUploads[currentUploadIndex].hasGps && (
-              <div style={{ background: '#fffbeb', padding: '10px', borderRadius: '10px', border: '1px solid #fef3c7', marginBottom: '14px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#b45309', marginBottom: '6px' }}>📍 撮影位置を手動設定</div>
+              <div style={{ background: '#fffbeb', padding: '8px', borderRadius: '8px', border: '1px solid #fef3c7', marginBottom: '10px' }}>
+                <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#b45309', marginBottom: '4px' }}>📍 撮影位置を手動設定</div>
                 <div style={{ display: 'flex', gap: '6px' }}>
                   <input
                     type="number" step="any" placeholder="緯度"
                     value={manualLat} onChange={(e) => setManualLat(e.target.value)}
-                    style={{ flex: 1, padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px' }}
+                    style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px' }}
                   />
                   <input
                     type="number" step="any" placeholder="経度"
                     value={manualLon} onChange={(e) => setManualLon(e.target.value)}
-                    style={{ flex: 1, padding: '6px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px' }}
+                    style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px' }}
                   />
                 </div>
               </div>
@@ -1425,14 +1401,14 @@ export default function WorldSnapApp() {
                   setPendingUploads([]);
                   setCurrentUploadIndex(0);
                 }}
-                style={{ flex: 1, padding: '12px', background: '#f1f5f9', border: 'none', borderRadius: '12px', color: '#0f172a', fontWeight: 'bold', cursor: 'pointer' }}
+                style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
               >
                 キャンセル
               </button>
               <button
                 type="button"
                 onClick={handleConfirmPost}
-                style={{ flex: 2, padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}
+                style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
               >
                 マップに反映する 🚀
               </button>
@@ -1454,7 +1430,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 7. 設定画面 (Settings モーダル) */}
+      {/* 7. 設定画面 */}
       {/* ==================================================== */}
       {isSettingsOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px' }}>
@@ -1537,25 +1513,25 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 8. プロフィール編集モーダル (写真アイコン変更対応) */}
+      {/* 8. プロフィール編集モーダル */}
       {/* ==================================================== */}
       {isEditProfileOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '360px', width: '100%' }}>
             <h3 style={{ margin: '0 0 12px 0', fontSize: '15px' }}>👤 プロフィール編集</h3>
 
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '14px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
               <div
                 onClick={() => avatarInputRef.current?.click()}
                 style={{
-                  width: '68px', height: '68px', borderRadius: '50%',
+                  width: '64px', height: '64px', borderRadius: '50%',
                   background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
-                  color: '#fff', fontSize: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: 'pointer', position: 'relative', overflow: 'hidden'
                 }}
               >
                 {!userAvatar && <span>👤</span>}
-                <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '10px', color: '#fff', textAlign: 'center', padding: '2px 0' }}>
+                <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '9px', color: '#fff', textAlign: 'center', padding: '1px 0' }}>
                   変更
                 </div>
               </div>
@@ -1594,7 +1570,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 9. 利用規約 (EULA) 確認モーダル */}
+      {/* 9. 利用規約 (EULA) モーダル */}
       {/* ==================================================== */}
       {isEulaModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
@@ -1653,7 +1629,7 @@ export default function WorldSnapApp() {
       {/* ==================================================== */}
       <nav
         style={{
-          height: '60px',
+          height: '56px',
           background: '#ffffff',
           borderTop: '1px solid #e2e8f0',
           display: 'flex',
@@ -1683,7 +1659,7 @@ export default function WorldSnapApp() {
         <button
           onClick={() => {
             if (currentTab === 'map') {
-              handleResetToOverview();
+              handleStepZoomOut();
             } else {
               setCurrentTab('map');
             }
