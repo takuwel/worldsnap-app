@@ -25,7 +25,7 @@ export interface Spot {
   countryCode: string;
   cityName: string;
   category: ViewCategory;
-  scope: DisplayScope;
+  scopes: DisplayScope[]; // 複数選択対応 (マイマップ / フレンド / ワールド)
   createdAt: string;
 }
 
@@ -247,7 +247,7 @@ const INITIAL_SPOTS: Spot[] = [
     fileName: 'matterhorn.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=800&auto=format&fit=crop',
     fileType: 'image', lat: 45.9765, lon: 7.7491, countryCode: 'CH', cityName: 'Zermatt',
-    category: 'view', scope: 'world', createdAt: '2026/08/14',
+    category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/14',
   },
   {
     id: 'mock-2', userId: 'user-ken', userName: 'Ken_Gourmet',
@@ -256,7 +256,7 @@ const INITIAL_SPOTS: Spot[] = [
     fileName: 'matcha.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=800&auto=format&fit=crop',
     fileType: 'image', lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: 'Kyoto',
-    category: 'gourmet', scope: 'world', createdAt: '2026/08/10',
+    category: 'gourmet', scopes: ['world', 'friends', 'my'], createdAt: '2026/08/10',
   },
   {
     id: 'mock-3', userId: 'user-lisa', userName: 'Lisa_Rain',
@@ -265,7 +265,7 @@ const INITIAL_SPOTS: Spot[] = [
     fileName: 'louvre.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=800&auto=format&fit=crop',
     fileType: 'image', lat: 48.8606, lon: 2.3376, countryCode: 'FR', cityName: 'Paris',
-    category: 'rain', scope: 'world', createdAt: '2026/08/01',
+    category: 'rain', scopes: ['world'], createdAt: '2026/08/01',
   },
 ];
 
@@ -430,6 +430,7 @@ export default function WorldSnapApp() {
   const [userCountry, setUserCountry] = useState<string>('JP');
   const [userName, setUserName] = useState<string>('taku_snap');
   const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
+  const [userAvatar, setUserAvatar] = useState<string>(''); // カスタムアイコン
   const [friendCode] = useState<string>('WS-8823-X9');
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
@@ -447,13 +448,13 @@ export default function WorldSnapApp() {
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
 
-  // 投稿作成・反映先選択モーダル用ステート
+  // 投稿作成・複数反映先選択モーダル用ステート
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
   const [postTitle, setPostTitle] = useState<string>('');
   const [postDesc, setPostDesc] = useState<string>('');
   const [postCategory, setPostCategory] = useState<ViewCategory>('view');
-  const [postScope, setPostScope] = useState<DisplayScope>('world');
+  const [selectedScopes, setSelectedScopes] = useState<DisplayScope[]>(['world', 'my']); // 複数選択
   const [manualLat, setManualLat] = useState<string>('');
   const [manualLon, setManualLon] = useState<string>('');
 
@@ -472,6 +473,7 @@ export default function WorldSnapApp() {
   const [inputFriendCode, setInputFriendCode] = useState('');
 
   const exportRef = useRef<HTMLDivElement>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   const t = currentConfig.dict;
 
   const showToast = (msg: string) => {
@@ -479,14 +481,18 @@ export default function WorldSnapApp() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  // フィルタリング処理（複数スコープ対応）
   const filteredSpots = spots.filter((s) => {
     if (blockedUsers.includes(s.userId)) return false;
     if (s.category !== viewMode) return false;
-    if (displayScope === 'my') return s.userId === 'me';
-    if (displayScope === 'friends') return s.userId === 'me' || (s.scope !== 'my' && friendsList.some((f) => f.id === s.userId));
+    if (displayScope === 'my') return s.scopes.includes('my') && s.userId === 'me';
+    if (displayScope === 'friends') {
+      if (s.userId === 'me') return s.scopes.includes('my');
+      return s.scopes.includes('friends') && friendsList.some((f) => f.id === s.userId);
+    }
     if (displayScope === 'world') {
       if (s.userId === 'me') return true;
-      return s.scope === 'world';
+      return s.scopes.includes('world');
     }
     if (searchKeyword) {
       const kw = searchKeyword.toLowerCase();
@@ -502,11 +508,24 @@ export default function WorldSnapApp() {
     setMapZoom((prev) => Math.min(prev + 3, 13));
   };
 
-  const handleResetToOverview = () => {
-    const target = COUNTRIES[userCountry] || COUNTRIES.JP;
-    setMapCenter([target.lat, target.lon]);
-    setMapZoom(target.zoom);
-    showToast(`🌍 ${target.name} の全体俯瞰へ戻りました`);
+  // 🪟 段階的ズームアウト機能（市・県 → 国 → 世界全体）
+  const handleStepZoomOut = () => {
+    if (mapZoom > 8) {
+      // 地方・都道府県レベルへ引く
+      setMapZoom(7);
+      showToast('🗺️ 県・地方エリアに引き戻しました');
+    } else if (mapZoom > 4) {
+      // 国全体レベルへ引く
+      const conf = COUNTRIES[userCountry] || COUNTRIES.JP;
+      setMapCenter([conf.lat, conf.lon]);
+      setMapZoom(conf.zoom);
+      showToast(`🌍 ${conf.name} 全体に引き戻しました`);
+    } else {
+      // 世界全体レベルへ引く
+      setMapCenter([20.0, 0.0]);
+      setMapZoom(2);
+      showToast('🌎 世界全体に引き戻しました');
+    }
   };
 
   const handleCompleteOnboarding = () => {
@@ -517,6 +536,17 @@ export default function WorldSnapApp() {
     showToast(`🌍 ${target.name} へフォーカスしました！`);
   };
 
+  // アイコン画像のアップロード
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const url = URL.createObjectURL(file);
+      setUserAvatar(url);
+      showToast('🖼️ アイコン画像を設定しました！');
+    }
+  };
+
+  // 写真・動画選択時
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -561,7 +591,7 @@ export default function WorldSnapApp() {
       setPostTitle(pendingList[0].file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
       setPostCategory(viewMode);
-      setPostScope('world');
+      setSelectedScopes(['world', 'my']);
       if (!pendingList[0].hasGps) {
         setManualLat(currentConfig.lat.toString());
         setManualLon(currentConfig.lon.toString());
@@ -569,6 +599,20 @@ export default function WorldSnapApp() {
     }
   };
 
+  // 複数選択トグル
+  const toggleScopeSelection = (scope: DisplayScope) => {
+    if (selectedScopes.includes(scope)) {
+      if (selectedScopes.length === 1) {
+        showToast('⚠️ 最低1つの反映先マップを選択してください');
+        return;
+      }
+      setSelectedScopes((prev) => prev.filter((s) => s !== scope));
+    } else {
+      setSelectedScopes((prev) => [...prev, scope]);
+    }
+  };
+
+  // 投稿確定
   const handleConfirmPost = () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current) return;
@@ -580,6 +624,7 @@ export default function WorldSnapApp() {
       id: current.id,
       userId: 'me',
       userName,
+      userAvatar,
       title: postTitle || current.file.name,
       description: postDesc || '旅の思い出',
       fileName: current.file.name,
@@ -590,12 +635,12 @@ export default function WorldSnapApp() {
       countryCode: userCountry,
       cityName: currentConfig.name.split(' ')[0],
       category: postCategory,
-      scope: postScope,
+      scopes: selectedScopes,
       createdAt: current.dateTime || new Date().toLocaleDateString(),
     };
 
     setSpots((prev) => [newSpot, ...prev]);
-    showToast(`📍 [${postScope === 'world' ? 'ワールド' : postScope === 'friends' ? 'フレンド' : 'マイマップ'}] に反映しました！`);
+    showToast(`📍 選択した ${selectedScopes.length} つのマップに反映しました！`);
 
     if (currentUploadIndex + 1 < pendingUploads.length) {
       const nextIndex = currentUploadIndex + 1;
@@ -667,7 +712,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 0. 初回オンボーディング */}
+      {/* 0. 初回3ステップオンボーディング */}
       {/* ==================================================== */}
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
@@ -716,11 +761,26 @@ export default function WorldSnapApp() {
             {onboardingStep === 2 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t.step2Title}</h3>
+                
+                {/* アイコン選択 */}
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-                  <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: '#0284c7', color: '#fff', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 6px 16px rgba(2,132,199,0.3)' }}>
-                    👤
+                  <div
+                    onClick={() => avatarInputRef.current?.click()}
+                    style={{
+                      width: '76px', height: '76px', borderRadius: '50%',
+                      background: userAvatar ? `url(${userAvatar}) center/cover` : '#0284c7',
+                      color: '#fff', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      boxShadow: '0 6px 16px rgba(2,132,199,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden'
+                    }}
+                  >
+                    {!userAvatar && <span>👤</span>}
+                    <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '10px', color: '#fff', textAlign: 'center', padding: '2px 0' }}>
+                      📷 変更
+                    </div>
                   </div>
+                  <input type="file" ref={avatarInputRef} accept="image/*" onChange={handleAvatarChange} style={{ display: 'none' }} />
                 </div>
+
                 <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>ユーザー名 (表示名)</label>
                 <input
                   type="text"
@@ -812,8 +872,15 @@ export default function WorldSnapApp() {
           </select>
         </div>
 
-        <button onClick={() => setCurrentTab('profile')} style={{ width: '32px', height: '32px', borderRadius: '50%', background: themeAccent, color: '#fff', border: 'none', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          👤
+        <button
+          onClick={() => setCurrentTab('profile')}
+          style={{
+            width: '34px', height: '34px', borderRadius: '50%',
+            background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
+            color: '#fff', border: 'none', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}
+        >
+          {!userAvatar && '👤'}
         </button>
       </header>
 
@@ -873,13 +940,15 @@ export default function WorldSnapApp() {
               onDoubleTap={handleMapDoubleTap}
             />
 
+            {/* 地図右下のコントロール（段階的引きボタン・現在地ボタン・保存ボタン） */}
             <div style={{ position: 'absolute', bottom: '12px', right: '12px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {/* 🪟 ズームしすぎた時に段階的に引き戻すボタン */}
               <button
-                title="全体俯瞰に戻る"
-                onClick={handleResetToOverview}
-                style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', fontSize: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                title="県・国・世界へ段階的に引き戻す"
+                onClick={handleStepZoomOut}
+                style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                🌍
+                🪟
               </button>
               <button
                 title="現在地へ移動"
@@ -980,8 +1049,16 @@ export default function WorldSnapApp() {
           <div style={{ background: '#ffffff', borderRadius: '20px', padding: '20px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '14px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
-                <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: themeAccent, color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  👤
+                <div
+                  onClick={() => setIsEditProfileOpen(true)}
+                  style={{
+                    width: '60px', height: '60px', borderRadius: '50%',
+                    background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
+                    color: '#fff', fontSize: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                  }}
+                >
+                  {!userAvatar && '👤'}
                 </div>
                 <div>
                   <h2 style={{ margin: 0, fontSize: '16px' }}>{userName}</h2>
@@ -1193,8 +1270,14 @@ export default function WorldSnapApp() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '14px', borderTop: '1px solid #f1f5f9' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: themeAccent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
-                  👤
+                <div
+                  style={{
+                    width: '34px', height: '34px', borderRadius: '50%',
+                    background: selectedSpot.userAvatar ? `url(${selectedSpot.userAvatar}) center/cover` : themeAccent,
+                    color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px'
+                  }}
+                >
+                  {!selectedSpot.userAvatar && '👤'}
                 </div>
                 <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{selectedSpot.userName}</span>
               </div>
@@ -1221,7 +1304,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 5. 投稿前・反映先選択モーダル (新機能) */}
+      {/* 5. 投稿前・複数反映先選択モーダル (新仕様) */}
       {/* ==================================================== */}
       {pendingUploads.length > 0 && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
@@ -1238,31 +1321,41 @@ export default function WorldSnapApp() {
               )}
             </div>
 
+            {/* ① 反映先マップ（複数選択可能） */}
             <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '6px' }}>
-              🌐 どのマップに反映させますか？
+              🌐 どのマップに反映させますか？（複数選択可能）
             </label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '16px' }}>
-              {(['world', 'friends', 'my'] as const).map((sc) => (
-                <button
-                  key={sc}
-                  type="button"
-                  onClick={() => setPostScope(sc)}
-                  style={{
-                    padding: '10px 4px',
-                    borderRadius: '10px',
-                    border: `2px solid ${postScope === sc ? themeAccent : '#e2e8f0'}`,
-                    background: postScope === sc ? '#f0f9ff' : '#ffffff',
-                    fontWeight: 'bold',
-                    fontSize: '11px',
-                    color: postScope === sc ? themeAccent : '#64748b',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {sc === 'world' ? '🌐 ワールド' : sc === 'friends' ? '👥 フレンド' : '🔒 マイマップ'}
-                </button>
-              ))}
+              {(['my', 'friends', 'world'] as const).map((sc) => {
+                const isSelected = selectedScopes.includes(sc);
+                return (
+                  <button
+                    key={sc}
+                    type="button"
+                    onClick={() => toggleScopeSelection(sc)}
+                    style={{
+                      padding: '10px 4px',
+                      borderRadius: '10px',
+                      border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
+                      background: isSelected ? '#f0f9ff' : '#ffffff',
+                      fontWeight: 'bold',
+                      fontSize: '11px',
+                      color: isSelected ? themeAccent : '#64748b',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <span>{isSelected ? '☑️' : '☐'}</span>
+                    <span>{sc === 'my' ? 'マイマップ' : sc === 'friends' ? 'フレンド' : 'ワールド'}</span>
+                  </button>
+                );
+              })}
             </div>
 
+            {/* ② カテゴリ選択 */}
             <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '6px' }}>
               🏷️ 投稿カテゴリ
             </label>
@@ -1288,6 +1381,7 @@ export default function WorldSnapApp() {
               ))}
             </div>
 
+            {/* ③ スポット名・キャプション */}
             <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
             <input
               type="text"
@@ -1340,7 +1434,7 @@ export default function WorldSnapApp() {
                 onClick={handleConfirmPost}
                 style={{ flex: 2, padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,0,0,0.15)' }}
               >
-                マップに配置する 🚀
+                マップに反映する 🚀
               </button>
             </div>
           </div>
@@ -1443,12 +1537,30 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 8. プロフィール編集モーダル */}
+      {/* 8. プロフィール編集モーダル (写真アイコン変更対応) */}
       {/* ==================================================== */}
       {isEditProfileOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '360px', width: '100%' }}>
             <h3 style={{ margin: '0 0 12px 0', fontSize: '15px' }}>👤 プロフィール編集</h3>
+
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '14px' }}>
+              <div
+                onClick={() => avatarInputRef.current?.click()}
+                style={{
+                  width: '68px', height: '68px', borderRadius: '50%',
+                  background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
+                  color: '#fff', fontSize: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', position: 'relative', overflow: 'hidden'
+                }}
+              >
+                {!userAvatar && <span>👤</span>}
+                <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '10px', color: '#fff', textAlign: 'center', padding: '2px 0' }}>
+                  変更
+                </div>
+              </div>
+            </div>
+
             <label style={{ fontSize: '11px', color: '#64748b' }}>名前</label>
             <input
               type="text"
