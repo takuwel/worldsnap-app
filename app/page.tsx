@@ -15,19 +15,19 @@ export interface Spot {
   userId: string;
   userName: string;
   userAvatar?: string;
-  isOfficial?: boolean; // 公式キュレーター/Botフラグ
+  isOfficial?: boolean;
   title: string;
   description: string;
   fileName: string;
-  fileUrl: string;       // 詳細表示用高画質URL
-  thumbUrl: string;      // マップ描画用超軽量サムネイルURL (約100px)
+  fileUrl: string;
+  thumbUrl: string;
   fileType: 'image' | 'video';
   lat: number;
   lon: number;
   countryCode: string;
   cityName: string;
   category: ViewCategory;
-  scopes: DisplayScope[]; // 複数選択対応 (マイマップ / フレンド / ワールド)
+  scopes: DisplayScope[];
   createdAt: string;
 }
 
@@ -248,11 +248,7 @@ export const COUNTRIES: Record<
   },
 };
 
-// ==========================================
-// 2. 公式キュレーター / 初期プリセットピン（京都・渋谷・ヨーロッパ高密度投入）
-// ==========================================
 const INITIAL_SPOTS: Spot[] = [
-  // ── 京都高密度エリア ──
   {
     id: 'spot-kyoto-1', userId: 'bot-curator-jp', userName: '京都公式キュレーター', isOfficial: true,
     title: '祇園 鴨川沿いの濃厚抹茶パフェ',
@@ -274,17 +270,6 @@ const INITIAL_SPOTS: Spot[] = [
     category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/11',
   },
   {
-    id: 'spot-kyoto-3', userId: 'bot-curator-jp', userName: '京都公式キュレーター', isOfficial: true,
-    title: '京都水族館（雨の日おすすめ）',
-    description: 'オオサンショウウオやクラゲの幻想的なパノラマ大水槽。雨の日のデートに最適🐟🌧️',
-    fileName: 'aquarium.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=900&auto=format&fit=crop',
-    thumbUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=120&h=120&auto=format&fit=crop',
-    fileType: 'image', lat: 34.9858, lon: 135.7481, countryCode: 'JP', cityName: 'Kyoto',
-    category: 'rain', scopes: ['world', 'my'], createdAt: '2026/08/09',
-  },
-  // ── 東京・渋谷高密度エリア ──
-  {
     id: 'spot-tokyo-1', userId: 'bot-tokyo-guide', userName: '東京おすすめガイド', isOfficial: true,
     title: '渋谷スクランブル交差点＆SHIBUYA SKY',
     description: '地上229mから望む東京360度パノラマビュー。夕暮れのグラデーションが絶景です✨',
@@ -295,17 +280,6 @@ const INITIAL_SPOTS: Spot[] = [
     category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/12',
   },
   {
-    id: 'spot-tokyo-2', userId: 'bot-tokyo-guide', userName: '東京おすすめガイド', isOfficial: true,
-    title: '奥渋谷 隠れ家ロースターカフェ',
-    description: '自家焙煎の浅煎りドリップと焼きたてカヌレ。静かな朝時間に☕',
-    fileName: 'cafe.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=900&auto=format&fit=crop',
-    thumbUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=120&h=120&auto=format&fit=crop',
-    fileType: 'image', lat: 35.6631, lon: 139.6934, countryCode: 'JP', cityName: 'Tokyo',
-    category: 'gourmet', scopes: ['world', 'my'], createdAt: '2026/08/13',
-  },
-  // ── スイス・ツェルマット ──
-  {
     id: 'spot-ch-1', userId: 'bot-world-photo', userName: 'Worldフォト公式', isOfficial: true,
     title: 'マッターホルン 黄金の朝焼け',
     description: '早朝のツェルマットから眺める黄金色の山頂。展望台へは始発電車がおすすめです🏔️',
@@ -315,7 +289,6 @@ const INITIAL_SPOTS: Spot[] = [
     fileType: 'image', lat: 45.9765, lon: 7.7491, countryCode: 'CH', cityName: 'Zermatt',
     category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/14',
   },
-  // ── フランス・パリ ──
   {
     id: 'spot-fr-1', userId: 'bot-world-photo', userName: 'Worldフォト公式', isOfficial: true,
     title: '雨のルーヴル美術館とガラスのピラミッド',
@@ -360,7 +333,7 @@ function convertDMSToDD(dms: number[], ref: string): number {
 }
 
 // ==========================================
-// 3. Leaflet 動的マップ（BBox検知 & 軽量サムネイル描画）
+// 2. Leaflet 動的マップ（タッチ・ピンチ・ズーム感度最適化版）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -370,7 +343,7 @@ const SafeMapComponent = dynamic(
         center,
         zoom,
         mode,
-        onBoundsChange,
+        onZoomChange,
         onSelectSpot,
         onDoubleTap,
       }: {
@@ -378,7 +351,7 @@ const SafeMapComponent = dynamic(
         center: [number, number];
         zoom: number;
         mode: ViewCategory;
-        onBoundsChange: (b: BoundingBox) => void;
+        onZoomChange?: (z: number) => void;
         onSelectSpot: (s: Spot) => void;
         onDoubleTap: (lat: number, lon: number) => void;
       }) => {
@@ -389,7 +362,7 @@ const SafeMapComponent = dynamic(
         const MapController = ({ center, zoom }: { center: [number, number]; zoom: number }) => {
           const map = useMap();
           useEffect(() => {
-            map.flyTo(center, zoom, { duration: 1.2 });
+            map.flyTo(center, zoom, { duration: 1.2, easeLinearity: 0.25 });
           }, [center, zoom, map]);
           return null;
         };
@@ -399,14 +372,10 @@ const SafeMapComponent = dynamic(
             dblclick(e: any) {
               onDoubleTap(e.latlng.lat, e.latlng.lng);
             },
-            moveend() {
-              const bounds = map.getBounds();
-              onBoundsChange({
-                minLat: bounds.getSouth(),
-                maxLat: bounds.getNorth(),
-                minLng: bounds.getWest(),
-                maxLng: bounds.getEast(),
-              });
+            zoomend() {
+              if (onZoomChange) {
+                onZoomChange(map.getZoom());
+              }
             },
           });
           return null;
@@ -422,18 +391,23 @@ const SafeMapComponent = dynamic(
             center={center}
             zoom={zoom}
             minZoom={1.5}
-            maxBounds={[[-85, -180], [85, 180]]}
-            maxBoundsViscosity={1.0}
+            maxZoom={18}
+            zoomSnap={0.5}
+            zoomDelta={1}
+            wheelPxPerZoomLevel={60}
+            touchZoom={true}
+            scrollWheelZoom={true}
+            dragging={true}
             doubleClickZoom={false}
             zoomControl={false}
-            style={{ width: '100%', height: '100%', background: '#e2e8f0' }}
-            scrollWheelZoom={true}
+            maxBounds={[[-85, -180], [85, 180]]}
+            maxBoundsViscosity={1.0}
+            style={{ width: '100%', height: '100%', background: '#e2e8f0', touchAction: 'pan-x pan-y pinch-zoom' }}
           >
             <MapController center={center} zoom={zoom} />
             <MapEventHandler />
             <TileLayer url={tileUrl} attribution='&copy; CARTO' />
 
-            {/* ポラロイド風超軽量サムネイルピン */}
             {spots.map((spot) => {
               const rot = ((spot.lat * 10) % 8) - 4;
               const badgeHtml = spot.isOfficial
@@ -496,7 +470,7 @@ const SafeMapComponent = dynamic(
 );
 
 // ==========================================
-// 4. メインコンポーネント (WorldSnap)
+// 3. メインコンポーネント (WorldSnap)
 // ==========================================
 export default function WorldSnapApp() {
   const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
@@ -517,7 +491,6 @@ export default function WorldSnapApp() {
   const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
   const [mapCenter, setMapCenter] = useState<[number, number]>([currentConfig.lat, currentConfig.lon]);
   const [mapZoom, setMapZoom] = useState<number>(currentConfig.zoom);
-  const [currentBounds, setCurrentBounds] = useState<BoundingBox | null>(null);
 
   const [spots, setSpots] = useState<Spot[]>(INITIAL_SPOTS);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
@@ -558,28 +531,21 @@ export default function WorldSnapApp() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // BBox・モード・表示スコープ連動フィルタリング（パフォーマンス最適化）
   const filteredSpots = useMemo(() => {
     return spots.filter((s) => {
       if (blockedUsers.includes(s.userId)) return false;
       if (s.category !== viewMode) return false;
-      if (displayScope === 'my') {
-        if (s.userId !== 'me' || !s.scopes.includes('my')) return false;
-      }
+      if (displayScope === 'my') return s.scopes.includes('my') && s.userId === 'me';
       if (displayScope === 'friends') {
-        if (s.userId === 'me') {
-          if (!s.scopes.includes('my')) return false;
-        } else {
-          if (!s.scopes.includes('friends') || !friendsList.some((f) => f.id === s.userId)) return false;
-        }
+        if (s.userId === 'me') return s.scopes.includes('my');
+        return s.scopes.includes('friends') && friendsList.some((f) => f.id === s.userId);
       }
       if (displayScope === 'world') {
         if (s.userId !== 'me' && !s.scopes.includes('world')) return false;
       }
       if (searchKeyword) {
         const kw = searchKeyword.toLowerCase();
-        const match = s.title.toLowerCase().includes(kw) || s.description.toLowerCase().includes(kw) || s.cityName.toLowerCase().includes(kw);
-        if (!match) return false;
+        return s.title.toLowerCase().includes(kw) || s.description.toLowerCase().includes(kw) || s.cityName.toLowerCase().includes(kw);
       }
       return true;
     });
@@ -589,10 +555,10 @@ export default function WorldSnapApp() {
 
   const handleMapDoubleTap = (lat: number, lon: number) => {
     setMapCenter([lat, lon]);
-    setMapZoom((prev) => Math.min(prev + 3, 14));
+    setMapZoom((prev) => Math.min(prev + 2.5, 16));
   };
 
-  // 🪟 5段階ズームアウト（市内 → 都道府県 → 地方 → 国 → 世界全体）
+  // 🪟 段階的ズームアウト機能（市内 → 都道府県 → 地方 → 国 → 世界全体）
   const handleStepZoomOut = () => {
     if (mapZoom >= 12) {
       setMapZoom(9);
@@ -600,7 +566,7 @@ export default function WorldSnapApp() {
     } else if (mapZoom >= 8) {
       setMapZoom(6);
       showToast('🗺️ 地方エリアへ引き戻しました');
-    } else if (mapZoom >= 5) {
+    } else if (mapZoom >= 4.5) {
       const conf = COUNTRIES[userCountry] || COUNTRIES.JP;
       setMapCenter([conf.lat, conf.lon]);
       setMapZoom(conf.zoom);
@@ -610,6 +576,14 @@ export default function WorldSnapApp() {
       setMapZoom(2);
       showToast('🌎 世界全体マップへ引き戻しました');
     }
+  };
+
+  const handleZoomIn = () => {
+    setMapZoom((prev) => Math.min(prev + 1.5, 18));
+  };
+
+  const handleZoomOut = () => {
+    setMapZoom((prev) => Math.max(prev - 1.5, 1.5));
   };
 
   const handleCompleteOnboarding = () => {
@@ -843,7 +817,6 @@ export default function WorldSnapApp() {
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t.step2Title}</h3>
                 
-                {/* アイコン選択 */}
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
                   <div
                     onClick={() => avatarInputRef.current?.click()}
@@ -968,7 +941,7 @@ export default function WorldSnapApp() {
       {/* ── メインコンテナ ── */}
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         {/* ==================================================== */}
-        {/* TAB 1: 🗺️ メインマップ (余白を削りマップを最大化) */}
+        {/* TAB 1: 🗺️ メインマップ (余白削減・マップ最大化) */}
         {/* ==================================================== */}
         <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', position: 'relative' }}>
           
@@ -1017,13 +990,31 @@ export default function WorldSnapApp() {
               center={mapCenter}
               zoom={mapZoom}
               mode={viewMode}
-              onBoundsChange={setCurrentBounds}
+              onZoomChange={setMapZoom}
               onSelectSpot={setSelectedSpot}
               onDoubleTap={handleMapDoubleTap}
             />
 
-            {/* 地図右下のコントロール（🪟 窓ボタンで5段階ズームアウト・保存ボタン） */}
+            {/* 地図右下のコントロール（＋ / − ズームボタン、🪟 段階ズームアウトボタン、保存ボタン） */}
             <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {/* ＋ ズームインボタン */}
+              <button
+                title="拡大"
+                onClick={handleZoomIn}
+                style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.18)', fontSize: '18px', fontWeight: 'bold', color: '#0f172a', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                ＋
+              </button>
+
+              {/* − ズームアウトボタン */}
+              <button
+                title="縮小"
+                onClick={handleZoomOut}
+                style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.18)', fontSize: '20px', fontWeight: 'bold', color: '#0f172a', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                −
+              </button>
+
               {/* 🪟 段階的ズームアウトボタン (市内→都道府県→地方→国→世界全体) */}
               <button
                 title="市内・都道府県・地方・国・世界全体へ段階的に引き戻す"
@@ -1032,6 +1023,8 @@ export default function WorldSnapApp() {
               >
                 🪟
               </button>
+
+              {/* 💾 マップ保存ボタン */}
               <button
                 title="マップを保存"
                 onClick={handleExportMap}
@@ -1042,7 +1035,7 @@ export default function WorldSnapApp() {
             </div>
           </div>
 
-          {/* コンパクト化した下部バー（余白を削減） */}
+          {/* コンパクト化した下部バー */}
           <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', zIndex: 450 }}>
             <div>
               <div style={{ fontSize: '12px', fontWeight: 'bold' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
@@ -1259,7 +1252,7 @@ export default function WorldSnapApp() {
       </div>
 
       {/* ==================================================== */}
-      {/* 5. 投稿詳細画面 */}
+      {/* 4. 投稿詳細画面 */}
       {/* ==================================================== */}
       {selectedSpot && (
         <div style={{ position: 'fixed', inset: 0, background: '#ffffff', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
@@ -1367,7 +1360,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 6. 投稿前・複数反映先選択モーダル */}
+      {/* 5. 投稿前・複数反映先選択モーダル */}
       {/* ==================================================== */}
       {pendingUploads.length > 0 && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
