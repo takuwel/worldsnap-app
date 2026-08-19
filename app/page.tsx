@@ -42,6 +42,13 @@ export interface PendingUpload {
   dateTime?: string;
 }
 
+export interface BoundingBox {
+  minLat: number;
+  maxLat: number;
+  minLng: number;
+  maxLng: number;
+}
+
 export const COUNTRIES: Record<
   string,
   {
@@ -316,7 +323,7 @@ function convertDMSToDD(dms: number[], ref: string): number {
 }
 
 // ==========================================
-// 2. Leaflet 動的マップ（強制引き戻しバグ解消版）
+// 2. Leaflet 動的マップ（タッチ・ピンチ操作最適化版）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -346,7 +353,6 @@ const SafeMapComponent = dynamic(
         const L = require('leaflet');
         require('leaflet/dist/leaflet.css');
 
-        // ボタン操作や国籍切り替えの明示的なトリガーがあった時だけflyToを実行する
         const MapController = ({ targetCenter, targetZoom }: { targetCenter: [number, number] | null; targetZoom: number | null }) => {
           const map = useMap();
           useEffect(() => {
@@ -483,7 +489,7 @@ export default function WorldSnapApp() {
   const [currentMapCenter, setCurrentMapCenter] = useState<[number, number]>([currentConfig.lat, currentConfig.lon]);
   const [currentMapZoom, setCurrentMapZoom] = useState<number>(currentConfig.zoom);
 
-  // 明示的な移動トリガー（ボタン操作時のみセットされ、移動完了後はnullクリア）
+  // 明示的な移動トリガー
   const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
   const [targetZoom, setTargetZoom] = useState<number | null>(null);
 
@@ -526,11 +532,9 @@ export default function WorldSnapApp() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // ユーザーがドラッグ・ズームした時に位置を追従（勝手に戻らないようにする）
   const handleMapMoveEnd = (center: [number, number], zoom: number) => {
     setCurrentMapCenter(center);
     setCurrentMapZoom(zoom);
-    // 明示的トリガーをリセット
     setTargetCenter(null);
     setTargetZoom(null);
   };
@@ -557,13 +561,12 @@ export default function WorldSnapApp() {
 
   const visitedCountryCount = new Set(spots.filter((s) => s.userId === 'me').map((s) => s.countryCode)).size;
 
-  // ダブルタップでのズームイン（タップ地点へスムーズ移動）
   const handleMapDoubleTap = (lat: number, lon: number) => {
     setTargetCenter([lat, lon]);
     setTargetZoom(Math.min(currentMapZoom + 2.5, 17));
   };
 
-  // 🪟 段階的ズームアウト（現在地を中心に引き戻す）
+  // 🪟 段階的ズームアウト機能
   const handleStepZoomOut = () => {
     if (currentMapZoom >= 12) {
       setTargetCenter(currentMapCenter);
@@ -583,16 +586,6 @@ export default function WorldSnapApp() {
       setTargetZoom(2);
       showToast('🌎 世界全体マップへ引き戻しました');
     }
-  };
-
-  const handleZoomIn = () => {
-    setTargetCenter(currentMapCenter);
-    setTargetZoom(Math.min(currentMapZoom + 1.5, 18));
-  };
-
-  const handleZoomOut = () => {
-    setTargetCenter(currentMapCenter);
-    setTargetZoom(Math.max(currentMapZoom - 1.5, 1.5));
   };
 
   const handleCompleteOnboarding = () => {
@@ -1006,22 +999,9 @@ export default function WorldSnapApp() {
               onDoubleTap={handleMapDoubleTap}
             />
 
-            {/* 地図右下のコントロール（＋/ー、🪟 段階ズームアウト、💾 保存） */}
+            {/* 地図右下のコントロール（🪟 窓ボタンで段階的ズームアウト・💾 保存） */}
             <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <button
-                title="拡大"
-                onClick={handleZoomIn}
-                style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.18)', fontSize: '18px', fontWeight: 'bold', color: '#0f172a', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              >
-                ＋
-              </button>
-              <button
-                title="縮小"
-                onClick={handleZoomOut}
-                style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.18)', fontSize: '20px', fontWeight: 'bold', color: '#0f172a', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              >
-                −
-              </button>
+              {/* 🪟 段階的ズームアウトボタン (市内→都道府県→地方→国→世界全体) */}
               <button
                 title="市内・都道府県・地方・国・世界全体へ段階的に引き戻す"
                 onClick={handleStepZoomOut}
@@ -1256,7 +1236,7 @@ export default function WorldSnapApp() {
       </div>
 
       {/* ==================================================== */}
-      {/* 5. 投稿詳細画面 */}
+      {/* 4. 投稿詳細画面 */}
       {/* ==================================================== */}
       {selectedSpot && (
         <div style={{ position: 'fixed', inset: 0, background: '#ffffff', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
@@ -1364,7 +1344,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 6. 投稿前・複数反映先選択モーダル */}
+      {/* 5. 投稿前・複数反映先選択モーダル */}
       {/* ==================================================== */}
       {pendingUploads.length > 0 && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
@@ -1499,7 +1479,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 7. フルスクリーン Lightbox */}
+      {/* 6. フルスクリーン Lightbox */}
       {/* ==================================================== */}
       {isLightboxOpen && selectedSpot && (
         <div onClick={() => setIsLightboxOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
@@ -1511,7 +1491,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 8. 設定画面 */}
+      {/* 7. 設定画面 */}
       {/* ==================================================== */}
       {isSettingsOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px' }}>
@@ -1594,7 +1574,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 9. プロフィール編集モーダル */}
+      {/* 8. プロフィール編集モーダル */}
       {/* ==================================================== */}
       {isEditProfileOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
@@ -1651,7 +1631,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 10. 利用規約 (EULA) モーダル */}
+      {/* 9. 利用規約 (EULA) モーダル */}
       {/* ==================================================== */}
       {isEulaModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
@@ -1671,7 +1651,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 11. 通報モーダル */}
+      {/* 10. 通報モーダル */}
       {/* ==================================================== */}
       {isReportModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
@@ -1706,7 +1686,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ==================================================== */}
-      {/* 12. ボトムナビゲーション */}
+      {/* 11. ボトムナビゲーション */}
       {/* ==================================================== */}
       <nav
         style={{
