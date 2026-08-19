@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo, memo } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { createClient } from '@supabase/supabase-js';
 
@@ -103,7 +103,7 @@ export const COUNTRIES: Record<
       step1Title: 'Step 1: 국적 선택', step1Desc: '선택한 국가에 맞춰 앱 언어가 한국어로 표시됩니다.',
       step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의',
       next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기',
-      eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
+      eulaAgree: '이용약관 및 커뮤니티 가イド라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
       home: '홈', map: '지도', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
       view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체',
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
@@ -209,7 +209,7 @@ function convertDMSToDD(dms: number[], ref: string): number {
 }
 
 // ==========================================
-// 2. Leaflet 軽量化マップコンポーネント
+// 2. Leaflet 軽量・日本語表示マップコンポーネント
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -262,13 +262,12 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 高速なOpenStreetMap / Cartoタイル
+        // 日本語・標準地名表示（OpenStreetMap標準タイル / 雨の日はダークタイル）
         const tileUrl =
           mode === 'rain'
             ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
-        // マーカーのアイコンキャッシュ
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
           const badgeHtml = spot.isOfficial
@@ -284,11 +283,10 @@ const SafeMapComponent = dynamic(
                 height: 52px;
                 background: #ffffff;
                 border-radius: 6px;
-                box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+                box-shadow: 0 4px 14px rgba(0,0,0,0.25);
                 padding: 3px 3px 12px 3px;
                 cursor: pointer;
                 transform: translateY(-50%) rotate(${rot}deg);
-                will-change: transform;
               ">
                 ${badgeHtml}
                 <div style="width: 100%; height: 36px; border-radius: 3px; overflow: hidden; background: #cbd5e1;">
@@ -325,18 +323,16 @@ const SafeMapComponent = dynamic(
             dragging={true}
             doubleClickZoom={false}
             zoomControl={false}
-            preferCanvas={true}
-            style={{ width: '100%', height: '100%', background: '#e2e8f0' }}
+            style={{ width: '100%', height: '100%', background: '#f1f5f9' }}
           >
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
             <TileLayer
               url={tileUrl}
-              attribution='&copy; CARTO'
+              attribution='&copy; OpenStreetMap contributors'
               maxNativeZoom={18}
               maxZoom={19}
               keepBuffer={4}
-              updateWhenZooming={false}
             />
 
             {spots.map((spot) => (
@@ -422,7 +418,6 @@ export default function WorldSnapApp() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // ── 初回オンボーディング判定 ──
   useEffect(() => {
     const hasCompleted = localStorage.getItem('ws_onboarded');
     if (!hasCompleted) {
@@ -430,7 +425,6 @@ export default function WorldSnapApp() {
     }
   }, []);
 
-  // ── Supabaseから初期ピンをロード ──
   const fetchSpots = async () => {
     if (!supabase) return;
     try {
@@ -461,7 +455,6 @@ export default function WorldSnapApp() {
           createdAt: new Date(d.created_at).toLocaleDateString(),
         }));
         
-        // プリセットとDBのピンを結合
         setSpots(() => {
           const dbIds = new Set(dbSpots.map(s => s.id));
           const remainPresets = INITIAL_SPOTS.filter(p => !dbIds.has(p.id));
@@ -621,7 +614,6 @@ export default function WorldSnapApp() {
     }
   };
 
-  // ── 確実なSupabaseアップロード＆保存 ──
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -642,7 +634,6 @@ export default function WorldSnapApp() {
         
         if (uploadError) {
           console.error('Storage upload error:', uploadError);
-          showToast('⚠️ 画像の保存に失敗しました。DBのみ保存を試みます。');
         } else {
           const { data: publicData } = supabase.storage.from('worldsnap-media').getPublicUrl(filePath);
           if (publicData?.publicUrl) {
@@ -672,13 +663,13 @@ export default function WorldSnapApp() {
         const { error: insertError } = await supabase.from('spots').insert([newSpotData]);
         if (insertError) {
           console.error('Insert error:', insertError);
-          showToast('❌ データベースへの保存に失敗しました: ' + insertError.message);
+          showToast('❌ 保存エラー: ' + insertError.message);
           setIsSubmitting(false);
           return;
         }
 
       } catch (err) {
-        console.error('Upload flow exception:', err);
+        console.error('Upload exception:', err);
       }
     }
 
