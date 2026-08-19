@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, memo } from 'react';
 import dynamic from 'next/dynamic';
 import { createClient } from '@supabase/supabase-js';
 
@@ -150,7 +150,7 @@ const INITIAL_SPOTS: Spot[] = [
     title: '祇園 鴨川沿いの濃厚抹茶パフェ',
     description: '川床を眺めながらいただく最高峰の宇治抹茶。デートやひと休みに最適な特等席です🍵',
     fileName: 'matcha.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=900&auto=format&fit=crop',
+    fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: 'Kyoto',
     category: 'gourmet', scopes: ['world', 'my'], createdAt: '2026/08/10',
@@ -160,7 +160,7 @@ const INITIAL_SPOTS: Spot[] = [
     title: '渋谷スクランブル交差点＆SHIBUYA SKY',
     description: '地上229mから望む東京360度パノラマビュー。夕暮れのグラデーションが絶景です✨',
     fileName: 'shibuya.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop',
+    fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 35.6595, lon: 139.7005, countryCode: 'JP', cityName: 'Tokyo',
     category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/12',
@@ -170,7 +170,7 @@ const INITIAL_SPOTS: Spot[] = [
     title: 'マッターホルン 黄金の朝焼け',
     description: '早朝のツェルマットから眺める黄金色の山頂。展望台へは始発電車がおすすめです🏔️',
     fileName: 'matterhorn.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=900&auto=format&fit=crop',
+    fileUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=600&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 45.9765, lon: 7.7491, countryCode: 'CH', cityName: 'Zermatt',
     category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/14',
@@ -209,7 +209,7 @@ function convertDMSToDD(dms: number[], ref: string): number {
 }
 
 // ==========================================
-// 2. Leaflet 動的マップ
+// 2. Leaflet 軽量化マップコンポーネント
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -243,7 +243,7 @@ const SafeMapComponent = dynamic(
           const map = useMap();
           useEffect(() => {
             if (targetCenter && targetZoom) {
-              map.flyTo(targetCenter, targetZoom, { duration: 1.1, easeLinearity: 0.25 });
+              map.flyTo(targetCenter, targetZoom, { duration: 0.8, easeLinearity: 0.25 });
             }
           }, [targetCenter, targetZoom, map]);
           return null;
@@ -262,99 +262,105 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
+        // 高速なOpenStreetMap / Cartoタイル
         const tileUrl =
           mode === 'rain'
             ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+            : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+
+        // マーカーのアイコンキャッシュ
+        const createMarkerIcon = (spot: Spot) => {
+          const rot = ((spot.lat * 10) % 6) - 3;
+          const badgeHtml = spot.isOfficial
+            ? `<div style="position:absolute;top:-4px;right:-4px;background:#0284c7;color:#fff;font-size:8px;font-weight:bold;border-radius:10px;padding:1px 4px;">公式</div>`
+            : '';
+
+          return L.divIcon({
+            className: 'ws-marker',
+            html: `
+              <div style="
+                position: relative;
+                width: 44px;
+                height: 52px;
+                background: #ffffff;
+                border-radius: 6px;
+                box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+                padding: 3px 3px 12px 3px;
+                cursor: pointer;
+                transform: translateY(-50%) rotate(${rot}deg);
+                will-change: transform;
+              ">
+                ${badgeHtml}
+                <div style="width: 100%; height: 36px; border-radius: 3px; overflow: hidden; background: #cbd5e1;">
+                  <img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="eager" />
+                </div>
+                <div style="
+                  position: absolute;
+                  bottom: -5px;
+                  left: 50%;
+                  transform: translateX(-50%);
+                  width: 0;
+                  height: 0;
+                  border-left: 4px solid transparent;
+                  border-right: 4px solid transparent;
+                  border-top: 5px solid #ffffff;
+                "></div>
+              </div>
+            `,
+            iconSize: [44, 52],
+            iconAnchor: [22, 26],
+          });
+        };
 
         return (
           <MapContainer
             center={center}
             zoom={zoom}
-            minZoom={1.5}
+            minZoom={2}
             maxZoom={18}
             zoomSnap={0.5}
             zoomDelta={1}
-            wheelPxPerZoomLevel={60}
             touchZoom={true}
             scrollWheelZoom={true}
             dragging={true}
             doubleClickZoom={false}
             zoomControl={false}
-            maxBounds={[[-85, -180], [85, 180]]}
-            maxBoundsViscosity={1.0}
-            style={{ width: '100%', height: '100%', background: '#e2e8f0', touchAction: 'pan-x pan-y pinch-zoom' }}
+            preferCanvas={true}
+            style={{ width: '100%', height: '100%', background: '#e2e8f0' }}
           >
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
-            <TileLayer url={tileUrl} attribution='&copy; CARTO' />
+            <TileLayer
+              url={tileUrl}
+              attribution='&copy; CARTO'
+              maxNativeZoom={18}
+              maxZoom={19}
+              keepBuffer={4}
+              updateWhenZooming={false}
+            />
 
-            {spots.map((spot) => {
-              const rot = ((spot.lat * 10) % 8) - 4;
-              const badgeHtml = spot.isOfficial
-                ? `<div style="position:absolute;top:-4px;right:-4px;background:#0284c7;color:#fff;font-size:8px;font-weight:bold;border-radius:10px;padding:1px 4px;box-shadow:0 2px 4px rgba(0,0,0,0.2);">公式</div>`
-                : '';
-
-              const iconHtml = `
-                <div style="
-                  position: relative;
-                  width: 48px;
-                  height: 56px;
-                  background: #ffffff;
-                  border-radius: 6px;
-                  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-                  padding: 4px 4px 14px 4px;
-                  cursor: pointer;
-                  transform: translateY(-50%) rotate(${rot}deg);
-                  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-                ">
-                  ${badgeHtml}
-                  <div style="width: 100%; height: 38px; border-radius: 3px; overflow: hidden; background: #e2e8f0;">
-                    <img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" />
-                  </div>
-                  <div style="
-                    position: absolute;
-                    bottom: -6px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 0;
-                    height: 0;
-                    border-left: 5px solid transparent;
-                    border-right: 5px solid transparent;
-                    border-top: 6px solid #ffffff;
-                  "></div>
-                </div>
-              `;
-              const customIcon = L.divIcon({
-                className: 'ws-polaroid-marker',
-                html: iconHtml,
-                iconSize: [48, 56],
-                iconAnchor: [24, 28],
-              });
-
-              return (
-                <Marker
-                  key={spot.id}
-                  position={[spot.lat, spot.lon]}
-                  icon={customIcon}
-                  eventHandlers={{
-                    click: () => onSelectSpot(spot),
-                  }}
-                />
-              );
-            })}
+            {spots.map((spot) => (
+              <Marker
+                key={spot.id}
+                position={[spot.lat, spot.lon]}
+                icon={createMarkerIcon(spot)}
+                eventHandlers={{
+                  click: () => onSelectSpot(spot),
+                }}
+              />
+            ))}
           </MapContainer>
         );
       }
     ),
-  { ssr: false, loading: () => <div style={{ height: '100%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>🗺️ マップを読み込み中...</div> }
+  { ssr: false, loading: () => <div style={{ height: '100%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>🗺️ マップを準備中...</div> }
 );
 
 // ==========================================
 // 3. メインコンポーネント
 // ==========================================
 export default function WorldSnapApp() {
-  const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
+  const [isOnboarding, setIsOnboarding] = useState<boolean>(false);
   const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3>(1);
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
 
@@ -391,6 +397,7 @@ export default function WorldSnapApp() {
   const [selectedScopes, setSelectedScopes] = useState<DisplayScope[]>(['world', 'my']);
   const [manualLat, setManualLat] = useState<string>('');
   const [manualLon, setManualLon] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
@@ -415,43 +422,58 @@ export default function WorldSnapApp() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // ── Supabaseからピンを取得 ──
+  // ── 初回オンボーディング判定 ──
   useEffect(() => {
-    async function fetchSpots() {
-      if (!supabase) return;
-      try {
-        const { data, error } = await supabase.from('spots').select('*').order('created_at', { ascending: false });
-        if (!error && data && data.length > 0) {
-          const dbSpots: Spot[] = data.map((d: any) => ({
-            id: d.id,
-            userId: d.user_id,
-            userName: d.user_name,
-            userAvatar: d.user_avatar,
-            isOfficial: d.is_official,
-            title: d.title,
-            description: d.description || '',
-            fileName: d.file_name,
-            fileUrl: d.file_url,
-            thumbUrl: d.thumb_url || d.file_url,
-            fileType: d.file_type,
-            lat: d.lat,
-            lon: d.lon,
-            countryCode: d.country_code,
-            cityName: d.city_name,
-            category: d.category,
-            scopes: d.scopes || ['world'],
-            createdAt: new Date(d.created_at).toLocaleDateString(),
-          }));
-          setSpots((prev) => {
-            const ids = new Set(dbSpots.map(s => s.id));
-            const remainPresets = prev.filter(p => !ids.has(p.id));
-            return [...dbSpots, ...remainPresets];
-          });
-        }
-      } catch (err) {
-        console.error('Supabase fetch error:', err);
-      }
+    const hasCompleted = localStorage.getItem('ws_onboarded');
+    if (!hasCompleted) {
+      setIsOnboarding(true);
     }
+  }, []);
+
+  // ── Supabaseから初期ピンをロード ──
+  const fetchSpots = async () => {
+    if (!supabase) return;
+    try {
+      const { data, error } = await supabase.from('spots').select('*').order('created_at', { ascending: false });
+      if (error) {
+        console.error('Supabase fetch error:', error);
+        return;
+      }
+      if (data && data.length > 0) {
+        const dbSpots: Spot[] = data.map((d: any) => ({
+          id: d.id,
+          userId: d.user_id,
+          userName: d.user_name,
+          userAvatar: d.user_avatar,
+          isOfficial: d.is_official,
+          title: d.title,
+          description: d.description || '',
+          fileName: d.file_name,
+          fileUrl: d.file_url,
+          thumbUrl: d.thumb_url || d.file_url,
+          fileType: d.file_type,
+          lat: Number(d.lat),
+          lon: Number(d.lon),
+          countryCode: d.country_code,
+          cityName: d.city_name,
+          category: d.category,
+          scopes: d.scopes || ['world'],
+          createdAt: new Date(d.created_at).toLocaleDateString(),
+        }));
+        
+        // プリセットとDBのピンを結合
+        setSpots(() => {
+          const dbIds = new Set(dbSpots.map(s => s.id));
+          const remainPresets = INITIAL_SPOTS.filter(p => !dbIds.has(p.id));
+          return [...dbSpots, ...remainPresets];
+        });
+      }
+    } catch (err) {
+      console.error('Fetch error:', err);
+    }
+  };
+
+  useEffect(() => {
     fetchSpots();
   }, []);
 
@@ -487,7 +509,9 @@ export default function WorldSnapApp() {
     });
   }, [spots, blockedUsers, viewMode, displayScope, friendsList, searchKeyword]);
 
-  const visitedCountryCount = new Set(spots.filter((s) => s.userId === 'me').map((s) => s.countryCode)).size;
+  const visitedCountryCount = useMemo(() => {
+    return new Set(spots.filter((s) => s.userId === 'me').map((s) => s.countryCode)).size;
+  }, [spots]);
 
   const handleMapDoubleTap = (lat: number, lon: number) => {
     setTargetCenter([lat, lon]);
@@ -498,29 +522,30 @@ export default function WorldSnapApp() {
     if (currentMapZoom >= 12) {
       setTargetCenter(currentMapCenter);
       setTargetZoom(9);
-      showToast('🏙️ 都道府県レベルへ引き戻しました');
+      showToast('🏙️ 都道府県レベルへ戻しました');
     } else if (currentMapZoom >= 8) {
       setTargetCenter(currentMapCenter);
       setTargetZoom(6);
-      showToast('🗺️ 地方エリアへ引き戻しました');
+      showToast('🗺️ 地方エリアへ戻しました');
     } else if (currentMapZoom >= 4.5) {
       const conf = COUNTRIES[userCountry] || COUNTRIES.JP;
       setTargetCenter([conf.lat, conf.lon]);
       setTargetZoom(conf.zoom);
-      showToast(`🇯🇵 ${conf.name} 全体へ引き戻しました`);
+      showToast(`🇯🇵 ${conf.name} 全体へ戻しました`);
     } else {
       setTargetCenter([20.0, 0.0]);
       setTargetZoom(2);
-      showToast('🌎 世界全体マップへ引き戻しました');
+      showToast('🌎 世界全体マップへ戻しました');
     }
   };
 
   const handleCompleteOnboarding = () => {
+    localStorage.setItem('ws_onboarded', 'true');
     setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
     setTargetZoom(target.zoom);
-    showToast(`🌍 ${target.name} へフォーカスしました！`);
+    showToast(`🌍 ${target.name} へようこそ！`);
   };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -544,7 +569,7 @@ export default function WorldSnapApp() {
     for (const file of files) {
       const fileUrl = URL.createObjectURL(file);
       const isVideo = file.type.startsWith('video/');
-      const fileId = 'spot-' + Math.random().toString(36).substring(2, 9);
+      const fileId = 'spot-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
 
       if (isVideo) {
         pendingList.push({ id: fileId, file, fileUrl, fileType: 'video', hasGps: false, dateTime: new Date().toLocaleDateString() });
@@ -587,7 +612,7 @@ export default function WorldSnapApp() {
   const toggleScopeSelection = (scope: DisplayScope) => {
     if (selectedScopes.includes(scope)) {
       if (selectedScopes.length === 1) {
-        showToast('⚠️ 最低1つの反映先マップを選択してください');
+        showToast('⚠️ 最低1つの反映先を選択してください');
         return;
       }
       setSelectedScopes((prev) => prev.filter((s) => s !== scope));
@@ -596,10 +621,13 @@ export default function WorldSnapApp() {
     }
   };
 
-  // ── Supabaseへの実画像アップロード & DB保存 ──
+  // ── 確実なSupabaseアップロード＆保存 ──
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
-    if (!current) return;
+    if (!current || isSubmitting) return;
+
+    setIsSubmitting(true);
+    showToast('⏳ 写真をアップロード中...');
 
     const finalLat = current.hasGps && current.lat ? current.lat : parseFloat(manualLat) || currentMapCenter[0];
     const finalLon = current.hasGps && current.lon ? current.lon : parseFloat(manualLon) || currentMapCenter[1];
@@ -608,18 +636,49 @@ export default function WorldSnapApp() {
 
     if (supabase) {
       try {
-        const fileExt = current.file.name.split('.').pop();
+        const fileExt = current.file.name.split('.').pop() || 'jpg';
         const filePath = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
         const { error: uploadError } = await supabase.storage.from('worldsnap-media').upload(filePath, current.file);
         
-        if (!uploadError) {
+        if (uploadError) {
+          console.error('Storage upload error:', uploadError);
+          showToast('⚠️ 画像の保存に失敗しました。DBのみ保存を試みます。');
+        } else {
           const { data: publicData } = supabase.storage.from('worldsnap-media').getPublicUrl(filePath);
           if (publicData?.publicUrl) {
             uploadedUrl = publicData.publicUrl;
           }
         }
+
+        const newSpotData = {
+          id: current.id,
+          user_id: 'me',
+          user_name: userName,
+          user_avatar: userAvatar || '',
+          title: postTitle || current.file.name,
+          description: postDesc || '旅の思い出',
+          file_name: current.file.name,
+          file_url: uploadedUrl,
+          thumb_url: uploadedUrl,
+          file_type: current.fileType,
+          lat: finalLat,
+          lon: finalLon,
+          country_code: userCountry,
+          city_name: currentConfig.name.split(' ')[0],
+          category: postCategory,
+          scopes: selectedScopes,
+        };
+
+        const { error: insertError } = await supabase.from('spots').insert([newSpotData]);
+        if (insertError) {
+          console.error('Insert error:', insertError);
+          showToast('❌ データベースへの保存に失敗しました: ' + insertError.message);
+          setIsSubmitting(false);
+          return;
+        }
+
       } catch (err) {
-        console.error('Storage upload error:', err);
+        console.error('Upload flow exception:', err);
       }
     }
 
@@ -640,32 +699,12 @@ export default function WorldSnapApp() {
       cityName: currentConfig.name.split(' ')[0],
       category: postCategory,
       scopes: selectedScopes,
-      createdAt: current.dateTime || new Date().toLocaleDateString(),
+      createdAt: new Date().toLocaleDateString(),
     };
 
-    if (supabase) {
-      await supabase.from('spots').insert([{
-        id: newSpot.id,
-        user_id: newSpot.userId,
-        user_name: newSpot.userName,
-        user_avatar: newSpot.userAvatar,
-        title: newSpot.title,
-        description: newSpot.description,
-        file_name: newSpot.fileName,
-        file_url: newSpot.fileUrl,
-        thumb_url: newSpot.thumbUrl,
-        file_type: newSpot.fileType,
-        lat: newSpot.lat,
-        lon: newSpot.lon,
-        country_code: newSpot.countryCode,
-        city_name: newSpot.cityName,
-        category: newSpot.category,
-        scopes: newSpot.scopes,
-      }]);
-    }
-
     setSpots((prev) => [newSpot, ...prev]);
-    showToast(`📍 選択した ${selectedScopes.length} つのマップに反映しました！`);
+    setIsSubmitting(false);
+    showToast(`📍 ピンを保存しました！`);
 
     if (currentUploadIndex + 1 < pendingUploads.length) {
       const nextIndex = currentUploadIndex + 1;
@@ -705,7 +744,7 @@ export default function WorldSnapApp() {
       if (supabase) {
         await supabase.from('saved_spots').delete().match({ user_id: 'me', spot_id: spotId });
       }
-      showToast('行きたい保存を解除しました');
+      showToast('保存を解除しました');
     } else {
       setSavedSpotIds((prev) => [...prev, spotId]);
       if (supabase) {
@@ -1031,7 +1070,7 @@ export default function WorldSnapApp() {
               style={{ background: '#ffffff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.06)', cursor: 'pointer' }}
             >
               <div style={{ height: '200px', background: '#000' }}>
-                <img src={spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
               </div>
               <div style={{ padding: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1130,7 +1169,7 @@ export default function WorldSnapApp() {
                 .filter((s) => s.userId === 'me')
                 .map((s) => (
                   <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
-                    <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                   </div>
                 ))}
             </div>
@@ -1142,7 +1181,7 @@ export default function WorldSnapApp() {
                 .filter((s) => savedSpotIds.includes(s.id))
                 .map((s) => (
                   <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
-                    <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                   </div>
                 ))}
             </div>
@@ -1414,6 +1453,7 @@ export default function WorldSnapApp() {
             <div style={{ display: 'flex', gap: '8px' }}>
               <button
                 type="button"
+                disabled={isSubmitting}
                 onClick={() => {
                   setPendingUploads([]);
                   setCurrentUploadIndex(0);
@@ -1424,10 +1464,11 @@ export default function WorldSnapApp() {
               </button>
               <button
                 type="button"
+                disabled={isSubmitting}
                 onClick={handleConfirmPost}
-                style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+                style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
               >
-                マップに反映する 🚀
+                {isSubmitting ? '保存中...' : 'マップに反映する 🚀'}
               </button>
             </div>
           </div>
@@ -1467,12 +1508,13 @@ export default function WorldSnapApp() {
               <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '6px' }}>▼ 安全対策 & キャッシュ</div>
               <div
                 onClick={() => {
-                  showToast('✨ キャッシュをクリアしました');
+                  fetchSpots();
+                  showToast('✨ 最新データを再読み込みしました');
                 }}
                 style={{ padding: '10px', background: '#f8fafc', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer', marginBottom: '6px', fontSize: '13px' }}
               >
                 <span>{t.cacheClear}</span>
-                <span style={{ color: themeAccent, fontWeight: 'bold' }}>実行</span>
+                <span style={{ color: themeAccent, fontWeight: 'bold' }}>再読込</span>
               </div>
               <div
                 onClick={() => {
@@ -1509,7 +1551,8 @@ export default function WorldSnapApp() {
               <button
                 onClick={() => {
                   if (prompt('退会する場合は「削除する」と入力してください:') === '削除する') {
-                    setSpots([]);
+                    localStorage.removeItem('ws_onboarded');
+                    setSpots(INITIAL_SPOTS);
                     showToast('⚠️ アカウントを削除しました');
                     setIsSettingsOpen(false);
                     setIsOnboarding(true);
