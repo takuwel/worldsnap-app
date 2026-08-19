@@ -2,9 +2,17 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import dynamic from 'next/dynamic';
+import { createClient } from '@supabase/supabase-js';
 
 // ==========================================
-// 1. 型定義 & 17カ国マスターデータ
+// 0. Supabase クライアント初期化
+// ==========================================
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
+
+// ==========================================
+// 1. 型定義 & マスターデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -42,13 +50,6 @@ export interface PendingUpload {
   dateTime?: string;
 }
 
-export interface BoundingBox {
-  minLat: number;
-  maxLat: number;
-  minLng: number;
-  maxLng: number;
-}
-
 export const COUNTRIES: Record<
   string,
   {
@@ -78,172 +79,67 @@ export const COUNTRIES: Record<
       report: '⚠️ 通報', block: '🚫 ブロック', delete: '🗑️ 削除', edit: '✏️ 編集',
       visited: '訪問国', countriesUnit: 'カ国', posts: '投稿', friendCode: 'フレンドコード',
       searchPlaceholder: '🔍 スポットを検索（例: 東京 夜景、京都 カフェ）',
-      cacheClear: '🧹 地図キャッシュ削除', deleteAccount: '⚠️ アカウントの削除 (退会処理)', logout: '🚪 ログアウト'
+      cacheClear: '🧹 地図キャッシュ削除', deleteAccount: '⚠️ アカウントの削除 (退会処理)', logout: '🚪 ログアウト', close: '閉じる'
     },
   },
   CH: {
     name: 'Schweiz (スイス)', flag: '🇨🇭', lang: 'de', lat: 46.8182, lon: 8.2275, zoom: 8,
     dict: {
-      step1Title: 'Schritt 1: Land / Nationalität wählen',
-      step1Desc: 'Die App-Sprache wird auf Deutsch eingestellt.',
+      step1Title: 'Schritt 1: Land wählen', step1Desc: 'Die App-Sprache wird auf Deutsch eingestellt.',
       step2Title: 'Schritt 2: Profil erstellen', step3Title: 'Schritt 3: Nutzungsbedingungen (EULA)',
       next: 'Weiter', back: 'Zurück', startApp: '🚀 WorldSnap Starten',
-      eulaAgree: 'Ich stimme den Nutzungsbedingungen zu',
-      termsTitle: '📜 Nutzungsbedingungen (EULA)',
-      home: 'Start', map: 'Karte', profile: 'Profil',
-      addPhoto: 'Medien hinzufügen', exportMap: 'Speichern',
-      view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen',
-      myMap: 'Meine Karte', friends: 'Freunde', world: 'Weltweit',
+      eulaAgree: 'Ich stimme den Nutzungsbedingungen zu', termsTitle: '📜 Nutzungsbedingungen (EULA)',
+      home: 'Start', map: 'Karte', profile: 'Profil', addPhoto: 'Medien hinzufügen', exportMap: 'Speichern',
+      view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen', myMap: 'Meine Karte', friends: 'Freunde', world: 'Weltweit',
       openGoogleMaps: '🧭 In Google Maps öffnen', saveSpot: '❤️ Merken', saved: '❤️ Gemerkt',
       report: '⚠️ Melden', block: '🚫 Blockieren', delete: '🗑️ Löschen', edit: '✏️ Bearbeiten',
       visited: 'Besucht', countriesUnit: 'Länder', posts: 'Beiträge', friendCode: 'Freundescode',
-      searchPlaceholder: '🔍 Suchen (z.B. Zermatt)',
-      cacheClear: '🧹 Cache leeren', deleteAccount: '⚠️ Konto löschen', logout: '🚪 Abmelden'
+      searchPlaceholder: '🔍 Suchen', cacheClear: '🧹 Cache leeren', deleteAccount: '⚠️ Konto löschen', logout: '🚪 Abmelden', close: 'Schließen'
     },
   },
   KR: {
     name: '대한민국 (韓国)', flag: '🇰🇷', lang: 'ko', lat: 35.9078, lon: 127.7669, zoom: 7,
     dict: {
-      step1Title: 'Step 1: 국적 / 주요 국가 선택',
-      step1Desc: '선택한 국가에 맞춰 앱 언어가 한국어로 표시됩니다.',
+      step1Title: 'Step 1: 국적 선택', step1Desc: '선택한 국가에 맞춰 앱 언어가 한국어로 표시됩니다.',
       step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의',
       next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기',
-      eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다',
-      termsTitle: '📜 WorldSnap 이용약관 (EULA)',
-      home: '홈', map: '지도', profile: '마이페이지',
-      addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
-      view: '경치', gourmet: '맛집', rain: '비오는날',
-      myMap: '내 지도', friends: '친구', world: '전체',
+      eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
+      home: '홈', map: '지도', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
+      view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체',
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
       report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
       visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 명소 검색 (예: 서울 맛집)',
-      cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃'
+      searchPlaceholder: '🔍 명소 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
     name: 'USA (アメリカ)', flag: '🇺🇸', lang: 'en', lat: 37.0902, lon: -95.7129, zoom: 4,
     dict: {
-      step1Title: 'Step 1: Select Nationality',
-      step1Desc: 'The app UI and map view will be localized to English.',
+      step1Title: 'Step 1: Select Nationality', step1Desc: 'The app UI and map view will be localized to English.',
       step2Title: 'Step 2: Create Profile', step3Title: 'Step 3: Terms of Service (EULA)',
       next: 'Next', back: 'Back', startApp: '🚀 Start WorldSnap',
-      eulaAgree: 'I agree to the Terms of Service',
-      termsTitle: '📜 Terms of Service (EULA)',
-      home: 'Home', map: 'Map', profile: 'Profile',
-      addPhoto: 'Add Media', exportMap: 'Save Map',
-      view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day',
-      myMap: 'My Map', friends: 'Friends', world: 'World',
+      eulaAgree: 'I agree to the Terms of Service', termsTitle: '📜 Terms of Service (EULA)',
+      home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map',
+      view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day', myMap: 'My Map', friends: 'Friends', world: 'World',
       openGoogleMaps: '🧭 Open in Google Maps', saveSpot: '❤️ Want to go', saved: '❤️ Saved',
       report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit',
       visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code',
-      searchPlaceholder: '🔍 Search spots (e.g. NYC)',
-      cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out'
+      searchPlaceholder: '🔍 Search spots', cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out', close: 'Close'
     },
   },
   FR: {
     name: 'France (フランス)', flag: '🇫🇷', lang: 'fr', lat: 46.2276, lon: 2.2137, zoom: 6,
     dict: {
-      step1Title: 'Étape 1 : Choisissez votre pays',
-      step1Desc: 'L’interface sera traduite en français.',
-      step2Title: 'Étape 2 : Profil', step3Title: 'Étape 3 : Conditions d’utilisation',
+      step1Title: 'Étape 1 : Pays', step1Desc: 'L’interface sera traduite en français.',
+      step2Title: 'Étape 2 : Profil', step3Title: 'Étape 3 : Conditions',
       next: 'Suivant', back: 'Retour', startApp: '🚀 Démarrer WorldSnap',
-      eulaAgree: 'J’accepte les conditions',
-      termsTitle: '📜 Conditions d’utilisation (EULA)',
-      home: 'Accueil', map: 'Carte', profile: 'Profil',
-      addPhoto: 'Ajouter média', exportMap: 'Enregistrer',
-      view: 'Paysage', gourmet: 'Gourmet', rain: 'Pluie',
-      myMap: 'Ma carte', friends: 'Amis', world: 'Monde',
-      openGoogleMaps: '🧭 Ouvrir dans Google Maps', saveSpot: '❤️ Enregistrer', saved: '❤️ Enregistré',
+      eulaAgree: 'J’accepte les conditions', termsTitle: '📜 Conditions (EULA)',
+      home: 'Accueil', map: 'Carte', profile: 'Profil', addPhoto: 'Ajouter média', exportMap: 'Enregistrer',
+      view: 'Paysage', gourmet: 'Gourmet', rain: 'Pluie', myMap: 'Ma carte', friends: 'Amis', world: 'Monde',
+      openGoogleMaps: '🧭 Google Maps', saveSpot: '❤️ Enregistrer', saved: '❤️ Enregistré',
       report: '⚠️ Signaler', block: '🚫 Bloquer', delete: '🗑️ Supprimer', edit: '✏️ Modifier',
       visited: 'Pays visités', countriesUnit: 'pays', posts: 'Publications', friendCode: 'Code ami',
-      searchPlaceholder: '🔍 Rechercher',
-      cacheClear: '🧹 Vider le cache', deleteAccount: '⚠️ Supprimer le compte', logout: '🚪 Déconnexion'
-    },
-  },
-  DE: {
-    name: 'Deutschland (ドイツ)', flag: '🇩🇪', lang: 'de', lat: 51.1657, lon: 10.4515, zoom: 6,
-    dict: {
-      step1Title: 'Schritt 1: Land wählen', step1Desc: 'App auf Deutsch.',
-      step2Title: 'Schritt 2: Profil', step3Title: 'Schritt 3: AGB',
-      next: 'Weiter', back: 'Zurück', startApp: '🚀 Starten',
-      eulaAgree: 'Zustimmen', termsTitle: '📜 AGB (EULA)',
-      home: 'Start', map: 'Karte', profile: 'Profil',
-      addPhoto: 'Foto', exportMap: 'Speichern', view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen',
-      myMap: 'Meine Karte', friends: 'Freunde', world: 'Weltweit',
-      openGoogleMaps: '🧭 Google Maps', saveSpot: '❤️ Merken', saved: '❤️ Gemerkt',
-      report: '⚠️ Melden', block: '🚫 Blockieren', delete: '🗑️ Löschen', edit: '✏️ Bearbeiten',
-      visited: 'Länder', countriesUnit: 'Länder', posts: 'Beiträge', friendCode: 'Freundescode',
-      searchPlaceholder: '🔍 Suchen',
-      cacheClear: '🧹 Cache leeren', deleteAccount: '⚠️ Konto löschen', logout: '🚪 Abmelden'
-    },
-  },
-  IT: {
-    name: 'Italia (イタリア)', flag: '🇮🇹', lang: 'it', lat: 41.8719, lon: 12.5674, zoom: 6,
-    dict: {
-      step1Title: 'Passo 1: Seleziona paese', step1Desc: 'App in italiano.',
-      step2Title: 'Passo 2: Profilo', step3Title: 'Passo 3: Termini',
-      next: 'Avanti', back: 'Indietro', startApp: '🚀 Avvia WorldSnap',
-      eulaAgree: 'Accetto', termsTitle: '📜 Termini di servizio',
-      home: 'Home', map: 'Mappa', profile: 'Profilo',
-      addPhoto: 'Aggiungi foto', exportMap: 'Salva', view: 'Panorama', gourmet: 'Gourmet', rain: 'Pioggia',
-      myMap: 'Mia mappa', friends: 'Amici', world: 'Mondo',
-      openGoogleMaps: '🧭 Google Maps', saveSpot: '❤️ Salva', saved: '❤️ Salvato',
-      report: '⚠️ Segnala', block: '🚫 Blocca', delete: '🗑️ Elimina', edit: '✏️ Modifica',
-      visited: 'Paesi', countriesUnit: 'paesi', posts: 'Post', friendCode: 'Codice amico',
-      searchPlaceholder: '🔍 Cerca',
-      cacheClear: '🧹 Svuota cache', deleteAccount: '⚠️ Elimina account', logout: '🚪 Esci'
-    },
-  },
-  TH: {
-    name: 'ไทย (タイ)', flag: '🇹🇭', lang: 'th', lat: 15.87, lon: 100.9925, zoom: 6,
-    dict: {
-      step1Title: 'ขั้นตอนที่ 1: เลือกประเทศ', step1Desc: 'แอปภาษาไทย',
-      step2Title: 'ขั้นตอนที่ 2: โปรไฟล์', step3Title: 'ขั้นตอนที่ 3: ข้อกำหนด',
-      next: 'ถัดไป', back: 'ย้อนกลับ', startApp: '🚀 เริ่ม WorldSnap',
-      eulaAgree: 'ยอมรับ', termsTitle: '📜 ข้อกำหนด (EULA)',
-      home: 'หน้าแรก', map: 'แผนที่', profile: 'โปรไฟล์',
-      addPhoto: 'เพิ่มรูป', exportMap: 'บันทึก', view: 'วิว', gourmet: 'ของกิน', rain: 'วันฝนตก',
-      myMap: 'แผนที่ของฉัน', friends: 'เพื่อน', world: 'ทั่วโลก',
-      openGoogleMaps: '🧭 Google Maps', saveSpot: '❤️ บันทึก', saved: '❤️ บันทึกแล้ว',
-      report: '⚠️ รายงาน', block: '🚫 บล็อก', delete: '🗑️ ลบ', edit: '✏️ แก้ไข',
-      visited: 'ประเทศที่เยือน', countriesUnit: 'ประเทศ', posts: 'โพสต์', friendCode: 'รหัสเพื่อน',
-      searchPlaceholder: '🔍 ค้นหา',
-      cacheClear: '🧹 ล้างแคช', deleteAccount: '⚠️ ลบบัญชี', logout: '🚪 ออกจากระบบ'
-    },
-  },
-  AU: {
-    name: 'Australia (オーストラリア)', flag: '🇦🇺', lang: 'en', lat: -25.2744, lon: 133.7751, zoom: 4,
-    dict: {
-      step1Title: 'Step 1: Select Country', step1Desc: 'App in English.',
-      step2Title: 'Step 2: Profile', step3Title: 'Step 3: Terms',
-      next: 'Next', back: 'Back', startApp: '🚀 Start WorldSnap',
-      eulaAgree: 'I agree', termsTitle: '📜 Terms of Service',
-      home: 'Home', map: 'Map', profile: 'Profile',
-      addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy',
-      myMap: 'My Map', friends: 'Friends', world: 'World',
-      openGoogleMaps: '🧭 Google Maps', saveSpot: '❤️ Save', saved: '❤️ Saved',
-      report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit',
-      visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code',
-      searchPlaceholder: '🔍 Search',
-      cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out'
-    },
-  },
-  ES: {
-    name: 'España (スペイン)', flag: '🇪🇸', lang: 'es', lat: 40.4637, lon: -3.7492, zoom: 6,
-    dict: {
-      step1Title: 'Paso 1: País', step1Desc: 'App en español.',
-      step2Title: 'Paso 2: Perfil', step3Title: 'Paso 3: Términos',
-      next: 'Siguiente', back: 'Atrás', startApp: '🚀 Comenzar',
-      eulaAgree: 'Acepto', termsTitle: '📜 Términos (EULA)',
-      home: 'Inicio', map: 'Mapa', profile: 'Perfil',
-      addPhoto: 'Añadir foto', exportMap: 'Guardar', view: 'Vistas', gourmet: 'Gourmet', rain: 'Lluvia',
-      myMap: 'Mi mapa', friends: 'Amigos', world: 'Mundo',
-      openGoogleMaps: '🧭 Google Maps', saveSpot: '❤️ Guardar', saved: '❤️ Guardado',
-      report: '⚠️ Denunciar', block: '🚫 Bloquear', delete: '🗑️ Eliminar', edit: '✏️ Editar',
-      visited: 'Países', countriesUnit: 'países', posts: 'Publicaciones', friendCode: 'Código amigo',
-      searchPlaceholder: '🔍 Buscar',
-      cacheClear: '🧹 Borrar caché', deleteAccount: '⚠️ Eliminar cuenta', logout: '🚪 Salir'
+      searchPlaceholder: '🔍 Rechercher', cacheClear: '🧹 Vider le cache', deleteAccount: '⚠️ Supprimer le compte', logout: '🚪 Déconnexion', close: 'Fermer'
     },
   },
 };
@@ -258,16 +154,6 @@ const INITIAL_SPOTS: Spot[] = [
     thumbUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: 'Kyoto',
     category: 'gourmet', scopes: ['world', 'my'], createdAt: '2026/08/10',
-  },
-  {
-    id: 'spot-kyoto-2', userId: 'bot-curator-jp', userName: '京都公式キュレーター', isOfficial: true,
-    title: '伏見稲荷大社 千本鳥居の幻想朝景',
-    description: '朝の光が朱色の鳥居を照らす瞬間。息をのむ美しさと静寂を体感できます⛩️',
-    fileName: 'inari.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=900&auto=format&fit=crop',
-    thumbUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=120&h=120&auto=format&fit=crop',
-    fileType: 'image', lat: 34.9671, lon: 135.7727, countryCode: 'JP', cityName: 'Kyoto',
-    category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/11',
   },
   {
     id: 'spot-tokyo-1', userId: 'bot-tokyo-guide', userName: '東京おすすめガイド', isOfficial: true,
@@ -301,7 +187,7 @@ const EULA_FULL_TEXT = `【WorldSnap 利用規約 (EULA)】
 ・性的、暴力的、過度にグロテスク、差別的、または他者に不快感を与える画像・動画・テキストの投稿
 ・特定の個人・団体への嫌がらせ、名誉毀損、脅迫、いじめ、ストーカー行為
 ・法令または公序良俗に反する行為、犯罪行為を助長する行為
-・第三者の著作権、肖像権、商標権その他の権利を侵害する行為（無断転載・立入禁止区域の撮影等）
+・第三者の著作権、肖像権、商標権その他の権利を侵害する行為
 ・個人情報の無断開示、スパム目的の連投
 
 第3条（不適切なコンテンツへの対処・モデレーション）
@@ -323,7 +209,7 @@ function convertDMSToDD(dms: number[], ref: string): number {
 }
 
 // ==========================================
-// 2. Leaflet 動的マップ（タッチ・ピンチ操作最適化版）
+// 2. Leaflet 動的マップ
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -465,7 +351,7 @@ const SafeMapComponent = dynamic(
 );
 
 // ==========================================
-// 3. メインコンポーネント (WorldSnap)
+// 3. メインコンポーネント
 // ==========================================
 export default function WorldSnapApp() {
   const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
@@ -485,11 +371,9 @@ export default function WorldSnapApp() {
 
   const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
 
-  // 地図の現在位置
   const [currentMapCenter, setCurrentMapCenter] = useState<[number, number]>([currentConfig.lat, currentConfig.lon]);
   const [currentMapZoom, setCurrentMapZoom] = useState<number>(currentConfig.zoom);
 
-  // 明示的な移動トリガー
   const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
   const [targetZoom, setTargetZoom] = useState<number | null>(null);
 
@@ -499,7 +383,6 @@ export default function WorldSnapApp() {
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
 
-  // 投稿作成モーダル用ステート
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
   const [postTitle, setPostTitle] = useState<string>('');
@@ -532,6 +415,46 @@ export default function WorldSnapApp() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  // ── Supabaseからピンを取得 ──
+  useEffect(() => {
+    async function fetchSpots() {
+      if (!supabase) return;
+      try {
+        const { data, error } = await supabase.from('spots').select('*').order('created_at', { ascending: false });
+        if (!error && data && data.length > 0) {
+          const dbSpots: Spot[] = data.map((d: any) => ({
+            id: d.id,
+            userId: d.user_id,
+            userName: d.user_name,
+            userAvatar: d.user_avatar,
+            isOfficial: d.is_official,
+            title: d.title,
+            description: d.description || '',
+            fileName: d.file_name,
+            fileUrl: d.file_url,
+            thumbUrl: d.thumb_url || d.file_url,
+            fileType: d.file_type,
+            lat: d.lat,
+            lon: d.lon,
+            countryCode: d.country_code,
+            cityName: d.city_name,
+            category: d.category,
+            scopes: d.scopes || ['world'],
+            createdAt: new Date(d.created_at).toLocaleDateString(),
+          }));
+          setSpots((prev) => {
+            const ids = new Set(dbSpots.map(s => s.id));
+            const remainPresets = prev.filter(p => !ids.has(p.id));
+            return [...dbSpots, ...remainPresets];
+          });
+        }
+      } catch (err) {
+        console.error('Supabase fetch error:', err);
+      }
+    }
+    fetchSpots();
+  }, []);
+
   const handleMapMoveEnd = (center: [number, number], zoom: number) => {
     setCurrentMapCenter(center);
     setCurrentMapZoom(zoom);
@@ -543,10 +466,15 @@ export default function WorldSnapApp() {
     return spots.filter((s) => {
       if (blockedUsers.includes(s.userId)) return false;
       if (s.category !== viewMode) return false;
-      if (displayScope === 'my') return s.scopes.includes('my') && s.userId === 'me';
+      if (displayScope === 'my') {
+        if (s.userId !== 'me' || !s.scopes.includes('my')) return false;
+      }
       if (displayScope === 'friends') {
-        if (s.userId === 'me') return s.scopes.includes('my');
-        return s.scopes.includes('friends') && friendsList.some((f) => f.id === s.userId);
+        if (s.userId === 'me') {
+          if (!s.scopes.includes('my')) return false;
+        } else {
+          if (!s.scopes.includes('friends') || !friendsList.some((f) => f.id === s.userId)) return false;
+        }
       }
       if (displayScope === 'world') {
         if (s.userId !== 'me' && !s.scopes.includes('world')) return false;
@@ -566,7 +494,6 @@ export default function WorldSnapApp() {
     setTargetZoom(Math.min(currentMapZoom + 2.5, 17));
   };
 
-  // 🪟 段階的ズームアウト機能
   const handleStepZoomOut = () => {
     if (currentMapZoom >= 12) {
       setTargetCenter(currentMapCenter);
@@ -669,12 +596,32 @@ export default function WorldSnapApp() {
     }
   };
 
-  const handleConfirmPost = () => {
+  // ── Supabaseへの実画像アップロード & DB保存 ──
+  const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current) return;
 
     const finalLat = current.hasGps && current.lat ? current.lat : parseFloat(manualLat) || currentMapCenter[0];
     const finalLon = current.hasGps && current.lon ? current.lon : parseFloat(manualLon) || currentMapCenter[1];
+
+    let uploadedUrl = current.fileUrl;
+
+    if (supabase) {
+      try {
+        const fileExt = current.file.name.split('.').pop();
+        const filePath = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage.from('worldsnap-media').upload(filePath, current.file);
+        
+        if (!uploadError) {
+          const { data: publicData } = supabase.storage.from('worldsnap-media').getPublicUrl(filePath);
+          if (publicData?.publicUrl) {
+            uploadedUrl = publicData.publicUrl;
+          }
+        }
+      } catch (err) {
+        console.error('Storage upload error:', err);
+      }
+    }
 
     const newSpot: Spot = {
       id: current.id,
@@ -684,8 +631,8 @@ export default function WorldSnapApp() {
       title: postTitle || current.file.name,
       description: postDesc || '旅の思い出',
       fileName: current.file.name,
-      fileUrl: current.fileUrl,
-      thumbUrl: current.fileUrl,
+      fileUrl: uploadedUrl,
+      thumbUrl: uploadedUrl,
       fileType: current.fileType,
       lat: finalLat,
       lon: finalLon,
@@ -695,6 +642,27 @@ export default function WorldSnapApp() {
       scopes: selectedScopes,
       createdAt: current.dateTime || new Date().toLocaleDateString(),
     };
+
+    if (supabase) {
+      await supabase.from('spots').insert([{
+        id: newSpot.id,
+        user_id: newSpot.userId,
+        user_name: newSpot.userName,
+        user_avatar: newSpot.userAvatar,
+        title: newSpot.title,
+        description: newSpot.description,
+        file_name: newSpot.fileName,
+        file_url: newSpot.fileUrl,
+        thumb_url: newSpot.thumbUrl,
+        file_type: newSpot.fileType,
+        lat: newSpot.lat,
+        lon: newSpot.lon,
+        country_code: newSpot.countryCode,
+        city_name: newSpot.cityName,
+        category: newSpot.category,
+        scopes: newSpot.scopes,
+      }]);
+    }
 
     setSpots((prev) => [newSpot, ...prev]);
     showToast(`📍 選択した ${selectedScopes.length} つのマップに反映しました！`);
@@ -731,27 +699,39 @@ export default function WorldSnapApp() {
     }
   };
 
-  const toggleSaveSpot = (spotId: string) => {
+  const toggleSaveSpot = async (spotId: string) => {
     if (savedSpotIds.includes(spotId)) {
       setSavedSpotIds((prev) => prev.filter((id) => id !== spotId));
+      if (supabase) {
+        await supabase.from('saved_spots').delete().match({ user_id: 'me', spot_id: spotId });
+      }
       showToast('行きたい保存を解除しました');
     } else {
       setSavedSpotIds((prev) => [...prev, spotId]);
+      if (supabase) {
+        await supabase.from('saved_spots').insert([{ user_id: 'me', spot_id: spotId }]);
+      }
       showToast('💛 行きたいリストに保存しました！');
     }
   };
 
-  const handleBlockUser = (userId: string) => {
+  const handleBlockUser = async (userId: string) => {
     if (confirm('このユーザーをブロックしますか？\n相手の投稿がすべて非表示になります。')) {
       setBlockedUsers((prev) => [...prev, userId]);
+      if (supabase) {
+        await supabase.from('blocked_users').insert([{ blocker_id: 'me', blocked_id: userId }]);
+      }
       setSelectedSpot(null);
       showToast('🚫 ユーザーをブロックしました');
     }
   };
 
-  const handleDeleteSpot = (spotId: string) => {
+  const handleDeleteSpot = async (spotId: string) => {
     if (confirm('このピンを削除しますか？')) {
       setSpots((prev) => prev.filter((s) => s.id !== spotId));
+      if (supabase) {
+        await supabase.from('spots').delete().eq('id', spotId);
+      }
       setSelectedSpot(null);
       showToast('🗑️ ピンを削除しました');
     }
@@ -761,16 +741,13 @@ export default function WorldSnapApp() {
 
   return (
     <div style={{ background: '#f8fafc', color: '#0f172a', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
-      {/* ── トースト通知 ── */}
       {toastMessage && (
         <div style={{ position: 'fixed', top: '14px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,23,42,0.94)', color: '#fff', padding: '10px 20px', borderRadius: '30px', zIndex: 99999, fontSize: '13px', fontWeight: 'bold', boxShadow: '0 8px 24px rgba(0,0,0,0.3)', backdropFilter: 'blur(6px)' }}>
           {toastMessage}
         </div>
       )}
 
-      {/* ==================================================== */}
-      {/* 0. 初回3ステップオンボーディング */}
-      {/* ==================================================== */}
+      {/* ── 初回オンボーディング ── */}
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -818,7 +795,6 @@ export default function WorldSnapApp() {
             {onboardingStep === 2 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t.step2Title}</h3>
-                
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
                   <div
                     onClick={() => avatarInputRef.current?.click()}
@@ -837,7 +813,7 @@ export default function WorldSnapApp() {
                   <input type="file" ref={avatarInputRef} accept="image/*" onChange={handleAvatarChange} style={{ display: 'none' }} />
                 </div>
 
-                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>ユーザー名 (表示名)</label>
+                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>ユーザー名</label>
                 <input
                   type="text"
                   maxLength={20}
@@ -889,7 +865,6 @@ export default function WorldSnapApp() {
                       border: 'none',
                       borderRadius: '12px',
                       cursor: eulaChecked ? 'pointer' : 'not-allowed',
-                      boxShadow: eulaChecked ? '0 6px 20px rgba(2,132,199,0.35)' : 'none',
                     }}
                   >
                     {t.startApp}
@@ -940,14 +915,10 @@ export default function WorldSnapApp() {
         </button>
       </header>
 
-      {/* ── メインコンテナ ── */}
+      {/* ── メインマップ ── */}
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        {/* ==================================================== */}
-        {/* TAB 1: 🗺️ メインマップ */}
-        {/* ==================================================== */}
         <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', position: 'relative' }}>
           
-          {/* マップ上部の3大モード切替 & 表示スコープ バー */}
           <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 500, display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
             <div style={{ display: 'flex', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '3px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
               {(['view', 'gourmet', 'rain'] as const).map((m) => (
@@ -964,7 +935,6 @@ export default function WorldSnapApp() {
                     fontSize: '11px',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    boxShadow: viewMode === m ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
                   }}
                 >
                   {m === 'view' ? `🏔️ ${t.view}` : m === 'gourmet' ? `🍔 ${t.gourmet}` : `🌧️ ${t.rain}`}
@@ -985,7 +955,6 @@ export default function WorldSnapApp() {
             </div>
           </div>
 
-          {/* 画面のほぼ全体を専有するマップ本体 */}
           <div ref={exportRef} style={{ flex: 1, width: '100%', height: '100%', position: 'relative' }}>
             <SafeMapComponent
               spots={filteredSpots}
@@ -999,11 +968,9 @@ export default function WorldSnapApp() {
               onDoubleTap={handleMapDoubleTap}
             />
 
-            {/* 地図右下のコントロール（🪟 窓ボタンで段階的ズームアウト・💾 保存） */}
             <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {/* 🪟 段階的ズームアウトボタン (市内→都道府県→地方→国→世界全体) */}
               <button
-                title="市内・都道府県・地方・国・世界全体へ段階的に引き戻す"
+                title="段階的に引き戻す"
                 onClick={handleStepZoomOut}
                 style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
@@ -1019,40 +986,35 @@ export default function WorldSnapApp() {
             </div>
           </div>
 
-          {/* コンパクト化した下部バー */}
           <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', zIndex: 450 }}>
             <div>
               <div style={{ fontSize: '12px', fontWeight: 'bold' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
               <div style={{ fontSize: '10px', color: '#64748b' }}>表示中: {filteredSpots.length}件</div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <label
-                style={{
-                  padding: '8px 16px',
-                  background: themeAccent,
-                  color: '#fff',
-                  borderRadius: '24px',
-                  fontWeight: 'bold',
-                  fontSize: '12px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                }}
-              >
-                <span>📷＋</span>
-                <span>{t.addPhoto}</span>
-                <input type="file" accept="image/*,video/*" multiple onChange={handlePhotoSelect} style={{ display: 'none' }} />
-              </label>
-            </div>
+            <label
+              style={{
+                padding: '8px 16px',
+                background: themeAccent,
+                color: '#fff',
+                borderRadius: '24px',
+                fontWeight: 'bold',
+                fontSize: '12px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+            >
+              <span>📷＋</span>
+              <span>{t.addPhoto}</span>
+              <input type="file" accept="image/*,video/*" multiple onChange={handlePhotoSelect} style={{ display: 'none' }} />
+            </label>
           </div>
         </div>
 
-        {/* ==================================================== */}
-        {/* TAB 2: 🏠 フィード画面 */}
-        {/* ==================================================== */}
+        {/* ── フィード ── */}
         <div style={{ display: currentTab === 'home' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', gap: '10px' }}>
           <input
             type="text"
@@ -1082,9 +1044,7 @@ export default function WorldSnapApp() {
           ))}
         </div>
 
-        {/* ==================================================== */}
-        {/* TAB 3: 👤 マイページ */}
-        {/* ==================================================== */}
+        {/* ── マイページ ── */}
         <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px' }}>
           <div style={{ background: '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -1235,9 +1195,7 @@ export default function WorldSnapApp() {
         </div>
       </div>
 
-      {/* ==================================================== */}
-      {/* 4. 投稿詳細画面 */}
-      {/* ==================================================== */}
+      {/* ── 詳細モーダル ── */}
       {selectedSpot && (
         <div style={{ position: 'fixed', inset: 0, background: '#ffffff', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
           <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
@@ -1343,9 +1301,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ==================================================== */}
-      {/* 5. 投稿前・複数反映先選択モーダル */}
-      {/* ==================================================== */}
+      {/* ── 投稿モーダル ── */}
       {pendingUploads.length > 0 && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
@@ -1478,9 +1434,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ==================================================== */}
-      {/* 6. フルスクリーン Lightbox */}
-      {/* ==================================================== */}
+      {/* ── フルスクリーン Lightbox ── */}
       {isLightboxOpen && selectedSpot && (
         <div onClick={() => setIsLightboxOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ maxWidth: '100%', maxHeight: '90%', objectFit: 'contain' }} />
@@ -1490,13 +1444,11 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ==================================================== */}
-      {/* 7. 設定画面 */}
-      {/* ==================================================== */}
+      {/* ── 設定モーダル ── */}
       {isSettingsOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', width: '100%', maxWidth: '440px', borderRadius: '20px', padding: '20px', maxHeight: '85vh', overflowY: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ margin: 0, fontSize: '16px' }}>⚙️ 設定</h2>
               <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', color: '#94a3b8', cursor: 'pointer' }}>
                 ✕
@@ -1573,9 +1525,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ==================================================== */}
-      {/* 8. プロフィール編集モーダル */}
-      {/* ==================================================== */}
+      {/* ── プロフィール編集モーダル ── */}
       {isEditProfileOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '360px', width: '100%' }}>
@@ -1630,9 +1580,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ==================================================== */}
-      {/* 9. 利用規約 (EULA) モーダル */}
-      {/* ==================================================== */}
+      {/* ── EULAモーダル ── */}
       {isEulaModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', padding: '24px', borderRadius: '20px', maxWidth: '480px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
@@ -1650,9 +1598,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ==================================================== */}
-      {/* 10. 通報モーダル */}
-      {/* ==================================================== */}
+      {/* ── 通報モーダル ── */}
       {isReportModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '360px', width: '100%' }}>
@@ -1685,9 +1631,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ==================================================== */}
-      {/* 11. ボトムナビゲーション */}
-      {/* ==================================================== */}
+      {/* ── ボトムナビゲーション ── */}
       <nav
         style={{
           height: '56px',
