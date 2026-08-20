@@ -1,0 +1,22 @@
+{
+  "name": "WorldSnap - 旅の思い出マップ",
+  "short_name": "WorldSnap",
+  "description": "世界中・日本中の思い出の場所を写真や動画で記録・共有するマップSNS",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0284c7",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
