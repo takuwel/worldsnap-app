@@ -110,7 +110,7 @@ export const COUNTRIES: Record<
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
       report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
       visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 名所 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
+      searchPlaceholder: '🔍 名所 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈退', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
@@ -241,7 +241,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Leaflet 白基調・完全日本語マップ (CARTO Positron + 日本語地名)
+// 2. Leaflet 元通りのCARTO Positron（白・洗練マップ）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -294,19 +294,17 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 写真通りの真っ白なベース地図（CARTO Positron No-Labels）
-        const baseTileUrl =
+        // 写真2枚目の通りのCARTO Positron（白基調・洗練されたデザイン）
+        const tileUrl =
           mode === 'rain'
-            ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
           const badgeHtml = spot.isOfficial
             ? `<div style="position:absolute;top:-4px;right:-4px;background:#0284c7;color:#fff;font-size:8px;font-weight:bold;border-radius:10px;padding:1px 4px;box-shadow:0 1px 3px rgba(0,0,0,0.3);">公式</div>`
             : '';
-
-          const mediaPreview = `<img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="eager" />`;
 
           return L.divIcon({
             className: 'ws-marker',
@@ -324,7 +322,7 @@ const SafeMapComponent = dynamic(
               ">
                 ${badgeHtml}
                 <div style="width: 100%; height: 38px; border-radius: 3px; overflow: hidden; background: #cbd5e1;">
-                  ${mediaPreview}
+                  <img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="eager" />
                 </div>
                 <div style="
                   position: absolute;
@@ -361,20 +359,9 @@ const SafeMapComponent = dynamic(
           >
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
-            
-            {/* 白基調のベースマップ（CARTO Positron） */}
             <TileLayer
-              url={baseTileUrl}
+              url={tileUrl}
               attribution='&copy; CARTO'
-              maxNativeZoom={18}
-              maxZoom={19}
-              keepBuffer={4}
-            />
-
-            {/* 引いた時も寄った時も「東京」「札幌」「大阪」と日本語で表示される専用日本語地名レイヤー */}
-            <TileLayer
-              url="https://cyberjapandata.gsi.go.jp/xyz/blank/{z}/{x}/{y}.png"
-              opacity={0.85}
               maxNativeZoom={18}
               maxZoom={19}
               keepBuffer={4}
