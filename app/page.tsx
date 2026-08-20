@@ -104,13 +104,13 @@ export const COUNTRIES: Record<
       step1Title: 'Step 1: 국적 선택', step1Desc: '선택한 국가에 맞춰 앱 언어가 한국어로 표시됩니다.',
       step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의',
       next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기',
-      eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
-      home: '홈', map: '지도', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
+      eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 利用規約 (EULA)',
+      home: '홈', map: '지도', profile: '마이페이지', addPhoto: '写真/動画追加', exportMap: '지도 저장',
       view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체',
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
       report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
       visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 명소 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
+      searchPlaceholder: '🔍 名所 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈退', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
@@ -241,7 +241,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Leaflet 白基調・常時日本語マップ
+// 2. Leaflet 白基調・完全日本語マップ (CARTO Positron + 日本語地名)
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -294,7 +294,7 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 真っ白で余計な線のないCARTO Positron（No-Labels）
+        // 写真通りの真っ白なベース地図（CARTO Positron No-Labels）
         const baseTileUrl =
           mode === 'rain'
             ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
@@ -362,7 +362,7 @@ const SafeMapComponent = dynamic(
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
             
-            {/* 白基調のベースマップ */}
+            {/* 白基調のベースマップ（CARTO Positron） */}
             <TileLayer
               url={baseTileUrl}
               attribution='&copy; CARTO'
@@ -371,10 +371,10 @@ const SafeMapComponent = dynamic(
               keepBuffer={4}
             />
 
-            {/* 国土地理院・公式の日本語地名レイヤー（線は増えず、東京・大阪などの文字だけが日本語で重なります） */}
+            {/* 引いた時も寄った時も「東京」「札幌」「大阪」と日本語で表示される専用日本語地名レイヤー */}
             <TileLayer
               url="https://cyberjapandata.gsi.go.jp/xyz/blank/{z}/{x}/{y}.png"
-              opacity={0.8}
+              opacity={0.85}
               maxNativeZoom={18}
               maxZoom={19}
               keepBuffer={4}
@@ -935,7 +935,7 @@ export default function WorldSnapApp() {
             {onboardingStep === 3 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step3Title}</h3>
-                <div style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '14px' }}>
+                <div style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line' marginBottom: '14px' }}>
                   {EULA_FULL_TEXT}
                 </div>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', color: '#0284c7', marginBottom: '20px' }}>
