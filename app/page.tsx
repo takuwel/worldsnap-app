@@ -43,6 +43,7 @@ export interface PendingUpload {
   id: string;
   file: File;
   fileUrl: string;
+  thumbUrl?: string;
   fileType: 'image' | 'video';
   lat?: number;
   lon?: number;
@@ -104,12 +105,12 @@ export const COUNTRIES: Record<
       step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의',
       next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기',
       eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
-      home: '홈', map: '지도', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
+      home: '홈', map: '지도', profile: '마이페이지', addPhoto: '写真/動画追加', exportMap: '지도 저장',
       view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체',
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
       report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
       visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 명소 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
+      searchPlaceholder: '🔍 名所 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈退', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
@@ -208,8 +209,41 @@ function convertDMSToDD(dms: number[], ref: string): number {
   return dd;
 }
 
+// 動画から1フレーム目のサムネイルを生成
+function generateVideoThumbnail(file: File): Promise<string> {
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.src = URL.createObjectURL(file);
+    video.muted = true;
+    video.playsInline = true;
+    video.currentTime = 0.5;
+
+    video.onloadeddata = () => {
+      setTimeout(() => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = 160;
+          canvas.height = 120;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            resolve(dataUrl);
+          } else {
+            resolve('');
+          }
+        } catch {
+          resolve('');
+        }
+      }, 200);
+    };
+    video.onerror = () => resolve('');
+  });
+}
+
 // ==========================================
-// 2. Leaflet 洗練された白ベース＆日本語マップ
+// 2. Leaflet 白基調・常時日本語マップ
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -262,7 +296,7 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 洗練されたすっきり白ベース（CARTO Positron No-Labels）
+        // 白基調のベースマップ（CARTO Positron）
         const baseTileUrl =
           mode === 'rain'
             ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
@@ -274,9 +308,7 @@ const SafeMapComponent = dynamic(
             ? `<div style="position:absolute;top:-4px;right:-4px;background:#0284c7;color:#fff;font-size:8px;font-weight:bold;border-radius:10px;padding:1px 4px;box-shadow:0 1px 3px rgba(0,0,0,0.3);">公式</div>`
             : '';
 
-          const mediaPreview = spot.fileType === 'video'
-            ? `<div style="width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">🎬</div>`
-            : `<img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="eager" />`;
+          const mediaPreview = `<img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="eager" />`;
 
           return L.divIcon({
             className: 'ws-marker',
@@ -341,10 +373,10 @@ const SafeMapComponent = dynamic(
               keepBuffer={4}
             />
 
-            {/* 常時日本語の文字ラベルレイヤー */}
+            {/* 常時日本語表記のオープンレイヤー */}
             <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              opacity={0.35}
+              url="https://tile.openstreetmap.jp/{z}/{x}/{y}.png"
+              opacity={0.3}
               maxNativeZoom={18}
               maxZoom={19}
               keepBuffer={4}
@@ -407,7 +439,6 @@ export default function WorldSnapApp() {
   const [postCategory, setPostCategory] = useState<ViewCategory>('view');
   const [selectedScopes, setSelectedScopes] = useState<DisplayScope[]>(['world', 'my']);
   
-  // 位置情報の手動設定（住所検索 or 緯度経度）
   const [addressSearchQuery, setAddressSearchQuery] = useState<string>('');
   const [isSearchingAddress, setIsSearchingAddress] = useState<boolean>(false);
   const [manualLat, setManualLat] = useState<string>('');
@@ -580,7 +611,8 @@ export default function WorldSnapApp() {
       const fileId = 'spot-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
 
       if (isVideo) {
-        pendingList.push({ id: fileId, file, fileUrl, fileType: 'video', hasGps: false, dateTime: new Date().toLocaleDateString() });
+        const thumbUrl = await generateVideoThumbnail(file);
+        pendingList.push({ id: fileId, file, fileUrl, thumbUrl: thumbUrl || fileUrl, fileType: 'video', hasGps: false, dateTime: new Date().toLocaleDateString() });
         continue;
       }
 
@@ -594,9 +626,9 @@ export default function WorldSnapApp() {
           if (lat && lon) {
             const latDecimal = convertDMSToDD(lat, latRef);
             const lonDecimal = convertDMSToDD(lon, lonRef);
-            pendingList.push({ id: fileId, file, fileUrl, fileType: 'image', lat: latDecimal, lon: lonDecimal, hasGps: true, dateTime: new Date().toLocaleDateString() });
+            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', lat: latDecimal, lon: lonDecimal, hasGps: true, dateTime: new Date().toLocaleDateString() });
           } else {
-            pendingList.push({ id: fileId, file, fileUrl, fileType: 'image', hasGps: false, dateTime: new Date().toLocaleDateString() });
+            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', hasGps: false, dateTime: new Date().toLocaleDateString() });
           }
           resolve();
         });
@@ -618,7 +650,6 @@ export default function WorldSnapApp() {
     }
   };
 
-  // 住所・地名から緯度経度を検索（ジオコーディング）
   const handleSearchAddress = async () => {
     if (!addressSearchQuery.trim()) return;
     setIsSearchingAddress(true);
@@ -633,7 +664,7 @@ export default function WorldSnapApp() {
       } else {
         showToast('⚠️ 住所が見つかりませんでした。別のキーワードでお試しください');
       }
-    } catch (e) {
+    } catch {
       showToast('⚠️ 検索に失敗しました');
     } finally {
       setIsSearchingAddress(false);
@@ -652,7 +683,6 @@ export default function WorldSnapApp() {
     }
   };
 
-  // 投稿の確定（Supabase保存 ＆ 万全のフォールバック）
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -664,10 +694,11 @@ export default function WorldSnapApp() {
     const finalLon = current.hasGps && current.lon ? current.lon : parseFloat(manualLon) || currentMapCenter[1];
 
     let uploadedUrl = current.fileUrl;
+    let finalThumbUrl = current.thumbUrl || current.fileUrl;
 
     if (supabase) {
       try {
-        const fileExt = current.file.name.split('.').pop() || 'jpg';
+        const fileExt = current.file.name.split('.').pop() || (current.fileType === 'video' ? 'mp4' : 'jpg');
         const filePath = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
         const { error: uploadError } = await supabase.storage.from('worldsnap-media').upload(filePath, current.file);
         
@@ -675,6 +706,9 @@ export default function WorldSnapApp() {
           const { data: publicData } = supabase.storage.from('worldsnap-media').getPublicUrl(filePath);
           if (publicData?.publicUrl) {
             uploadedUrl = publicData.publicUrl;
+            if (current.fileType === 'image') {
+              finalThumbUrl = publicData.publicUrl;
+            }
           }
         }
 
@@ -687,7 +721,7 @@ export default function WorldSnapApp() {
           description: postDesc || '旅の思い出',
           file_name: current.file.name,
           file_url: uploadedUrl,
-          thumb_url: uploadedUrl,
+          thumb_url: finalThumbUrl,
           file_type: current.fileType,
           lat: finalLat,
           lon: finalLon,
@@ -699,7 +733,7 @@ export default function WorldSnapApp() {
 
         await supabase.from('spots').insert([newSpotData]);
       } catch (err) {
-        console.error('Save error (fallback will apply):', err);
+        console.error('Save error:', err);
       }
     }
 
@@ -712,7 +746,7 @@ export default function WorldSnapApp() {
       description: postDesc || '旅の思い出',
       fileName: current.file.name,
       fileUrl: uploadedUrl,
-      thumbUrl: uploadedUrl,
+      thumbUrl: finalThumbUrl,
       fileType: current.fileType,
       lat: finalLat,
       lon: finalLon,
@@ -755,7 +789,7 @@ export default function WorldSnapApp() {
       a.download = `WorldSnap-Map-${userCountry}.png`;
       a.click();
       showToast('💾 マップを保存しました');
-    } catch (e) {
+    } catch {
       showToast('❌ 保存に失敗しました');
     }
   };
@@ -1195,11 +1229,7 @@ export default function WorldSnapApp() {
                 .filter((s) => s.userId === 'me')
                 .map((s) => (
                   <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
-                    {s.fileType === 'video' ? (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>🎬</div>
-                    ) : (
-                      <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
-                    )}
+                    <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                   </div>
                 ))}
             </div>
@@ -1211,11 +1241,7 @@ export default function WorldSnapApp() {
                 .filter((s) => savedSpotIds.includes(s.id))
                 .map((s) => (
                   <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
-                    {s.fileType === 'video' ? (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>🎬</div>
-                    ) : (
-                      <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
-                    )}
+                    <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                   </div>
                 ))}
             </div>
@@ -1466,7 +1492,6 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            {/* 位置情報がない場合の住所・地名検索入力枠 */}
             {!pendingUploads[currentUploadIndex].hasGps && (
               <div style={{ background: '#fffbeb', padding: '10px', borderRadius: '10px', border: '1px solid #fef3c7', marginBottom: '12px' }}>
                 <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#b45309', marginBottom: '6px' }}>📍 撮影場所を設定（地名・住所検索）</div>
