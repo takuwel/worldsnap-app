@@ -105,12 +105,12 @@ export const COUNTRIES: Record<
       step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의',
       next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기',
       eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
-      home: '홈', map: '지도', profile: '마이페이지', addPhoto: '写真/動画追加', exportMap: '지도 저장',
+      home: '홈', map: '지도', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
       view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체',
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
       report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
       visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 名所 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈退', logout: '🚪 로그아웃', close: '닫기'
+      searchPlaceholder: '🔍 명소 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
@@ -241,7 +241,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Leaflet 元通りのCARTO Positron（白・洗練マップ）
+// 2. Leaflet 元通りのCARTO Positron（写真2枚目と完全一致）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -294,7 +294,7 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 写真2枚目の通りのCARTO Positron（白基調・洗練されたデザイン）
+        // 写真2枚目と全く同じCARTO Positron単一タイル
         const tileUrl =
           mode === 'rain'
             ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
