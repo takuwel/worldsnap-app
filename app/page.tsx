@@ -103,7 +103,7 @@ export const COUNTRIES: Record<
       step1Title: 'Step 1: 국적 선택', step1Desc: '선택한 국가에 맞춰 앱 언어가 한국어로 표시됩니다.',
       step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의',
       next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기',
-      eulaAgree: '이용약관 및 커뮤니티 가イド라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
+      eulaAgree: '이용약관 및 커뮤니티 가이드ライン에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
       home: '홈', map: '지도', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
       view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체',
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
@@ -150,7 +150,7 @@ const INITIAL_SPOTS: Spot[] = [
     title: '祇園 鴨川沿いの濃厚抹茶パフェ',
     description: '川床を眺めながらいただく最高峰の宇治抹茶。デートやひと休みに最適な特等席です🍵',
     fileName: 'matcha.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&auto=format&fit=crop',
+    fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: 'Kyoto',
     category: 'gourmet', scopes: ['world', 'my'], createdAt: '2026/08/10',
@@ -160,7 +160,7 @@ const INITIAL_SPOTS: Spot[] = [
     title: '渋谷スクランブル交差点＆SHIBUYA SKY',
     description: '地上229mから望む東京360度パノラマビュー。夕暮れのグラデーションが絶景です✨',
     fileName: 'shibuya.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&auto=format&fit=crop',
+    fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 35.6595, lon: 139.7005, countryCode: 'JP', cityName: 'Tokyo',
     category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/12',
@@ -170,7 +170,7 @@ const INITIAL_SPOTS: Spot[] = [
     title: 'マッターホルン 黄金の朝焼け',
     description: '早朝のツェルマットから眺める黄金色の山頂。展望台へは始発電車がおすすめです🏔️',
     fileName: 'matterhorn.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=600&auto=format&fit=crop',
+    fileUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 45.9765, lon: 7.7491, countryCode: 'CH', cityName: 'Zermatt',
     category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/14',
@@ -209,7 +209,7 @@ function convertDMSToDD(dms: number[], ref: string): number {
 }
 
 // ==========================================
-// 2. Leaflet 軽量・日本語表示マップコンポーネント
+// 2. Leaflet マップコンポーネント（日本語地名・元デザイン維持）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -262,11 +262,17 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 日本語・標準地名表示（OpenStreetMap標準タイル / 雨の日はダークタイル）
-        const tileUrl =
+        // 元のスタイリッシュなベースマップ + 雨の日のダークマップ
+        const baseTileUrl =
           mode === 'rain'
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
+
+        // 日本語・現地語ラベル（文字がアルファベットにならず、きれいな日本語で重なります）
+        const labelTileUrl =
+          mode === 'rain'
+            ? 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png';
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
@@ -279,34 +285,34 @@ const SafeMapComponent = dynamic(
             html: `
               <div style="
                 position: relative;
-                width: 44px;
-                height: 52px;
+                width: 48px;
+                height: 56px;
                 background: #ffffff;
                 border-radius: 6px;
-                box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-                padding: 3px 3px 12px 3px;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+                padding: 4px 4px 14px 4px;
                 cursor: pointer;
                 transform: translateY(-50%) rotate(${rot}deg);
               ">
                 ${badgeHtml}
-                <div style="width: 100%; height: 36px; border-radius: 3px; overflow: hidden; background: #cbd5e1;">
+                <div style="width: 100%; height: 38px; border-radius: 3px; overflow: hidden; background: #cbd5e1;">
                   <img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="eager" />
                 </div>
                 <div style="
                   position: absolute;
-                  bottom: -5px;
+                  bottom: -6px;
                   left: 50%;
                   transform: translateX(-50%);
                   width: 0;
                   height: 0;
-                  border-left: 4px solid transparent;
-                  border-right: 4px solid transparent;
-                  border-top: 5px solid #ffffff;
+                  border-left: 5px solid transparent;
+                  border-right: 5px solid transparent;
+                  border-top: 6px solid #ffffff;
                 "></div>
               </div>
             `,
-            iconSize: [44, 52],
-            iconAnchor: [22, 26],
+            iconSize: [48, 56],
+            iconAnchor: [24, 28],
           });
         };
 
@@ -323,13 +329,23 @@ const SafeMapComponent = dynamic(
             dragging={true}
             doubleClickZoom={false}
             zoomControl={false}
-            style={{ width: '100%', height: '100%', background: '#f1f5f9' }}
+            style={{ width: '100%', height: '100%', background: '#f8fafc' }}
           >
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
+            
+            {/* 地図ベース */}
             <TileLayer
-              url={tileUrl}
-              attribution='&copy; OpenStreetMap contributors'
+              url={baseTileUrl}
+              attribution='&copy; CARTO'
+              maxNativeZoom={18}
+              maxZoom={19}
+              keepBuffer={4}
+            />
+
+            {/* 地名ラベルレイヤー */}
+            <TileLayer
+              url={labelTileUrl}
               maxNativeZoom={18}
               maxZoom={19}
               keepBuffer={4}
