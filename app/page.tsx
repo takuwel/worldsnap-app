@@ -101,9 +101,9 @@ export const COUNTRIES: Record<
     name: '대한민국 (韓国)', flag: '🇰🇷', lang: 'ko', lat: 35.9078, lon: 127.7669, zoom: 7,
     dict: {
       step1Title: 'Step 1: 국적 선택', step1Desc: '선택한 국가에 맞춰 앱 언어가 한국어로 표시됩니다.',
-      step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의',
+      step2Title: 'Step 2: プロフィール設定', step3Title: 'Step 3: 이용약관 (EULA) 동의',
       next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기',
-      eulaAgree: '이용약관 및 커뮤니티 가이드ライン에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
+      eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
       home: '홈', map: '지도', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
       view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체',
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
@@ -121,7 +121,7 @@ export const COUNTRIES: Record<
       eulaAgree: 'I agree to the Terms of Service', termsTitle: '📜 Terms of Service (EULA)',
       home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map',
       view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day', myMap: 'My Map', friends: 'Friends', world: 'World',
-      openGoogleMaps: '🧭 Open in Google Maps', saveSpot: '❤️ Want to go', saved: '❤️ Saved',
+      openGoogleMaps: '🧭 開く', saveSpot: '❤️ 行きたい', saved: '❤️ 保存済み',
       report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit',
       visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code',
       searchPlaceholder: '🔍 Search spots', cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out', close: 'Close'
@@ -209,7 +209,7 @@ function convertDMSToDD(dms: number[], ref: string): number {
 }
 
 // ==========================================
-// 2. Leaflet マップコンポーネント（日本語地名・元デザイン維持）
+// 2. Leaflet 常時日本語（漢字）表示マップコンポーネント
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -262,17 +262,11 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 元のスタイリッシュなベースマップ + 雨の日のダークマップ
-        const baseTileUrl =
+        // 引いても寄っても常に日本語（東京・新宿区など）で表示される標準タイル
+        const tileUrl =
           mode === 'rain'
-            ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
-
-        // 日本語・現地語ラベル（文字がアルファベットにならず、きれいな日本語で重なります）
-        const labelTileUrl =
-          mode === 'rain'
-            ? 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png';
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://tile.openstreetmap.jp/{z}/{x}/{y}.png';
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
@@ -333,19 +327,9 @@ const SafeMapComponent = dynamic(
           >
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
-            
-            {/* 地図ベース */}
             <TileLayer
-              url={baseTileUrl}
-              attribution='&copy; CARTO'
-              maxNativeZoom={18}
-              maxZoom={19}
-              keepBuffer={4}
-            />
-
-            {/* 地名ラベルレイヤー */}
-            <TileLayer
-              url={labelTileUrl}
+              url={tileUrl}
+              attribution='&copy; OpenStreetMap contributors, OpenStreetMap Japan'
               maxNativeZoom={18}
               maxZoom={19}
               keepBuffer={4}
