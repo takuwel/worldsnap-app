@@ -105,12 +105,12 @@ export const COUNTRIES: Record<
       step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의',
       next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기',
       eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
-      home: '홈', map: '지도', profile: '마이페이지', addPhoto: '写真/動画追加', exportMap: '지도 저장',
+      home: '홈', map: '지도', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
       view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체',
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
       report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
       visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 名所 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈退', logout: '🚪 로그아웃', close: '닫기'
+      searchPlaceholder: '🔍 명소 검색', cacheClear: '🧹 캐シ 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
@@ -209,7 +209,6 @@ function convertDMSToDD(dms: number[], ref: string): number {
   return dd;
 }
 
-// 動画から1フレーム目のサムネイルを生成
 function generateVideoThumbnail(file: File): Promise<string> {
   return new Promise((resolve) => {
     const video = document.createElement('video');
@@ -228,8 +227,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
           const ctx = canvas.getContext('2d');
           if (ctx) {
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-            resolve(dataUrl);
+            resolve(canvas.toDataURL('image/jpeg', 0.8));
           } else {
             resolve('');
           }
@@ -243,7 +241,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Leaflet 白基調・常時日本語マップ
+// 2. Leaflet 元のすっきり白マップ (CARTO Positron)
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -296,19 +294,17 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 白基調のベースマップ（CARTO Positron）
-        const baseTileUrl =
+        // 写真と全く同じCARTO Positron（白基調・すっきりデザイン）
+        const tileUrl =
           mode === 'rain'
-            ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
           const badgeHtml = spot.isOfficial
             ? `<div style="position:absolute;top:-4px;right:-4px;background:#0284c7;color:#fff;font-size:8px;font-weight:bold;border-radius:10px;padding:1px 4px;box-shadow:0 1px 3px rgba(0,0,0,0.3);">公式</div>`
             : '';
-
-          const mediaPreview = `<img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="eager" />`;
 
           return L.divIcon({
             className: 'ws-marker',
@@ -326,7 +322,7 @@ const SafeMapComponent = dynamic(
               ">
                 ${badgeHtml}
                 <div style="width: 100%; height: 38px; border-radius: 3px; overflow: hidden; background: #cbd5e1;">
-                  ${mediaPreview}
+                  <img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="eager" />
                 </div>
                 <div style="
                   position: absolute;
@@ -363,20 +359,9 @@ const SafeMapComponent = dynamic(
           >
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
-            
-            {/* 白基調のベースマップ */}
             <TileLayer
-              url={baseTileUrl}
+              url={tileUrl}
               attribution='&copy; CARTO'
-              maxNativeZoom={18}
-              maxZoom={19}
-              keepBuffer={4}
-            />
-
-            {/* 常時日本語表記のオープンレイヤー */}
-            <TileLayer
-              url="https://tile.openstreetmap.jp/{z}/{x}/{y}.png"
-              opacity={0.3}
               maxNativeZoom={18}
               maxZoom={19}
               keepBuffer={4}
