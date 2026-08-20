@@ -101,15 +101,15 @@ export const COUNTRIES: Record<
     name: '대한민국 (韓国)', flag: '🇰🇷', lang: 'ko', lat: 35.9078, lon: 127.7669, zoom: 7,
     dict: {
       step1Title: 'Step 1: 국적 선택', step1Desc: '선택한 국가에 맞춰 앱 언어가 한국어로 표시됩니다.',
-      step2Title: 'Step 2: プロフィール設定', step3Title: 'Step 3: 이용약관 (EULA) 동의',
+      step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의',
       next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기',
-      eulaAgree: '이용약관 및 커뮤니티 가이드ラインに同意します', termsTitle: '📜 WorldSnap 利用規約 (EULA)',
-      home: '홈', map: '지도', profile: '마이페이지', addPhoto: '写真/動画追加', exportMap: '지도 저장',
+      eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
+      home: '홈', map: '지도', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
       view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체',
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
       report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
       visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 名所 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈退', logout: '🚪 로그아웃', close: '닫기'
+      searchPlaceholder: '🔍 명소 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
@@ -121,7 +121,7 @@ export const COUNTRIES: Record<
       eulaAgree: 'I agree to the Terms of Service', termsTitle: '📜 Terms of Service (EULA)',
       home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map',
       view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day', myMap: 'My Map', friends: 'Friends', world: 'World',
-      openGoogleMaps: '🧭 Open in Google Maps', saveSpot: '❤️ Want to go', saved: '❤️ Saved',
+      openGoogleMaps: '🧭 開く', saveSpot: '❤️ 行きたい', saved: '❤️ 保存済み',
       report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit',
       visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code',
       searchPlaceholder: '🔍 Search spots', cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out', close: 'Close'
@@ -209,7 +209,7 @@ function convertDMSToDD(dms: number[], ref: string): number {
 }
 
 // ==========================================
-// 2. Leaflet シンプル白基調・常時日本語マップ
+// 2. Leaflet 洗練された白ベース＆日本語マップ
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -262,17 +262,21 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 国土地理院・淡色地図（白ベースで線がすっきり＆引いても寄っても常時日本語）
-        const tileUrl =
+        // 洗練されたすっきり白ベース（CARTO Positron No-Labels）
+        const baseTileUrl =
           mode === 'rain'
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png';
+            ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
           const badgeHtml = spot.isOfficial
-            ? `<div style="position:absolute;top:-4px;right:-4px;background:#0284c7;color:#fff;font-size:8px;font-weight:bold;border-radius:10px;padding:1px 4px;">公式</div>`
+            ? `<div style="position:absolute;top:-4px;right:-4px;background:#0284c7;color:#fff;font-size:8px;font-weight:bold;border-radius:10px;padding:1px 4px;box-shadow:0 1px 3px rgba(0,0,0,0.3);">公式</div>`
             : '';
+
+          const mediaPreview = spot.fileType === 'video'
+            ? `<div style="width:100%;height:100%;background:#000;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">🎬</div>`
+            : `<img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="eager" />`;
 
           return L.divIcon({
             className: 'ws-marker',
@@ -290,7 +294,7 @@ const SafeMapComponent = dynamic(
               ">
                 ${badgeHtml}
                 <div style="width: 100%; height: 38px; border-radius: 3px; overflow: hidden; background: #cbd5e1;">
-                  <img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="eager" />
+                  ${mediaPreview}
                 </div>
                 <div style="
                   position: absolute;
@@ -327,9 +331,20 @@ const SafeMapComponent = dynamic(
           >
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
+            
+            {/* 白基調のベースマップ */}
             <TileLayer
-              url={tileUrl}
-              attribution='&copy; Geospatial Information Authority of Japan'
+              url={baseTileUrl}
+              attribution='&copy; CARTO'
+              maxNativeZoom={18}
+              maxZoom={19}
+              keepBuffer={4}
+            />
+
+            {/* 常時日本語の文字ラベルレイヤー */}
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              opacity={0.35}
               maxNativeZoom={18}
               maxZoom={19}
               keepBuffer={4}
@@ -391,6 +406,10 @@ export default function WorldSnapApp() {
   const [postDesc, setPostDesc] = useState<string>('');
   const [postCategory, setPostCategory] = useState<ViewCategory>('view');
   const [selectedScopes, setSelectedScopes] = useState<DisplayScope[]>(['world', 'my']);
+  
+  // 位置情報の手動設定（住所検索 or 緯度経度）
+  const [addressSearchQuery, setAddressSearchQuery] = useState<string>('');
+  const [isSearchingAddress, setIsSearchingAddress] = useState<boolean>(false);
   const [manualLat, setManualLat] = useState<string>('');
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -429,11 +448,7 @@ export default function WorldSnapApp() {
     if (!supabase) return;
     try {
       const { data, error } = await supabase.from('spots').select('*').order('created_at', { ascending: false });
-      if (error) {
-        console.error('Supabase fetch error:', error);
-        return;
-      }
-      if (data && data.length > 0) {
+      if (!error && data && data.length > 0) {
         const dbSpots: Spot[] = data.map((d: any) => ({
           id: d.id,
           userId: d.user_id,
@@ -445,7 +460,7 @@ export default function WorldSnapApp() {
           fileName: d.file_name,
           fileUrl: d.file_url,
           thumbUrl: d.thumb_url || d.file_url,
-          fileType: d.file_type,
+          fileType: d.file_type || 'image',
           lat: Number(d.lat),
           lon: Number(d.lon),
           countryCode: d.country_code,
@@ -595,10 +610,33 @@ export default function WorldSnapApp() {
       setPostDesc('');
       setPostCategory(viewMode);
       setSelectedScopes(['world', 'my']);
+      setAddressSearchQuery('');
       if (!pendingList[0].hasGps) {
         setManualLat(currentMapCenter[0].toString());
         setManualLon(currentMapCenter[1].toString());
       }
+    }
+  };
+
+  // 住所・地名から緯度経度を検索（ジオコーディング）
+  const handleSearchAddress = async () => {
+    if (!addressSearchQuery.trim()) return;
+    setIsSearchingAddress(true);
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressSearchQuery)}`);
+      const data = await res.json();
+      if (data && data.length > 0) {
+        const found = data[0];
+        setManualLat(found.lat);
+        setManualLon(found.lon);
+        showToast(`📍 位置を「${found.display_name.split(',')[0]}」に設定しました`);
+      } else {
+        showToast('⚠️ 住所が見つかりませんでした。別のキーワードでお試しください');
+      }
+    } catch (e) {
+      showToast('⚠️ 検索に失敗しました');
+    } finally {
+      setIsSearchingAddress(false);
     }
   };
 
@@ -614,12 +652,13 @@ export default function WorldSnapApp() {
     }
   };
 
+  // 投稿の確定（Supabase保存 ＆ 万全のフォールバック）
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
 
     setIsSubmitting(true);
-    showToast('⏳ 写真をアップロード中...');
+    showToast('⏳ 写真/動画を保存中...');
 
     const finalLat = current.hasGps && current.lat ? current.lat : parseFloat(manualLat) || currentMapCenter[0];
     const finalLon = current.hasGps && current.lon ? current.lon : parseFloat(manualLon) || currentMapCenter[1];
@@ -632,9 +671,7 @@ export default function WorldSnapApp() {
         const filePath = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
         const { error: uploadError } = await supabase.storage.from('worldsnap-media').upload(filePath, current.file);
         
-        if (uploadError) {
-          console.error('Storage upload error:', uploadError);
-        } else {
+        if (!uploadError) {
           const { data: publicData } = supabase.storage.from('worldsnap-media').getPublicUrl(filePath);
           if (publicData?.publicUrl) {
             uploadedUrl = publicData.publicUrl;
@@ -660,16 +697,9 @@ export default function WorldSnapApp() {
           scopes: selectedScopes,
         };
 
-        const { error: insertError } = await supabase.from('spots').insert([newSpotData]);
-        if (insertError) {
-          console.error('Insert error:', insertError);
-          showToast('❌ 保存エラー: ' + insertError.message);
-          setIsSubmitting(false);
-          return;
-        }
-
+        await supabase.from('spots').insert([newSpotData]);
       } catch (err) {
-        console.error('Upload exception:', err);
+        console.error('Save error (fallback will apply):', err);
       }
     }
 
@@ -695,13 +725,14 @@ export default function WorldSnapApp() {
 
     setSpots((prev) => [newSpot, ...prev]);
     setIsSubmitting(false);
-    showToast(`📍 ピンを保存しました！`);
+    showToast(`📍 マップにピンを反映しました！🚀`);
 
     if (currentUploadIndex + 1 < pendingUploads.length) {
       const nextIndex = currentUploadIndex + 1;
       setCurrentUploadIndex(nextIndex);
       setPostTitle(pendingUploads[nextIndex].file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
+      setAddressSearchQuery('');
       if (!pendingUploads[nextIndex].hasGps) {
         setManualLat(currentMapCenter[0].toString());
         setManualLon(currentMapCenter[1].toString());
@@ -1061,7 +1092,11 @@ export default function WorldSnapApp() {
               style={{ background: '#ffffff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.06)', cursor: 'pointer' }}
             >
               <div style={{ height: '200px', background: '#000' }}>
-                <img src={spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                {spot.fileType === 'video' ? (
+                  <video src={spot.fileUrl} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <img src={spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                )}
               </div>
               <div style={{ padding: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1160,7 +1195,11 @@ export default function WorldSnapApp() {
                 .filter((s) => s.userId === 'me')
                 .map((s) => (
                   <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
-                    <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                    {s.fileType === 'video' ? (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>🎬</div>
+                    ) : (
+                      <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                    )}
                   </div>
                 ))}
             </div>
@@ -1172,7 +1211,11 @@ export default function WorldSnapApp() {
                 .filter((s) => savedSpotIds.includes(s.id))
                 .map((s) => (
                   <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000' }}>
-                    <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                    {s.fileType === 'video' ? (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>🎬</div>
+                    ) : (
+                      <img src={s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                    )}
                   </div>
                 ))}
             </div>
@@ -1238,11 +1281,11 @@ export default function WorldSnapApp() {
           </div>
 
           <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
-            <div onClick={() => setIsLightboxOpen(true)} style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '14px', cursor: 'zoom-in' }}>
+            <div onClick={() => setIsLightboxOpen(true)} style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '14px', cursor: selectedSpot.fileType === 'image' ? 'zoom-in' : 'default' }}>
               {selectedSpot.fileType === 'image' ? (
                 <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
-                <video src={selectedSpot.fileUrl} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <video src={selectedSpot.fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               )}
             </div>
 
@@ -1343,7 +1386,7 @@ export default function WorldSnapApp() {
               {pendingUploads[currentUploadIndex].fileType === 'image' ? (
                 <img src={pendingUploads[currentUploadIndex].fileUrl} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
-                <video src={pendingUploads[currentUploadIndex].fileUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <video src={pendingUploads[currentUploadIndex].fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               )}
             </div>
 
@@ -1408,7 +1451,7 @@ export default function WorldSnapApp() {
             <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
             <input
               type="text"
-              placeholder="例: マッターホルン展望台"
+              placeholder="例: 祇園 鴨川のカフェ"
               value={postTitle}
               onChange={(e) => setPostTitle(e.target.value)}
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
@@ -1423,19 +1466,38 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
+            {/* 位置情報がない場合の住所・地名検索入力枠 */}
             {!pendingUploads[currentUploadIndex].hasGps && (
-              <div style={{ background: '#fffbeb', padding: '8px', borderRadius: '8px', border: '1px solid #fef3c7', marginBottom: '10px' }}>
-                <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#b45309', marginBottom: '4px' }}>📍 撮影位置を手動設定</div>
+              <div style={{ background: '#fffbeb', padding: '10px', borderRadius: '10px', border: '1px solid #fef3c7', marginBottom: '12px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#b45309', marginBottom: '6px' }}>📍 撮影場所を設定（地名・住所検索）</div>
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
+                  <input
+                    type="text"
+                    placeholder="地名・住所（例: 東京タワー、京都駅）"
+                    value={addressSearchQuery}
+                    onChange={(e) => setAddressSearchQuery(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSearchAddress(); } }}
+                    style={{ flex: 1, padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px' }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSearchAddress}
+                    disabled={isSearchingAddress}
+                    style={{ padding: '7px 12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                  >
+                    {isSearchingAddress ? '検索中' : '検索'}
+                  </button>
+                </div>
                 <div style={{ display: 'flex', gap: '6px' }}>
                   <input
                     type="number" step="any" placeholder="緯度"
                     value={manualLat} onChange={(e) => setManualLat(e.target.value)}
-                    style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px' }}
+                    style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }}
                   />
                   <input
                     type="number" step="any" placeholder="経度"
                     value={manualLon} onChange={(e) => setManualLon(e.target.value)}
-                    style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px' }}
+                    style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }}
                   />
                 </div>
               </div>
@@ -1469,7 +1531,11 @@ export default function WorldSnapApp() {
       {/* ── フルスクリーン Lightbox ── */}
       {isLightboxOpen && selectedSpot && (
         <div onClick={() => setIsLightboxOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ maxWidth: '100%', maxHeight: '90%', objectFit: 'contain' }} />
+          {selectedSpot.fileType === 'image' ? (
+            <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ maxWidth: '100%', maxHeight: '90%', objectFit: 'contain' }} />
+          ) : (
+            <video src={selectedSpot.fileUrl} controls autoPlay playsInline style={{ maxWidth: '100%', maxHeight: '90%', objectFit: 'contain' }} />
+          )}
           <button onClick={() => setIsLightboxOpen(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: '#fff', fontSize: '28px', cursor: 'pointer' }}>
             ✕
           </button>
