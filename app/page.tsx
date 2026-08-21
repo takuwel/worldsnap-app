@@ -110,7 +110,7 @@ export const COUNTRIES: Record<
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
       report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
       visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 명소 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
+      searchPlaceholder: '🔍 명소 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈退', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
@@ -241,7 +241,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Leaflet CARTO Positron（白デザイン維持 ＋ 地名ラベル強調）
+// 2. Leaflet CARTO Positron（白基調 ＋ 明確な県境線 ＋ 階層型地名表示）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -294,13 +294,13 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // CARTO Positron のベース地図
+        // 写真通りのCARTO Positronベースタイル
         const baseTileUrl =
           mode === 'rain'
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+            ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
 
-        // 都道府県・州・主要地名をくっきり際立たせるラベルレイヤー
+        // ズーム状況に応じて最適化された地名ラベル
         const labelTileUrl =
           mode === 'rain'
             ? 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png'
@@ -366,7 +366,7 @@ const SafeMapComponent = dynamic(
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
             
-            {/* ベース地図 */}
+            {/* ① 白ベース地図（CARTO Positron） */}
             <TileLayer
               url={baseTileUrl}
               attribution='&copy; CARTO'
@@ -375,13 +375,22 @@ const SafeMapComponent = dynamic(
               keepBuffer={4}
             />
 
-            {/* 地名・都道府県・州名をくっきり際立たせるラベルレイヤー */}
+            {/* ② デザインを損なわずに県境・国境ラインを明瞭化する境界レイヤー */}
+            <TileLayer
+              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
+              opacity={0.35}
+              maxNativeZoom={18}
+              maxZoom={19}
+              keepBuffer={4}
+            />
+
+            {/* ③ ズーム段階に応じて自然に切り替わるクリアな地名ラベル */}
             <TileLayer
               url={labelTileUrl}
               maxNativeZoom={18}
               maxZoom={19}
               keepBuffer={4}
-              opacity={1.0}
+              opacity={0.95}
             />
 
             {spots.map((spot) => (
@@ -405,7 +414,7 @@ const SafeMapComponent = dynamic(
 // 3. メインコンポーネント
 // ==========================================
 export default function WorldSnapApp() {
-  const [isOnboarding, setIsOnboarding] = useState<boolean>(false);
+  const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
   const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3>(1);
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
 
@@ -471,9 +480,9 @@ export default function WorldSnapApp() {
   };
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem('ws_onboarded');
-    if (!hasCompleted) {
-      setIsOnboarding(true);
+    const hasCompleted = localStorage.getItem('ws_onboarded_v2');
+    if (hasCompleted) {
+      setIsOnboarding(false);
     }
   }, []);
 
@@ -581,7 +590,7 @@ export default function WorldSnapApp() {
   };
 
   const handleCompleteOnboarding = () => {
-    localStorage.setItem('ws_onboarded', 'true');
+    localStorage.setItem('ws_onboarded_v2', 'true');
     setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
@@ -844,7 +853,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── 初回オンボーディング ── */}
+      {/* ── 初回オープニング（オンボーディング） ── */}
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -1635,7 +1644,7 @@ export default function WorldSnapApp() {
               <button
                 onClick={() => {
                   if (prompt('退会する場合は「削除する」と入力してください:') === '削除する') {
-                    localStorage.removeItem('ws_onboarded');
+                    localStorage.removeItem('ws_onboarded_v2');
                     setSpots(INITIAL_SPOTS);
                     showToast('⚠️ アカウントを削除しました');
                     setIsSettingsOpen(false);
