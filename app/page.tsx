@@ -241,7 +241,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Leaflet 元通りのCARTO Positron（写真2枚目と完全一致）
+// 2. Leaflet CARTO Positron（白デザイン維持 ＋ 地名ラベル強調）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -294,11 +294,17 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 写真2枚目と全く同じCARTO Positron単一タイル
-        const tileUrl =
+        // CARTO Positron のベース地図
+        const baseTileUrl =
           mode === 'rain'
             ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
             : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+
+        // 都道府県・州・主要地名をくっきり際立たせるラベルレイヤー
+        const labelTileUrl =
+          mode === 'rain'
+            ? 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png';
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
@@ -359,12 +365,23 @@ const SafeMapComponent = dynamic(
           >
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
+            
+            {/* ベース地図 */}
             <TileLayer
-              url={tileUrl}
+              url={baseTileUrl}
               attribution='&copy; CARTO'
               maxNativeZoom={18}
               maxZoom={19}
               keepBuffer={4}
+            />
+
+            {/* 地名・都道府県・州名をくっきり際立たせるラベルレイヤー */}
+            <TileLayer
+              url={labelTileUrl}
+              maxNativeZoom={18}
+              maxZoom={19}
+              keepBuffer={4}
+              opacity={1.0}
             />
 
             {spots.map((spot) => (
