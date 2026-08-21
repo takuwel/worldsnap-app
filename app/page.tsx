@@ -110,7 +110,7 @@ export const COUNTRIES: Record<
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
       report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
       visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 명소 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈退', logout: '🚪 로그아웃', close: '닫기'
+      searchPlaceholder: '🔍 명소 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
@@ -241,7 +241,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Leaflet CARTO Positron（白基調 ＋ 明確な県境線 ＋ 階層型地名表示）
+// 2. Leaflet CARTO Positron（白基調 ＋ 県境線 ＋ 階層型地名表示）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -294,13 +294,11 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 写真通りのCARTO Positronベースタイル
         const baseTileUrl =
           mode === 'rain'
             ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
             : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
 
-        // ズーム状況に応じて最適化された地名ラベル
         const labelTileUrl =
           mode === 'rain'
             ? 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png'
@@ -366,7 +364,6 @@ const SafeMapComponent = dynamic(
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
             
-            {/* ① 白ベース地図（CARTO Positron） */}
             <TileLayer
               url={baseTileUrl}
               attribution='&copy; CARTO'
@@ -375,7 +372,6 @@ const SafeMapComponent = dynamic(
               keepBuffer={4}
             />
 
-            {/* ② デザインを損なわずに県境・国境ラインを明瞭化する境界レイヤー */}
             <TileLayer
               url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
               opacity={0.35}
@@ -384,7 +380,6 @@ const SafeMapComponent = dynamic(
               keepBuffer={4}
             />
 
-            {/* ③ ズーム段階に応じて自然に切り替わるクリアな地名ラベル */}
             <TileLayer
               url={labelTileUrl}
               maxNativeZoom={18}
@@ -846,7 +841,7 @@ export default function WorldSnapApp() {
   const themeAccent = viewMode === 'rain' ? '#38bdf8' : viewMode === 'gourmet' ? '#ea580c' : '#0284c7';
 
   return (
-    <div style={{ background: '#f8fafc', color: '#0f172a', height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+    <div style={{ background: '#f8fafc', color: '#0f172a', height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
       {toastMessage && (
         <div style={{ position: 'fixed', top: '14px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,23,42,0.94)', color: '#fff', padding: '10px 20px', borderRadius: '30px', zIndex: 99999, fontSize: '13px', fontWeight: 'bold', boxShadow: '0 8px 24px rgba(0,0,0,0.3)', backdropFilter: 'blur(6px)' }}>
           {toastMessage}
@@ -1767,17 +1762,18 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── ボトムナビゲーション ── */}
+      {/* ── ボトムナビゲーション（セーフエリア対応 & 最前面配置） ── */}
       <nav
         style={{
-          height: '56px',
+          height: 'calc(54px + env(safe-area-inset-bottom, 0px))',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
           background: '#ffffff',
           borderTop: '1px solid #e2e8f0',
           display: 'flex',
           justifyContent: 'space-around',
           alignItems: 'center',
           flexShrink: 0,
-          zIndex: 500,
+          zIndex: 1000,
         }}
       >
         <button
@@ -1791,6 +1787,7 @@ export default function WorldSnapApp() {
             gap: '2px',
             color: currentTab === 'home' ? themeAccent : '#94a3b8',
             cursor: 'pointer',
+            padding: '4px 16px',
           }}
         >
           <span style={{ fontSize: '18px' }}>🏠</span>
@@ -1814,6 +1811,7 @@ export default function WorldSnapApp() {
             gap: '2px',
             color: currentTab === 'map' ? themeAccent : '#94a3b8',
             cursor: 'pointer',
+            padding: '4px 16px',
           }}
         >
           <span style={{ fontSize: '18px' }}>🗺️</span>
@@ -1831,6 +1829,7 @@ export default function WorldSnapApp() {
             gap: '2px',
             color: currentTab === 'profile' ? themeAccent : '#94a3b8',
             cursor: 'pointer',
+            padding: '4px 16px',
           }}
         >
           <span style={{ fontSize: '18px' }}>👤</span>
