@@ -26,10 +26,19 @@ export interface CommentItem {
   createdAt: string;
 }
 
-export interface Reactions {
-  hot: number;
-  wantToGo: number;
-  beautiful: number;
+export interface ChatMessage {
+  id: string;
+  senderId: string;
+  text: string;
+  createdAt: string;
+}
+
+export interface FriendUser {
+  id: string;
+  name: string;
+  avatar: string;
+  bio: string;
+  postsCount: number;
 }
 
 export interface Spot {
@@ -56,8 +65,7 @@ export interface Spot {
   scopes: DisplayScope[];
   tags?: string[];
   comments?: CommentItem[];
-  reactions?: Reactions;
-  reportCount?: number; // 通報された回数
+  reportCount?: number;
   createdAt: string;
 }
 
@@ -184,29 +192,29 @@ export const COUNTRIES: Record<
 
 const INITIAL_SPOTS: Spot[] = [
   {
-    id: 'spot-kyoto-1', userId: 'bot-curator-jp', userName: '京都公式キュレーター', isOfficial: true, isFeatured: true,
+    id: 'spot-kyoto-1', userId: 'user-yuki', userName: 'Yuki_Traveler', userAvatar: '', isOfficial: false, isFeatured: true,
     viewsCount: 342, savedCount: 88,
     title: '祇園 鴨川沿いの濃厚抹茶パフェ',
-    description: '川床を眺めながらいただく最高峰の宇治抹茶。デートやひと休みに最適な特等席です🍵 #京都スイーツ #絶景カフェ',
+    description: 'フレンドのYukiさんがシェアした京都の絶品スイーツです🍵 #京都スイーツ',
     fileName: 'matcha.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: '京都',
-    category: 'gourmet', scopes: ['world', 'my'], tags: ['京都スイーツ', '絶景カフェ'],
-    comments: [{ id: 'c1', userName: 'Yuki_Traveler', userAvatar: '🌸', text: 'ここめっちゃ美味しかったです！', createdAt: '2026/08/11' }],
+    category: 'gourmet', scopes: ['world', 'friends', 'my'], tags: ['京都スイーツ'],
+    comments: [{ id: 'c1', userName: 'Ken_Gourmet', userAvatar: '', text: 'ここ今度一緒に行こう！', createdAt: '2026/08/11' }],
     reportCount: 0,
     createdAt: '2026/08/10',
   },
   {
-    id: 'spot-tokyo-1', userId: 'bot-tokyo-guide', userName: '東京おすすめガイド', isOfficial: true, isFeatured: true,
+    id: 'spot-tokyo-1', userId: 'user-ken', userName: 'Ken_Gourmet', userAvatar: '', isOfficial: false, isFeatured: true,
     viewsCount: 521, savedCount: 142,
     title: '渋谷スクランブル交差点＆SHIBUYA SKY',
-    description: '地上229mから望む東京360度パノラマビュー。夕暮れのグラデーションが絶景です✨ #東京夜景 #渋谷スカイ',
+    description: 'フレンドのKenさんがシェアした東京の夜景スポット✨ #東京夜景',
     fileName: 'shibuya.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 35.6595, lon: 139.7005, countryCode: 'JP', cityName: '東京',
-    category: 'view', scopes: ['world', 'my'], tags: ['東京夜景', '渋谷スカイ'],
+    category: 'view', scopes: ['world', 'friends', 'my'], tags: ['東京夜景'],
     comments: [],
     reportCount: 0,
     createdAt: '2026/08/12',
@@ -508,13 +516,25 @@ export default function WorldSnapApp() {
   const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
   const [reportReasonType, setReportReasonType] = useState<string>('inappropriate');
 
+  // フレンドプロフィール＆メッセージ機能用
+  const [selectedFriend, setSelectedFriend] = useState<FriendUser | null>(null);
+  const [chatMessages, setChatMessages] = useState<Record<string, ChatMessage[]>>({
+    'user-yuki': [
+      { id: 'm1', senderId: 'user-yuki', text: 'こんにちは！次の旅行どこ行くの？', createdAt: '10:00' }
+    ],
+    'user-ken': [
+      { id: 'm2', senderId: 'user-ken', text: '先日は最高のスポット教えてくれてありがとう！', createdAt: '昨日' }
+    ]
+  });
+  const [inputMessageText, setInputMessageText] = useState<string>('');
+
   // 投稿モーダル用
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
   const [postTitle, setPostTitle] = useState<string>('');
   const [postDesc, setPostDesc] = useState<string>('');
   const [postCategory, setPostCategory] = useState<ViewCategory>('view');
-  const [selectedScopes, setSelectedScopes] = useState<DisplayScope[]>(['world', 'my']);
+  const [selectedScopes, setSelectedScopes] = useState<DisplayScope[]>(['world', 'friends', 'my']);
   
   const [addressSearchQuery, setAddressSearchQuery] = useState<string>('');
   const [isSearchingAddress, setIsSearchingAddress] = useState<boolean>(false);
@@ -528,9 +548,9 @@ export default function WorldSnapApp() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [profileSubTab, setProfileSubTab] = useState<'posts' | 'saved' | 'friends'>('posts');
-  const [friendsList, setFriendsList] = useState<{ id: string; name: string; avatar: string }[]>([
-    { id: 'user-yuki', name: 'Yuki_Traveler', avatar: '🌸' },
-    { id: 'user-ken', name: 'Ken_Gourmet', avatar: '☕' },
+  const [friendsList, setFriendsList] = useState<FriendUser[]>([
+    { id: 'user-yuki', name: 'Yuki_Traveler', avatar: '', bio: 'カフェと絶景巡りが好きです🌸', postsCount: 12 },
+    { id: 'user-ken', name: 'Ken_Gourmet', avatar: '', bio: '世界の美味しいものを探求中☕', postsCount: 19 },
   ]);
   const [inputFriendCode, setInputFriendCode] = useState('');
 
@@ -578,7 +598,7 @@ export default function WorldSnapApp() {
           countryCode: d.country_code,
           cityName: d.city_name,
           category: d.category,
-          scopes: d.scopes || ['world'],
+          scopes: d.scopes || ['world', 'friends'],
           tags: d.tags || extractHashtags(d.description || ''),
           comments: d.comments || [],
           reportCount: d.report_count || 0,
@@ -628,7 +648,7 @@ export default function WorldSnapApp() {
             countryCode: newSpotData.country_code,
             cityName: newSpotData.city_name,
             category: newSpotData.category,
-            scopes: newSpotData.scopes || ['world'],
+            scopes: newSpotData.scopes || ['world', 'friends'],
             tags: newSpotData.tags || extractHashtags(newSpotData.description || ''),
             comments: newSpotData.comments || [],
             reportCount: newSpotData.report_count || 0,
@@ -686,19 +706,19 @@ export default function WorldSnapApp() {
     return spots.filter((s) => {
       if (blockedUsers.includes(s.userId)) return false;
       if (s.category !== viewMode) return false;
-      if (displayScope === 'my') {
-        if (s.userId !== 'me' || !s.scopes.includes('my')) return false;
-      }
+
+      // フレンドマップ（displayScope === 'friends'）の場合、フレンド全員が共有した投稿（または自分の投稿）を表示
       if (displayScope === 'friends') {
-        if (s.userId === 'me') {
-          if (!s.scopes.includes('my')) return false;
-        } else {
-          if (!s.scopes.includes('friends') || !friendsList.some((f) => f.id === s.userId)) return false;
-        }
-      }
-      if (displayScope === 'world') {
+        const isMyPost = s.userId === 'me';
+        const isFriendPost = friendsList.some((f) => f.id === s.userId);
+        if (!isMyPost && !isFriendPost) return false;
+        if (!s.scopes.includes('friends') && !isMyPost) return false;
+      } else if (displayScope === 'my') {
+        if (s.userId !== 'me' || !s.scopes.includes('my')) return false;
+      } else if (displayScope === 'world') {
         if (s.userId !== 'me' && !s.scopes.includes('world')) return false;
       }
+
       if (mapSearchKeyword.trim()) {
         const kw = mapSearchKeyword.toLowerCase();
         if (kw.startsWith('#')) {
@@ -712,7 +732,7 @@ export default function WorldSnapApp() {
   }, [spots, blockedUsers, viewMode, displayScope, friendsList, mapSearchKeyword]);
 
   const rankingSpots = useMemo(() => {
-    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (b.viewsCount || 0)));
+    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
   }, [spots]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
@@ -792,6 +812,22 @@ export default function WorldSnapApp() {
     showToast('💬 コメントを投稿しました！');
   };
 
+  const handleSendMessage = () => {
+    if (!inputMessageText.trim() || !selectedFriend) return;
+    const newMsg: ChatMessage = {
+      id: 'msg-' + Date.now(),
+      senderId: 'me',
+      text: inputMessageText.trim(),
+      createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    setChatMessages((prev) => ({
+      ...prev,
+      [selectedFriend.id]: [...(prev[selectedFriend.id] || []), newMsg],
+    }));
+    setInputMessageText('');
+  };
+
   const handleExecuteReport = async (reason: string) => {
     if (!selectedSpot) return;
     const spotId = selectedSpot.id;
@@ -810,7 +846,6 @@ export default function WorldSnapApp() {
     const currentSpot = spots.find((s) => s.id === spotId);
     const updatedReportCount = (currentSpot?.reportCount || 0) + 1;
 
-    // 30人以上からの通報で自動削除 ＆ 1週間凍結（ブロック）処理
     if (updatedReportCount >= 30) {
       setSpots((prev) => prev.filter((s) => s.id !== spotId));
       setBlockedUsers((prev) => [...prev, targetUserId]);
@@ -871,7 +906,7 @@ export default function WorldSnapApp() {
       setPostTitle(pendingList[0].file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
       setPostCategory(viewMode);
-      setSelectedScopes(['world', 'my']);
+      setSelectedScopes(['world', 'friends', 'my']);
       setAddressSearchQuery('');
       if (!pendingList[0].hasGps) {
         setManualLat(currentMapCenter[0].toString());
@@ -1322,7 +1357,7 @@ export default function WorldSnapApp() {
                   style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '4px 6px' }}
                 >
                   <option value="world">🌎 {t.world}</option>
-                  <option value="friends">👥 {t.friends}</option>
+                  <option value="friends">👥 フレンドマップ (共有)</option>
                   <option value="my">📍 {t.myMap}</option>
                 </select>
               </div>
@@ -1473,7 +1508,7 @@ export default function WorldSnapApp() {
           ))}
         </div>
 
-        {/* ── マイページ ── */}
+        {/* ── マイページ（フレンドプロフィール＆メッセージ機能付き） ── */}
         <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px' }}>
           <div style={{ background: '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -1603,7 +1638,7 @@ export default function WorldSnapApp() {
                 <button
                   onClick={() => {
                     if (!inputFriendCode) return;
-                    setFriendsList((prev) => [...prev, { id: 'user-' + Date.now(), name: 'Traveler_Buddy', avatar: '✈️' }]);
+                    setFriendsList((prev) => [...prev, { id: 'user-' + Date.now(), name: 'Traveler_Buddy', avatar: '', bio: '新規フレンドです！', postsCount: 3 }]);
                     setInputFriendCode('');
                     showToast('👥 友達を追加しました！');
                   }}
@@ -1613,21 +1648,23 @@ export default function WorldSnapApp() {
                 </button>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {friendsList.map((f) => (
-                  <div key={f.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span>{f.avatar}</span>
-                      <span style={{ fontWeight: 'bold', fontSize: '13px' }}>{f.name}</span>
+                  <div key={f.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #f1f5f9' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => setSelectedFriend(f)}>
+                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: themeAccent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
+                        👤
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 'bold', fontSize: '13px' }}>{f.name}</div>
+                        <div style={{ fontSize: '10px', color: '#64748b' }}>投稿 {f.postsCount}件 · タップしてプロフィール・メッセージ</div>
+                      </div>
                     </div>
                     <button
-                      onClick={() => {
-                        setCurrentTab('map');
-                        setDisplayScope('friends');
-                      }}
-                      style={{ padding: '4px 8px', background: '#f1f5f9', color: themeAccent, border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                      onClick={() => setSelectedFriend(f)}
+                      style={{ padding: '5px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
                     >
-                      マップ
+                      💬 メッセージ
                     </button>
                   </div>
                 ))}
@@ -1636,6 +1673,60 @@ export default function WorldSnapApp() {
           )}
         </div>
       </div>
+
+      {/* ── フレンドプロフィール ＆ メッセージモーダル ── */}
+      {selectedFriend && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: '#ffffff', width: '100%', maxWidth: '420px', borderRadius: '20px', padding: '20px', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: themeAccent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
+                  👤
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '15px' }}>{selectedFriend.name}</h3>
+                  <span style={{ fontSize: '10px', color: '#64748b' }}>{selectedFriend.bio}</span>
+                </div>
+              </div>
+              <button onClick={() => setSelectedFriend(null)} style={{ background: 'transparent', border: 'none', fontSize: '16px', color: '#94a3b8', cursor: 'pointer' }}>
+                ✕
+              </button>
+            </div>
+
+            {/* チャット履歴エリア */}
+            <div style={{ flex: 1, minHeight: '200px', maxHeight: '260px', overflowY: 'auto', background: '#f8fafc', padding: '10px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+              {(chatMessages[selectedFriend.id] || []).map((msg) => (
+                <div key={msg.id} style={{ alignSelf: msg.senderId === 'me' ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
+                  <div style={{ background: msg.senderId === 'me' ? themeAccent : '#e2e8f0', color: msg.senderId === 'me' ? '#fff' : '#0f172a', padding: '8px 12px', borderRadius: '12px', fontSize: '12px' }}>
+                    {msg.text}
+                  </div>
+                  <div style={{ fontSize: '9px', color: '#94a3b8', textAlign: msg.senderId === 'me' ? 'right' : 'left', marginTop: '2px' }}>
+                    {msg.createdAt}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* メッセージ入力エリア */}
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <input
+                type="text"
+                placeholder="メッセージを入力..."
+                value={inputMessageText}
+                onChange={(e) => setInputMessageText(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSendMessage(); }}
+                style={{ flex: 1, padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+              />
+              <button
+                onClick={handleSendMessage}
+                style={{ padding: '8px 14px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+              >
+                送信
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── 詳細モーダル ── */}
       {selectedSpot && (
@@ -1913,9 +2004,9 @@ export default function WorldSnapApp() {
               >
                 <div>
                   <div style={{ fontSize: '12px', fontWeight: 'bold', color: selectedScopes.includes('friends') ? themeAccent : '#0f172a' }}>
-                    {selectedScopes.includes('friends') ? '☑️' : '☐'} 👥 フレンドマップ
+                    {selectedScopes.includes('friends') ? '☑️' : '☐'} 👥 フレンドマップ（全員に共有）
                   </div>
-                  <div style={{ fontSize: '10px', color: '#64748b' }}>相互フォローの友達同士だけで共有</div>
+                  <div style={{ fontSize: '10px', color: '#64748b' }}>フレンド全員のマップに反映されます</div>
                 </div>
               </div>
 
@@ -2297,7 +2388,7 @@ export default function WorldSnapApp() {
             border: 'none',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
+            alignItems: 'center`,
             gap: '2px',
             color: currentTab === 'profile' ? themeAccent : '#94a3b8',
             cursor: 'pointer',
