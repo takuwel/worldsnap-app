@@ -57,6 +57,7 @@ export interface Spot {
   tags?: string[];
   comments?: CommentItem[];
   reactions?: Reactions;
+  reportCount?: number; // 通報された回数
   createdAt: string;
 }
 
@@ -193,7 +194,7 @@ const INITIAL_SPOTS: Spot[] = [
     fileType: 'image', lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: '京都',
     category: 'gourmet', scopes: ['world', 'my'], tags: ['京都スイーツ', '絶景カフェ'],
     comments: [{ id: 'c1', userName: 'Yuki_Traveler', userAvatar: '🌸', text: 'ここめっちゃ美味しかったです！', createdAt: '2026/08/11' }],
-    reactions: { hot: 12, wantToGo: 25, beautiful: 40 },
+    reportCount: 0,
     createdAt: '2026/08/10',
   },
   {
@@ -207,7 +208,7 @@ const INITIAL_SPOTS: Spot[] = [
     fileType: 'image', lat: 35.6595, lon: 139.7005, countryCode: 'JP', cityName: '東京',
     category: 'view', scopes: ['world', 'my'], tags: ['東京夜景', '渋谷スカイ'],
     comments: [],
-    reactions: { hot: 30, wantToGo: 50, beautiful: 85 },
+    reportCount: 0,
     createdAt: '2026/08/12',
   },
 ];
@@ -226,15 +227,8 @@ const EULA_FULL_TEXT = `【WorldSnap 利用規約 (EULA)】
 ・個人情報の無断開示、スパム目的の連投
 
 第3条（不適切なコンテンツへの対処・モデレーション）
-・通報機能（Report）：ユーザーは不適切な写真・ピンを通報できます。通報されたコンテンツは24時間以内にモデレーターが確認し、削除等の措置を行います。
-・ブロック機能（Block）：ユーザーは特定の他ユーザーをブロックでき、ブロックされたユーザーの投稿やピンは即座に非表示となります。
-・利用停止・削除：本規約に違反したユーザーに対し、運営側は事前の通知なく投稿の削除、アカウントの凍結、または強制退会処分を実施します。
-
-第4条（位置情報およびコンテンツの権利）
-投稿写真に含まれる位置情報の公開はユーザー自身の責任において管理するものとします。
-
-第5条（アカウント削除・退会）
-ユーザーは設定画面より、いつでもアカウントおよび投稿データを完全に削除（退会）することができます。`;
+・通報機能（Report）：ユーザーは不適切な写真・ピンを通報できます。通報が30件に達したコンテンツおよびユーザーは自動的に削除・1週間凍結されます。
+・ブロック機能（Block）：ユーザーは特定の他ユーザーをブロックでき、ブロックされたユーザーの投稿やピンは即座に非表示となります。`;
 
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
@@ -510,6 +504,10 @@ export default function WorldSnapApp() {
   // コメント入力用
   const [newCommentText, setNewCommentText] = useState<string>('');
 
+  // 通報モーダル用
+  const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
+  const [reportReasonType, setReportReasonType] = useState<string>('inappropriate');
+
   // 投稿モーダル用
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
@@ -527,8 +525,6 @@ export default function WorldSnapApp() {
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
   const [isEulaModalOpen, setIsEulaModalOpen] = useState<boolean>(false);
-  const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
-  const [reportReason, setReportReason] = useState<string>('不適切な画像');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [profileSubTab, setProfileSubTab] = useState<'posts' | 'saved' | 'friends'>('posts');
@@ -585,7 +581,7 @@ export default function WorldSnapApp() {
           scopes: d.scopes || ['world'],
           tags: d.tags || extractHashtags(d.description || ''),
           comments: d.comments || [],
-          reactions: d.reactions || { hot: 0, wantToGo: 0, beautiful: 0 },
+          reportCount: d.report_count || 0,
           createdAt: new Date(d.created_at).toLocaleDateString(),
         }));
         
@@ -635,7 +631,7 @@ export default function WorldSnapApp() {
             scopes: newSpotData.scopes || ['world'],
             tags: newSpotData.tags || extractHashtags(newSpotData.description || ''),
             comments: newSpotData.comments || [],
-            reactions: newSpotData.reactions || { hot: 0, wantToGo: 0, beautiful: 0 },
+            reportCount: newSpotData.report_count || 0,
             createdAt: new Date(newSpotData.created_at).toLocaleDateString(),
           };
           setSpots((prev) => [formattedSpot, ...prev.filter((s) => s.id !== formattedSpot.id)]);
@@ -716,7 +712,7 @@ export default function WorldSnapApp() {
   }, [spots, blockedUsers, viewMode, displayScope, friendsList, mapSearchKeyword]);
 
   const rankingSpots = useMemo(() => {
-    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
+    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (b.viewsCount || 0)));
   }, [spots]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
@@ -796,22 +792,38 @@ export default function WorldSnapApp() {
     showToast('💬 コメントを投稿しました！');
   };
 
-  const handleAddReaction = (spotId: string, type: 'hot' | 'wantToGo' | 'beautiful') => {
+  const handleExecuteReport = async (reason: string) => {
+    if (!selectedSpot) return;
+    const spotId = selectedSpot.id;
+    const targetUserId = selectedSpot.userId;
+
     setSpots((prev) =>
       prev.map((s) => {
         if (s.id === spotId) {
-          const currentReactions = s.reactions || { hot: 0, wantToGo: 0, beautiful: 0 };
-          const updatedReactions = { ...currentReactions, [type]: currentReactions[type] + 1 };
-          const target = { ...s, reactions: updatedReactions };
-          if (selectedSpot && selectedSpot.id === spotId) {
-            setSelectedSpot(target);
-          }
-          return target;
+          const nextCount = (s.reportCount || 0) + 1;
+          return { ...s, reportCount: nextCount };
         }
         return s;
       })
     );
-    showToast('✨ リアクションを追加しました！');
+
+    const currentSpot = spots.find((s) => s.id === spotId);
+    const updatedReportCount = (currentSpot?.reportCount || 0) + 1;
+
+    // 30人以上からの通報で自動削除 ＆ 1週間凍結（ブロック）処理
+    if (updatedReportCount >= 30) {
+      setSpots((prev) => prev.filter((s) => s.id !== spotId));
+      setBlockedUsers((prev) => [...prev, targetUserId]);
+      if (supabase) {
+        await supabase.from('spots').delete().eq('id', spotId);
+      }
+      showToast('⚠️ 通報が30件に達したため、この投稿は自動削除され、投稿者は1週間凍結されました。');
+    } else {
+      showToast(`✅ 通報を受け付けました（理由: ${reason}）。ご協力ありがとうございます。`);
+    }
+
+    setIsReportModalOpen(false);
+    setSelectedSpot(null);
   };
 
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -956,7 +968,7 @@ export default function WorldSnapApp() {
           scopes: selectedScopes,
           tags: extractedTags,
           comments: [],
-          reactions: { hot: 0, wantToGo: 0, beautiful: 0 },
+          report_count: 0,
         };
 
         await supabase.from('spots').insert([newSpotData]);
@@ -987,7 +999,7 @@ export default function WorldSnapApp() {
       scopes: selectedScopes,
       tags: extractedTags,
       comments: [],
-      reactions: { hot: 0, wantToGo: 0, beautiful: 0 },
+      reportCount: 0,
       createdAt: new Date().toLocaleDateString(),
     };
 
@@ -1394,7 +1406,7 @@ export default function WorldSnapApp() {
           </div>
         </div>
 
-        {/* ── ホーム / フィード（リアクション・コメント付き） ── */}
+        {/* ── ホーム / フィード ── */}
         <div style={{ display: currentTab === 'home' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', gap: '12px' }}>
           {spots.map((spot) => (
             <div
@@ -1423,36 +1435,12 @@ export default function WorldSnapApp() {
                 <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '4px' }}>{spot.title}</div>
                 <p style={{ margin: '0 0 10px 0', fontSize: '12px', color: '#475569', lineHeight: '1.4' }}>{spot.description}</p>
 
-                {/* スタンプリアクションボタン */}
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-                  <button
-                    onClick={() => handleAddReaction(spot.id, 'hot')}
-                    style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 'bold', color: '#dc2626', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                  >
-                    <span>🔥 熱い！</span>
-                    <span>{spot.reactions?.hot || 0}</span>
-                  </button>
-                  <button
-                    onClick={() => handleAddReaction(spot.id, 'wantToGo')}
-                    style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 'bold', color: '#ca8a04', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                  >
-                    <span>☕ 行きたい</span>
-                    <span>{spot.reactions?.wantToGo || 0}</span>
-                  </button>
-                  <button
-                    onClick={() => handleAddReaction(spot.id, 'beautiful')}
-                    style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 'bold', color: '#16a34a', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                  >
-                    <span>✨ きれい！</span>
-                    <span>{spot.reactions?.beautiful || 0}</span>
-                  </button>
-                </div>
-
                 <div
                   onClick={() => setSelectedSpot(spot)}
-                  style={{ fontSize: '11px', color: themeAccent, fontWeight: 'bold', cursor: 'pointer', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}
+                  style={{ fontSize: '11px', color: themeAccent, fontWeight: 'bold', cursor: 'pointer', borderTop: '1px solid #f1f5f9', paddingTop: '8px', display: 'flex', justifyContent: 'space-between' }}
                 >
-                  💬 コメントを見る・書く ({spot.comments?.length || 0}件)
+                  <span>💬 コメントを見る・書く ({spot.comments?.length || 0}件)</span>
+                  <span style={{ color: '#94a3b8' }}>詳細へ &gt;</span>
                 </div>
               </div>
             </div>
@@ -1485,7 +1473,7 @@ export default function WorldSnapApp() {
           ))}
         </div>
 
-        {/* ── マイページ（10刻み〜100、以降50刻みの称号システム） ── */}
+        {/* ── マイページ ── */}
         <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px' }}>
           <div style={{ background: '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -1519,7 +1507,6 @@ export default function WorldSnapApp() {
               </button>
             </div>
 
-            {/* 開拓統計 ＆ 承認リアクション統計 */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '6px', margin: '14px 0', textAlign: 'center' }}>
               <div style={{ background: '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{mySpots.length}</div>
@@ -1702,31 +1689,6 @@ export default function WorldSnapApp() {
 
             <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', margin: '14px 0 10px 0' }}>{selectedSpot.description}</p>
 
-            {/* スタンプリアクションボタン */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-              <button
-                onClick={() => handleAddReaction(selectedSpot.id, 'hot')}
-                style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '20px', padding: '6px 14px', fontSize: '12px', fontWeight: 'bold', color: '#dc2626', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-              >
-                <span>🔥 熱い！</span>
-                <span>{selectedSpot.reactions?.hot || 0}</span>
-              </button>
-              <button
-                onClick={() => handleAddReaction(selectedSpot.id, 'wantToGo')}
-                style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '20px', padding: '6px 14px', fontSize: '12px', fontWeight: 'bold', color: '#ca8a04', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-              >
-                <span>☕ 行きたい</span>
-                <span>{selectedSpot.reactions?.wantToGo || 0}</span>
-              </button>
-              <button
-                onClick={() => handleAddReaction(selectedSpot.id, 'beautiful')}
-                style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '20px', padding: '6px 14px', fontSize: '12px', fontWeight: 'bold', color: '#16a34a', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-              >
-                <span>✨ きれい！</span>
-                <span>{selectedSpot.reactions?.beautiful || 0}</span>
-              </button>
-            </div>
-
             {selectedSpot.tags && selectedSpot.tags.length > 0 && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
                 {selectedSpot.tags.map((tag) => (
@@ -1837,6 +1799,59 @@ export default function WorldSnapApp() {
                   </>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 詳細な通報選択モーダル ── */}
+      {isReportModalOpen && selectedSpot && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '380px', width: '100%' }}>
+            <h3 style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: 'bold' }}>⚠️ 投稿の通報</h3>
+            <p style={{ margin: '0 0 12px 0', fontSize: '11px', color: '#64748b' }}>
+              問題の理由を選択してください。（※30件以上の通報が集まると自動的に削除され、投稿者は1週間凍結されます）
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
+              {[
+                { id: 'inappropriate', label: '🛑 不適切なコンテンツ (露出・グロテスク)' },
+                { id: 'harassment', label: '💬 ハラスメント・誹謗中傷 (攻撃的な発言)' },
+                { id: 'spam', label: '📢 スパム・宣伝 (無関係な広告や連投)' },
+                { id: 'copyright', label: ' ©️ 著作権・肖像権の侵害 (無断転載など)' },
+                { id: 'fake_location', label: '📍 位置情報の虚偽・危険な場所' },
+              ].map((reason) => (
+                <div
+                  key={reason.id}
+                  onClick={() => setReportReasonType(reason.label)}
+                  style={{
+                    padding: '8px 10px',
+                    borderRadius: '8px',
+                    border: `2px solid ${reportReasonType === reason.label ? themeAccent : '#e2e8f0'}`,
+                    background: reportReasonType === reason.label ? '#f0f9ff' : '#ffffff',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {reason.label}
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={() => setIsReportModalOpen(false)}
+                style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={() => handleExecuteReport(reportReasonType)}
+                style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+              >
+                通報を送信する
+              </button>
             </div>
           </div>
         </div>
@@ -2197,39 +2212,6 @@ export default function WorldSnapApp() {
             >
               {t.close}
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* ── 通報モーダル ── */}
-      {isReportModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '360px', width: '100%' }}>
-            <h3 style={{ margin: '0 0 10px 0', fontSize: '15px' }}>⚠️ 投稿の通報</h3>
-            <select
-              value={reportReason}
-              onChange={(e) => setReportReason(e.target.value)}
-              style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #cbd5e1', marginBottom: '14px', fontSize: '12px' }}
-            >
-              <option value="不適切な画像">不適切な画像・ポルノ</option>
-              <option value="スパム・広告">スパム・宣伝行為</option>
-              <option value="誹謗中傷">誹謗中傷・ハラスメント</option>
-              <option value="著作権侵害">無断転載・著作権侵害</option>
-            </select>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <button onClick={() => setIsReportModalOpen(false)} style={{ flex: 1, padding: '8px', background: '#f1f5f9', border: 'none', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' }}>
-                キャンセル
-              </button>
-              <button
-                onClick={() => {
-                  setIsReportModalOpen(false);
-                  showToast('✅ 通報を受け付けました');
-                }}
-                style={{ flex: 1, padding: '8px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-              >
-                送信
-              </button>
-            </div>
           </div>
         </div>
       )}
