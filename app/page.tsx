@@ -247,17 +247,28 @@ function generateVideoThumbnail(file: File): Promise<string> {
   });
 }
 
-// ユーザーランク称号計算
-function getUserTitle(postCount: number) {
-  if (postCount >= 20) return { title: '👑 伝説の冒険家', color: '#eab308' };
-  if (postCount >= 10) return { title: '🧭 旅のマスター', color: '#a855f7' };
-  if (postCount >= 5) return { title: '✈️ 熟練トラベラー', color: '#0284c7' };
-  if (postCount >= 1) return { title: '🌱 見習い探検家', color: '#10b981' };
-  return { title: '🐣 旅のビギナー', color: '#64748b' };
+// 投稿数に応じた称号システム（10刻み〜100、以降50刻み）
+function getUserTitle(count: number) {
+  if (count >= 300) return { title: '🪐 宇宙級の旅人', color: '#ec4899' };
+  if (count >= 250) return { title: '🌏 ワールドレジェンド', color: '#d946ef' };
+  if (count >= 200) return { title: '💎 地球の語り部', color: '#06b6d4' };
+  if (count >= 150) return { title: '🌌 歴戦の探求者', color: '#10b981' };
+  if (count >= 100) return { title: '👑 百景の覇者', color: '#eab308' };
+  if (count >= 90) return { title: '🏆 ワールドナビゲーター', color: '#f97316' };
+  if (count >= 80) return { title: '🌟 グローバルウォーカー', color: '#f59e0b' };
+  if (count >= 70) return { title: '⭐ トラベルマスター', color: '#f43f5e' };
+  if (count >= 60) return { title: '🏔️ 開拓エキスパート', color: '#8b5cf6' };
+  if (count >= 50) return { title: '🧭 ジャーニーガイド', color: '#6366f1' };
+  if (count >= 40) return { title: '✈️ 熟練ボイジャー', color: '#3b82f6' };
+  if (count >= 30) return { title: '🗺️ エリアトラベラー', color: '#0284c7' };
+  if (count >= 20) return { title: '📷 スポットハンター', color: '#0ea5e9' };
+  if (count >= 10) return { title: '🎒 トラベルビギナー', color: '#38bdf8' };
+  if (count >= 1) return { title: '🌱 見習い探検家', color: '#22c55e' };
+  return { title: '🐣 旅のビギナー', color: '#94a3b8' };
 }
 
 // ==========================================
-// 2. Leaflet CARTO Positron（白基調 ＋ 県境線 ＋ 階層型地名表示）
+// 2. Leaflet CARTO Positron（白基調 ＋ 完全無料キー不要）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -310,15 +321,11 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
+        // APIキー不要・透かし文字なしの標準CARTO Positronタイル
         const baseTileUrl =
           mode === 'rain'
-            ? 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
-
-        const labelTileUrl =
-          mode === 'rain'
-            ? 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png';
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
@@ -393,22 +400,6 @@ const SafeMapComponent = dynamic(
               keepBuffer={4}
             />
 
-            <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png"
-              opacity={0.35}
-              maxNativeZoom={18}
-              maxZoom={19}
-              keepBuffer={4}
-            />
-
-            <TileLayer
-              url={labelTileUrl}
-              maxNativeZoom={18}
-              maxZoom={19}
-              keepBuffer={4}
-              opacity={0.95}
-            />
-
             {spots.map((spot) => (
               <Marker
                 key={spot.id}
@@ -444,7 +435,6 @@ export default function WorldSnapApp() {
   const [viewMode, setViewMode] = useState<ViewCategory>('view');
   const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
   
-  // マップ上部の地域ジャンプ検索
   const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
   const [isSearchingLocation, setIsSearchingLocation] = useState<boolean>(false);
 
@@ -462,7 +452,7 @@ export default function WorldSnapApp() {
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
 
-  // 投稿モーダル（初期状態でワールドとマイマップの双方にチェック）
+  // 投稿モーダル用
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
   const [postTitle, setPostTitle] = useState<string>('');
@@ -558,7 +548,6 @@ export default function WorldSnapApp() {
     setTargetZoom(null);
   };
 
-  // マップ上部バナーからの地域ジャンプ検索
   const handleJumpLocationSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!mapSearchKeyword.trim()) return;
@@ -701,7 +690,7 @@ export default function WorldSnapApp() {
       setPostTitle(pendingList[0].file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
       setPostCategory(viewMode);
-      setSelectedScopes(['world', 'my']); // 初期選択でワールド共有をデフォルト設定
+      setSelectedScopes(['world', 'my']);
       setAddressSearchQuery('');
       if (!pendingList[0].hasGps) {
         setManualLat(currentMapCenter[0].toString());
@@ -756,7 +745,6 @@ export default function WorldSnapApp() {
     let uploadedUrl = current.fileUrl;
     let finalThumbUrl = current.thumbUrl || current.fileUrl;
 
-    // 近隣スポット存在チェック（初代開拓ボーナス）
     const isNearbyExists = spots.some((s) => Math.abs(s.lat - finalLat) < 0.05 && Math.abs(s.lon - finalLon) < 0.05);
     const isFirstExplorer = !isNearbyExists;
 
@@ -1094,7 +1082,7 @@ export default function WorldSnapApp() {
           {/* 上部：検索バナー ＆ 切り替えコントロール */}
           <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none' }}>
             
-            {/* 画面上部 地域検索バナー（ジャンプ機能） */}
+            {/* 画面上部 地域検索バナー */}
             <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '6px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
               <input
                 type="text"
@@ -1239,7 +1227,7 @@ export default function WorldSnapApp() {
           ))}
         </div>
 
-        {/* ── マイページ（ゲーミフィケーション＆称号＆リアクション統計） ── */}
+        {/* ── マイページ（10刻み〜100、以降50刻みの称号システム） ── */}
         <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px' }}>
           <div style={{ background: '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -1400,7 +1388,7 @@ export default function WorldSnapApp() {
         </div>
       </div>
 
-      {/* ── 詳細モーダル（閲覧数・保存者数表示） ── */}
+      {/* ── 詳細モーダル ── */}
       {selectedSpot && (
         <div style={{ position: 'fixed', inset: 0, background: '#ffffff', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
           <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
@@ -1445,7 +1433,6 @@ export default function WorldSnapApp() {
               </button>
             </div>
 
-            {/* 閲覧数・保存者数の反響ステータス */}
             <div style={{ display: 'flex', gap: '12px', padding: '8px 12px', background: '#f8fafc', borderRadius: '10px', margin: '12px 0', fontSize: '12px', color: '#475569' }}>
               <span>👀 <strong>{selectedSpot.viewsCount || 0}</strong> 人が閲覧</span>
               <span>💛 <strong>{selectedSpot.savedCount || 0}</strong> 人が行きたいリストに保存</span>
@@ -1512,7 +1499,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── 投稿モーダル（ワールド共有のデフォルト推奨） ── */}
+      {/* ── 投稿モーダル（ワールド・フレンド・マイマップの3選択肢） ── */}
       {pendingUploads.length > 0 && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
@@ -1529,7 +1516,7 @@ export default function WorldSnapApp() {
             </div>
 
             <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
-              🌐 反映先（初期選択でワールドマップに共有されます✨）
+              🌐 反映先（複数選択可能）
             </label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
               <div
@@ -1554,6 +1541,27 @@ export default function WorldSnapApp() {
               </div>
 
               <div
+                onClick={() => toggleScopeSelection('friends')}
+                style={{
+                  padding: '8px 10px',
+                  borderRadius: '10px',
+                  border: `2px solid ${selectedScopes.includes('friends') ? themeAccent : '#e2e8f0'}`,
+                  background: selectedScopes.includes('friends') ? '#f0f9ff' : '#ffffff',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: selectedScopes.includes('friends') ? themeAccent : '#0f172a' }}>
+                    {selectedScopes.includes('friends') ? '☑️' : '☐'} 👥 フレンドマップ
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#64748b' }}>相互フォローの友達同士だけで共有</div>
+                </div>
+              </div>
+
+              <div
                 onClick={() => toggleScopeSelection('my')}
                 style={{
                   padding: '8px 10px',
@@ -1568,9 +1576,9 @@ export default function WorldSnapApp() {
               >
                 <div>
                   <div style={{ fontSize: '12px', fontWeight: 'bold', color: selectedScopes.includes('my') ? themeAccent : '#0f172a' }}>
-                    {selectedScopes.includes('my') ? '☑️' : '☐'} 📍 マイマップ（自分の記録）
+                    {selectedScopes.includes('my') ? '☑️' : '☐'} 📍 マイマップ
                   </div>
-                  <div style={{ fontSize: '10px', color: '#64748b' }}>あなたの旅ログ・足跡としてマイページに保存</div>
+                  <div style={{ fontSize: '10px', color: '#64748b' }}>あなただけの旅ログ・足跡としてマイページに保存</div>
                 </div>
               </div>
             </div>
