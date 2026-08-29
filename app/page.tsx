@@ -112,9 +112,9 @@ export const COUNTRIES: Record<
       home: '홈', map: '지도', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
       view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체',
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
-      report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
+      report: '⚠️ 신고', block: '🚫 차断', delete: '🗑️ 삭제', edit: '✏️ 수정',
       visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 도시 / 지역 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
+      searchPlaceholder: '🔍 도시 / 지역 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈退', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
@@ -268,7 +268,7 @@ function getUserTitle(count: number) {
 }
 
 // ==========================================
-// 2. 写真と100%同一のCARTO Positron（Fastly直結・透かし完全ゼロ）
+// 2. Leaflet 白基調マップ（写真通りのデザイン・透かし完全ゼロ・APIキー不要）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -321,11 +321,17 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 写真と全く同一のCARTO Positronタイル（キー制限のないFastly CDN直結URL）
-        const cartoTileUrl =
+        // 写真通りの白ベースタイル（透かし文字一切なし・完全無料）
+        const baseTileUrl =
           mode === 'rain'
-            ? 'https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png'
-            : 'https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png';
+            ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+            : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+
+        // 写真通りのクリアな地名・境界線レイヤー（透かし文字一切なし）
+        const referenceTileUrl =
+          mode === 'rain'
+            ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}'
+            : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}';
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
@@ -390,17 +396,29 @@ const SafeMapComponent = dynamic(
             doubleClickZoom={false}
             zoomControl={false}
             preferCanvas={true}
-            style={{ width: '100%', height: '100%', background: '#e2e8f0' }}
+            style={{ width: '100%', height: '100%', background: '#f8fafc' }}
           >
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
             
+            {/* ① 白ベース地図（透かしなし） */}
             <TileLayer
-              url={cartoTileUrl}
-              attribution='&copy; CARTO'
-              maxNativeZoom={18}
+              url={baseTileUrl}
+              attribution='&copy; Esri, HERE, Garmin, OpenStreetMap contributors'
+              maxNativeZoom={16}
               maxZoom={19}
               keepBuffer={6}
+              updateWhenZooming={false}
+              updateWhenIdle={true}
+            />
+
+            {/* ② 地名・県境境界線レイヤー（透かしなし） */}
+            <TileLayer
+              url={referenceTileUrl}
+              maxNativeZoom={16}
+              maxZoom={19}
+              keepBuffer={6}
+              opacity={0.9}
               updateWhenZooming={false}
               updateWhenIdle={true}
             />
@@ -419,7 +437,7 @@ const SafeMapComponent = dynamic(
         );
       }
     ),
-  { ssr: false, loading: () => <div style={{ height: '100%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>🗺️ マップを読み込み中...</div> }
+  { ssr: false, loading: () => <div style={{ height: '100%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>🗺️ 白地図マップを準備中...</div> }
 );
 
 // ==========================================
