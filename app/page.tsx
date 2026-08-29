@@ -114,7 +114,7 @@ export const COUNTRIES: Record<
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
       report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
       visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 도시 / 지역 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
+      searchPlaceholder: '🔍 도시 / 지역 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈退', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
@@ -268,7 +268,7 @@ function getUserTitle(count: number) {
 }
 
 // ==========================================
-// 2. Leaflet タイルマップ（透かし一切なし・完全無料・白基調）
+// 2. Leaflet 白基調マップ（完全無料・透かし無し・超高速GPU描画）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -321,11 +321,11 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 透かし文字が一切入らないオープンタイル（標準OSM / ダーク）
-        const baseTileUrl =
+        // 元のお気に入り「純白・洗練デザイン」の無料オープンタイル（透かし文字一切なし）
+        const whiteTileUrl =
           mode === 'rain'
-            ? 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'
-            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+            ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
@@ -350,11 +350,13 @@ const SafeMapComponent = dynamic(
                 box-shadow: 0 4px 16px rgba(0,0,0,0.22);
                 padding: 4px 4px 14px 4px;
                 cursor: pointer;
+                will-change: transform;
                 transform: translateY(-50%) rotate(${rot}deg);
+                transition: transform 0.15s ease-out;
               ">
                 ${badgeHtml}
                 <div style="width: 100%; height: 38px; border-radius: 3px; overflow: hidden; background: #cbd5e1;">
-                  <img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="eager" />
+                  <img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" decoding="async" />
                 </div>
                 <div style="
                   position: absolute;
@@ -387,17 +389,20 @@ const SafeMapComponent = dynamic(
             dragging={true}
             doubleClickZoom={false}
             zoomControl={false}
+            preferCanvas={true}
             style={{ width: '100%', height: '100%', background: '#f8fafc' }}
           >
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
             
             <TileLayer
-              url={baseTileUrl}
-              attribution='&copy; OpenStreetMap contributors'
+              url={whiteTileUrl}
+              subdomains="abcd"
               maxNativeZoom={18}
               maxZoom={19}
-              keepBuffer={4}
+              keepBuffer={6}
+              updateWhenZooming={false}
+              updateWhenIdle={true}
             />
 
             {spots.map((spot) => (
@@ -414,7 +419,7 @@ const SafeMapComponent = dynamic(
         );
       }
     ),
-  { ssr: false, loading: () => <div style={{ height: '100%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>🗺️ マップを準備中...</div> }
+  { ssr: false, loading: () => <div style={{ height: '100%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>🗺️ 白地図マップを読み込み中...</div> }
 );
 
 // ==========================================
@@ -1226,7 +1231,7 @@ export default function WorldSnapApp() {
           ))}
         </div>
 
-        {/* ── マイページ（10刻み〜100、以降50刻みの称号システム） ── */}
+        {/* ── マイページ ── */}
         <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px' }}>
           <div style={{ background: '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -1256,7 +1261,6 @@ export default function WorldSnapApp() {
               </button>
             </div>
 
-            {/* 開拓統計 ＆ 承認リアクション統計 */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '6px', margin: '14px 0', textAlign: 'center' }}>
               <div style={{ background: '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{mySpots.length}</div>
@@ -1498,7 +1502,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── 投稿モーダル（ワールド・フレンド・マイマップの3選択肢） ── */}
+      {/* ── 投稿モーダル ── */}
       {pendingUploads.length > 0 && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
