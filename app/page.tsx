@@ -112,9 +112,9 @@ export const COUNTRIES: Record<
       home: '홈', map: '지도', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
       view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체',
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
-      report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
+      report: '⚠️ 신고', block: '🚫 차断', delete: '🗑️ 삭제', edit: '✏️ 수정',
       visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 도시 / 지역 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈退', logout: '🚪 로그아웃', close: '닫기'
+      searchPlaceholder: '🔍 도시 / 지역 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
@@ -321,12 +321,6 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 元のお気に入り「純白・洗練デザイン」の無料オープンタイル（透かし文字一切なし）
-        const whiteTileUrl =
-          mode === 'rain'
-            ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
-
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
           let badgeHtml = '';
@@ -377,45 +371,59 @@ const SafeMapComponent = dynamic(
         };
 
         return (
-          <MapContainer
-            center={center}
-            zoom={zoom}
-            minZoom={2}
-            maxZoom={18}
-            zoomSnap={0.5}
-            zoomDelta={1}
-            touchZoom={true}
-            scrollWheelZoom={true}
-            dragging={true}
-            doubleClickZoom={false}
-            zoomControl={false}
-            preferCanvas={true}
-            style={{ width: '100%', height: '100%', background: '#f8fafc' }}
-          >
-            <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
-            <MapEventHandler />
-            
-            <TileLayer
-              url={whiteTileUrl}
-              subdomains="abcd"
-              maxNativeZoom={18}
-              maxZoom={19}
-              keepBuffer={6}
-              updateWhenZooming={false}
-              updateWhenIdle={true}
-            />
-
-            {spots.map((spot) => (
-              <Marker
-                key={spot.id}
-                position={[spot.lat, spot.lon]}
-                icon={createMarkerIcon(spot)}
-                eventHandlers={{
-                  click: () => onSelectSpot(spot),
-                }}
+          <>
+            {/* 白基調マップフィルター（透かしなし・白トーン完全再現） */}
+            <style jsx global>{`
+              .white-map-tiles .leaflet-tile {
+                filter: grayscale(100%) brightness(108%) contrast(92%) !important;
+                -webkit-filter: grayscale(100%) brightness(108%) contrast(92%) !important;
+              }
+              .dark-map-tiles .leaflet-tile {
+                filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
+                -webkit-filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
+              }
+            `}</style>
+            <MapContainer
+              center={center}
+              zoom={zoom}
+              minZoom={2}
+              maxZoom={18}
+              zoomSnap={0.5}
+              zoomDelta={1}
+              touchZoom={true}
+              scrollWheelZoom={true}
+              dragging={true}
+              doubleClickZoom={false}
+              zoomControl={false}
+              preferCanvas={true}
+              style={{ width: '100%', height: '100%', background: '#f1f5f9' }}
+            >
+              <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
+              <MapEventHandler />
+              
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                className={mode === 'rain' ? 'dark-map-tiles' : 'white-map-tiles'}
+                attribution='&copy; OpenStreetMap'
+                maxNativeZoom={18}
+                maxZoom={19}
+                keepBuffer={6}
+                updateWhenZooming={false}
+                updateWhenIdle={true}
               />
-            ))}
-          </MapContainer>
+
+              {spots.map((spot) => (
+                <Marker
+                  key={spot.id}
+                  position={[spot.lat, spot.lon]}
+                  icon={createMarkerIcon(spot)}
+                  eventHandlers={{
+                    click: () => onSelectSpot(spot),
+                  }}
+                />
+              ))}
+            </MapContainer>
+          </>
         );
       }
     ),
@@ -1231,7 +1239,7 @@ export default function WorldSnapApp() {
           ))}
         </div>
 
-        {/* ── マイページ ── */}
+        {/* ── マイページ（10刻み〜100、以降50刻みの称号システム） ── */}
         <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px' }}>
           <div style={{ background: '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -1261,6 +1269,7 @@ export default function WorldSnapApp() {
               </button>
             </div>
 
+            {/* 開拓統計 ＆ 承認リアクション統計 */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '6px', margin: '14px 0', textAlign: 'center' }}>
               <div style={{ background: '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{mySpots.length}</div>
@@ -1460,7 +1469,7 @@ export default function WorldSnapApp() {
                 fontSize: '13px',
                 borderRadius: '12px',
                 textDecoration: 'none',
-                boxShadow: '0 4px 14px rgba(37,99,235,0.25)',
+                boxShadow: '0 4px 14px rgba(37,99,255,0.25)',
                 marginBottom: '20px',
               }}
             >
