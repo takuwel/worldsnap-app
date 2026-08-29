@@ -18,6 +18,20 @@ export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
 export type TabType = 'map' | 'home' | 'ranking' | 'profile';
 
+export interface CommentItem {
+  id: string;
+  userName: string;
+  userAvatar?: string;
+  text: string;
+  createdAt: string;
+}
+
+export interface Reactions {
+  hot: number;
+  wantToGo: number;
+  beautiful: number;
+}
+
 export interface Spot {
   id: string;
   userId: string;
@@ -41,6 +55,8 @@ export interface Spot {
   category: ViewCategory;
   scopes: DisplayScope[];
   tags?: string[];
+  comments?: CommentItem[];
+  reactions?: Reactions;
   createdAt: string;
 }
 
@@ -175,7 +191,10 @@ const INITIAL_SPOTS: Spot[] = [
     fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: '京都',
-    category: 'gourmet', scopes: ['world', 'my'], tags: ['京都スイーツ', '絶景カフェ'], createdAt: '2026/08/10',
+    category: 'gourmet', scopes: ['world', 'my'], tags: ['京都スイーツ', '絶景カフェ'],
+    comments: [{ id: 'c1', userName: 'Yuki_Traveler', userAvatar: '🌸', text: 'ここめっちゃ美味しかったです！', createdAt: '2026/08/11' }],
+    reactions: { hot: 12, wantToGo: 25, beautiful: 40 },
+    createdAt: '2026/08/10',
   },
   {
     id: 'spot-tokyo-1', userId: 'bot-tokyo-guide', userName: '東京おすすめガイド', isOfficial: true, isFeatured: true,
@@ -186,18 +205,10 @@ const INITIAL_SPOTS: Spot[] = [
     fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 35.6595, lon: 139.7005, countryCode: 'JP', cityName: '東京',
-    category: 'view', scopes: ['world', 'my'], tags: ['東京夜景', '渋谷スカイ'], createdAt: '2026/08/12',
-  },
-  {
-    id: 'spot-ch-1', userId: 'bot-world-photo', userName: 'Worldフォト公式', isOfficial: true, isFeatured: true,
-    viewsCount: 219, savedCount: 65,
-    title: 'マッターホルン 黄金の朝焼け',
-    description: '早朝のツェルマットから眺める黄金色の山頂。展望台へは始発電車がおすすめです🏔️ #スイス絶景 #マッターホルン',
-    fileName: 'matterhorn.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=900&auto=format&fit=crop',
-    thumbUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=120&h=120&auto=format&fit=crop',
-    fileType: 'image', lat: 45.9765, lon: 7.7491, countryCode: 'CH', cityName: 'ツェルマット',
-    category: 'view', scopes: ['world', 'my'], tags: ['スイス絶景', 'マッターホルン'], createdAt: '2026/08/14',
+    category: 'view', scopes: ['world', 'my'], tags: ['東京夜景', '渋谷スカイ'],
+    comments: [],
+    reactions: { hot: 30, wantToGo: 50, beautiful: 85 },
+    createdAt: '2026/08/12',
   },
 ];
 
@@ -288,7 +299,7 @@ function getUserTitle(count: number) {
 }
 
 // ==========================================
-// 2. Leaflet 白基調マップ（高速レンダリング）
+// 2. Leaflet 白基調マップ
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -496,6 +507,9 @@ export default function WorldSnapApp() {
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
 
+  // コメント入力用
+  const [newCommentText, setNewCommentText] = useState<string>('');
+
   // 投稿モーダル用
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
@@ -570,6 +584,8 @@ export default function WorldSnapApp() {
           category: d.category,
           scopes: d.scopes || ['world'],
           tags: d.tags || extractHashtags(d.description || ''),
+          comments: d.comments || [],
+          reactions: d.reactions || { hot: 0, wantToGo: 0, beautiful: 0 },
           createdAt: new Date(d.created_at).toLocaleDateString(),
         }));
         
@@ -618,6 +634,8 @@ export default function WorldSnapApp() {
             category: newSpotData.category,
             scopes: newSpotData.scopes || ['world'],
             tags: newSpotData.tags || extractHashtags(newSpotData.description || ''),
+            comments: newSpotData.comments || [],
+            reactions: newSpotData.reactions || { hot: 0, wantToGo: 0, beautiful: 0 },
             createdAt: new Date(newSpotData.created_at).toLocaleDateString(),
           };
           setSpots((prev) => [formattedSpot, ...prev.filter((s) => s.id !== formattedSpot.id)]);
@@ -749,6 +767,51 @@ export default function WorldSnapApp() {
       setUserAvatar(objectUrl);
       showToast('🖼️ プロフィール写真を変更しました！');
     }
+  };
+
+  const handleAddComment = (spotId: string) => {
+    if (!newCommentText.trim()) return;
+    const newComment: CommentItem = {
+      id: 'com-' + Date.now(),
+      userName: userName,
+      userAvatar: userAvatar || '',
+      text: newCommentText.trim(),
+      createdAt: new Date().toLocaleDateString(),
+    };
+
+    setSpots((prev) =>
+      prev.map((s) => {
+        if (s.id === spotId) {
+          const updatedComments = [...(s.comments || []), newComment];
+          const target = { ...s, comments: updatedComments };
+          if (selectedSpot && selectedSpot.id === spotId) {
+            setSelectedSpot(target);
+          }
+          return target;
+        }
+        return s;
+      })
+    );
+    setNewCommentText('');
+    showToast('💬 コメントを投稿しました！');
+  };
+
+  const handleAddReaction = (spotId: string, type: 'hot' | 'wantToGo' | 'beautiful') => {
+    setSpots((prev) =>
+      prev.map((s) => {
+        if (s.id === spotId) {
+          const currentReactions = s.reactions || { hot: 0, wantToGo: 0, beautiful: 0 };
+          const updatedReactions = { ...currentReactions, [type]: currentReactions[type] + 1 };
+          const target = { ...s, reactions: updatedReactions };
+          if (selectedSpot && selectedSpot.id === spotId) {
+            setSelectedSpot(target);
+          }
+          return target;
+        }
+        return s;
+      })
+    );
+    showToast('✨ リアクションを追加しました！');
   };
 
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -892,6 +955,8 @@ export default function WorldSnapApp() {
           category: postCategory,
           scopes: selectedScopes,
           tags: extractedTags,
+          comments: [],
+          reactions: { hot: 0, wantToGo: 0, beautiful: 0 },
         };
 
         await supabase.from('spots').insert([newSpotData]);
@@ -921,6 +986,8 @@ export default function WorldSnapApp() {
       category: postCategory,
       scopes: selectedScopes,
       tags: extractedTags,
+      comments: [],
+      reactions: { hot: 0, wantToGo: 0, beautiful: 0 },
       createdAt: new Date().toLocaleDateString(),
     };
 
@@ -1327,30 +1394,65 @@ export default function WorldSnapApp() {
           </div>
         </div>
 
-        {/* ── フィード ── */}
-        <div style={{ display: currentTab === 'home' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', gap: '10px' }}>
+        {/* ── ホーム / フィード（リアクション・コメント付き） ── */}
+        <div style={{ display: currentTab === 'home' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', gap: '12px' }}>
           {spots.map((spot) => (
             <div
               key={spot.id}
-              onClick={() => setSelectedSpot(spot)}
-              style={{ background: '#ffffff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.06)', cursor: 'pointer' }}
+              style={{ background: '#ffffff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}
             >
-              <div style={{ height: '200px', background: '#000' }}>
+              <div style={{ padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: spot.userAvatar ? `url(${spot.userAvatar}) center/cover` : themeAccent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px' }}>
+                    {!spot.userAvatar && '👤'}
+                  </div>
+                  <span style={{ fontSize: '12px', fontWeight: 'bold' }}>{spot.userName}</span>
+                </div>
+                <span style={{ fontSize: '10px', color: '#94a3b8' }}>{COUNTRIES[spot.countryCode]?.flag} {spot.cityName} · {spot.createdAt}</span>
+              </div>
+
+              <div onClick={() => setSelectedSpot(spot)} style={{ height: '220px', background: '#000', cursor: 'pointer' }}>
                 {spot.fileType === 'video' ? (
                   <video src={spot.fileUrl} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
                   <img src={spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                 )}
               </div>
+
               <div style={{ padding: '12px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 'bold', color: themeAccent }}>📍 {COUNTRIES[spot.countryCode]?.flag} {spot.title}</span>
-                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>{spot.createdAt}</span>
+                <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '4px' }}>{spot.title}</div>
+                <p style={{ margin: '0 0 10px 0', fontSize: '12px', color: '#475569', lineHeight: '1.4' }}>{spot.description}</p>
+
+                {/* スタンプリアクションボタン */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                  <button
+                    onClick={() => handleAddReaction(spot.id, 'hot')}
+                    style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 'bold', color: '#dc2626', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  >
+                    <span>🔥 熱い！</span>
+                    <span>{spot.reactions?.hot || 0}</span>
+                  </button>
+                  <button
+                    onClick={() => handleAddReaction(spot.id, 'wantToGo')}
+                    style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 'bold', color: '#ca8a04', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  >
+                    <span>☕ 行きたい</span>
+                    <span>{spot.reactions?.wantToGo || 0}</span>
+                  </button>
+                  <button
+                    onClick={() => handleAddReaction(spot.id, 'beautiful')}
+                    style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 'bold', color: '#16a34a', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  >
+                    <span>✨ きれい！</span>
+                    <span>{spot.reactions?.beautiful || 0}</span>
+                  </button>
                 </div>
-                <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#64748b', lineHeight: '1.4' }}>{spot.description}</p>
-                <div style={{ marginTop: '8px', display: 'flex', gap: '12px', fontSize: '11px', color: '#94a3b8' }}>
-                  <span>👀 {spot.viewsCount || 0} 回閲覧</span>
-                  <span>❤️ {spot.savedCount || 0} 人が保存</span>
+
+                <div
+                  onClick={() => setSelectedSpot(spot)}
+                  style={{ fontSize: '11px', color: themeAccent, fontWeight: 'bold', cursor: 'pointer', borderTop: '1px solid #f1f5f9', paddingTop: '8px' }}
+                >
+                  💬 コメントを見る・書く ({spot.comments?.length || 0}件)
                 </div>
               </div>
             </div>
@@ -1600,6 +1702,31 @@ export default function WorldSnapApp() {
 
             <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', margin: '14px 0 10px 0' }}>{selectedSpot.description}</p>
 
+            {/* スタンプリアクションボタン */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+              <button
+                onClick={() => handleAddReaction(selectedSpot.id, 'hot')}
+                style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '20px', padding: '6px 14px', fontSize: '12px', fontWeight: 'bold', color: '#dc2626', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+              >
+                <span>🔥 熱い！</span>
+                <span>{selectedSpot.reactions?.hot || 0}</span>
+              </button>
+              <button
+                onClick={() => handleAddReaction(selectedSpot.id, 'wantToGo')}
+                style={{ background: '#fefce8', border: '1px solid #fef08a', borderRadius: '20px', padding: '6px 14px', fontSize: '12px', fontWeight: 'bold', color: '#ca8a04', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+              >
+                <span>☕ 行きたい</span>
+                <span>{selectedSpot.reactions?.wantToGo || 0}</span>
+              </button>
+              <button
+                onClick={() => handleAddReaction(selectedSpot.id, 'beautiful')}
+                style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '20px', padding: '6px 14px', fontSize: '12px', fontWeight: 'bold', color: '#16a34a', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+              >
+                <span>✨ きれい！</span>
+                <span>{selectedSpot.reactions?.beautiful || 0}</span>
+              </button>
+            </div>
+
             {selectedSpot.tags && selectedSpot.tags.length > 0 && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
                 {selectedSpot.tags.map((tag) => (
@@ -1617,6 +1744,44 @@ export default function WorldSnapApp() {
                 ))}
               </div>
             )}
+
+            {/* コメントセクション */}
+            <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginTop: '16px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 10px 0' }}>💬 コメント ({selectedSpot.comments?.length || 0})</h3>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '14px' }}>
+                {selectedSpot.comments && selectedSpot.comments.length > 0 ? (
+                  selectedSpot.comments.map((com) => (
+                    <div key={com.id} style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '10px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a' }}>{com.userName}</span>
+                        <span style={{ fontSize: '10px', color: '#94a3b8' }}>{com.createdAt}</span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '12px', color: '#334155' }}>{com.text}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div style={{ fontSize: '12px', color: '#94a3b8' }}>まだコメントはありません。最初のコメントを投稿してみよう！</div>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  placeholder="コメントを入力..."
+                  value={newCommentText}
+                  onChange={(e) => setNewCommentText(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleAddComment(selectedSpot.id); }}
+                  style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+                />
+                <button
+                  onClick={() => handleAddComment(selectedSpot.id)}
+                  style={{ padding: '8px 16px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+                >
+                  送信
+                </button>
+              </div>
+            </div>
 
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${selectedSpot.lat},${selectedSpot.lon}`}
@@ -1636,7 +1801,7 @@ export default function WorldSnapApp() {
                 borderRadius: '12px',
                 textDecoration: 'none',
                 boxShadow: '0 4px 14px rgba(37,99,235,0.25)',
-                marginBottom: '20px',
+                margin: '20px 0',
               }}
             >
               {t.openGoogleMaps}
