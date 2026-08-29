@@ -71,7 +71,7 @@ export const COUNTRIES: Record<
     name: '日本 (Japan)', flag: '🇯🇵', lang: 'ja', lat: 36.2048, lon: 138.2529, zoom: 5,
     dict: {
       step1Title: 'Step 1: 国籍・メインの国を選択',
-      step1Desc: '選択した国に応じて、アプリ全体の言語と初期マップがローカライズされます。',
+      step1Desc: '選択した国に応じて、地図の地名（日本語・漢字表記）とアプリ全体の言語がローカライズされます。',
       step2Title: 'Step 2: プロフィール作成', step3Title: 'Step 3: 利用規約 (EULA) の確認',
       next: '次へ進む', back: '戻る', startApp: '🚀 WorldSnap をはじめる',
       eulaAgree: '利用規約およびコミュニティガイドラインに同意する',
@@ -90,7 +90,7 @@ export const COUNTRIES: Record<
   CH: {
     name: 'Schweiz (スイス)', flag: '🇨🇭', lang: 'de', lat: 46.8182, lon: 8.2275, zoom: 8,
     dict: {
-      step1Title: 'Schritt 1: Land wählen', step1Desc: 'Die App-Sprache wird auf Deutsch eingestellt.',
+      step1Title: 'Schritt 1: Land wählen', step1Desc: 'Kartennamen und UI werden auf Deutsch angezeigt.',
       step2Title: 'Schritt 2: Profil erstellen', step3Title: 'Schritt 3: Nutzungsbedingungen (EULA)',
       next: 'Weiter', back: 'Zurück', startApp: '🚀 WorldSnap Starten',
       eulaAgree: 'Ich stimme den Nutzungsbedingungen zu', termsTitle: '📜 Nutzungsbedingungen (EULA)',
@@ -105,7 +105,7 @@ export const COUNTRIES: Record<
   KR: {
     name: '대한민국 (韓国)', flag: '🇰🇷', lang: 'ko', lat: 35.9078, lon: 127.7669, zoom: 7,
     dict: {
-      step1Title: 'Step 1: 국적 선택', step1Desc: '선택한 국가에 맞춰 앱 언어가 한국어로 표시됩니다.',
+      step1Title: 'Step 1: 국적 선택', step1Desc: '지도의 지명과 앱 언어가 한국어로 표시됩니다.',
       step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의',
       next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기',
       eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
@@ -120,7 +120,7 @@ export const COUNTRIES: Record<
   US: {
     name: 'USA (アメリカ)', flag: '🇺🇸', lang: 'en', lat: 37.0902, lon: -95.7129, zoom: 4,
     dict: {
-      step1Title: 'Step 1: Select Nationality', step1Desc: 'The app UI and map view will be localized to English.',
+      step1Title: 'Step 1: Select Nationality', step1Desc: 'Map labels and UI will be displayed in English.',
       step2Title: 'Step 2: Create Profile', step3Title: 'Step 3: Terms of Service (EULA)',
       next: 'Next', back: 'Back', startApp: '🚀 Start WorldSnap',
       eulaAgree: 'I agree to the Terms of Service', termsTitle: '📜 Terms of Service (EULA)',
@@ -135,7 +135,7 @@ export const COUNTRIES: Record<
   FR: {
     name: 'France (フランス)', flag: '🇫🇷', lang: 'fr', lat: 46.2276, lon: 2.2137, zoom: 6,
     dict: {
-      step1Title: 'Étape 1 : Pays', step1Desc: 'L’interface sera traduite en français.',
+      step1Title: 'Étape 1 : Pays', step1Desc: 'Les noms de lieux et l’interface seront traduits en français.',
       step2Title: 'Étape 2 : Profil', step3Title: 'Étape 3 : Conditions',
       next: 'Suivant', back: 'Retour', startApp: '🚀 Démarrer WorldSnap',
       eulaAgree: 'J’accepte les conditions', termsTitle: '📜 Conditions (EULA)',
@@ -158,7 +158,7 @@ const INITIAL_SPOTS: Spot[] = [
     fileName: 'matcha.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=120&h=120&auto=format&fit=crop',
-    fileType: 'image', lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: 'Kyoto',
+    fileType: 'image', lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: '京都',
     category: 'gourmet', scopes: ['world', 'my'], createdAt: '2026/08/10',
   },
   {
@@ -169,7 +169,7 @@ const INITIAL_SPOTS: Spot[] = [
     fileName: 'shibuya.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop',
-    fileType: 'image', lat: 35.6595, lon: 139.7005, countryCode: 'JP', cityName: 'Tokyo',
+    fileType: 'image', lat: 35.6595, lon: 139.7005, countryCode: 'JP', cityName: '東京',
     category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/12',
   },
   {
@@ -180,7 +180,7 @@ const INITIAL_SPOTS: Spot[] = [
     fileName: 'matterhorn.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=120&h=120&auto=format&fit=crop',
-    fileType: 'image', lat: 45.9765, lon: 7.7491, countryCode: 'CH', cityName: 'Zermatt',
+    fileType: 'image', lat: 45.9765, lon: 7.7491, countryCode: 'CH', cityName: 'ツェルマット',
     category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/14',
   },
 ];
@@ -247,7 +247,6 @@ function generateVideoThumbnail(file: File): Promise<string> {
   });
 }
 
-// 投稿数に応じた称号システム（10刻み〜100、以降50刻み）
 function getUserTitle(count: number) {
   if (count >= 300) return { title: '🪐 宇宙級の旅人', color: '#ec4899' };
   if (count >= 250) return { title: '🌏 ワールドレジェンド', color: '#d946ef' };
@@ -268,7 +267,7 @@ function getUserTitle(count: number) {
 }
 
 // ==========================================
-// 2. Leaflet 白基調マップ（写真通りのデザイン・透かし完全ゼロ・APIキー不要）
+// 2. Leaflet 白基調マップ（母国語・漢字ローカライズ対応）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -280,6 +279,7 @@ const SafeMapComponent = dynamic(
         targetCenter,
         targetZoom,
         mode,
+        userCountry,
         onMoveEnd,
         onSelectSpot,
         onDoubleTap,
@@ -290,6 +290,7 @@ const SafeMapComponent = dynamic(
         targetCenter: [number, number] | null;
         targetZoom: number | null;
         mode: ViewCategory;
+        userCountry: string;
         onMoveEnd: (center: [number, number], zoom: number) => void;
         onSelectSpot: (s: Spot) => void;
         onDoubleTap: (lat: number, lon: number) => void;
@@ -321,17 +322,15 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 写真通りの白ベースタイル（透かし文字一切なし・完全無料）
-        const baseTileUrl =
-          mode === 'rain'
-            ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
-            : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
-
-        // 写真通りのクリアな地名・境界線レイヤー（透かし文字一切なし）
-        const referenceTileUrl =
-          mode === 'rain'
-            ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}'
-            : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}';
+        const getLocalizedTileUrl = () => {
+          if (userCountry === 'JP') {
+            return 'https://tile.openstreetmap.jp/{z}/{x}/{y}.png';
+          }
+          if (mode === 'rain') {
+            return 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png';
+          }
+          return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        };
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
@@ -383,61 +382,63 @@ const SafeMapComponent = dynamic(
         };
 
         return (
-          <MapContainer
-            center={center}
-            zoom={zoom}
-            minZoom={2}
-            maxZoom={18}
-            zoomSnap={0.5}
-            zoomDelta={1}
-            touchZoom={true}
-            scrollWheelZoom={true}
-            dragging={true}
-            doubleClickZoom={false}
-            zoomControl={false}
-            preferCanvas={true}
-            style={{ width: '100%', height: '100%', background: '#f8fafc' }}
-          >
-            <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
-            <MapEventHandler />
-            
-            {/* ① 白ベース地図（透かしなし） */}
-            <TileLayer
-              url={baseTileUrl}
-              attribution='&copy; Esri, HERE, Garmin, OpenStreetMap contributors'
-              maxNativeZoom={16}
-              maxZoom={19}
-              keepBuffer={6}
-              updateWhenZooming={false}
-              updateWhenIdle={true}
-            />
-
-            {/* ② 地名・県境境界線レイヤー（透かしなし） */}
-            <TileLayer
-              url={referenceTileUrl}
-              maxNativeZoom={16}
-              maxZoom={19}
-              keepBuffer={6}
-              opacity={0.9}
-              updateWhenZooming={false}
-              updateWhenIdle={true}
-            />
-
-            {spots.map((spot) => (
-              <Marker
-                key={spot.id}
-                position={[spot.lat, spot.lon]}
-                icon={createMarkerIcon(spot)}
-                eventHandlers={{
-                  click: () => onSelectSpot(spot),
-                }}
+          <>
+            <style jsx global>{`
+              .white-map-jp .leaflet-tile {
+                filter: grayscale(88%) brightness(106%) contrast(96%) !important;
+                -webkit-filter: grayscale(88%) brightness(106%) contrast(96%) !important;
+              }
+              .dark-map-jp .leaflet-tile {
+                filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
+                -webkit-filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%) !important;
+              }
+            `}</style>
+            <MapContainer
+              center={center}
+              zoom={zoom}
+              minZoom={2}
+              maxZoom={18}
+              zoomSnap={0.5}
+              zoomDelta={1}
+              touchZoom={true}
+              scrollWheelZoom={true}
+              dragging={true}
+              doubleClickZoom={false}
+              zoomControl={false}
+              preferCanvas={true}
+              style={{ width: '100%', height: '100%', background: '#f8fafc' }}
+            >
+              <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
+              <MapEventHandler />
+              
+              <TileLayer
+                key={`${userCountry}-${mode}`}
+                url={getLocalizedTileUrl()}
+                className={mode === 'rain' ? 'dark-map-jp' : 'white-map-jp'}
+                attribution='&copy; OpenStreetMap Japan contributors'
+                maxNativeZoom={18}
+                maxZoom={19}
+                keepBuffer={6}
+                updateWhenZooming={false}
+                updateWhenIdle={true}
               />
-            ))}
-          </MapContainer>
+
+              {spots.map((spot) => (
+                <Marker
+                  key={spot.id}
+                  position={[spot.lat, spot.lon]}
+                  icon={createMarkerIcon(spot)}
+                  eventHandlers={{
+                    click: () => onSelectSpot(spot),
+                  }}
+                />
+              ))}
+            </MapContainer>
+          </>
         );
       }
     ),
-  { ssr: false, loading: () => <div style={{ height: '100%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>🗺️ 白地図マップを準備中...</div> }
+  { ssr: false, loading: () => <div style={{ height: '100%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>🗺️ 日本語マップを読み込み中...</div> }
 );
 
 // ==========================================
@@ -460,6 +461,9 @@ export default function WorldSnapApp() {
   
   const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
   const [isSearchingLocation, setIsSearchingLocation] = useState<boolean>(false);
+
+  // 広告バナー表示フラグ
+  const [isAdVisible, setIsAdVisible] = useState<boolean>(true);
 
   const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
 
@@ -1168,6 +1172,7 @@ export default function WorldSnapApp() {
               targetCenter={targetCenter}
               targetZoom={targetZoom}
               mode={viewMode}
+              userCountry={userCountry}
               onMoveEnd={handleMapMoveEnd}
               onSelectSpot={setSelectedSpot}
               onDoubleTap={handleMapDoubleTap}
@@ -1190,6 +1195,24 @@ export default function WorldSnapApp() {
               </button>
             </div>
           </div>
+
+          {/* ── マップ下部 広告バナースペース ── */}
+          {isAdVisible && (
+            <div style={{ background: '#f1f5f9', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '44px', zIndex: 440 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '36px', background: '#ffffff', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
+                <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 'bold' }}>
+                  📢 <span style={{ color: themeAccent }}>WorldSnap PR</span>: 旅の思い出を高画質でシェアしよう！
+                </span>
+              </div>
+              <button
+                onClick={() => setIsAdVisible(false)}
+                style={{ position: 'absolute', right: '12px', background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '14px', cursor: 'pointer', padding: '4px' }}
+                title="広告を閉じる"
+              >
+                ✕
+              </button>
+            </div>
+          )}
 
           <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', zIndex: 450 }}>
             <div>
