@@ -267,7 +267,7 @@ function getUserTitle(count: number) {
 }
 
 // ==========================================
-// 2. Leaflet 白基調マップ（写真と同一のシンプル白デザイン ＆ 日本語漢字表記）
+// 2. Leaflet 滑らかアニメーション＆高速レンダリング
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -301,7 +301,11 @@ const SafeMapComponent = dynamic(
           const map = useMap();
           useEffect(() => {
             if (targetCenter && targetZoom) {
-              map.flyTo(targetCenter, targetZoom, { duration: 0.8, easeLinearity: 0.25 });
+              map.flyTo(targetCenter, targetZoom, {
+                duration: 0.75,
+                easeLinearity: 0.2,
+                animate: true,
+              });
             }
           }, [targetCenter, targetZoom, map]);
           return null;
@@ -320,13 +324,11 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // 写真と完全一致する白背景＆薄グレー海（ごちゃごちゃした道路線がないクリーンタイル）
         const baseTileUrl =
           mode === 'rain'
             ? 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
             : 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 
-        // 日本語・漢字対応のクリーンな地名ラベル（透かし文字一切なし）
         const labelTileUrl =
           mode === 'rain'
             ? 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}'
@@ -356,8 +358,8 @@ const SafeMapComponent = dynamic(
                 padding: 4px 4px 14px 4px;
                 cursor: pointer;
                 will-change: transform;
-                transform: translateY(-50%) rotate(${rot}deg);
-                transition: transform 0.15s ease-out;
+                transform: translateY(-50%) rotate(${rot}deg) translateZ(0);
+                transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
               ">
                 ${badgeHtml}
                 <div style="width: 100%; height: 38px; border-radius: 3px; overflow: hidden; background: #cbd5e1;">
@@ -389,9 +391,12 @@ const SafeMapComponent = dynamic(
             maxZoom={18}
             zoomSnap={0.5}
             zoomDelta={1}
+            wheelPxPerZoomLevel={120}
             touchZoom={true}
             scrollWheelZoom={true}
             dragging={true}
+            inertia={true}
+            inertiaDeceleration={3000}
             doubleClickZoom={false}
             zoomControl={false}
             preferCanvas={true}
@@ -400,23 +405,21 @@ const SafeMapComponent = dynamic(
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
             
-            {/* ① 写真通りのシンプルな白マップベース */}
             <TileLayer
               url={baseTileUrl}
               attribution='&copy; WorldSnap'
               maxNativeZoom={16}
               maxZoom={19}
-              keepBuffer={6}
+              keepBuffer={8}
               updateWhenZooming={false}
               updateWhenIdle={true}
             />
 
-            {/* ② すっきりした日本語地名ラベル（透かし・余計な線なし） */}
             <TileLayer
               url={labelTileUrl}
               maxNativeZoom={16}
               maxZoom={19}
-              keepBuffer={6}
+              keepBuffer={8}
               opacity={0.85}
               updateWhenZooming={false}
               updateWhenIdle={true}
@@ -505,7 +508,11 @@ export default function WorldSnapApp() {
   const [inputFriendCode, setInputFriendCode] = useState('');
 
   const exportRef = useRef<HTMLDivElement>(null);
-  const avatarInputRef = useRef<HTMLInputElement>(null);
+  
+  // プロフィール画像アップロード用 Ref
+  const profileAvatarInputRef = useRef<HTMLInputElement>(null);
+  const onboardingAvatarInputRef = useRef<HTMLInputElement>(null);
+
   const t = currentConfig.dict;
 
   const showToast = (msg: string) => {
@@ -659,12 +666,13 @@ export default function WorldSnapApp() {
     showToast(`🌍 ${target.name} へようこそ！`);
   };
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // プロフィール画像選択ハンドラ
+  const handleAvatarFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const url = URL.createObjectURL(file);
-      setUserAvatar(url);
-      showToast('🖼️ アイコン画像を変更しました！');
+      const objectUrl = URL.createObjectURL(file);
+      setUserAvatar(objectUrl);
+      showToast('🖼️ プロフィール写真を変更しました！');
     }
   };
 
@@ -930,6 +938,22 @@ export default function WorldSnapApp() {
         </div>
       )}
 
+      {/* 隠しアバター画像アップロードInput */}
+      <input
+        type="file"
+        ref={profileAvatarInputRef}
+        accept="image/*"
+        onChange={handleAvatarFileSelect}
+        style={{ display: 'none' }}
+      />
+      <input
+        type="file"
+        ref={onboardingAvatarInputRef}
+        accept="image/*"
+        onChange={handleAvatarFileSelect}
+        style={{ display: 'none' }}
+      />
+
       {/* ── 初回オープニング（オンボーディング） ── */}
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
@@ -980,7 +1004,7 @@ export default function WorldSnapApp() {
                 <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t.step2Title}</h3>
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
                   <div
-                    onClick={() => avatarInputRef.current?.click()}
+                    onClick={() => onboardingAvatarInputRef.current?.click()}
                     style={{
                       width: '76px', height: '76px', borderRadius: '50%',
                       background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
@@ -993,7 +1017,6 @@ export default function WorldSnapApp() {
                       📷 変更
                     </div>
                   </div>
-                  <input type="file" ref={avatarInputRef} accept="image/*" onChange={handleAvatarChange} style={{ display: 'none' }} />
                 </div>
 
                 <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>ユーザー名</label>
@@ -1274,16 +1297,20 @@ export default function WorldSnapApp() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <div
-                  onClick={() => setIsEditProfileOpen(true)}
+                  onClick={() => profileAvatarInputRef.current?.click()}
                   style={{
                     width: '56px', height: '56px', borderRadius: '50%',
                     background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
                     border: `3px solid ${userRank.color}`,
                     color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', position: 'relative', overflow: 'hidden'
                   }}
+                  title="クリックしてアバター画像を変更"
                 >
                   {!userAvatar && '👤'}
+                  <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '8px', color: '#fff', textAlign: 'center', padding: '1px 0' }}>
+                    変更
+                  </div>
                 </div>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -1833,13 +1860,14 @@ export default function WorldSnapApp() {
 
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
               <div
-                onClick={() => avatarInputRef.current?.click()}
+                onClick={() => profileAvatarInputRef.current?.click()}
                 style={{
                   width: '64px', height: '64px', borderRadius: '50%',
                   background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
                   color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: 'pointer', position: 'relative', overflow: 'hidden'
                 }}
+                title="クリックしてアバター画像を変更"
               >
                 {!userAvatar && <span>👤</span>}
                 <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '9px', color: '#fff', textAlign: 'center', padding: '1px 0' }}>
