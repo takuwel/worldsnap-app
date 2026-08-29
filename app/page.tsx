@@ -16,7 +16,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
-export type TabType = 'map' | 'home' | 'profile';
+export type TabType = 'map' | 'home' | 'ranking' | 'profile';
 
 export interface Spot {
   id: string;
@@ -40,6 +40,7 @@ export interface Spot {
   cityName: string;
   category: ViewCategory;
   scopes: DisplayScope[];
+  tags?: string[];
   createdAt: string;
 }
 
@@ -76,14 +77,14 @@ export const COUNTRIES: Record<
       next: '次へ進む', back: '戻る', startApp: '🚀 WorldSnap をはじめる',
       eulaAgree: '利用規約およびコミュニティガイドラインに同意する',
       termsTitle: '📜 WorldSnap 利用規約 (EULA)',
-      home: 'ホーム', map: 'マップ', profile: 'マイページ',
+      home: 'ホーム', map: 'マップ', ranking: 'ランキング', profile: 'マイページ',
       addPhoto: '写真 / 動画を追加', exportMap: 'マップ保存',
       view: 'View', gourmet: 'グルメ', rain: '雨の日',
       myMap: 'マイマップ', friends: 'フレンド', world: 'ワールド',
       openGoogleMaps: '🧭 Googleマップで開く', saveSpot: '❤️ 行きたい', saved: '❤️ 保存済み',
       report: '⚠️ 通報', block: '🚫 ブロック', delete: '🗑️ 削除', edit: '✏️ 編集',
       visited: '訪問国', countriesUnit: 'カ国', posts: '投稿', friendCode: 'フレンドコード',
-      searchPlaceholder: '🔍 地域・都市を検索（例: 京都、渋谷、パリ）',
+      searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
       cacheClear: '🧹 地図キャッシュ削除', deleteAccount: '⚠️ アカウントの削除 (退会処理)', logout: '🚪 ログアウト', close: '閉じる'
     },
   },
@@ -94,12 +95,12 @@ export const COUNTRIES: Record<
       step2Title: 'Schritt 2: Profil erstellen', step3Title: 'Schritt 3: Nutzungsbedingungen (EULA)',
       next: 'Weiter', back: 'Zurück', startApp: '🚀 WorldSnap Starten',
       eulaAgree: 'Ich stimme den Nutzungsbedingungen zu', termsTitle: '📜 Nutzungsbedingungen (EULA)',
-      home: 'Start', map: 'Karte', profile: 'Profil', addPhoto: 'Medien hinzufügen', exportMap: 'Speichern',
+      home: 'Start', map: 'Karte', ranking: 'Ranking', profile: 'Profil', addPhoto: 'Medien hinzufügen', exportMap: 'Speichern',
       view: 'Aussicht', gourmet: 'Gourmet', rain: 'Regen', myMap: 'Meine Karte', friends: 'Freunde', world: 'Weltweit',
       openGoogleMaps: '🧭 In Google Maps öffnen', saveSpot: '❤️ Merken', saved: '❤️ Gemerkt',
       report: '⚠️ Melden', block: '🚫 Blockieren', delete: '🗑️ Löschen', edit: '✏️ Bearbeiten',
       visited: 'Besucht', countriesUnit: 'Länder', posts: 'Beiträge', friendCode: 'Freundescode',
-      searchPlaceholder: '🔍 Ort / Stadt suchen', cacheClear: '🧹 Cache leeren', deleteAccount: '⚠️ Konto löschen', logout: '🚪 Abmelden', close: 'Schließen'
+      searchPlaceholder: '🔍 Ort / #Tag suchen', cacheClear: '🧹 Cache leeren', deleteAccount: '⚠️ Konto löschen', logout: '🚪 Abmelden', close: 'Schließen'
     },
   },
   KR: {
@@ -109,12 +110,12 @@ export const COUNTRIES: Record<
       step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의',
       next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기',
       eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)',
-      home: '홈', map: '지도', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
+      home: '홈', map: '지도', ranking: '랭킹', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장',
       view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체',
       openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨',
       report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정',
-      visited: '방문 국가', countriesUnit: '개국', posts: '게시物', friendCode: '친구 코드',
-      searchPlaceholder: '🔍 도시 / 지역 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
+      visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드',
+      searchPlaceholder: '🔍 도시 / #태그 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기'
     },
   },
   US: {
@@ -124,12 +125,12 @@ export const COUNTRIES: Record<
       step2Title: 'Step 2: Create Profile', step3Title: 'Step 3: Terms of Service (EULA)',
       next: 'Next', back: 'Back', startApp: '🚀 Start WorldSnap',
       eulaAgree: 'I agree to the Terms of Service', termsTitle: '📜 Terms of Service (EULA)',
-      home: 'Home', map: 'Map', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map',
+      home: 'Home', map: 'Map', ranking: 'Trending', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map',
       view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day', myMap: 'My Map', friends: 'Friends', world: 'World',
       openGoogleMaps: '🧭 Open Maps', saveSpot: '❤️ Save', saved: '❤️ Saved',
       report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit',
       visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code',
-      searchPlaceholder: '🔍 Search city, region...', cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out', close: 'Close'
+      searchPlaceholder: '🔍 Search city, #tag...', cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out', close: 'Close'
     },
   },
   FR: {
@@ -139,12 +140,12 @@ export const COUNTRIES: Record<
       step2Title: 'Étape 2 : Profil', step3Title: 'Étape 3 : Conditions',
       next: 'Suivant', back: 'Retour', startApp: '🚀 Démarrer WorldSnap',
       eulaAgree: 'J’accepte les conditions', termsTitle: '📜 Conditions (EULA)',
-      home: 'Accueil', map: 'Carte', profile: 'Profil', addPhoto: 'Ajouter média', exportMap: 'Enregistrer',
+      home: 'Accueil', map: 'Carte', ranking: 'Tendances', profile: 'Profil', addPhoto: 'Ajouter média', exportMap: 'Enregistrer',
       view: 'Paysage', gourmet: 'Gourmet', rain: 'Pluie', myMap: 'Ma carte', friends: 'Amis', world: 'Monde',
       openGoogleMaps: '🧭 Google Maps', saveSpot: '❤️ Enregistrer', saved: '❤️ Enregistré',
       report: '⚠️ Signaler', block: '🚫 Bloquer', delete: '🗑️ Supprimer', edit: '✏️ Modifier',
       visited: 'Pays visités', countriesUnit: 'pays', posts: 'Publications', friendCode: 'Code ami',
-      searchPlaceholder: '🔍 Rechercher une ville...', cacheClear: '🧹 Vider le cache', deleteAccount: '⚠️ Supprimer le compte', logout: '🚪 Déconnexion', close: 'Fermer'
+      searchPlaceholder: '🔍 Rechercher une ville, #tag...', cacheClear: '🧹 Vider le cache', deleteAccount: '⚠️ Supprimer le compte', logout: '🚪 Déconnexion', close: 'Fermer'
     },
   },
 };
@@ -154,34 +155,34 @@ const INITIAL_SPOTS: Spot[] = [
     id: 'spot-kyoto-1', userId: 'bot-curator-jp', userName: '京都公式キュレーター', isOfficial: true, isFeatured: true,
     viewsCount: 342, savedCount: 88,
     title: '祇園 鴨川沿いの濃厚抹茶パフェ',
-    description: '川床を眺めながらいただく最高峰の宇治抹茶。デートやひと休みに最適な特等席です🍵',
+    description: '川床を眺めながらいただく最高峰の宇治抹茶。デートやひと休みに最適な特等席です🍵 #京都スイーツ #絶景カフェ',
     fileName: 'matcha.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: '京都',
-    category: 'gourmet', scopes: ['world', 'my'], createdAt: '2026/08/10',
+    category: 'gourmet', scopes: ['world', 'my'], tags: ['京都スイーツ', '絶景カフェ'], createdAt: '2026/08/10',
   },
   {
     id: 'spot-tokyo-1', userId: 'bot-tokyo-guide', userName: '東京おすすめガイド', isOfficial: true, isFeatured: true,
     viewsCount: 521, savedCount: 142,
     title: '渋谷スクランブル交差点＆SHIBUYA SKY',
-    description: '地上229mから望む東京360度パノラマビュー。夕暮れのグラデーションが絶景です✨',
+    description: '地上229mから望む東京360度パノラマビュー。夕暮れのグラデーションが絶景です✨ #東京夜景 #渋谷スカイ',
     fileName: 'shibuya.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 35.6595, lon: 139.7005, countryCode: 'JP', cityName: '東京',
-    category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/12',
+    category: 'view', scopes: ['world', 'my'], tags: ['東京夜景', '渋谷スカイ'], createdAt: '2026/08/12',
   },
   {
     id: 'spot-ch-1', userId: 'bot-world-photo', userName: 'Worldフォト公式', isOfficial: true, isFeatured: true,
     viewsCount: 219, savedCount: 65,
     title: 'マッターホルン 黄金の朝焼け',
-    description: '早朝のツェルマットから眺める黄金色の山頂。展望台へは始発電車がおすすめです🏔️',
+    description: '早朝のツェルマットから眺める黄金色の山頂。展望台へは始発電車がおすすめです🏔️ #スイス絶景 #マッターホルン',
     fileName: 'matterhorn.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=120&h=120&auto=format&fit=crop',
     fileType: 'image', lat: 45.9765, lon: 7.7491, countryCode: 'CH', cityName: 'ツェルマット',
-    category: 'view', scopes: ['world', 'my'], createdAt: '2026/08/14',
+    category: 'view', scopes: ['world', 'my'], tags: ['スイス絶景', 'マッターホルン'], createdAt: '2026/08/14',
   },
 ];
 
@@ -208,6 +209,11 @@ const EULA_FULL_TEXT = `【WorldSnap 利用規約 (EULA)】
 
 第5条（アカウント削除・退会）
 ユーザーは設定画面より、いつでもアカウントおよび投稿データを完全に削除（退会）することができます。`;
+
+function extractHashtags(text: string): string[] {
+  const matches = text.match(/#([^\s#]+)/g);
+  return matches ? matches.map((tag) => tag.replace('#', '')) : [];
+}
 
 function convertDMSToDD(dms: number[], ref: string): number {
   if (!dms || dms.length < 3) return 0;
@@ -267,7 +273,7 @@ function getUserTitle(count: number) {
 }
 
 // ==========================================
-// 2. Leaflet 滑らかアニメーション＆高速レンダリング
+// 2. Leaflet 白基調マップ（高速レンダリング）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -301,11 +307,7 @@ const SafeMapComponent = dynamic(
           const map = useMap();
           useEffect(() => {
             if (targetCenter && targetZoom) {
-              map.flyTo(targetCenter, targetZoom, {
-                duration: 0.75,
-                easeLinearity: 0.2,
-                animate: true,
-              });
+              map.flyTo(targetCenter, targetZoom, { duration: 0.75, easeLinearity: 0.2, animate: true });
             }
           }, [targetCenter, targetZoom, map]);
           return null;
@@ -508,8 +510,6 @@ export default function WorldSnapApp() {
   const [inputFriendCode, setInputFriendCode] = useState('');
 
   const exportRef = useRef<HTMLDivElement>(null);
-  
-  // プロフィール画像アップロード用 Ref
   const profileAvatarInputRef = useRef<HTMLInputElement>(null);
   const onboardingAvatarInputRef = useRef<HTMLInputElement>(null);
 
@@ -527,6 +527,7 @@ export default function WorldSnapApp() {
     }
   }, []);
 
+  // Supabase データ取得 & リアルタイムリスナー設定
   const fetchSpots = async () => {
     if (!supabase) return;
     try {
@@ -554,6 +555,7 @@ export default function WorldSnapApp() {
           cityName: d.city_name,
           category: d.category,
           scopes: d.scopes || ['world'],
+          tags: d.tags || extractHashtags(d.description || ''),
           createdAt: new Date(d.created_at).toLocaleDateString(),
         }));
         
@@ -570,6 +572,49 @@ export default function WorldSnapApp() {
 
   useEffect(() => {
     fetchSpots();
+
+    if (!supabase) return;
+    const channel = supabase
+      .channel('realtime_spots')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'spots' },
+        (payload: any) => {
+          const newSpotData = payload.new;
+          const formattedSpot: Spot = {
+            id: newSpotData.id,
+            userId: newSpotData.user_id,
+            userName: newSpotData.user_name,
+            userAvatar: newSpotData.user_avatar,
+            isOfficial: newSpotData.is_official,
+            isFeatured: newSpotData.is_featured,
+            isFirstExplorer: newSpotData.is_first_explorer,
+            viewsCount: newSpotData.views_count || 1,
+            savedCount: newSpotData.saved_count || 0,
+            title: newSpotData.title,
+            description: newSpotData.description || '',
+            fileName: newSpotData.file_name,
+            fileUrl: newSpotData.file_url,
+            thumbUrl: newSpotData.thumb_url || newSpotData.file_url,
+            fileType: newSpotData.file_type || 'image',
+            lat: Number(newSpotData.lat),
+            lon: Number(newSpotData.lon),
+            countryCode: newSpotData.country_code,
+            cityName: newSpotData.city_name,
+            category: newSpotData.category,
+            scopes: newSpotData.scopes || ['world'],
+            tags: newSpotData.tags || extractHashtags(newSpotData.description || ''),
+            createdAt: new Date(newSpotData.created_at).toLocaleDateString(),
+          };
+          setSpots((prev) => [formattedSpot, ...prev.filter((s) => s.id !== formattedSpot.id)]);
+          showToast(`🌟 新しいスポット「${formattedSpot.title}」が共有されました！`);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleMapMoveEnd = (center: [number, number], zoom: number) => {
@@ -582,6 +627,12 @@ export default function WorldSnapApp() {
   const handleJumpLocationSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!mapSearchKeyword.trim()) return;
+
+    if (mapSearchKeyword.startsWith('#')) {
+      showToast(`🏷️ タグ「${mapSearchKeyword}」で絞り込みました`);
+      return;
+    }
+
     setIsSearchingLocation(true);
     try {
       const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearchKeyword)}`);
@@ -593,7 +644,6 @@ export default function WorldSnapApp() {
         setTargetCenter([lat, lon]);
         setTargetZoom(12);
         showToast(`📍 ${first.display_name.split(',')[0]} へ移動しました！`);
-        setMapSearchKeyword('');
       } else {
         showToast('⚠️ 地域が見つかりませんでした');
       }
@@ -621,9 +671,21 @@ export default function WorldSnapApp() {
       if (displayScope === 'world') {
         if (s.userId !== 'me' && !s.scopes.includes('world')) return false;
       }
+      if (mapSearchKeyword.trim()) {
+        const kw = mapSearchKeyword.toLowerCase();
+        if (kw.startsWith('#')) {
+          const rawTag = kw.replace('#', '');
+          return s.tags?.some((t) => t.toLowerCase().includes(rawTag)) || s.description.toLowerCase().includes(kw);
+        }
+        return s.title.toLowerCase().includes(kw) || s.description.toLowerCase().includes(kw) || s.cityName.toLowerCase().includes(kw);
+      }
       return true;
     });
-  }, [spots, blockedUsers, viewMode, displayScope, friendsList]);
+  }, [spots, blockedUsers, viewMode, displayScope, friendsList, mapSearchKeyword]);
+
+  const rankingSpots = useMemo(() => {
+    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
+  }, [spots]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
   const visitedCountryCount = useMemo(() => new Set(mySpots.map((s) => s.countryCode)).size, [mySpots]);
@@ -666,7 +728,6 @@ export default function WorldSnapApp() {
     showToast(`🌍 ${target.name} へようこそ！`);
   };
 
-  // プロフィール画像選択ハンドラ
   const handleAvatarFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -778,6 +839,7 @@ export default function WorldSnapApp() {
 
     const isNearbyExists = spots.some((s) => Math.abs(s.lat - finalLat) < 0.05 && Math.abs(s.lon - finalLon) < 0.05);
     const isFirstExplorer = !isNearbyExists;
+    const extractedTags = extractHashtags(postDesc);
 
     if (supabase) {
       try {
@@ -815,6 +877,7 @@ export default function WorldSnapApp() {
           city_name: currentConfig.name.split(' ')[0],
           category: postCategory,
           scopes: selectedScopes,
+          tags: extractedTags,
         };
 
         await supabase.from('spots').insert([newSpotData]);
@@ -843,10 +906,11 @@ export default function WorldSnapApp() {
       cityName: currentConfig.name.split(' ')[0],
       category: postCategory,
       scopes: selectedScopes,
+      tags: extractedTags,
       createdAt: new Date().toLocaleDateString(),
     };
 
-    setSpots((prev) => [newSpot, ...prev]);
+    setSpots((prev) => [newSpot, ...prev.filter((s) => s.id !== newSpot.id)]);
     setIsSubmitting(false);
 
     if (isFirstExplorer && selectedScopes.includes('world')) {
@@ -939,20 +1003,8 @@ export default function WorldSnapApp() {
       )}
 
       {/* 隠しアバター画像アップロードInput */}
-      <input
-        type="file"
-        ref={profileAvatarInputRef}
-        accept="image/*"
-        onChange={handleAvatarFileSelect}
-        style={{ display: 'none' }}
-      />
-      <input
-        type="file"
-        ref={onboardingAvatarInputRef}
-        accept="image/*"
-        onChange={handleAvatarFileSelect}
-        style={{ display: 'none' }}
-      />
+      <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
+      <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
       {/* ── 初回オープニング（オンボーディング） ── */}
       {isOnboarding && (
@@ -1128,7 +1180,7 @@ export default function WorldSnapApp() {
           {/* 上部：検索バナー ＆ 切り替えコントロール */}
           <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none' }}>
             
-            {/* 画面上部 地域検索バナー */}
+            {/* 画面上部 地域・タグ検索バナー */}
             <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '6px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
               <input
                 type="text"
@@ -1142,7 +1194,7 @@ export default function WorldSnapApp() {
                 disabled={isSearchingLocation}
                 style={{ background: themeAccent, color: '#fff', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
               >
-                {isSearchingLocation ? '移動中...' : '飛ぶ 🚀'}
+                {isSearchingLocation ? '移動中...' : '検索 🚀'}
               </button>
             </form>
 
@@ -1286,6 +1338,32 @@ export default function WorldSnapApp() {
                   <span>👀 {spot.viewsCount || 0} 回閲覧</span>
                   <span>❤️ {spot.savedCount || 0} 人が保存</span>
                 </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ── トレンド・ランキング ── */}
+        <div style={{ display: currentTab === 'ranking' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', gap: '10px' }}>
+          <div style={{ padding: '6px 0', fontSize: '14px', fontWeight: '900', color: themeAccent }}>
+            🏆 人気スポットランキング（行きたい数＆閲覧数順）
+          </div>
+          {rankingSpots.map((spot, idx) => (
+            <div
+              key={spot.id}
+              onClick={() => setSelectedSpot(spot)}
+              style={{ background: '#ffffff', borderRadius: '14px', padding: '10px', display: 'flex', gap: '12px', alignItems: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', cursor: 'pointer' }}
+            >
+              <div style={{ fontSize: '18px', fontWeight: '900', width: '28px', textAlign: 'center', color: idx === 0 ? '#eab308' : idx === 1 ? '#94a3b8' : idx === 2 ? '#b45309' : '#cbd5e1' }}>
+                {idx + 1}
+              </div>
+              <div style={{ width: '64px', height: '64px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
+                <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
+                <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>📍 {COUNTRIES[spot.countryCode]?.flag} {spot.cityName}</div>
+                <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', marginTop: '4px' }}>❤️ {spot.savedCount || 0} 保存 · 👀 {spot.viewsCount || 0} 閲覧</div>
               </div>
             </div>
           ))}
@@ -1506,7 +1584,25 @@ export default function WorldSnapApp() {
               <span>💛 <strong>{selectedSpot.savedCount || 0}</strong> 人が行きたいリストに保存</span>
             </div>
 
-            <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', margin: '14px 0 20px 0' }}>{selectedSpot.description}</p>
+            <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', margin: '14px 0 10px 0' }}>{selectedSpot.description}</p>
+
+            {selectedSpot.tags && selectedSpot.tags.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
+                {selectedSpot.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    onClick={() => {
+                      setMapSearchKeyword(`#${tag}`);
+                      setSelectedSpot(null);
+                      setCurrentTab('map');
+                    }}
+                    style={{ fontSize: '11px', background: '#e0f2fe', color: '#0284c7', padding: '3px 8px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
 
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${selectedSpot.lat},${selectedSpot.lon}`}
@@ -1685,9 +1781,9 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ</label>
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ（#タグをつけると検索されやすくなります）</label>
             <textarea
-              placeholder="おすすめポイントや感想"
+              placeholder="おすすめポイント（例: 眺め最高！ #京都観光 #絶景カフェ）"
               rows={2}
               value={postDesc}
               onChange={(e) => setPostDesc(e.target.value)}
@@ -1984,7 +2080,7 @@ export default function WorldSnapApp() {
             gap: '2px',
             color: currentTab === 'home' ? themeAccent : '#94a3b8',
             cursor: 'pointer',
-            padding: '4px 16px',
+            padding: '4px 12px',
           }}
         >
           <span style={{ fontSize: '18px' }}>🏠</span>
@@ -2008,11 +2104,29 @@ export default function WorldSnapApp() {
             gap: '2px',
             color: currentTab === 'map' ? themeAccent : '#94a3b8',
             cursor: 'pointer',
-            padding: '4px 16px',
+            padding: '4px 12px',
           }}
         >
           <span style={{ fontSize: '18px' }}>🗺️</span>
           <span style={{ fontSize: '10px', fontWeight: currentTab === 'map' ? 'bold' : 'normal' }}>{t.map}</span>
+        </button>
+
+        <button
+          onClick={() => setCurrentTab('ranking')}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '2px',
+            color: currentTab === 'ranking' ? themeAccent : '#94a3b8',
+            cursor: 'pointer',
+            padding: '4px 12px',
+          }}
+        >
+          <span style={{ fontSize: '18px' }}>🏆</span>
+          <span style={{ fontSize: '10px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t.ranking}</span>
         </button>
 
         <button
@@ -2026,7 +2140,7 @@ export default function WorldSnapApp() {
             gap: '2px',
             color: currentTab === 'profile' ? themeAccent : '#94a3b8',
             cursor: 'pointer',
-            padding: '4px 16px',
+            padding: '4px 12px',
           }}
         >
           <span style={{ fontSize: '18px' }}>👤</span>
