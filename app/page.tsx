@@ -268,7 +268,7 @@ function getUserTitle(count: number) {
 }
 
 // ==========================================
-// 2. Leaflet CARTO Positron（白基調 ＋ 完全無料キー不要）
+// 2. Leaflet タイルマップ（透かし一切なし・完全無料・白基調）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -321,11 +321,11 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // APIキー不要・透かし文字なしの標準CARTO Positronタイル
+        // 透かし文字が一切入らないオープンタイル（標準OSM / ダーク）
         const baseTileUrl =
           mode === 'rain'
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+            ? 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png'
+            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
@@ -394,7 +394,7 @@ const SafeMapComponent = dynamic(
             
             <TileLayer
               url={baseTileUrl}
-              attribution='&copy; CARTO'
+              attribution='&copy; OpenStreetMap contributors'
               maxNativeZoom={18}
               maxZoom={19}
               keepBuffer={4}
@@ -594,7 +594,6 @@ export default function WorldSnapApp() {
     });
   }, [spots, blockedUsers, viewMode, displayScope, friendsList]);
 
-  // マイページ統計 & ゲーミフィケーション称号
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
   const visitedCountryCount = useMemo(() => new Set(mySpots.map((s) => s.countryCode)).size, [mySpots]);
   const totalMySavedCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.savedCount || 0), 0), [mySpots]);
