@@ -707,7 +707,6 @@ export default function WorldSnapApp() {
       if (blockedUsers.includes(s.userId)) return false;
       if (s.category !== viewMode) return false;
 
-      // フレンドマップ（displayScope === 'friends'）の場合、フレンド全員が共有した投稿（または自分の投稿）を表示
       if (displayScope === 'friends') {
         const isMyPost = s.userId === 'me';
         const isFriendPost = friendsList.some((f) => f.id === s.userId);
@@ -2388,7 +2387,7 @@ export default function WorldSnapApp() {
             border: 'none',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center`,
+            alignItems: 'center',
             gap: '2px',
             color: currentTab === 'profile' ? themeAccent : '#94a3b8',
             cursor: 'pointer',
