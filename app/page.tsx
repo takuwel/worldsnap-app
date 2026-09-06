@@ -41,6 +41,13 @@ export interface FriendUser {
   postsCount: number;
 }
 
+export interface MediaItem {
+  fileUrl: string;
+  thumbUrl: string;
+  fileType: 'image' | 'video';
+  fileName: string;
+}
+
 export interface Spot {
   id: string;
   userId: string;
@@ -57,6 +64,7 @@ export interface Spot {
   fileUrl: string;
   thumbUrl: string;
   fileType: 'image' | 'video';
+  mediaList?: MediaItem[]; // 同一スポット内の複数メディアまとめ
   lat: number;
   lon: number;
   countryCode: string;
@@ -81,6 +89,7 @@ export interface PendingUpload {
   dateTime?: string;
 }
 
+// 暴言・差別発言・下ネタの厳格な検知パターン
 const NG_PATTERNS = [
   '死ね', 'しね', '殺す', 'ころす', '消えろ', 'きえろ', 'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす',
   'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'レイプ', 'れいぷ', '売春', 'ばいしゅん',
@@ -91,6 +100,7 @@ const NG_PATTERNS = [
 ];
 
 function checkInappropriateContent(text: string): { isViolating: boolean; matchedWord: string } {
+  if (!text) return { isViolating: false, matchedWord: '' };
   const lower = text.toLowerCase().replace(/\s+/g, '');
   for (const word of NG_PATTERNS) {
     if (lower.includes(word.toLowerCase())) {
@@ -170,7 +180,12 @@ const INITIAL_SPOTS: Spot[] = [
     fileName: 'matcha.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=120&h=120&auto=format&fit=crop',
-    fileType: 'image', lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: '京都',
+    fileType: 'image',
+    mediaList: [
+      { fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=900&auto=format&fit=crop', thumbUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=120&h=120&auto=format&fit=crop', fileType: 'image', fileName: 'matcha.jpg' },
+      { fileUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=900&auto=format&fit=crop', thumbUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=120&h=120&auto=format&fit=crop', fileType: 'image', fileName: 'kyoto_view.jpg' },
+    ],
+    lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: '京都',
     category: 'gourmet', scopes: ['world', 'friends', 'my'], tags: ['京都スイーツ'],
     comments: [{ id: 'c1', userName: 'Ken_Gourmet', userAvatar: '', text: 'ここ今度一緒に行こう！', createdAt: '2026/08/11' }],
     reportCount: 0,
@@ -184,7 +199,11 @@ const INITIAL_SPOTS: Spot[] = [
     fileName: 'shibuya.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop',
-    fileType: 'image', lat: 35.6595, lon: 139.7005, countryCode: 'JP', cityName: '東京',
+    fileType: 'image',
+    mediaList: [
+      { fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop', thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop', fileType: 'image', fileName: 'shibuya.jpg' }
+    ],
+    lat: 35.6595, lon: 139.7005, countryCode: 'JP', cityName: '東京',
     category: 'view', scopes: ['world', 'friends', 'my'], tags: ['東京夜景'],
     comments: [],
     reportCount: 0,
@@ -338,6 +357,11 @@ const SafeMapComponent = dynamic(
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
           let badgeHtml = '';
+          const totalMedia = spot.mediaList ? spot.mediaList.length : 1;
+          const multiCountBadge = totalMedia > 1 
+            ? `<div style="position:absolute;bottom:12px;right:-4px;background:#0f172a;color:#fff;font-size:9px;font-weight:bold;border-radius:10px;padding:1px 5px;box-shadow:0 1px 4px rgba(0,0,0,0.4);border:1px solid #ffffff;">+${totalMedia}</div>` 
+            : '';
+
           if (spot.isOfficial) {
             badgeHtml = `<div style="position:absolute;top:-4px;right:-4px;background:#0284c7;color:#fff;font-size:8px;font-weight:bold;border-radius:10px;padding:1px 4px;box-shadow:0 1px 3px rgba(0,0,0,0.3);">公式</div>`;
           } else if (spot.isFirstExplorer) {
@@ -363,6 +387,7 @@ const SafeMapComponent = dynamic(
                 transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
               ">
                 ${badgeHtml}
+                ${multiCountBadge}
                 <div style="width: 100%; height: 38px; border-radius: 3px; overflow: hidden; background: #cbd5e1;">
                   <img src="${spot.thumbUrl || spot.fileUrl}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" decoding="async" />
                 </div>
@@ -452,7 +477,8 @@ export default function WorldSnapApp() {
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
 
   const [userCountry, setUserCountry] = useState<string>('JP');
-  const [userName, setUserName] = useState<string>('taku_snap');
+  // namesnapを初期ユーザー名に設定
+  const [userName, setUserName] = useState<string>('namesnap');
   const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
   const [userAvatar, setUserAvatar] = useState<string>('');
   const [friendCode] = useState<string>('WS-8823-X9');
@@ -476,9 +502,17 @@ export default function WorldSnapApp() {
 
   const [spots, setSpots] = useState<Spot[]>(INITIAL_SPOTS);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
+  const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0); // 複数写真の閲覧インデックス
   const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
+
+  // 投稿編集モーダル用
+  const [editingSpot, setEditingSpot] = useState<Spot | null>(null);
+  const [editTitle, setEditTitle] = useState<string>('');
+  const [editDesc, setEditDesc] = useState<string>('');
+  const [editCategory, setEditCategory] = useState<ViewCategory>('view');
+  const [editScopes, setEditScopes] = useState<DisplayScope[]>(['world']);
 
   // コメント入力用
   const [newCommentText, setNewCommentText] = useState<string>('');
@@ -572,6 +606,7 @@ export default function WorldSnapApp() {
           fileUrl: d.file_url,
           thumbUrl: d.thumb_url || d.file_url,
           fileType: d.file_type || 'image',
+          mediaList: d.media_list || [{ fileUrl: d.file_url, thumbUrl: d.thumb_url || d.file_url, fileType: d.file_type || 'image', fileName: d.file_name }],
           lat: Number(d.lat),
           lon: Number(d.lon),
           countryCode: d.country_code,
@@ -622,6 +657,7 @@ export default function WorldSnapApp() {
             fileUrl: newSpotData.file_url,
             thumbUrl: newSpotData.thumb_url || newSpotData.file_url,
             fileType: newSpotData.file_type || 'image',
+            mediaList: newSpotData.media_list || [{ fileUrl: newSpotData.file_url, thumbUrl: newSpotData.thumb_url || newSpotData.file_url, fileType: newSpotData.file_type || 'image', fileName: newSpotData.file_name }],
             lat: Number(newSpotData.lat),
             lon: Number(newSpotData.lon),
             countryCode: newSpotData.country_code,
@@ -761,6 +797,11 @@ export default function WorldSnapApp() {
       setUserAvatar(objectUrl);
       showToast('🖼️ プロフィール写真を変更しました！');
     }
+  };
+
+  const handleOpenSpot = (spot: Spot) => {
+    setSelectedSpot(spot);
+    setActiveMediaIndex(0);
   };
 
   const handleAddComment = (spotId: string) => {
@@ -962,6 +1003,11 @@ export default function WorldSnapApp() {
     let uploadedUrl = current.fileUrl;
     let finalThumbUrl = current.thumbUrl || current.fileUrl;
 
+    // 同一・近接座標（0.005以内 ≒ 約500m圏内）の既存スポットがあるか検索
+    const existingSameSpot = spots.find(
+      (s) => s.userId === 'me' && Math.abs(s.lat - finalLat) < 0.005 && Math.abs(s.lon - finalLon) < 0.005
+    );
+
     const isNearbyExists = spots.some((s) => Math.abs(s.lat - finalLat) < 0.05 && Math.abs(s.lon - finalLon) < 0.05);
     const isFirstExplorer = !isNearbyExists;
     const extractedTags = extractHashtags(postDesc);
@@ -981,8 +1027,66 @@ export default function WorldSnapApp() {
             }
           }
         }
+      } catch (err) {
+        console.error('Save error:', err);
+      }
+    }
 
-        const newSpotData = {
+    const newMediaItem: MediaItem = {
+      fileUrl: uploadedUrl,
+      thumbUrl: finalThumbUrl,
+      fileType: current.fileType,
+      fileName: current.file.name,
+    };
+
+    if (existingSameSpot) {
+      // 住所・位置が同じ既存スポットに写真を追加してまとめる
+      const updatedMediaList = [...(existingSameSpot.mediaList || [{ fileUrl: existingSameSpot.fileUrl, thumbUrl: existingSameSpot.thumbUrl, fileType: existingSameSpot.fileType, fileName: existingSameSpot.fileName }]), newMediaItem];
+      const updatedSpot: Spot = {
+        ...existingSameSpot,
+        mediaList: updatedMediaList,
+        title: postTitle ? `${existingSameSpot.title} & ${postTitle}` : existingSameSpot.title,
+        description: postDesc ? `${existingSameSpot.description}\n${postDesc}` : existingSameSpot.description,
+      };
+
+      setSpots((prev) => prev.map((s) => (s.id === existingSameSpot.id ? updatedSpot : s)));
+      if (supabase) {
+        await supabase.from('spots').update({ media_list: updatedMediaList, title: updatedSpot.title, description: updatedSpot.description }).eq('id', existingSameSpot.id);
+      }
+      showToast(`📸 同じ場所のピンに写真を追加してまとめました！`);
+    } else {
+      // 新規ピンとして登録
+      const newSpot: Spot = {
+        id: current.id,
+        userId: 'me',
+        userName,
+        userAvatar,
+        isFirstExplorer,
+        viewsCount: 1,
+        savedCount: 0,
+        title: postTitle || current.file.name,
+        description: postDesc || '旅の思い出',
+        fileName: current.file.name,
+        fileUrl: uploadedUrl,
+        thumbUrl: finalThumbUrl,
+        fileType: current.fileType,
+        mediaList: [newMediaItem],
+        lat: finalLat,
+        lon: finalLon,
+        countryCode: userCountry,
+        cityName: currentConfig.name.split(' ')[0],
+        category: postCategory,
+        scopes: selectedScopes,
+        tags: extractedTags,
+        comments: [],
+        reportCount: 0,
+        createdAt: new Date().toLocaleDateString(),
+      };
+
+      setSpots((prev) => [newSpot, ...prev.filter((s) => s.id !== newSpot.id)]);
+
+      if (supabase) {
+        await supabase.from('spots').insert([{
           id: current.id,
           user_id: 'me',
           user_name: userName,
@@ -996,6 +1100,7 @@ export default function WorldSnapApp() {
           file_url: uploadedUrl,
           thumb_url: finalThumbUrl,
           file_type: current.fileType,
+          media_list: [newMediaItem],
           lat: finalLat,
           lon: finalLon,
           country_code: userCountry,
@@ -1005,48 +1110,17 @@ export default function WorldSnapApp() {
           tags: extractedTags,
           comments: [],
           report_count: 0,
-        };
+        }]);
+      }
 
-        await supabase.from('spots').insert([newSpotData]);
-      } catch (err) {
-        console.error('Save error:', err);
+      if (isFirstExplorer && selectedScopes.includes('world')) {
+        showToast(`🎉 初代発見者！未開拓エリアにピンを共有しました！🗺️`);
+      } else {
+        showToast(`📍 マップにピンを反映しました！🚀`);
       }
     }
 
-    const newSpot: Spot = {
-      id: current.id,
-      userId: 'me',
-      userName,
-      userAvatar,
-      isFirstExplorer,
-      viewsCount: 1,
-      savedCount: 0,
-      title: postTitle || current.file.name,
-      description: postDesc || '旅の思い出',
-      fileName: current.file.name,
-      fileUrl: uploadedUrl,
-      thumbUrl: finalThumbUrl,
-      fileType: current.fileType,
-      lat: finalLat,
-      lon: finalLon,
-      countryCode: userCountry,
-      cityName: currentConfig.name.split(' ')[0],
-      category: postCategory,
-      scopes: selectedScopes,
-      tags: extractedTags,
-      comments: [],
-      reportCount: 0,
-      createdAt: new Date().toLocaleDateString(),
-    };
-
-    setSpots((prev) => [newSpot, ...prev.filter((s) => s.id !== newSpot.id)]);
     setIsSubmitting(false);
-
-    if (isFirstExplorer && selectedScopes.includes('world')) {
-      showToast(`🎉 初代発見者！未開拓エリアにピンを共有しました！🗺️`);
-    } else {
-      showToast(`📍 マップにピンを反映しました！🚀`);
-    }
 
     if (currentUploadIndex + 1 < pendingUploads.length) {
       const nextIndex = currentUploadIndex + 1;
@@ -1062,6 +1136,54 @@ export default function WorldSnapApp() {
       setPendingUploads([]);
       setCurrentUploadIndex(0);
     }
+  };
+
+  // 編集開始
+  const handleStartEdit = (spot: Spot) => {
+    setEditingSpot(spot);
+    setEditTitle(spot.title);
+    setEditDesc(spot.description);
+    setEditCategory(spot.category);
+    setEditScopes(spot.scopes);
+  };
+
+  // 編集保存
+  const handleSaveEdit = async () => {
+    if (!editingSpot) return;
+
+    const checkTitle = checkInappropriateContent(editTitle);
+    const checkDesc = checkInappropriateContent(editDesc);
+    if (checkTitle.isViolating || checkDesc.isViolating) {
+      showWarning('⚠️ 暴言・差別発言・不適切な表現が含まれているため変更を保存できません。');
+      return;
+    }
+
+    const updatedSpot: Spot = {
+      ...editingSpot,
+      title: editTitle.trim() || editingSpot.title,
+      description: editDesc.trim(),
+      category: editCategory,
+      scopes: editScopes,
+      tags: extractHashtags(editDesc.trim()),
+    };
+
+    setSpots((prev) => prev.map((s) => (s.id === editingSpot.id ? updatedSpot : s)));
+    if (selectedSpot && selectedSpot.id === editingSpot.id) {
+      setSelectedSpot(updatedSpot);
+    }
+
+    if (supabase) {
+      await supabase.from('spots').update({
+        title: updatedSpot.title,
+        description: updatedSpot.description,
+        category: updatedSpot.category,
+        scopes: updatedSpot.scopes,
+        tags: updatedSpot.tags,
+      }).eq('id', editingSpot.id);
+    }
+
+    setEditingSpot(null);
+    showToast('✏️ 投稿の修正を保存しました！');
   };
 
   const handleExportMap = async () => {
@@ -1271,7 +1393,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── ヘッダー（スマホ対応：アイコン潰れ防止のレイアウト調整） ── */}
+      {/* ── ヘッダー（スマホ対応：アイコン潰れ防止） ── */}
       <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
           <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0 }}>
@@ -1382,7 +1504,7 @@ export default function WorldSnapApp() {
               targetZoom={targetZoom}
               mode={viewMode}
               onMoveEnd={handleMapMoveEnd}
-              onSelectSpot={setSelectedSpot}
+              onSelectSpot={handleOpenSpot}
               onDoubleTap={handleMapDoubleTap}
             />
 
@@ -1458,14 +1580,19 @@ export default function WorldSnapApp() {
           {rankingSpots.map((spot, idx) => (
             <div
               key={spot.id}
-              onClick={() => setSelectedSpot(spot)}
+              onClick={() => handleOpenSpot(spot)}
               style={{ background: '#ffffff', borderRadius: '14px', padding: '10px', display: 'flex', gap: '12px', alignItems: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', cursor: 'pointer' }}
             >
               <div style={{ fontSize: '18px', fontWeight: '900', width: '28px', textAlign: 'center', color: idx === 0 ? '#eab308' : idx === 1 ? '#94a3b8' : idx === 2 ? '#b45309' : '#cbd5e1' }}>
                 {idx + 1}
               </div>
-              <div style={{ width: '64px', height: '64px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0, position: 'relative' }}>
                 <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                {spot.mediaList && spot.mediaList.length > 1 && (
+                  <span style={{ position: 'absolute', bottom: '2px', right: '2px', background: 'rgba(0,0,0,0.7)', color: '#fff', fontSize: '8px', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>
+                    +{spot.mediaList.length}
+                  </span>
+                )}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
@@ -1571,8 +1698,13 @@ export default function WorldSnapApp() {
           {profileSubTab === 'posts' && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
               {mySpots.map((s) => (
-                <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
+                <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
                   <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                  {s.mediaList && s.mediaList.length > 1 && (
+                    <span style={{ position: 'absolute', top: '4px', right: '4px', background: 'rgba(15,23,42,0.8)', color: '#fff', fontSize: '9px', padding: '1px 5px', borderRadius: '4px', fontWeight: 'bold' }}>
+                      +{s.mediaList.length}
+                    </span>
+                  )}
                   {s.isFirstExplorer && (
                     <span style={{ position: 'absolute', bottom: '4px', left: '4px', background: '#10b981', color: '#fff', fontSize: '8px', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>初代開拓</span>
                   )}
@@ -1586,7 +1718,7 @@ export default function WorldSnapApp() {
               {spots
                 .filter((s) => savedSpotIds.includes(s.id))
                 .map((s) => (
-                  <div key={s.id} onClick={() => setSelectedSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
+                  <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
                     <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                   </div>
                 ))}
@@ -1661,7 +1793,6 @@ export default function WorldSnapApp() {
               </button>
             </div>
 
-            {/* チャット履歴エリア */}
             <div style={{ flex: 1, minHeight: '200px', maxHeight: '260px', overflowY: 'auto', background: '#f8fafc', padding: '10px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
               {(chatMessages[selectedFriend.id] || []).map((msg) => (
                 <div key={msg.id} style={{ alignSelf: msg.senderId === 'me' ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
@@ -1675,7 +1806,6 @@ export default function WorldSnapApp() {
               ))}
             </div>
 
-            {/* メッセージ入力エリア */}
             <div style={{ display: 'flex', gap: '6px' }}>
               <input
                 type="text"
@@ -1696,7 +1826,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── 詳細モーダル ── */}
+      {/* ── 詳細モーダル（複数写真対応 & 編集機能） ── */}
       {selectedSpot && (
         <div style={{ position: 'fixed', inset: 0, background: '#ffffff', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
           <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
@@ -1709,13 +1839,51 @@ export default function WorldSnapApp() {
           </div>
 
           <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
-            <div onClick={() => setIsLightboxOpen(true)} style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '14px', cursor: selectedSpot.fileType === 'image' ? 'zoom-in' : 'default' }}>
-              {selectedSpot.fileType === 'image' ? (
-                <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <video src={selectedSpot.fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-              )}
-            </div>
+            {/* メインメディア表示 */}
+            {(() => {
+              const currentMedia = selectedSpot.mediaList && selectedSpot.mediaList[activeMediaIndex] 
+                ? selectedSpot.mediaList[activeMediaIndex] 
+                : { fileUrl: selectedSpot.fileUrl, fileType: selectedSpot.fileType, thumbUrl: selectedSpot.thumbUrl };
+
+              return (
+                <div onClick={() => setIsLightboxOpen(true)} style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '8px', cursor: currentMedia.fileType === 'image' ? 'zoom-in' : 'default', position: 'relative' }}>
+                  {currentMedia.fileType === 'image' ? (
+                    <img src={currentMedia.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <video src={currentMedia.fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  )}
+                  {selectedSpot.mediaList && selectedSpot.mediaList.length > 1 && (
+                    <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.65)', color: '#fff', fontSize: '11px', padding: '3px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
+                      {activeMediaIndex + 1} / {selectedSpot.mediaList.length}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* 同一スポットの複数写真サムネイル一覧 */}
+            {selectedSpot.mediaList && selectedSpot.mediaList.length > 1 && (
+              <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px', marginBottom: '12px' }}>
+                {selectedSpot.mediaList.map((media, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => setActiveMediaIndex(idx)}
+                    style={{
+                      width: '60px',
+                      height: '60px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      flexShrink: 0,
+                      cursor: 'pointer',
+                      border: activeMediaIndex === idx ? `3px solid ${themeAccent}` : '2px solid transparent',
+                      boxSizing: 'border-box',
+                    }}
+                  >
+                    <img src={media.thumbUrl || media.fileUrl} alt={`media-${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
@@ -1746,7 +1914,7 @@ export default function WorldSnapApp() {
               <span>💛 <strong>{selectedSpot.savedCount || 0}</strong> 人が行きたいリストに保存</span>
             </div>
 
-            <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', margin: '14px 0 10px 0' }}>{selectedSpot.description}</p>
+            <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', margin: '14px 0 10px 0', whiteSpace: 'pre-wrap' }}>{selectedSpot.description}</p>
 
             {selectedSpot.tags && selectedSpot.tags.length > 0 && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
@@ -1844,9 +2012,14 @@ export default function WorldSnapApp() {
 
               <div style={{ display: 'flex', gap: '6px' }}>
                 {selectedSpot.userId === 'me' ? (
-                  <button onClick={() => handleDeleteSpot(selectedSpot.id)} style={{ padding: '5px 10px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
-                    {t.delete}
-                  </button>
+                  <>
+                    <button onClick={() => handleStartEdit(selectedSpot)} style={{ padding: '5px 10px', background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
+                      {t.edit}
+                    </button>
+                    <button onClick={() => handleDeleteSpot(selectedSpot.id)} style={{ padding: '5px 10px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
+                      {t.delete}
+                    </button>
+                  </>
                 ) : (
                   <>
                     <button onClick={() => setIsReportModalOpen(true)} style={{ padding: '5px 8px', background: 'transparent', border: '1px solid #f59e0b', color: '#f59e0b', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
@@ -1858,6 +2031,69 @@ export default function WorldSnapApp() {
                   </>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 投稿編集モーダル ── */}
+      {editingSpot && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 5500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '380px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '15px', fontWeight: 'bold' }}>✏️ 投稿の編集</h3>
+
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
+            <input
+              type="text"
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+            />
+
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグ)</label>
+            <textarea
+              rows={3}
+              value={editDesc}
+              onChange={(e) => setEditDesc(e.target.value)}
+              style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+            />
+
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>カテゴリ</label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '14px' }}>
+              {(['view', 'gourmet', 'rain'] as const).map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setEditCategory(cat)}
+                  style={{
+                    padding: '6px',
+                    borderRadius: '8px',
+                    border: `2px solid ${editCategory === cat ? themeAccent : '#e2e8f0'}`,
+                    background: editCategory === cat ? '#f0f9ff' : '#ffffff',
+                    fontWeight: 'bold',
+                    fontSize: '11px',
+                    color: editCategory === cat ? themeAccent : '#64748b',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? '🍔 グルメ' : '🌧️ 雨の日'}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={() => setEditingSpot(null)}
+                style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                style={{ flex: 1, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+              >
+                保存する
+              </button>
             </div>
           </div>
         </div>
@@ -2107,11 +2343,17 @@ export default function WorldSnapApp() {
       {/* ── フルスクリーン Lightbox ── */}
       {isLightboxOpen && selectedSpot && (
         <div onClick={() => setIsLightboxOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.95)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          {selectedSpot.fileType === 'image' ? (
-            <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ maxWidth: '100%', maxHeight: '90%', objectFit: 'contain' }} />
-          ) : (
-            <video src={selectedSpot.fileUrl} controls autoPlay playsInline style={{ maxWidth: '100%', maxHeight: '90%', objectFit: 'contain' }} />
-          )}
+          {(() => {
+            const currentMedia = selectedSpot.mediaList && selectedSpot.mediaList[activeMediaIndex]
+              ? selectedSpot.mediaList[activeMediaIndex]
+              : { fileUrl: selectedSpot.fileUrl, fileType: selectedSpot.fileType };
+
+            return currentMedia.fileType === 'image' ? (
+              <img src={currentMedia.fileUrl} alt={selectedSpot.title} style={{ maxWidth: '100%', maxHeight: '90%', objectFit: 'contain' }} />
+            ) : (
+              <video src={currentMedia.fileUrl} controls autoPlay playsInline style={{ maxWidth: '100%', maxHeight: '90%', objectFit: 'contain' }} />
+            );
+          })()}
           <button onClick={() => setIsLightboxOpen(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: '#fff', fontSize: '28px', cursor: 'pointer' }}>
             ✕
           </button>
@@ -2245,6 +2487,12 @@ export default function WorldSnapApp() {
               </button>
               <button
                 onClick={() => {
+                  const check = checkInappropriateContent(userName);
+                  const checkBio = checkInappropriateContent(userBio);
+                  if (check.isViolating || checkBio.isViolating) {
+                    showWarning('⚠️ ユーザー名または紹介文に不適切な表現が含まれています');
+                    return;
+                  }
                   setIsEditProfileOpen(false);
                   showToast('✨ 更新しました');
                 }}
