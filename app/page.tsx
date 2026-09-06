@@ -81,16 +81,24 @@ export interface PendingUpload {
   dateTime?: string;
 }
 
-// NGワード・不適切表現フィルター（コンプライアンス遵守）
-const NG_WORDS = [
-  '死ね', '殺す', 'バカ', 'アホ', 'クズ', 'ブス', 'レイプ', '売春', 'ドラッグ', '大麻',
-  '暴力', '自殺', 'ホモ', 'オカマ', '差別', 'セックス', 'エロ', 'ちんこ', 'まんこ', 'おっぱい',
-  'fuck', 'shit', 'idiot', 'stupid'
+// 暴言・差別発言・下ネタの厳格な検知パターン（日本語・英語・俗語）
+const NG_PATTERNS = [
+  '死ね', 'しね', '殺す', 'ころす', '消えろ', 'きえろ', 'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす',
+  'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'レイプ', 'れいぷ', '売春', 'ばいしゅん',
+  'ドラッグ', 'どらっぐ', '大麻', 'たいま', '覚醒剤', '暴力', '暴行', '自殺', 'じさつ',
+  'ホモ', 'ほも', 'オカマ', 'おかま', '差別', 'さべつ', 'チョン', '中国人差別', '外国人差別',
+  'セックス', 'せっくす', 'エロ', 'えろ', 'ちんこ', 'まんこ', 'おっぱい', 'オナニー', 'おなにー',
+  'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy'
 ];
 
-function containsInappropriateContent(text: string): boolean {
-  const lower = text.toLowerCase();
-  return NG_WORDS.some((word) => lower.includes(word));
+function checkInappropriateContent(text: string): { isViolating: boolean; matchedWord: string } {
+  const lower = text.toLowerCase().replace(/\s+/g, '');
+  for (const word of NG_PATTERNS) {
+    if (lower.includes(word.toLowerCase())) {
+      return { isViolating: true, matchedWord: word };
+    }
+  }
+  return { isViolating: false, matchedWord: '' };
 }
 
 export const COUNTRIES: Record<
@@ -190,16 +198,16 @@ export const COUNTRIES: Record<
   TH: { name: 'ประเทศไทย (タイ)', flag: '🇹🇭', lang: 'th', lat: 15.8700, lon: 100.9925, zoom: 6, dict: { step1Title: 'Step 1: เลือกประเทศ', step1Desc: 'เลือกประเทศ', step2Title: 'Step 2', step3Title: 'Step 3', next: 'ถัดไป', back: 'ย้อนกลับ', startApp: 'เริ่ม', eulaAgree: 'ยอมรับ', termsTitle: 'เงื่อนไข', map: 'แผนที่', ranking: 'อันดับ', profile: 'โปรไฟล์', addPhoto: 'เพิ่ม', exportMap: 'บันทึก', view: 'วิว', gourmet: 'ร้านอาหาร', rain: 'ฝน', myMap: 'แผนที่ฉัน', friends: 'เพื่อน', world: 'ทั่วโลก', openGoogleMaps: 'แผนที่', saveSpot: 'บันทึก', saved: 'บันทึกแล้ว', report: 'รายงาน', block: 'บล็อก', delete: 'ลบ', edit: 'แก้ไข', visited: 'เยี่ยมชม', countriesUnit: 'ประเทศ', posts: 'โพสต์', friendCode: 'โค้ด', searchPlaceholder: 'ค้นหา...', cacheClear: 'ล้างแคช', deleteAccount: 'ลบบัญชี', logout: 'ออกจากระบบ', close: 'ปิด' } },
   IT: { name: 'Italia (イタリア)', flag: '🇮🇹', lang: 'it', lat: 41.8719, lon: 12.5674, zoom: 6, dict: { step1Title: 'Step 1: Paese', step1Desc: 'Seleziona paese', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Avanti', back: 'Indietro', startApp: 'Inizia', eulaAgree: 'Accetto', termsTitle: 'Termini', map: 'Mappa', ranking: 'Classifica', profile: 'Profilo', addPhoto: 'Aggiungi', exportMap: 'Salva', view: 'Vista', gourmet: 'Gourmet', rain: 'Pioggia', myMap: 'Mappa mia', friends: 'Amici', world: 'Mondo', openGoogleMaps: 'Maps', saveSpot: 'Salva', saved: 'Salvato', report: 'Segnala', block: 'Blocca', delete: 'Elimina', edit: 'Modifica', visited: 'Visitati', countriesUnit: 'paesi', posts: 'Post', friendCode: 'Codice', searchPlaceholder: 'Cerca...', cacheClear: 'Cache', deleteAccount: 'Elimina', logout: 'Esci', close: 'Chiudi' } },
   GB: { name: 'United Kingdom (イギリス)', flag: '🇬🇧', lang: 'en', lat: 55.3781, lon: -3.4360, zoom: 6, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  ES: { name: 'España (スペイン)', flag: '🇪🇸', lang: 'es', lat: 40.4637, lon: -3.7492, zoom: 6, dict: { step1Title: 'Paso 1: País', step1Desc: 'Selecciona país', step2Title: 'Paso 2', step3Title: 'Paso 3', next: 'Siguiente', back: 'Atrás', startApp: 'Empezar', eulaAgree: 'Acepto', termsTitle: 'Términos', map: 'Mapa', ranking: 'Ranking', profile: 'Perfil', addPhoto: 'Añadir', exportMap: 'Guardar', view: 'Vista', gourmet: 'Gourmet', rain: 'Lluvia', myMap: 'Mi mapa', friends: 'Amigos', world: 'Mundo', openGoogleMaps: 'Maps', saveSpot: 'Guardar', saved: 'Guardado', report: 'Reportar', block: 'Bloquear', delete: 'Eliminar', edit: 'Editar', visited: 'Visitados', countriesUnit: 'países', posts: 'Publicaciones', friendCode: 'Código', searchPlaceholder: 'Buscar...', cacheClear: 'Limpiar', deleteAccount: 'Eliminar', logout: 'Salir', close: 'Cerrar' } },
+  ES: { name: 'España (スペイン)', flag: '🇪🇸', lang: 'es', lat: 40.4637, lon: -3.7492, zoom: 6, dict: { step1Title: 'Paso 1: País', step1Desc: 'Selecciona país', step2Title: 'Paso 2', step3Title: 'Paso 3', next: 'Siguiente', back: 'Atrás', startApp: 'Empezar', eulaAgree: 'Acepto', termsTitle: 'Términos', home: 'Inicio', map: 'Mapa', ranking: 'Ranking', profile: 'Perfil', addPhoto: 'Añadir', exportMap: 'Guardar', view: 'Vista', gourmet: 'Gourmet', rain: 'Lluvia', myMap: 'Mi mapa', friends: 'Amigos', world: 'Mundo', openGoogleMaps: 'Maps', saveSpot: 'Guardar', saved: 'Guardado', report: 'Reportar', block: 'Bloquear', delete: 'Eliminar', edit: 'Editar', visited: 'Visitados', countriesUnit: 'países', posts: 'Publicaciones', friendCode: 'Código', searchPlaceholder: 'Buscar...', cacheClear: 'Limpiar', deleteAccount: 'Eliminar', logout: 'Salir', close: 'Cerrar' } },
   NZ: { name: 'New Zealand (ニュージーランド)', flag: '🇳🇿', lang: 'en', lat: -40.9006, lon: 174.8860, zoom: 5, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  AT: { name: 'Österreich (オーストリア)', flag: '🇦🇹', lang: 'de', lat: 47.5162, lon: 14.5501, zoom: 7, dict: { step1Title: 'Schritt 1: Land', step1Desc: 'Land wählen', step2Title: 'Schritt 2', step3Title: 'Schritt 3', next: 'Weiter', back: 'Zurück', startApp: 'Start', eulaAgree: 'Zustimmen', termsTitle: 'AGB', map: 'Karte', ranking: 'Ranking', profile: 'Profil', addPhoto: 'Hinzufügen', exportMap: 'Speichern', view: 'Sicht', gourmet: 'Gourmet', rain: 'Regen', myMap: 'Meine', friends: 'Freunde', world: 'Welt', openGoogleMaps: 'Maps', saveSpot: 'Merken', saved: 'Gemerkt', report: 'Melden', block: 'Blockieren', delete: 'Löschen', edit: 'Ändern', visited: 'Besucht', countriesUnit: 'Länder', posts: 'Beiträge', friendCode: 'Code', searchPlaceholder: 'Suchen...', cacheClear: 'Cache', deleteAccount: 'Konto', logout: 'Abmelden', close: 'Schließen' } },
-  SG: { name: 'Singapore (シンガポール)', flag: '🇸🇬', lang: 'en', lat: 1.3521, lon: 103.8198, zoom: 11, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  CA: { name: 'Canada (カナダ)', flag: '🇨🇦', lang: 'en', lat: 56.1304, lon: -106.3468, zoom: 4, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  AE: { name: 'UAE / Dubai (アラブ首長国連邦)', flag: '🇦🇪', lang: 'en', lat: 23.4241, lon: 53.8478, zoom: 7, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  MV: { name: 'Maldives (モルディブ)', flag: '🇲🇻', lang: 'en', lat: 3.2028, lon: 73.2207, zoom: 7, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
+  AT: { name: 'Österreich (オーストリア)', flag: '🇦🇹', lang: 'de', lat: 47.5162, lon: 14.5501, zoom: 7, dict: { step1Title: 'Schritt 1: Land', step1Desc: 'Land wählen', step2Title: 'Schritt 2', step3Title: 'Schritt 3', next: 'Weiter', back: 'Zurück', startApp: 'Start', eulaAgree: 'Zustimmen', termsTitle: 'AGB', home: 'Start', map: 'Karte', ranking: 'Ranking', profile: 'Profil', addPhoto: 'Hinzufügen', exportMap: 'Speichern', view: 'Sicht', gourmet: 'Gourmet', rain: 'Regen', myMap: 'Meine', friends: 'Freunde', world: 'Welt', openGoogleMaps: 'Maps', saveSpot: 'Merken', saved: 'Gemerkt', report: 'Melden', block: 'Blockieren', delete: 'Löschen', edit: 'Ändern', visited: 'Besucht', countriesUnit: 'Länder', posts: 'Beiträge', friendCode: 'Code', searchPlaceholder: 'Suchen...', cacheClear: 'Cache', deleteAccount: 'Konto', logout: 'Abmelden', close: 'Schließen' } },
+  SG: { name: 'Singapore (シンガポール)', flag: '🇸🇬', lang: 'en', lat: 1.3521, lon: 103.8198, zoom: 11, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', home: 'Home', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
+  CA: { name: 'Canada (カナダ)', flag: '🇨🇦', lang: 'en', lat: 56.1304, lon: -106.3468, zoom: 4, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', home: 'Home', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
+  AE: { name: 'UAE / Dubai (アラブ首長国連邦)', flag: '🇦🇪', lang: 'en', lat: 23.4241, lon: 53.8478, zoom: 7, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', home: 'Home', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
+  MV: { name: 'Maldives (モルディブ)', flag: '🇲🇻', lang: 'en', lat: 3.2028, lon: 73.2207, zoom: 7, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', home: 'Home', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
   CN: { name: '中国 (China)', flag: '🇨🇳', lang: 'zh', lat: 35.8617, lon: 104.1954, zoom: 4, dict: { step1Title: '步骤 1: 选择国家', step1Desc: '选择国家', step2Title: '步骤 2', step3Title: '步骤 3', next: '下一步', back: '返回', startApp: '开始', eulaAgree: '同意', termsTitle: '条款', map: '地图', ranking: '排行', profile: '我的', addPhoto: '添加', exportMap: '保存', view: '风景', gourmet: '美食', rain: '雨天', myMap: '我的地图', friends: '好友', world: '世界', openGoogleMaps: '地图', saveSpot: '收藏', saved: '已收藏', report: '举报', block: '拉黑', delete: '删除', edit: '编辑', visited: '已访问', countriesUnit: '个国家', posts: '动态', friendCode: '好友码', searchPlaceholder: '搜索...', cacheClear: '清理缓存', deleteAccount: '注销账号', logout: '退出', close: '关闭' } },
-  ID: { name: 'Indonesia (インドネシア)', flag: '🇮🇩', lang: 'en', lat: -0.7893, lon: 113.9213, zoom: 5, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  IN: { name: 'India (インド)', flag: '🇮🇳', lang: 'en', lat: 20.5937, lon: 78.9629, zoom: 5, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
+  ID: { name: 'Indonesia (インドネシア)', flag: '🇮🇩', lang: 'en', lat: -0.7893, lon: 113.9213, zoom: 5, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', home: 'Home', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
+  IN: { name: 'India (インド)', flag: '🇮🇳', lang: 'en', lat: 20.5937, lon: 78.9629, zoom: 5, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', home: 'Home', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -524,6 +532,9 @@ export default function WorldSnapApp() {
   // コメント入力用
   const [newCommentText, setNewCommentText] = useState<string>('');
 
+  // 警告バナー用のステート
+  const [warningMessage, setWarningMessage] = useState<string | null>(null);
+
   // 通報モーダル用
   const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
   const [reportReasonType, setReportReasonType] = useState<string>('inappropriate');
@@ -575,6 +586,11 @@ export default function WorldSnapApp() {
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const showWarning = (msg: string) => {
+    setWarningMessage(msg);
+    setTimeout(() => setWarningMessage(null), 5000);
   };
 
   useEffect(() => {
@@ -800,8 +816,9 @@ export default function WorldSnapApp() {
     const trimmedText = newCommentText.trim();
     if (!trimmedText) return;
 
-    if (containsInappropriateContent(trimmedText)) {
-      showToast('⚠️ 規約違反（誹謗中傷・不適切発言）となる言葉が含まれているため送信できません');
+    const check = checkInappropriateContent(trimmedText);
+    if (check.isViolating) {
+      showWarning('⚠️ 暴言・差別発言・不適切な表現が含まれているため、コメントを送信できません。コミュニティガイドラインをお守りください。');
       return;
     }
 
@@ -834,8 +851,9 @@ export default function WorldSnapApp() {
     const trimmedMsg = inputMessageText.trim();
     if (!trimmedMsg || !selectedFriend) return;
 
-    if (containsInappropriateContent(trimmedMsg)) {
-      showToast('⚠️ 規約違反（誹謗中傷・不適切発言）となる言葉が含まれているため送信できません');
+    const check = checkInappropriateContent(trimmedMsg);
+    if (check.isViolating) {
+      showWarning('⚠️ 暴言・差別発言・下ネタ等の不適切な表現が含まれているため、メッセージを送信できません。');
       return;
     }
 
@@ -977,8 +995,10 @@ export default function WorldSnapApp() {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
 
-    if (containsInappropriateContent(postTitle) || containsInappropriateContent(postDesc)) {
-      showToast('⚠️ 規約違反（誹謗中傷・不適切発言）となる言葉が含まれているため投稿できません');
+    const checkTitle = checkInappropriateContent(postTitle);
+    const checkDesc = checkInappropriateContent(postDesc);
+    if (checkTitle.isViolating || checkDesc.isViolating) {
+      showWarning('⚠️ 暴言・差別発言・不適切な表現が含まれているため投稿できません。');
       return;
     }
 
@@ -1154,6 +1174,14 @@ export default function WorldSnapApp() {
 
   return (
     <div style={{ background: '#f8fafc', color: '#0f172a', height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+      
+      {/* ── 違反警告バナー ── */}
+      {warningMessage && (
+        <div style={{ position: 'fixed', top: 0, insetInline: 0, background: '#ef4444', color: '#fff', padding: '12px 16px', zIndex: 999999, fontSize: '13px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 4px 16px rgba(239,68,68,0.4)', animation: 'fadeIn 0.2s ease' }}>
+          {warningMessage}
+        </div>
+      )}
+
       {toastMessage && (
         <div style={{ position: 'fixed', top: '14px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,23,42,0.94)', color: '#fff', padding: '10px 20px', borderRadius: '30px', zIndex: 99999, fontSize: '13px', fontWeight: 'bold', boxShadow: '0 8px 24px rgba(0,0,0,0.3)', backdropFilter: 'blur(6px)' }}>
           {toastMessage}
@@ -2296,7 +2324,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── ボトムナビゲーション（3タブ：マップ・ランキング・マイページ） ── */}
+      {/* ── ボトムナビゲーション（3タブ構成） ── */}
       <nav
         style={{
           height: 'calc(54px + env(safe-area-inset-bottom, 0px))',
