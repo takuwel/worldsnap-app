@@ -122,6 +122,7 @@ export const COUNTRIES: Record<
     dict: Record<string, string>;
   }
 > = {
+  // --- アジア ---
   JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lang: 'ja', lat: 36.2048, lon: 138.2529, zoom: 5, dict: { step1Title: 'Step 1: 国籍・メインの国を選択', step1Desc: '選択した国に応じて、地図の地名とアプリ全体の言語がローカライズされます。', step2Title: 'Step 2: プロフィール作成', step3Title: 'Step 3: 利用規約 (EULA) の確認', next: '次へ進む', back: '戻る', startApp: '🚀 WorldSnap をはじめる', eulaAgree: '利用規約およびコミュニティガイドラインに同意する', termsTitle: '📜 WorldSnap 利用規約 (EULA)', map: 'マップ', ranking: 'ランキング', profile: 'マイページ', addPhoto: '写真 / 動画を追加', exportMap: 'マップ保存', view: 'View', gourmet: 'グルメ', rain: '雨の日', myMap: 'マイマップ', friends: 'フレンド', world: 'ワールド', openGoogleMaps: '🧭 Googleマップで開く', saveSpot: '❤️ 行きたい', saved: '❤️ 保存済み', report: '⚠️ 通報', block: '🚫 ブロック', delete: '🗑️ 削除', edit: '✏️ 編集', visited: '訪問国', countriesUnit: 'カ国', posts: '投稿', friendCode: 'フレンドコード', searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）', cacheClear: '🧹 地図キャッシュ削除', deleteAccount: '⚠️ アカウントの削除 (退会処理)', logout: '🚪 ログアウト', close: '閉じる' } },
   KR: { name: '대한민국 (韓国)', flag: '🇰🇷', region: '🌏 アジア', lang: 'ko', lat: 35.9078, lon: 127.7669, zoom: 7, dict: { step1Title: 'Step 1: 국적 선택', step1Desc: '지도의 지명과 앱 언어가 한국어로 표시됩니다.', step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의', next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기', eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)', map: '지도', ranking: '랭킹', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장', view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체', openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨', report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정', visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드', searchPlaceholder: '🔍 도시 / #태그 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기' } },
   CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lang: 'zh', lat: 35.8617, lon: 104.1954, zoom: 4, dict: { step1Title: '步骤 1: 选择国家', step1Desc: '选择国家', step2Title: '步骤 2', step3Title: '步骤 3', next: '下一步', back: '返回', startApp: '开始', eulaAgree: '同意', termsTitle: '条款', map: '地图', ranking: '排行', profile: '我的', addPhoto: '添加', exportMap: '保存地图', view: '风景', gourmet: '美食', rain: '雨天', myMap: '我的地图', friends: '好友', world: '世界', openGoogleMaps: '地图', saveSpot: '收藏', saved: '已收藏', report: '举报', block: '拉黑', delete: '删除', edit: '编辑', visited: '已访问', countriesUnit: '个国家', posts: '动态', friendCode: '好友码', searchPlaceholder: '搜索...', cacheClear: '清理缓存', deleteAccount: '注销账号', logout: '退出', close: '关闭' } },
@@ -431,7 +432,7 @@ const SafeMapComponent = dynamic(
             <TileLayer
               url={baseTileUrl}
               crossOrigin="anonymous"
-              attribution='&copy; WorldSnap'
+              attribution=""
               maxNativeZoom={16}
               maxZoom={19}
               keepBuffer={8}
@@ -442,6 +443,7 @@ const SafeMapComponent = dynamic(
             <TileLayer
               url={labelTileUrl}
               crossOrigin="anonymous"
+              attribution=""
               maxNativeZoom={16}
               maxZoom={19}
               keepBuffer={8}
@@ -802,6 +804,12 @@ export default function WorldSnapApp() {
     setActiveMediaIndex(0);
   };
 
+  // 写真タップで次の写真に進む
+  const handleNextMedia = () => {
+    if (!selectedSpot?.mediaList || selectedSpot.mediaList.length <= 1) return;
+    setActiveMediaIndex((prev) => (prev + 1) % selectedSpot.mediaList!.length);
+  };
+
   const handleAddComment = (spotId: string) => {
     const trimmedText = newCommentText.trim();
     if (!trimmedText) return;
@@ -1133,7 +1141,6 @@ export default function WorldSnapApp() {
     }
   };
 
-  // 編集開始
   const handleStartEdit = (spot: Spot) => {
     setEditingSpot(spot);
     setEditTitle(spot.title);
@@ -1142,7 +1149,6 @@ export default function WorldSnapApp() {
     setEditScopes(spot.scopes);
   };
 
-  // 編集保存
   const handleSaveEdit = async () => {
     if (!editingSpot) return;
 
@@ -1181,10 +1187,10 @@ export default function WorldSnapApp() {
     showToast('✏️ 投稿の修正を保存しました！');
   };
 
-  // マップ画面をそのまま画像化し、右下に「WorldSnap」を英字で合成して写真フォルダ/ダウンロードへ保存
+  // マップ画面をそのまま画像化し、下部の不要文字を排除して右下に「WorldSnap」の英語文字を合成
   const handleSaveMyMap = async () => {
     if (!exportRef.current) return;
-    showToast('📸 マップ画像を保存・生成中...');
+    showToast('📸 マップ画像を生成中...');
 
     try {
       const html2canvasModule = await import('html2canvas');
@@ -1196,40 +1202,47 @@ export default function WorldSnapApp() {
         scale: 2,
         logging: false,
         ignoreElements: (element) => {
-          return element.classList?.contains('ws-no-export');
+          return (
+            element.classList?.contains('ws-no-export') ||
+            element.classList?.contains('leaflet-control-attribution') ||
+            element.classList?.contains('leaflet-control-container')
+          );
         },
       });
 
-      // 右下に英語で「WorldSnap」のウォーターマークを綺麗に描画
+      // 右下に英語でスタイリッシュに「WorldSnap」の文字を描画
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        const text = 'WorldSnap';
-        ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        const textMetrics = ctx.measureText(text);
-        const paddingX = 24;
-        const paddingY = 12;
-        const width = textMetrics.width + paddingX * 2;
-        const height = 48;
-        const x = canvas.width - width - 30;
-        const y = canvas.height - height - 30;
+        const brandText = 'WorldSnap';
+        ctx.font = '900 36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        const metrics = ctx.measureText(brandText);
+        const paddingX = 22;
+        const paddingY = 10;
+        const badgeWidth = metrics.width + paddingX * 2;
+        const badgeHeight = 52;
+        const x = canvas.width - badgeWidth - 28;
+        const y = canvas.height - badgeHeight - 28;
 
-        // 背景の洗練された半透明ピルバッジ
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.28)';
+        ctx.shadowBlur = 14;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 4;
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.82)';
         ctx.beginPath();
         if (ctx.roundRect) {
-          ctx.roundRect(x, y, width, height, 24);
+          ctx.roundRect(x, y, badgeWidth, badgeHeight, 26);
         } else {
-          ctx.rect(x, y, width, height);
+          ctx.rect(x, y, badgeWidth, badgeHeight);
         }
         ctx.fill();
 
-        // 英語のブランドロゴテキスト
+        ctx.shadowColor = 'transparent';
         ctx.fillStyle = '#ffffff';
         ctx.textBaseline = 'middle';
-        ctx.fillText(text, x + paddingX, y + height / 2);
+        ctx.fillText(brandText, x + paddingX, y + badgeHeight / 2 + 1);
       }
 
-      // 写真フォルダ（カメラロール）への直接保存メニュー（Web Share API）
       canvas.toBlob(async (blob) => {
         if (!blob) {
           showToast('❌ 保存に失敗しました');
@@ -1239,22 +1252,20 @@ export default function WorldSnapApp() {
         const fileName = `WorldSnap-${userCountry}-${Date.now()}.png`;
         const file = new File([blob], fileName, { type: 'image/png' });
 
-        // スマホ（iOS Safari/Android Chrome）で「画像を保存」「写真に追加」を直接開く
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({
-              title: 'WorldSnap My Map',
+              title: 'WorldSnap',
               text: 'My WorldSnap Map',
               files: [file],
             });
-            showToast('✅ 写真フォルダへの保存メニューを開きました');
+            showToast('✅ 写真への保存メニューを開きました');
             return;
           } catch (err: any) {
             if (err.name === 'AbortError') return;
           }
         }
 
-        // ダウンロード保存フォールバック
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -1263,11 +1274,11 @@ export default function WorldSnapApp() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showToast('💾 マップを写真として保存しました！');
+        showToast('💾 写真フォルダ / ダウンロードに保存しました！');
       }, 'image/png');
     } catch (err) {
       console.error('Export error:', err);
-      showToast('❌ マップの保存に失敗しました');
+      showToast('❌ 保存に失敗しました');
     }
   };
 
@@ -1314,7 +1325,8 @@ export default function WorldSnapApp() {
   const themeAccent = viewMode === 'rain' ? '#38bdf8' : viewMode === 'gourmet' ? '#ea580c' : '#0284c7';
 
   return (
-    <div style={{ background: '#f8fafc', color: '#0f172a', height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+    // 画面全体を縦向き固定スタイル（Portrait固定）に保つコンテナ
+    <div style={{ background: '#f8fafc', color: '#0f172a', width: '100vw', maxWidth: '100vw', height: '100dvh', maxHeight: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', touchAction: 'manipulation' }}>
       
       {/* ── 違反警告バナー ── */}
       {warningMessage && (
@@ -1461,7 +1473,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── ヘッダー ── */}
+      {/* ── ヘッダー（スマホ対応：アイコン潰れ防止） ── */}
       <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
           <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0 }}>
@@ -1911,7 +1923,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── 詳細モーダル ── */}
+      {/* ── 詳細モーダル（タップで次の写真へ進む機能付き） ── */}
       {selectedSpot && (
         <div style={{ position: 'fixed', inset: 0, background: '#ffffff', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
           <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
@@ -1929,44 +1941,62 @@ export default function WorldSnapApp() {
                 ? selectedSpot.mediaList[activeMediaIndex] 
                 : { fileUrl: selectedSpot.fileUrl, fileType: selectedSpot.fileType, thumbUrl: selectedSpot.thumbUrl };
 
+              const hasMultiple = selectedSpot.mediaList && selectedSpot.mediaList.length > 1;
+
               return (
-                <div onClick={() => setIsLightboxOpen(true)} style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '8px', cursor: currentMedia.fileType === 'image' ? 'zoom-in' : 'default', position: 'relative' }}>
-                  {currentMedia.fileType === 'image' ? (
-                    <img src={currentMedia.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  ) : (
-                    <video src={currentMedia.fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                  )}
-                  {selectedSpot.mediaList && selectedSpot.mediaList.length > 1 && (
-                    <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.65)', color: '#fff', fontSize: '11px', padding: '3px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
-                      {activeMediaIndex + 1} / {selectedSpot.mediaList.length}
+                <div style={{ position: 'relative', marginBottom: '12px' }}>
+                  {/* 写真をタップすると次の写真へ切り替わるエリア */}
+                  <div
+                    onClick={hasMultiple ? handleNextMedia : () => setIsLightboxOpen(true)}
+                    style={{
+                      width: '100%',
+                      height: '280px',
+                      background: '#000',
+                      borderRadius: '16px',
+                      overflow: 'hidden',
+                      cursor: 'pointer',
+                      position: 'relative',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                    title={hasMultiple ? 'タップして次の写真を表示' : 'タップして拡大表示'}
+                  >
+                    {currentMedia.fileType === 'image' ? (
+                      <img src={currentMedia.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <video src={currentMedia.fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    )}
+
+                    {hasMultiple && (
+                      <div style={{ position: 'absolute', bottom: '12px', right: '12px', background: 'rgba(15,23,42,0.75)', color: '#fff', fontSize: '11px', padding: '4px 10px', borderRadius: '14px', fontWeight: 'bold', backdropFilter: 'blur(4px)' }}>
+                        👉 タップで次へ ({activeMediaIndex + 1}/{selectedSpot.mediaList!.length})
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 複数写真のドットインジケーター */}
+                  {hasMultiple && (
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '8px' }}>
+                      {selectedSpot.mediaList!.map((_, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => setActiveMediaIndex(idx)}
+                          style={{
+                            width: activeMediaIndex === idx ? '18px' : '6px',
+                            height: '6px',
+                            borderRadius: '3px',
+                            background: activeMediaIndex === idx ? themeAccent : '#cbd5e1',
+                            transition: 'all 0.2s ease',
+                            cursor: 'pointer',
+                          }}
+                        />
+                      ))}
                     </div>
                   )}
                 </div>
               );
             })()}
-
-            {selectedSpot.mediaList && selectedSpot.mediaList.length > 1 && (
-              <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px', marginBottom: '12px' }}>
-                {selectedSpot.mediaList.map((media, idx) => (
-                  <div
-                    key={idx}
-                    onClick={() => setActiveMediaIndex(idx)}
-                    style={{
-                      width: '60px',
-                      height: '60px',
-                      borderRadius: '8px',
-                      overflow: 'hidden',
-                      flexShrink: 0,
-                      cursor: 'pointer',
-                      border: activeMediaIndex === idx ? `3px solid ${themeAccent}` : '2px solid transparent',
-                      boxSizing: 'border-box',
-                    }}
-                  >
-                    <img src={media.thumbUrl || media.fileUrl} alt={`media-${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                ))}
-              </div>
-            )}
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
