@@ -2,12 +2,12 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'WorldSnap - 旅の思い出マップ',
-  description: '写真と動画で世界を記録・共有するマップアプリ',
+  title: 'WorldSnap',
+  description: '世界中を旅して、思い出をつなごう',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'WorldSnap',
   },
 };
@@ -27,10 +27,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <head>
-        <link rel="apple-touch-icon" href="/icon-512.png" />
-      </head>
-      <body>{children}</body>
+      <body style={{ margin: 0, padding: 0, overflow: 'hidden', overscrollBehavior: 'none' }}>
+        {children}
+      </body>
     </html>
   );
 }
