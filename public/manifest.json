@@ -3,8 +3,7 @@
   "short_name": "WorldSnap",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#090d16",
+  "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "icons": [
     {
