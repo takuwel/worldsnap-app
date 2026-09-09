@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: 'WorldSnap',
   description: '世界中を旅して、思い出をつなごう',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/icon-192.png',
+    apple: '/icon-192.png',
+  },
 };
 
 export default function RootLayout({
