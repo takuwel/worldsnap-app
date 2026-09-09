@@ -167,31 +167,19 @@ export const COUNTRIES: Record<
   MV: { name: 'Maldives (モルディブ)', flag: '🇲🇻', region: '🐪 中東・アフリカ', lang: 'en', lat: 3.2028, lon: 73.2207, zoom: 7, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
 };
 
+// 渋谷スクランブル交差点のみ（公式マーク付き）
 const INITIAL_SPOTS: Spot[] = [
   {
-    id: 'spot-kyoto-1', userId: 'user-yuki', userName: 'Yuki_Traveler', userAvatar: '', isOfficial: false, isFeatured: true,
-    viewsCount: 342, savedCount: 88,
-    title: '祇園 鴨川沿いの濃厚抹茶パフェ',
-    description: 'フレンドのYukiさんがシェアした京都の絶品スイーツです🍵 #京都スイーツ',
-    fileName: 'matcha.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=900&auto=format&fit=crop',
-    thumbUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=120&h=120&auto=format&fit=crop',
-    fileType: 'image',
-    mediaList: [
-      { fileUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=900&auto=format&fit=crop', thumbUrl: 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=120&h=120&auto=format&fit=crop', fileType: 'image', fileName: 'matcha.jpg' },
-      { fileUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=900&auto=format&fit=crop', thumbUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=120&h=120&auto=format&fit=crop', fileType: 'image', fileName: 'kyoto_view.jpg' },
-    ],
-    lat: 35.0037, lon: 135.7712, countryCode: 'JP', cityName: '京都',
-    category: 'gourmet', scopes: ['world', 'friends', 'my'], tags: ['京都スイーツ'],
-    comments: [{ id: 'c1', userName: 'Ken_Gourmet', userAvatar: '', text: 'ここ今度一緒に行こう！', createdAt: '2026/08/11' }],
-    reportCount: 0,
-    createdAt: '2026/08/10',
-  },
-  {
-    id: 'spot-tokyo-1', userId: 'user-ken', userName: 'Ken_Gourmet', userAvatar: '', isOfficial: false, isFeatured: true,
-    viewsCount: 521, savedCount: 142,
+    id: 'spot-tokyo-1',
+    userId: 'user-official',
+    userName: 'WorldSnap 公式',
+    userAvatar: '',
+    isOfficial: true, // 公式マーク
+    isFeatured: true,
+    viewsCount: 1250,
+    savedCount: 430,
     title: '渋谷スクランブル交差点＆SHIBUYA SKY',
-    description: 'フレンドのKenさんがシェアした東京の夜景スポット✨ #東京夜景',
+    description: 'WorldSnap公式がおすすめする東京の代表的スポット✨ #東京 #公式スポット',
     fileName: 'shibuya.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop',
@@ -199,8 +187,13 @@ const INITIAL_SPOTS: Spot[] = [
     mediaList: [
       { fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop', thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop', fileType: 'image', fileName: 'shibuya.jpg' }
     ],
-    lat: 35.6595, lon: 139.7005, countryCode: 'JP', cityName: '東京',
-    category: 'view', scopes: ['world', 'friends', 'my'], tags: ['東京夜景'],
+    lat: 35.6595,
+    lon: 139.7005,
+    countryCode: 'JP',
+    cityName: '東京',
+    category: 'view',
+    scopes: ['world', 'friends', 'my'],
+    tags: ['東京', '公式スポット'],
     comments: [],
     reportCount: 0,
     createdAt: '2026/08/12',
@@ -792,6 +785,11 @@ export default function WorldSnapApp() {
     setActiveMediaIndex(0);
   };
 
+  const handleNextMedia = () => {
+    if (!selectedSpot?.mediaList || selectedSpot.mediaList.length <= 1) return;
+    setActiveMediaIndex((prev) => (prev + 1) % selectedSpot.mediaList!.length);
+  };
+
   const handleAddComment = (spotId: string) => {
     const trimmedText = newCommentText.trim();
     if (!trimmedText) return;
@@ -1305,7 +1303,7 @@ export default function WorldSnapApp() {
   const themeAccent = viewMode === 'rain' ? '#38bdf8' : viewMode === 'gourmet' ? '#ea580c' : '#0284c7';
 
   return (
-    <div style={{ background: '#f8fafc', color: '#0f172a', height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+    <div style={{ background: '#f8fafc', color: '#0f172a', height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation' }}>
       
       {/* ── 違反警告バナー ── */}
       {warningMessage && (
@@ -1453,7 +1451,7 @@ export default function WorldSnapApp() {
       )}
 
       {/* ── ヘッダー ── */}
-      <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100 }}>
+      <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
           <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0 }}>
             ☰
@@ -1492,7 +1490,7 @@ export default function WorldSnapApp() {
       </header>
 
       {/* ── メインマップ ── */}
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', touchAction: 'none' }}>
         <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', position: 'relative' }}>
           
           <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none' }}>
@@ -1586,7 +1584,7 @@ export default function WorldSnapApp() {
 
           {/* ── マップ下部 広告バナースペース ── */}
           {isAdVisible && (
-            <div style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '44px', zIndex: 440 }}>
+            <div style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '44px', zIndex: 440, touchAction: 'none' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '36px', background: '#ffffff', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
                 <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 'bold' }}>
                   📢 <span style={{ color: themeAccent }}>WorldSnap PR</span>: 写真や動画で世界をつなごう！
@@ -1602,7 +1600,7 @@ export default function WorldSnapApp() {
             </div>
           )}
 
-          <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', zIndex: 450 }}>
+          <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', zIndex: 450, touchAction: 'none' }}>
             <div>
               <div style={{ fontSize: '12px', fontWeight: 'bold' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
               <div style={{ fontSize: '10px', color: '#64748b' }}>表示中: {filteredSpots.length}件</div>
@@ -1631,7 +1629,7 @@ export default function WorldSnapApp() {
         </div>
 
         {/* ── トレンド・ランキング ── */}
-        <div style={{ display: currentTab === 'ranking' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', gap: '10px' }}>
+        <div style={{ display: currentTab === 'ranking' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', gap: '10px', touchAction: 'pan-y' }}>
           <div style={{ padding: '6px 0', fontSize: '14px', fontWeight: '900', color: themeAccent }}>
             🏆 人気スポットランキング（行きたい数＆閲覧数順）
           </div>
@@ -1646,6 +1644,9 @@ export default function WorldSnapApp() {
               </div>
               <div style={{ width: '64px', height: '64px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0, position: 'relative' }}>
                 <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                {spot.isOfficial && (
+                  <span style={{ position: 'absolute', top: '2px', left: '2px', background: '#0284c7', color: '#fff', fontSize: '8px', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>公式</span>
+                )}
                 {spot.mediaList && spot.mediaList.length > 1 && (
                   <span style={{ position: 'absolute', bottom: '2px', right: '2px', background: 'rgba(0,0,0,0.7)', color: '#fff', fontSize: '8px', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>
                     +{spot.mediaList.length}
@@ -1653,7 +1654,10 @@ export default function WorldSnapApp() {
                 )}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
+                  {spot.isOfficial && <span style={{ fontSize: '10px', background: '#0284c7', color: '#fff', padding: '1px 5px', borderRadius: '10px', fontWeight: 'bold', flexShrink: 0 }}>公式</span>}
+                </div>
                 <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>📍 {COUNTRIES[spot.countryCode]?.flag} {spot.cityName}</div>
                 <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', marginTop: '4px' }}>❤️ {spot.savedCount || 0} 保存 · 👀 {spot.viewsCount || 0} 閲覧</div>
               </div>
@@ -1662,7 +1666,7 @@ export default function WorldSnapApp() {
         </div>
 
         {/* ── マイページ ── */}
-        <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px' }}>
+        <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', touchAction: 'pan-y' }}>
           <div style={{ background: '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -1892,7 +1896,7 @@ export default function WorldSnapApp() {
               ← {t.back}
             </button>
             <span style={{ fontSize: '11px', fontWeight: 'bold', padding: '3px 8px', borderRadius: '20px', background: themeAccent, color: '#fff' }}>
-              {selectedSpot.category === 'view' ? '🏔️ VIEW' : selectedSpot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ RAIN'}
+              {selectedSpot.category === 'view' ? '🏔️ VIEW' : selectedSpot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ 雨の日'}
             </span>
           </div>
 
@@ -1959,7 +1963,10 @@ export default function WorldSnapApp() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <h2 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                  <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
+                  {selectedSpot.isOfficial && <span style={{ fontSize: '10px', background: '#0284c7', color: '#fff', padding: '2px 6px', borderRadius: '10px', fontWeight: 'bold' }}>公式</span>}
+                </div>
                 <div style={{ fontSize: '12px', color: '#64748b' }}>
                   📍 {selectedSpot.lat.toFixed(4)}, {selectedSpot.lon.toFixed(4)} ({COUNTRIES[selectedSpot.countryCode]?.flag} {selectedSpot.cityName}) · {selectedSpot.createdAt}
                 </div>
@@ -2606,6 +2613,7 @@ export default function WorldSnapApp() {
           alignItems: 'center',
           flexShrink: 0,
           zIndex: 1000,
+          touchAction: 'none',
         }}
       >
         <button
