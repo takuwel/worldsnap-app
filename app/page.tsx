@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { createClient } from '@supabase/supabase-js';
 
@@ -161,7 +161,7 @@ export const COUNTRIES: Record<
   // --- 中東・アフリカ ---
   AE: { name: 'UAE / Dubai (アラブ首長国連邦)', flag: '🇦🇪', region: '🐪 中東・アフリカ', lang: 'en', lat: 23.4241, lon: 53.8478, zoom: 7, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
   SA: { name: 'Saudi Arabia (サウジアラビア)', flag: '🇸🇦', region: '🐪 中東・アフリカ', lang: 'en', lat: 23.8859, lon: 45.0792, zoom: 5, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  EG: { name: 'Egypt (エジプト)', flag: '🇪🇬', region: '🐪 中東・アフリカ', lang: 'en', lat: 26.8206, lon: 30.8025, zoom: 6, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
+  EG: { name: 'Egypt (エジプト)', flag: '🇪🇬', region: '🐪 中東・アフリカ', lang: 'en', lang: 'en', lat: 26.8206, lon: 30.8025, zoom: 6, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
   MA: { name: 'Maroc (モロッコ)', flag: '🇲🇦', region: '🐪 中東・アフリカ', lang: 'en', lat: 31.7917, lon: -7.0926, zoom: 6, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
   ZA: { name: 'South Africa (南アフリカ)', flag: '🇿🇦', region: '🐪 中東・アフリカ', lang: 'en', lat: -30.5595, lon: 22.9375, zoom: 5, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
   MV: { name: 'Maldives (モルディブ)', flag: '🇲🇻', region: '🐪 中東・アフリカ', lang: 'en', lat: 3.2028, lon: 73.2207, zoom: 7, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
@@ -792,12 +792,6 @@ export default function WorldSnapApp() {
     setActiveMediaIndex(0);
   };
 
-  // 写真タップで次の画像に進む機能
-  const handleNextMedia = () => {
-    if (!selectedSpot?.mediaList || selectedSpot.mediaList.length <= 1) return;
-    setActiveMediaIndex((prev) => (prev + 1) % selectedSpot.mediaList!.length);
-  };
-
   const handleAddComment = (spotId: string) => {
     const trimmedText = newCommentText.trim();
     if (!trimmedText) return;
@@ -1175,7 +1169,6 @@ export default function WorldSnapApp() {
     showToast('✏️ 投稿の修正を保存しました！');
   };
 
-  // マップ保存時に下部の余計な文字を排除し、右下に英語で「WorldSnap」を合成
   const handleSaveMyMap = async () => {
     if (!exportRef.current) return;
     showToast('📸 マップ画像を生成中...');
@@ -1899,7 +1892,7 @@ export default function WorldSnapApp() {
               ← {t.back}
             </button>
             <span style={{ fontSize: '11px', fontWeight: 'bold', padding: '3px 8px', borderRadius: '20px', background: themeAccent, color: '#fff' }}>
-              {selectedSpot.category === 'view' ? '🏔️ VIEW' : selectedSpot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ RAIN'}
+              {selectedSpot.category === 'view' ? '🏔️ VIEW' : selectedSpot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ 雨の日'}
             </span>
           </div>
 
@@ -2024,7 +2017,7 @@ export default function WorldSnapApp() {
                         <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a' }}>{com.userName}</span>
                         <span style={{ fontSize: '10px', color: '#94a3b8' }}>{com.createdAt}</span>
                       </div>
-                      <p style={{ margin: 0, fontSize: '12px', color: '#334155' }}>{com.text}</p>
+                        <p style={{ margin: 0, fontSize: '12px', color: '#334155' }}>{com.text}</p>
                     </div>
                   ))
                 ) : (
@@ -2671,7 +2664,7 @@ export default function WorldSnapApp() {
             padding: '4px 16px',
           }}
         >
-          <span style={{ fontSize: '18px' }, { color: '#000000' }}>👤</span>
+          <span style={{ fontSize: '18px' }}>👤</span>
           <span style={{ fontSize: '10px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal' }}>{t.profile}</span>
         </button>
       </nav>
