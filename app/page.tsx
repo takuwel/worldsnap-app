@@ -123,7 +123,7 @@ export const COUNTRIES: Record<
   }
 > = {
   JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lang: 'ja', lat: 36.2048, lon: 138.2529, zoom: 5, dict: { step1Title: 'Step 1: 国籍・メインの国を選択', step1Desc: '選択した国に応じて、地図の地名とアプリ全体の言語がローカライズされます。', step2Title: 'Step 2: プロフィール作成', step3Title: 'Step 3: 利用規約 (EULA) の確認', next: '次へ進む', back: '戻る', startApp: '🚀 WorldSnap をはじめる', eulaAgree: '利用規約およびコミュニティガイドラインに同意する', termsTitle: '📜 WorldSnap 利用規約 (EULA)', map: 'マップ', ranking: 'ランキング', profile: 'マイページ', addPhoto: '写真 / 動画を追加', exportMap: 'マップ保存', view: 'View', gourmet: 'グルメ', rain: '雨の日', myMap: 'マイマップ', friends: 'フレンド', world: 'ワールド', openGoogleMaps: '🧭 Googleマップで開く', saveSpot: '❤️ 行きたい', saved: '❤️ 保存済み', report: '⚠️ 通報', block: '🚫 ブロック', delete: '🗑️ 削除', edit: '✏️ 編集', visited: '訪問国', countriesUnit: 'カ国', posts: '投稿', friendCode: 'フレンドコード', searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）', cacheClear: '🧹 地図キャッシュ削除', deleteAccount: '⚠️ アカウントの削除 (退会処理)', logout: '🚪 ログアウト', close: '閉じる' } },
-  KR: { name: '대한민국 (韓国)', flag: '🇰🇷', region: '🌏 アジア', lang: 'ko', lat: 35.9078, lon: 127.7669, zoom: 7, dict: { step1Title: 'Step 1: 국적 선택', step1Desc: '지도의 지명과 앱 언어가 한국어로 표시됩니다.', step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의', next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기', eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)', map: '지도', ranking: '랭킹', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장', view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체', openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨', report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정', visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드', searchPlaceholder: '🔍 도시 / #태그 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 로그아웃', close: '닫기' } },
+  KR: { name: '대한민국 (韓国)', flag: '🇰🇷', region: '🌏 アジア', lang: 'ko', lat: 35.9078, lon: 127.7669, zoom: 7, dict: { step1Title: 'Step 1: 국적 선택', step1Desc: '지도의 지명과 앱 언어가 한국어로 표시됩니다.', step2Title: 'Step 2: 프로필 설정', step3Title: 'Step 3: 이용약관 (EULA) 동의', next: '다음', back: '뒤로', startApp: '🚀 WorldSnap 시작하기', eulaAgree: '이용약관 및 커뮤니티 가이드라인에 동의합니다', termsTitle: '📜 WorldSnap 이용약관 (EULA)', map: '지도', ranking: '랭킹', profile: '마이페이지', addPhoto: '사진/동영상 추가', exportMap: '지도 저장', view: '경치', gourmet: '맛집', rain: '비오는날', myMap: '내 지도', friends: '친구', world: '전체', openGoogleMaps: '🧭 Google 지도에서 길찾기', saveSpot: '❤️ 가고싶다', saved: '❤️ 저장됨', report: '⚠️ 신고', block: '🚫 차단', delete: '🗑️ 삭제', edit: '✏️ 수정', visited: '방문 국가', countriesUnit: '개국', posts: '게시물', friendCode: '친구 코드', searchPlaceholder: '🔍 도시 / #태그 검색', cacheClear: '🧹 캐시 삭제', deleteAccount: '⚠️ 회원 탈퇴', logout: '🚪 ログアウト', close: '닫기' } },
   CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lang: 'zh', lat: 35.8617, lon: 104.1954, zoom: 4, dict: { step1Title: '步骤 1: 选择国家', step1Desc: '选择国家', step2Title: '步骤 2', step3Title: '步骤 3', next: '下一步', back: '返回', startApp: '开始', eulaAgree: '同意', termsTitle: '条款', map: '地图', ranking: '排行', profile: '我的', addPhoto: '添加', exportMap: '保存地图', view: '风景', gourmet: '美食', rain: '雨天', myMap: '我的地图', friends: '好友', world: '世界', openGoogleMaps: '地图', saveSpot: '收藏', saved: '已收藏', report: '举报', block: '拉黑', delete: '删除', edit: '编辑', visited: '已访问', countriesUnit: '个国家', posts: '动态', friendCode: '好友码', searchPlaceholder: '搜索...', cacheClear: '清理缓存', deleteAccount: '注销账号', logout: '退出', close: '关闭' } },
   TW: { name: '台灣 (台湾)', flag: '🇹🇼', region: '🌏 アジア', lang: 'zh', lat: 23.6978, lon: 120.9605, zoom: 7, dict: { step1Title: 'Step 1: 選擇國家', step1Desc: '選擇國家', step2Title: 'Step 2', step3Title: 'Step 3', next: '下一步', back: '返回', startApp: '開始', eulaAgree: '同意', termsTitle: '條款', map: '地圖', ranking: '排行', profile: '我的', addPhoto: '新增', exportMap: '儲存地圖', view: '風景', gourmet: '美食', rain: '雨天', myMap: '我的地圖', friends: '好友', world: '世界', openGoogleMaps: '地圖', saveSpot: '收藏', saved: '已收藏', report: '舉報', block: '封鎖', delete: '刪除', edit: '編輯', visited: '訪問', countriesUnit: '個國家', posts: '貼文', friendCode: '好友代碼', searchPlaceholder: '搜尋...', cacheClear: '清除快取', deleteAccount: '刪除帳號', logout: '登出', close: '關閉' } },
   TH: { name: 'ประเทศไทย (タイ)', flag: '🇹🇭', region: '🌏 アジア', lang: 'th', lat: 15.8700, lon: 100.9925, zoom: 6, dict: { step1Title: 'Step 1: เลือกประเทศ', step1Desc: 'เลือกประเทศ', step2Title: 'Step 2', step3Title: 'Step 3', next: 'ถัดไป', back: 'ย้อนกลับ', startApp: 'เริ่ม', eulaAgree: 'ยอมรับ', termsTitle: 'เงื่อนไข', map: 'แผนที่', ranking: 'อันดับ', profile: 'โปรไฟล์', addPhoto: 'เพิ่ม', exportMap: 'บันทึกแผนที่', view: 'วิว', gourmet: 'ร้านอาหาร', rain: 'ฝน', myMap: 'แผนที่ฉัน', friends: 'เพื่อน', world: 'ทั่วโลก', openGoogleMaps: 'แผนที่', saveSpot: 'บันทึก', saved: 'บันทึกแล้ว', report: 'รายงาน', block: 'บล็อก', delete: 'ลบ', edit: 'แก้ไข', visited: 'เยี่ยมชม', countriesUnit: 'ประเทศ', posts: 'โพสต์', friendCode: 'โค้ด', searchPlaceholder: 'ค้นหา...', cacheClear: 'ล้างแคช', deleteAccount: 'ลบบัญชี', logout: 'ออกจากระบบ', close: 'ปิด' } },
@@ -167,14 +167,13 @@ export const COUNTRIES: Record<
   MV: { name: 'Maldives (モルディブ)', flag: '🇲🇻', region: '🐪 中東・アフリカ', lang: 'en', lat: 3.2028, lon: 73.2207, zoom: 7, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2', step3Title: 'Step 3', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
 };
 
-// 渋谷スクランブル交差点のみ（公式マーク付き）
 const INITIAL_SPOTS: Spot[] = [
   {
     id: 'spot-tokyo-1',
     userId: 'user-official',
     userName: 'WorldSnap 公式',
     userAvatar: '',
-    isOfficial: true, // 公式マーク
+    isOfficial: true,
     isFeatured: true,
     viewsCount: 1250,
     savedCount: 430,
@@ -930,8 +929,8 @@ export default function WorldSnapApp() {
       setSelectedScopes(['world', 'friends', 'my']);
       setAddressSearchQuery('');
       if (!pendingList[0].hasGps) {
-        setManualLat(currentMapCenter[0].toString());
-        setManualLon(currentMapCenter[1].toString());
+        setManualLat('');
+        setManualLon('');
       }
     }
   };
@@ -973,6 +972,15 @@ export default function WorldSnapApp() {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
 
+    // GPSがなく、手動の緯度経度が入力されていない場合は投稿させない
+    const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
+    const finalHasGps = current.hasGps && current.lat !== undefined && current.lon !== undefined;
+
+    if (!finalHasGps && !hasValidManualLocation) {
+      showWarning('⚠️ GPS情報が含まれていない写真です。必ず「撮影場所を設定（地名・住所検索）」で場所を指定してから投稿してください。');
+      return;
+    }
+
     const checkTitle = checkInappropriateContent(postTitle);
     const checkDesc = checkInappropriateContent(postDesc);
     if (checkTitle.isViolating || checkDesc.isViolating) {
@@ -983,8 +991,8 @@ export default function WorldSnapApp() {
     setIsSubmitting(true);
     showToast('⏳ 写真/動画を保存中...');
 
-    const finalLat = current.hasGps && current.lat ? current.lat : parseFloat(manualLat) || currentMapCenter[0];
-    const finalLon = current.hasGps && current.lon ? current.lon : parseFloat(manualLon) || currentMapCenter[1];
+    const finalLat = finalHasGps ? current.lat! : parseFloat(manualLat);
+    const finalLon = finalHasGps ? current.lon! : parseFloat(manualLon);
 
     let uploadedUrl = current.fileUrl;
     let finalThumbUrl = current.thumbUrl || current.fileUrl;
@@ -1111,10 +1119,8 @@ export default function WorldSnapApp() {
       setPostTitle(pendingUploads[nextIndex].file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
       setAddressSearchQuery('');
-      if (!pendingUploads[nextIndex].hasGps) {
-        setManualLat(currentMapCenter[0].toString());
-        setManualLon(currentMapCenter[1].toString());
-      }
+      setManualLat('');
+      setManualLon('');
     } else {
       setPendingUploads([]);
       setCurrentUploadIndex(0);
@@ -2357,41 +2363,42 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            {!pendingUploads[currentUploadIndex].hasGps && (
-              <div style={{ background: '#fffbeb', padding: '10px', borderRadius: '10px', border: '1px solid #fef3c7', marginBottom: '12px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#b45309', marginBottom: '6px' }}>📍 撮影場所を設定（地名・住所検索）</div>
-                <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
-                  <input
-                    type="text"
-                    placeholder="地名・住所（例: 東京タワー、京都駅）"
-                    value={addressSearchQuery}
-                    onChange={(e) => setAddressSearchQuery(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSearchAddress(); } }}
-                    style={{ flex: 1, padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px' }}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleSearchAddress}
-                    disabled={isSearchingAddress}
-                    style={{ padding: '7px 12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
-                  >
-                    {isSearchingAddress ? '検索中' : '検索'}
-                  </button>
-                </div>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  <input
-                    type="number" step="any" placeholder="緯度"
-                    value={manualLat} onChange={(e) => setManualLat(e.target.value)}
-                    style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }}
-                  />
-                  <input
-                    type="number" step="any" placeholder="経度"
-                    value={manualLon} onChange={(e) => setManualLon(e.target.value)}
-                    style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }}
-                  />
-                </div>
+            {/* GPSがない、または手動未設定の場合は強制的に住所検索を要求 */}
+            <div style={{ background: pendingUploads[currentUploadIndex].hasGps ? '#f0fdf4' : '#fffbeb', padding: '10px', borderRadius: '10px', border: `1px solid ${pendingUploads[currentUploadIndex].hasGps ? '#bbf7d0' : '#fef3c7'}`, marginBottom: '12px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 'bold', color: pendingUploads[currentUploadIndex].hasGps ? '#15803d' : '#b45309', marginBottom: '6px' }}>
+                {pendingUploads[currentUploadIndex].hasGps ? '✅ 写真のGPS位置情報を検出しました' : '⚠️ GPSなし写真（カメラ撮影など）: 住所・地名を必ず検索してください'}
               </div>
-            )}
+              <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
+                <input
+                  type="text"
+                  placeholder="地名・住所（例: 東京タワー、清水寺）"
+                  value={addressSearchQuery}
+                  onChange={(e) => setAddressSearchQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSearchAddress(); } }}
+                  style={{ flex: 1, padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px' }}
+                />
+                <button
+                  type="button"
+                  onClick={handleSearchAddress}
+                  disabled={isSearchingAddress}
+                  style={{ padding: '7px 12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  {isSearchingAddress ? '検索中' : '検索'}
+                </button>
+              </div>
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <input
+                  type="number" step="any" placeholder="緯度"
+                  value={manualLat} onChange={(e) => setManualLat(e.target.value)}
+                  style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }}
+                />
+                <input
+                  type="number" step="any" placeholder="経度"
+                  value={manualLon} onChange={(e) => setManualLon(e.target.value)}
+                  style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }}
+                />
+              </div>
+            </div>
 
             <div style={{ display: 'flex', gap: '8px' }}>
               <button
