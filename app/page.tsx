@@ -279,7 +279,7 @@ function getUserTitle(count: number) {
 }
 
 // ==========================================
-// 2. 超軽量・フォーマルなベクターSVGマップ
+// 2. 超軽量・フォーマルなオープンマップ（言語連動対応）
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -291,6 +291,7 @@ const SafeMapComponent = dynamic(
         targetCenter,
         targetZoom,
         mode,
+        userLang,
         onMoveEnd,
         onSelectSpot,
         onDoubleTap,
@@ -301,6 +302,7 @@ const SafeMapComponent = dynamic(
         targetCenter: [number, number] | null;
         targetZoom: number | null;
         mode: ViewCategory;
+        userLang: string;
         onMoveEnd: (center: [number, number], zoom: number) => void;
         onSelectSpot: (s: Spot) => void;
         onDoubleTap: (lat: number, lon: number) => void;
@@ -332,11 +334,12 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // カルティエ・リッツ・高級ホテル等で使用されるフォーマルなCartoDB Positron（白基調・超軽量）を採用
+        // OpenStreetMapベース。言語コード（ja, ko, zh, fr, de, en など）をマップタイルに渡すことで地名が自動翻訳されます
+        const tileLang = userLang || 'ja';
         const baseTileUrl =
           mode === 'rain'
             ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+            : `https://tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png`; // または標準OSM
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
@@ -416,13 +419,12 @@ const SafeMapComponent = dynamic(
             <MapEventHandler />
             
             <TileLayer
-              url={baseTileUrl}
-              subdomains="abcd"
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               maxZoom={19}
               keepBuffer={8}
               updateWhenZooming={false}
               updateWhenIdle={true}
-              attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
 
             {spots.map((spot) => (
@@ -1545,6 +1547,7 @@ export default function WorldSnapApp() {
               targetCenter={targetCenter}
               targetZoom={targetZoom}
               mode={viewMode}
+              userLang={currentConfig.lang}
               onMoveEnd={handleMapMoveEnd}
               onSelectSpot={handleOpenSpot}
               onDoubleTap={handleMapDoubleTap}
@@ -2345,7 +2348,6 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            {/* GPSがない場合は強制的に住所・地名入力を求める */}
             <div style={{ background: pendingUploads[currentUploadIndex].hasGps ? '#f0fdf4' : '#fffbeb', padding: '10px', borderRadius: '10px', border: `1px solid ${pendingUploads[currentUploadIndex].hasGps ? '#bbf7d0' : '#fef3c7'}`, marginBottom: '12px' }}>
               <div style={{ fontSize: '11px', fontWeight: 'bold', color: pendingUploads[currentUploadIndex].hasGps ? '#15803d' : '#b45309', marginBottom: '6px' }}>
                 {pendingUploads[currentUploadIndex].hasGps ? '✅ 写真のGPS位置情報を検出しました' : '⚠️ GPSなし写真（カメラ撮影など）: 住所・地名を必ず検索してください'}
