@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import { createClient } from '@supabase/supabase-js';
 
@@ -279,7 +279,7 @@ function getUserTitle(count: number) {
 }
 
 // ==========================================
-// 2. 超軽量・フォーマルなオープンマップ（言語連動対応）
+// 2. Leaflet 白基調マップ
 // ==========================================
 const SafeMapComponent = dynamic(
   () =>
@@ -291,7 +291,6 @@ const SafeMapComponent = dynamic(
         targetCenter,
         targetZoom,
         mode,
-        userLang,
         onMoveEnd,
         onSelectSpot,
         onDoubleTap,
@@ -302,7 +301,6 @@ const SafeMapComponent = dynamic(
         targetCenter: [number, number] | null;
         targetZoom: number | null;
         mode: ViewCategory;
-        userLang: string;
         onMoveEnd: (center: [number, number], zoom: number) => void;
         onSelectSpot: (s: Spot) => void;
         onDoubleTap: (lat: number, lon: number) => void;
@@ -334,12 +332,15 @@ const SafeMapComponent = dynamic(
           return null;
         };
 
-        // OpenStreetMapベース。言語コード（ja, ko, zh, fr, de, en など）をマップタイルに渡すことで地名が自動翻訳されます
-        const tileLang = userLang || 'ja';
         const baseTileUrl =
           mode === 'rain'
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : `https://tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png`; // または標準OSM
+            ? 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+            : 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+
+        const labelTileUrl =
+          mode === 'rain'
+            ? 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}'
+            : 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}';
 
         const createMarkerIcon = (spot: Spot) => {
           const rot = ((spot.lat * 10) % 6) - 3;
@@ -413,18 +414,32 @@ const SafeMapComponent = dynamic(
             doubleClickZoom={false}
             zoomControl={false}
             preferCanvas={true}
-            style={{ width: '100%', height: '100%', background: '#f1f5f9' }}
+            style={{ width: '100%', height: '100%', background: '#eaedf1' }}
           >
             <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
             <MapEventHandler />
             
             <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              url={baseTileUrl}
+              crossOrigin="anonymous"
+              attribution=""
+              maxNativeZoom={16}
               maxZoom={19}
               keepBuffer={8}
               updateWhenZooming={false}
               updateWhenIdle={true}
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+
+            <TileLayer
+              url={labelTileUrl}
+              crossOrigin="anonymous"
+              attribution=""
+              maxNativeZoom={16}
+              maxZoom={19}
+              keepBuffer={8}
+              opacity={0.85}
+              updateWhenZooming={false}
+              updateWhenIdle={true}
             />
 
             {spots.map((spot) => (
@@ -957,6 +972,7 @@ export default function WorldSnapApp() {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
 
+    // GPSがなく、手動の緯度経度が入力されていない場合は投稿させない
     const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
     const finalHasGps = current.hasGps && current.lat !== undefined && current.lon !== undefined;
 
@@ -1547,7 +1563,6 @@ export default function WorldSnapApp() {
               targetCenter={targetCenter}
               targetZoom={targetZoom}
               mode={viewMode}
-              userLang={currentConfig.lang}
               onMoveEnd={handleMapMoveEnd}
               onSelectSpot={handleOpenSpot}
               onDoubleTap={handleMapDoubleTap}
@@ -2348,6 +2363,7 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
+            {/* GPSがない、または手動未設定の場合は強制的に住所検索を要求 */}
             <div style={{ background: pendingUploads[currentUploadIndex].hasGps ? '#f0fdf4' : '#fffbeb', padding: '10px', borderRadius: '10px', border: `1px solid ${pendingUploads[currentUploadIndex].hasGps ? '#bbf7d0' : '#fef3c7'}`, marginBottom: '12px' }}>
               <div style={{ fontSize: '11px', fontWeight: 'bold', color: pendingUploads[currentUploadIndex].hasGps ? '#15803d' : '#b45309', marginBottom: '6px' }}>
                 {pendingUploads[currentUploadIndex].hasGps ? '✅ 写真のGPS位置情報を検出しました' : '⚠️ GPSなし写真（カメラ撮影など）: 住所・地名を必ず検索してください'}
