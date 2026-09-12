@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import dynamic from 'next/dynamic';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
 // ==========================================
@@ -10,6 +9,8 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
+
+// AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7Iconst GOOGLE_MAPS_API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY';
 
 // ==========================================
 // 1. 型定義 & マスターデータ
@@ -221,243 +222,126 @@ function extractHashtags(text: string): string[] {
   return matches ? matches.map((tag) => tag.replace('#', '')) : [];
 }
 
-function convertDMSToDD(dms: number[], ref: string): number {
-  if (!dms || dms.length < 3) return 0;
-  let dd = dms[0] + dms[1] / 60 + dms[2] / 3600;
-  if (ref === 'S' || ref === 'W') dd *= -1;
-  return dd;
-}
-
-function generateVideoThumbnail(file: File): Promise<string> {
-  return new Promise((resolve) => {
-    const video = document.createElement('video');
-    video.preload = 'metadata';
-    video.src = URL.createObjectURL(file);
-    video.muted = true;
-    video.playsInline = true;
-    video.currentTime = 0.5;
-
-    video.onloadeddata = () => {
-      setTimeout(() => {
-        try {
-          const canvas = document.createElement('canvas');
-          canvas.width = 160;
-          canvas.height = 120;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL('image/jpeg', 0.8));
-          } else {
-            resolve('');
-          }
-        } catch {
-          resolve('');
-        }
-      }, 200);
-    };
-    video.onerror = () => resolve('');
-  });
-}
-
-function getUserTitle(count: number) {
-  if (count >= 300) return { title: '🪐 宇宙級の旅人', color: '#ec4899' };
-  if (count >= 250) return { title: '🌏 ワールドレジェンド', color: '#d946ef' };
-  if (count >= 200) return { title: '💎 地球の語り部', color: '#06b6d4' };
-  if (count >= 150) return { title: '🌌 歴戦の探求者', color: '#10b981' };
-  if (count >= 100) return { title: '👑 百景の覇者', color: '#eab308' };
-  if (count >= 90) return { title: '🏆 ワールドナビゲーター', color: '#f97316' };
-  if (count >= 80) return { title: '🌟 グローバルウォーカー', color: '#f59e0b' };
-  if (count >= 70) return { title: '⭐ トラベルマスター', color: '#f43f5e' };
-  if (count >= 60) return { title: '🏔️ 開拓エキスパート', color: '#8b5cf6' };
-  if (count >= 50) return { title: '🧭 ジャーニーガイド', color: '#6366f1' };
-  if (count >= 40) return { title: '✈️ 熟練ボイジャー', color: '#3b82f6' };
-  if (count >= 30) return { title: '🗺️ エリアトラベラー', color: '#0284c7' };
-  if (count >= 20) return { title: '📷 スポットハンター', color: '#0ea5e9' };
-  if (count >= 10) return { title: '🎒 トラベルビギナー', color: '#38bdf8' };
-  if (count >= 1) return { title: '🌱 見習い探検家', color: '#22c55e' };
-  return { title: '🐣 旅のビギナー', color: '#94a3b8' };
-}
-
 // ==========================================
-// 2. Leaflet 白基調マップ
+// 2. Google Maps API を用いた滑らかなマップコンポーネント
 // ==========================================
-const SafeMapComponent = dynamic(
-  () =>
-    Promise.resolve(
-      ({
-        spots,
-        center,
-        zoom,
-        targetCenter,
-        targetZoom,
-        mode,
-        onMoveEnd,
-        onSelectSpot,
-        onDoubleTap,
-      }: {
-        spots: Spot[];
-        center: [number, number];
-        zoom: number;
-        targetCenter: [number, number] | null;
-        targetZoom: number | null;
-        mode: ViewCategory;
-        onMoveEnd: (center: [number, number], zoom: number) => void;
-        onSelectSpot: (s: Spot) => void;
-        onDoubleTap: (lat: number, lon: number) => void;
-      }) => {
-        const { MapContainer, TileLayer, Marker, useMapEvents, useMap } = require('react-leaflet');
-        const L = require('leaflet');
-        require('leaflet/dist/leaflet.css');
+const GoogleMapComponent = ({
+  spots,
+  center,
+  zoom,
+  targetCenter,
+  targetZoom,
+  mode,
+  userLang,
+  onMoveEnd,
+  onSelectSpot,
+  onDoubleTap,
+}: {
+  spots: Spot[];
+  center: [number, number];
+  zoom: number;
+  targetCenter: [number, number] | null;
+  targetZoom: number | null;
+  mode: ViewCategory;
+  userLang: string;
+  onMoveEnd: (center: [number, number], zoom: number) => void;
+  onSelectSpot: (s: Spot) => void;
+  onDoubleTap: (lat: number, lon: number) => void;
+}) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
 
-        const MapController = ({ targetCenter, targetZoom }: { targetCenter: [number, number] | null; targetZoom: number | null }) => {
-          const map = useMap();
-          useEffect(() => {
-            if (targetCenter && targetZoom) {
-              map.flyTo(targetCenter, targetZoom, { duration: 0.75, easeLinearity: 0.2, animate: true });
-            }
-          }, [targetCenter, targetZoom, map]);
-          return null;
-        };
-
-        const MapEventHandler = () => {
-          const map = useMapEvents({
-            dblclick(e: any) {
-              onDoubleTap(e.latlng.lat, e.latlng.lng);
-            },
-            moveend() {
-              const c = map.getCenter();
-              onMoveEnd([c.lat, c.lng], map.getZoom());
-            },
-          });
-          return null;
-        };
-
-        const baseTileUrl =
-          mode === 'rain'
-            ? 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
-            : 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
-
-        const labelTileUrl =
-          mode === 'rain'
-            ? 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}'
-            : 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}';
-
-        const createMarkerIcon = (spot: Spot) => {
-          const rot = ((spot.lat * 10) % 6) - 3;
-          let badgeHtml = '';
-          const totalMedia = spot.mediaList ? spot.mediaList.length : 1;
-          const multiCountBadge = totalMedia > 1 
-            ? `<div style="position:absolute;bottom:12px;right:-4px;background:#0f172a;color:#fff;font-size:9px;font-weight:bold;border-radius:10px;padding:1px 5px;box-shadow:0 1px 4px rgba(0,0,0,0.4);border:1px solid #ffffff;">+${totalMedia}</div>` 
-            : '';
-
-          if (spot.isOfficial) {
-            badgeHtml = `<div style="position:absolute;top:-4px;right:-4px;background:#0284c7;color:#fff;font-size:8px;font-weight:bold;border-radius:10px;padding:1px 4px;box-shadow:0 1px 3px rgba(0,0,0,0.3);">公式</div>`;
-          } else if (spot.isFirstExplorer) {
-            badgeHtml = `<div style="position:absolute;top:-4px;right:-4px;background:#10b981;color:#fff;font-size:8px;font-weight:bold;border-radius:10px;padding:1px 4px;box-shadow:0 1px 3px rgba(0,0,0,0.3);">初代開拓</div>`;
-          } else if (spot.isFeatured) {
-            badgeHtml = `<div style="position:absolute;top:-4px;right:-4px;background:#f59e0b;color:#fff;font-size:8px;font-weight:bold;border-radius:10px;padding:1px 4px;box-shadow:0 1px 3px rgba(0,0,0,0.3);">注目</div>`;
+  // Google Maps スクリプトの動的ロード
+  useEffect(() => {
+    if (!window.google || !window.google.maps) {
+      const existingScript = document.getElementById('google-maps-script');
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.id = 'google-maps-script';
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}&loading=async`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => initMap();
+        document.head.appendChild(script);
+      } else {
+        const checkInterval = setInterval(() => {
+          if (window.google && window.google.maps) {
+            clearInterval(checkInterval);
+            initMap();
           }
-
-          return L.divIcon({
-            className: 'ws-marker',
-            html: `
-              <div style="
-                position: relative;
-                width: 48px;
-                height: 56px;
-                background: #ffffff;
-                border-radius: 6px;
-                box-shadow: 0 4px 16px rgba(0,0,0,0.22);
-                padding: 4px 4px 14px 4px;
-                cursor: pointer;
-                will-change: transform;
-                transform: translateY(-50%) rotate(${rot}deg) translateZ(0);
-                transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
-              ">
-                ${badgeHtml}
-                ${multiCountBadge}
-                <div style="width: 100%; height: 38px; border-radius: 3px; overflow: hidden; background: #cbd5e1;">
-                  <img src="${spot.thumbUrl || spot.fileUrl}" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover;" loading="lazy" decoding="async" />
-                </div>
-                <div style="
-                  position: absolute;
-                  bottom: -6px;
-                  left: 50%;
-                  transform: translateX(-50%);
-                  width: 0;
-                  height: 0;
-                  border-left: 5px solid transparent;
-                  border-right: 5px solid transparent;
-                  border-top: 6px solid #ffffff;
-                "></div>
-              </div>
-            `,
-            iconSize: [48, 56],
-            iconAnchor: [24, 28],
-          });
-        };
-
-        return (
-          <MapContainer
-            center={center}
-            zoom={zoom}
-            minZoom={2}
-            maxZoom={18}
-            zoomSnap={0.5}
-            zoomDelta={1}
-            wheelPxPerZoomLevel={120}
-            touchZoom={true}
-            scrollWheelZoom={true}
-            dragging={true}
-            inertia={true}
-            inertiaDeceleration={3000}
-            doubleClickZoom={false}
-            zoomControl={false}
-            preferCanvas={true}
-            style={{ width: '100%', height: '100%', background: '#eaedf1' }}
-          >
-            <MapController targetCenter={targetCenter} targetZoom={targetZoom} />
-            <MapEventHandler />
-            
-            <TileLayer
-              url={baseTileUrl}
-              crossOrigin="anonymous"
-              attribution=""
-              maxNativeZoom={16}
-              maxZoom={19}
-              keepBuffer={8}
-              updateWhenZooming={false}
-              updateWhenIdle={true}
-            />
-
-            <TileLayer
-              url={labelTileUrl}
-              crossOrigin="anonymous"
-              attribution=""
-              maxNativeZoom={16}
-              maxZoom={19}
-              keepBuffer={8}
-              opacity={0.85}
-              updateWhenZooming={false}
-              updateWhenIdle={true}
-            />
-
-            {spots.map((spot) => (
-              <Marker
-                key={spot.id}
-                position={[spot.lat, spot.lon]}
-                icon={createMarkerIcon(spot)}
-                eventHandlers={{
-                  click: () => onSelectSpot(spot),
-                }}
-              />
-            ))}
-          </MapContainer>
-        );
+        }, 100);
       }
-    ),
-  { ssr: false, loading: () => <div style={{ height: '100%', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b' }}>🗺️ マップを読み込み中...</div> }
-);
+    } else {
+      initMap();
+    }
+  }, [userLang]);
+
+  const initMap = () => {
+    if (!mapRef.current || mapInstanceRef.current) return;
+
+    const map = new window.google.maps.Map(mapRef.current, {
+      center: { lat: center[0], lng: center[1] },
+      zoom: zoom,
+      disableDefaultUI: true,
+      zoomControl: false,
+      styles: mode === 'rain' ? [
+        { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+        { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
+        { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
+      ] : [],
+    });
+
+    mapInstanceRef.current = map;
+
+    map.addListener('idle', () => {
+      const c = map.getCenter();
+      const z = map.getZoom();
+      if (c && z) {
+        onMoveEnd([c.lat(), c.lng()], z);
+      }
+    });
+
+    map.addListener('dblclick', (e: any) => {
+      if (e.latLng) {
+        onDoubleTap(e.latLng.lat(), e.latLng.lng());
+      }
+    });
+  };
+
+  // センターやズームが外部から変更されたとき
+  useEffect(() => {
+    if (mapInstanceRef.current && targetCenter && targetZoom) {
+      mapInstanceRef.current.panTo({ lat: targetCenter[0], lng: targetCenter[1] });
+      mapInstanceRef.current.setZoom(targetZoom);
+    }
+  }, [targetCenter, targetZoom]);
+
+  // マーカーの更新
+  useEffect(() => {
+    if (!mapInstanceRef.current || !window.google) return;
+
+    // 既存マーカーをクリア
+    markersRef.current.forEach((m) => m.setMap(null));
+    markersRef.current = [];
+
+    spots.forEach((spot) => {
+      const marker = new window.google.maps.Marker({
+        position: { lat: spot.lat, lng: spot.lon },
+        map: mapInstanceRef.current,
+        title: spot.title,
+      });
+
+      marker.addListener('click', () => {
+        onSelectSpot(spot);
+      });
+
+      markersRef.current.push(marker);
+    });
+  }, [spots]);
+
+  return <div ref={mapRef} style={{ width: '100%', height: '100%', background: '#f1f5f9' }} />;
+};
 
 // ==========================================
 // 3. メインコンポーネント
@@ -612,52 +496,6 @@ export default function WorldSnapApp() {
 
   useEffect(() => {
     fetchSpots();
-
-    if (!supabase) return;
-    const channel = supabase
-      .channel('realtime_spots')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'spots' },
-        (payload: any) => {
-          const newSpotData = payload.new;
-          const formattedSpot: Spot = {
-            id: newSpotData.id,
-            userId: newSpotData.user_id,
-            userName: newSpotData.user_name,
-            userAvatar: newSpotData.user_avatar,
-            isOfficial: newSpotData.is_official,
-            isFeatured: newSpotData.is_featured,
-            isFirstExplorer: newSpotData.is_first_explorer,
-            viewsCount: newSpotData.views_count || 1,
-            savedCount: newSpotData.saved_count || 0,
-            title: newSpotData.title,
-            description: newSpotData.description || '',
-            fileName: newSpotData.file_name,
-            fileUrl: newSpotData.file_url,
-            thumbUrl: newSpotData.thumb_url || newSpotData.file_url,
-            fileType: newSpotData.file_type || 'image',
-            mediaList: newSpotData.media_list || [{ fileUrl: newSpotData.file_url, thumbUrl: newSpotData.thumb_url || newSpotData.file_url, fileType: newSpotData.file_type || 'image', fileName: newSpotData.file_name }],
-            lat: Number(newSpotData.lat),
-            lon: Number(newSpotData.lon),
-            countryCode: newSpotData.country_code,
-            cityName: newSpotData.city_name,
-            category: newSpotData.category,
-            scopes: newSpotData.scopes || ['world', 'friends'],
-            tags: newSpotData.tags || extractHashtags(newSpotData.description || ''),
-            comments: newSpotData.comments || [],
-            reportCount: newSpotData.report_count || 0,
-            createdAt: new Date(newSpotData.created_at).toLocaleDateString(),
-          };
-          setSpots((prev) => [formattedSpot, ...prev.filter((s) => s.id !== formattedSpot.id)]);
-          showToast(`🌟 新しいスポット「${formattedSpot.title}」が共有されました！`);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, []);
 
   const handleMapMoveEnd = (center: [number, number], zoom: number) => {
@@ -972,7 +810,6 @@ export default function WorldSnapApp() {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
 
-    // GPSがなく、手動の緯度経度が入力されていない場合は投稿させない
     const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
     const finalHasGps = current.hasGps && current.lat !== undefined && current.lon !== undefined;
 
@@ -1311,7 +1148,6 @@ export default function WorldSnapApp() {
   return (
     <div style={{ background: '#f8fafc', color: '#0f172a', height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation' }}>
       
-      {/* ── 違反警告バナー ── */}
       {warningMessage && (
         <div style={{ position: 'fixed', top: 0, insetInline: 0, background: '#ef4444', color: '#fff', padding: '12px 16px', zIndex: 999999, fontSize: '13px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 4px 16px rgba(239,68,68,0.4)', animation: 'fadeIn 0.2s ease' }}>
           {warningMessage}
@@ -1324,11 +1160,9 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* 隠しアバター画像アップロードInput */}
       <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
       <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-      {/* ── 初回オープニング（オンボーディング） ── */}
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -1456,7 +1290,6 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── ヘッダー ── */}
       <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
           <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0 }}>
@@ -1556,13 +1389,14 @@ export default function WorldSnapApp() {
           </div>
 
           <div ref={exportRef} style={{ flex: 1, width: '100%', height: '100%', position: 'relative' }}>
-            <SafeMapComponent
+            <GoogleMapComponent
               spots={filteredSpots}
               center={currentMapCenter}
               zoom={currentMapZoom}
               targetCenter={targetCenter}
               targetZoom={targetZoom}
               mode={viewMode}
+              userLang={currentConfig.lang}
               onMoveEnd={handleMapMoveEnd}
               onSelectSpot={handleOpenSpot}
               onDoubleTap={handleMapDoubleTap}
@@ -1588,7 +1422,6 @@ export default function WorldSnapApp() {
             </div>
           </div>
 
-          {/* ── マップ下部 広告バナースペース ── */}
           {isAdVisible && (
             <div style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '44px', zIndex: 440, touchAction: 'none' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '36px', background: '#ffffff', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
@@ -2363,7 +2196,6 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            {/* GPSがない、または手動未設定の場合は強制的に住所検索を要求 */}
             <div style={{ background: pendingUploads[currentUploadIndex].hasGps ? '#f0fdf4' : '#fffbeb', padding: '10px', borderRadius: '10px', border: `1px solid ${pendingUploads[currentUploadIndex].hasGps ? '#bbf7d0' : '#fef3c7'}`, marginBottom: '12px' }}>
               <div style={{ fontSize: '11px', fontWeight: 'bold', color: pendingUploads[currentUploadIndex].hasGps ? '#15803d' : '#b45309', marginBottom: '6px' }}>
                 {pendingUploads[currentUploadIndex].hasGps ? '✅ 写真のGPS位置情報を検出しました' : '⚠️ GPSなし写真（カメラ撮影など）: 住所・地名を必ず検索してください'}
