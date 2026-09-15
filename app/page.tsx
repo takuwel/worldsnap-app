@@ -11,7 +11,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
 // Google Maps API キー（正しいキー）
-const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNFmr77hi-gvKwo1bv9xSdADGuAN7I';
+const GOOGLE_MAPS_API_KEY = 'AlzaSyCYqbNfMr77hi-gvKwo1bv9xSdADgUaN7l';
 
 // ==========================================
 // 1. 型定義 & マスターデータ
