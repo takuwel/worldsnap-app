@@ -10,7 +10,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
-// Google Maps API キー（正しいキーに更新済み）
+// Google Maps API キー（正しいキー）
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNFmr77hi-gvKwo1bv9xSdADGuAN7I';
 
 // ==========================================
@@ -245,7 +245,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント (自動リサイズ対応)
+// 2. Google Maps API コンポーネント (自動リサイズ対応・確実な読み込み)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -319,7 +319,7 @@ const GoogleMapComponent = ({
       if (!existingScript) {
         const script = document.createElement('script');
         script.id = 'google-maps-script';
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}&loading=async`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}`;
         script.async = true;
         script.defer = true;
         script.onload = () => initMap();
