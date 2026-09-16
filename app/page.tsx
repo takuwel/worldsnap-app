@@ -668,7 +668,7 @@ export default function WorldSnapApp() {
     setTargetZoom(null);
   };
 
-  // マップ検索バーのサジェスト（自動補完）機能
+  // マップ検索バーのサジェスト（自動補完）
   useEffect(() => {
     if (!mapSearchKeyword.trim() || mapSearchKeyword.startsWith('#')) {
       setMapSearchSuggestions([]);
@@ -711,7 +711,7 @@ export default function WorldSnapApp() {
     }
   };
 
-  // 投稿時住所検索のサジェスト機能
+  // 投稿時住所検索のサジェスト
   useEffect(() => {
     if (!addressSearchQuery.trim()) {
       setAddressSuggestions([]);
@@ -937,7 +937,6 @@ export default function WorldSnapApp() {
 
       if (isVideo) {
         const thumbUrl = await generateVideoThumbnail(file);
-        // 動画の場合、初期位置は未設定（空欄）にし、ユーザーに検索して指定してもらう
         pendingList.push({
           id: fileId,
           file,
@@ -992,10 +991,9 @@ export default function WorldSnapApp() {
     if (!current || isSubmitting) return;
 
     const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
-    const finalHasGps = current.hasGps && current.lat !== undefined && current.lon !== undefined;
 
-    if (!finalHasGps && !hasValidManualLocation) {
-      showWarning('⚠️ 位置情報が指定されていません。必ず「地名・住所検索」で場所を選択してください。');
+    if (!hasValidManualLocation) {
+      showWarning('⚠️ 位置情報が指定されていません。「地名・住所検索」で必ず場所を選択してください。');
       return;
     }
 
@@ -1007,39 +1005,46 @@ export default function WorldSnapApp() {
     }
 
     setIsSubmitting(true);
-    showToast('⏳ メディアを保存中...');
+    showToast('⏳ メディアをアップロード中...');
 
-    const finalLat = finalHasGps && manualLat === '' ? current.lat! : parseFloat(manualLat);
-    const finalLon = finalHasGps && manualLon === '' ? current.lon! : parseFloat(manualLon);
+    const finalLat = parseFloat(manualLat);
+    const finalLon = parseFloat(manualLon);
 
     let uploadedUrl = current.fileUrl;
     let finalThumbUrl = current.thumbUrl || current.fileUrl;
 
-    const existingSameSpot = spots.find(
-      (s) => s.userId === 'me' && Math.abs(s.lat - finalLat) < 0.005 && Math.abs(s.lon - finalLon) < 0.005
-    );
-
-    const isNearbyExists = spots.some((s) => Math.abs(s.lat - finalLat) < 0.05 && Math.abs(s.lon - finalLon) < 0.05);
-    const isFirstExplorer = !isNearbyExists;
-    const extractedTags = extractHashtags(postDesc);
-
+    // Supabaseストレージへのアップロード処理（エラーハンドリング強化）
     if (supabase) {
       try {
         const fileExt = current.file.name.split('.').pop() || (current.fileType === 'video' ? 'mp4' : 'jpg');
         const filePath = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage.from('worldsnap-media').upload(filePath, current.file);
         
-        if (!uploadError) {
-          const { data: publicData } = supabase.storage.from('worldsnap-media').getPublicUrl(filePath);
-          if (publicData?.publicUrl) {
-            uploadedUrl = publicData.publicUrl;
-            if (current.fileType === 'image') {
-              finalThumbUrl = publicData.publicUrl;
-            }
+        const { error: uploadError } = await supabase.storage
+          .from('worldsnap-media')
+          .upload(filePath, current.file, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+        
+        if (uploadError) {
+          console.error('Supabase storage upload error:', uploadError);
+          showToast('❌ アップロードに失敗しました。容量や接続を確認してください。');
+          setIsSubmitting(false);
+          return;
+        }
+
+        const { data: publicData } = supabase.storage.from('worldsnap-media').getPublicUrl(filePath);
+        if (publicData?.publicUrl) {
+          uploadedUrl = publicData.publicUrl;
+          if (current.fileType === 'image') {
+            finalThumbUrl = publicData.publicUrl;
           }
         }
       } catch (err) {
-        console.error('Save error:', err);
+        console.error('Upload exception:', err);
+        showToast('❌ アップロード中にエラーが発生しました。');
+        setIsSubmitting(false);
+        return;
       }
     }
 
@@ -1049,6 +1054,14 @@ export default function WorldSnapApp() {
       fileType: current.fileType,
       fileName: current.file.name,
     };
+
+    const existingSameSpot = spots.find(
+      (s) => s.userId === 'me' && Math.abs(s.lat - finalLat) < 0.005 && Math.abs(s.lon - finalLon) < 0.005
+    );
+
+    const isNearbyExists = spots.some((s) => Math.abs(s.lat - finalLat) < 0.05 && Math.abs(s.lon - finalLon) < 0.05);
+    const isFirstExplorer = !isNearbyExists;
+    const extractedTags = extractHashtags(postDesc);
 
     if (existingSameSpot) {
       const updatedMediaList = [...(existingSameSpot.mediaList || [{ fileUrl: existingSameSpot.fileUrl, thumbUrl: existingSameSpot.thumbUrl, fileType: existingSameSpot.fileType, fileName: existingSameSpot.fileName }]), newMediaItem];
@@ -1137,8 +1150,8 @@ export default function WorldSnapApp() {
       setPostTitle(pendingUploads[nextIndex].file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
       setAddressSearchQuery('');
-      setManualLat(pendingUploads[nextIndex].lat?.toString() || '');
-      setManualLon(pendingUploads[nextIndex].lon?.toString() || '');
+      setManualLat('');
+      setManualLon('');
     } else {
       setPendingUploads([]);
       setCurrentUploadIndex(0);
