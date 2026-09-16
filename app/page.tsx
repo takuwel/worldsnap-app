@@ -10,7 +10,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
-// Google Maps API キー（正しいキーに更新済み）
+// Google Maps API キー
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
@@ -245,7 +245,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント (角丸四角形・写真サムネイルピン対応)
+// 2. Google Maps API コンポーネント (クラスタリング機能 & 角丸四角形ピン対応)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -350,66 +350,163 @@ const GoogleMapComponent = ({
     markersRef.current.forEach((m) => m.setMap(null));
     markersRef.current = [];
 
-    spots.forEach((spot) => {
-      const imageUrl = spot.thumbUrl || spot.fileUrl;
-      const marker = new window.google.maps.Marker({
-        position: { lat: spot.lat, lng: spot.lon },
-        map: mapInstanceRef.current,
-        title: spot.title,
+    const map = mapInstanceRef.current;
+    const currentZoom = map.getZoom() || zoom;
+
+    // ズームアウトしている時は近くのピンをグループ化（クラスタリング）してまとめる処理
+    if (currentZoom <= 8) {
+      // 簡易クラスタリングロジック（グリッド単位で集約）
+      const gridMap: Record<string, { spots: Spot[]; latSum: number; lonSum: number }> = {};
+      const gridSize = currentZoom <= 4 ? 3.0 : 1.0;
+
+      spots.forEach((spot) => {
+        const gridKey = `${Math.floor(spot.lat / gridSize)}_${Math.floor(spot.lon / gridSize)}`;
+        if (!gridMap[gridKey]) {
+          gridMap[gridKey] = { spots: [], latSum: 0, lonSum: 0 };
+        }
+        gridMap[gridKey].spots.push(spot);
+        gridMap[gridKey].latSum += spot.lat;
+        gridMap[gridKey].lonSum += spot.lon;
       });
 
-      // Canvasを使って投稿写真を角丸の四角形サムネイルピンに変換（CORS対応）
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.src = imageUrl;
-      img.onload = () => {
-        try {
+      Object.values(gridMap).forEach((cluster) => {
+        const avgLat = cluster.latSum / cluster.spots.length;
+        const avgLon = cluster.lonSum / cluster.spots.length;
+        const count = cluster.spots.length;
+
+        if (count === 1) {
+          // 1件だけの場合は通常の個別ピン
+          createPhotoMarker(cluster.spots[0], map, markersRef, onSelectSpot);
+        } else {
+          // 複数ある場合はまとめアイコン（数字付きバッジ）を作成
+          const firstSpot = cluster.spots[0];
+          const imageUrl = firstSpot.thumbUrl || firstSpot.fileUrl;
+
           const canvas = document.createElement('canvas');
-          canvas.width = 56;
-          canvas.height = 56;
+          canvas.width = 64;
+          canvas.height = 64;
           const ctx = canvas.getContext('2d');
           if (ctx) {
-            // ドロップシャドウ
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
-            ctx.shadowBlur = 8;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 3;
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = imageUrl;
+            img.onload = () => {
+              // 背景・角丸四角形
+              ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+              ctx.shadowBlur = 8;
+              ctx.fillStyle = '#ffffff';
+              ctx.beginPath();
+              ctx.roundRect(2, 2, 60, 60, 12);
+              ctx.fill();
 
-            // 白い枠線の背景（角丸四角形）
-            ctx.fillStyle = '#ffffff';
-            const radius = 8;
-            ctx.beginPath();
-            ctx.roundRect(2, 2, 52, 52, radius);
-            ctx.fill();
+              ctx.shadowColor = 'transparent';
+              ctx.save();
+              ctx.beginPath();
+              ctx.roundRect(6, 6, 52, 52, 8);
+              ctx.clip();
+              ctx.drawImage(img, 6, 6, 52, 52);
+              ctx.restore();
 
-            // 影をリセットして写真を角丸で切り抜き描画
-            ctx.shadowColor = 'transparent';
-            ctx.save();
-            ctx.beginPath();
-            ctx.roundRect(5, 5, 46, 46, radius - 2);
-            ctx.clip();
+              // まとまり数（バッジ）
+              ctx.fillStyle = '#ef4444';
+              ctx.beginPath();
+              ctx.arc(50, 14, 14, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.strokeStyle = '#ffffff';
+              ctx.lineWidth = 3;
+              ctx.stroke();
 
-            ctx.drawImage(img, 5, 5, 46, 46);
-            ctx.restore();
+              ctx.fillStyle = '#ffffff';
+              ctx.font = 'bold 13px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(`${count}`, 50, 14);
 
-            marker.setIcon({
-              url: canvas.toDataURL(),
-              scaledSize: new window.google.maps.Size(46, 46),
-              anchor: new window.google.maps.Point(23, 23),
-            });
+              const clusterMarker = new window.google.maps.Marker({
+                position: { lat: avgLat, lng: avgLon },
+                map: map,
+                title: `${count}件のスポット`,
+                icon: {
+                  url: canvas.toDataURL(),
+                  scaledSize: new window.google.maps.Size(46, 46),
+                  anchor: new window.google.maps.Point(23, 23),
+                },
+              });
+
+              clusterMarker.addListener('click', () => {
+                map.panTo({ lat: avgLat, lng: avgLon });
+                map.setZoom(currentZoom + 3);
+              });
+
+              markersRef.current.push(clusterMarker);
+            };
           }
-        } catch (e) {
-          console.error('Marker image load error:', e);
         }
-      };
-
-      marker.addListener('click', () => {
-        onSelectSpot(spot);
       });
+    } else {
+      // ズームインしている時はすべてのピンを個別に表示
+      spots.forEach((spot) => {
+        createPhotoMarker(spot, map, markersRef, onSelectSpot);
+      });
+    }
+  }, [spots, zoom]);
 
-      markersRef.current.push(marker);
+  // 個別の写真ピン作成ヘルパー関数
+  const createPhotoMarker = (spot: Spot, map: any, markersRef: any, onSelectSpot: (s: Spot) => void) => {
+    const imageUrl = spot.thumbUrl || spot.fileUrl;
+    const marker = new window.google.maps.Marker({
+      position: { lat: spot.lat, lng: spot.lon },
+      map: map,
+      title: spot.title,
     });
-  }, [spots]);
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = imageUrl;
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 56;
+        canvas.height = 56;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+          ctx.shadowBlur = 8;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 3;
+
+          ctx.fillStyle = '#ffffff';
+          const radius = 8;
+          ctx.beginPath();
+          ctx.roundRect(2, 2, 52, 52, radius);
+          ctx.fill();
+
+          ctx.shadowColor = 'transparent';
+          ctx.save();
+          ctx.beginPath();
+          ctx.roundRect(5, 5, 46, 46, radius - 2);
+          ctx.clip();
+
+          ctx.drawImage(img, 5, 5, 46, 46);
+          ctx.restore();
+
+          marker.setIcon({
+            url: canvas.toDataURL(),
+            scaledSize: new window.google.maps.Size(42, 42),
+            anchor: new window.google.maps.Point(21, 21),
+          });
+        }
+      } catch (e) {
+        console.error('Marker load error:', e);
+      }
+    };
+
+    marker.addListener('click', () => {
+      onSelectSpot(spot);
+    });
+
+    markersRef.current.push(marker);
+  };
 
   return <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: '#f1f5f9' }} />;
 };
@@ -783,6 +880,7 @@ export default function WorldSnapApp() {
     setSelectedSpot(null);
   };
 
+  // 写真・動画共通のファイル選択処理（動画もサムネイル＆EXIF/メタデータ対応）
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -878,7 +976,7 @@ export default function WorldSnapApp() {
     const finalHasGps = current.hasGps && current.lat !== undefined && current.lon !== undefined;
 
     if (!finalHasGps && !hasValidManualLocation) {
-      showWarning('⚠️ GPS情報が含まれていない写真です。必ず「撮影場所を設定（地名・住所検索）」で場所を指定してから投稿してください。');
+      showWarning('⚠️ GPS情報が含まれていないファイルです。必ず「撮影場所を設定（地名・住所検索）」で場所を指定してから投稿してください。');
       return;
     }
 
@@ -946,7 +1044,7 @@ export default function WorldSnapApp() {
       if (supabase) {
         await supabase.from('spots').update({ media_list: updatedMediaList, title: updatedSpot.title, description: updatedSpot.description }).eq('id', existingSameSpot.id);
       }
-      showToast(`📸 同じ場所のピンに写真を追加してまとめました！`);
+      showToast(`📸 同じ場所のピンにメディアを追加してまとめました！`);
     } else {
       const newSpot: Spot = {
         id: current.id,
@@ -2261,7 +2359,7 @@ export default function WorldSnapApp() {
 
             <div style={{ background: pendingUploads[currentUploadIndex].hasGps ? '#f0fdf4' : '#fffbeb', padding: '10px', borderRadius: '10px', border: `1px solid ${pendingUploads[currentUploadIndex].hasGps ? '#bbf7d0' : '#fef3c7'}`, marginBottom: '12px' }}>
               <div style={{ fontSize: '11px', fontWeight: 'bold', color: pendingUploads[currentUploadIndex].hasGps ? '#15803d' : '#b45309', marginBottom: '6px' }}>
-                {pendingUploads[currentUploadIndex].hasGps ? '✅ 写真のGPS位置情報を検出しました' : '⚠️ GPSなし写真: 住所・地名を必ず検索してください'}
+                {pendingUploads[currentUploadIndex].hasGps ? '✅ メディアの位置情報を検出しました' : '⚠️ 位置情報なしファイル: 住所・地名を必ず検索してください'}
               </div>
               <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
                 <input
