@@ -10,8 +10,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
-// Google Maps API キー（正しいキー）
-const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNFmr77hi-gvKwo1bv9xSdADGuAN7I';
+// Google Maps API キー
+const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
 // 1. 型定義 & マスターデータ
@@ -163,7 +163,7 @@ const INITIAL_SPOTS: Spot[] = [
     viewsCount: 1250,
     savedCount: 430,
     title: '渋谷スクランブル交差点＆SHIBUYA SKY',
-    description: 'WorldSnap公式がおすすめする東京の代表적スポット✨ #東京 #公式スポット',
+    description: 'WorldSnap公式がおすすめする東京の代表的スポット✨ #東京 #公式スポット',
     fileName: 'shibuya.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop',
@@ -245,7 +245,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント (自動リサイズ対応・確実な読み込み)
+// 2. Google Maps API コンポーネント (SVGカスタムピン対応・CORSエラー回避)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -351,10 +351,27 @@ const GoogleMapComponent = ({
     markersRef.current = [];
 
     spots.forEach((spot) => {
+      // カテゴリに応じた絵文字アイコンのSVGバッジを作成してCORSエラーを完全に回避
+      const emoji = spot.category === 'gourmet' ? '🍔' : spot.category === 'rain' ? '🌧️' : '📸';
+      const svgString = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42">
+          <circle cx="21" cy="21" r="19" fill="#0284c7" stroke="#ffffff" stroke-width="3"/>
+          <text x="21" y="27" font-size="18" text-anchor="middle">${emoji}</text>
+        </svg>
+      `;
+      const encodedSvg = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgString);
+
+      const customIcon = {
+        url: encodedSvg,
+        scaledSize: new window.google.maps.Size(38, 38),
+        anchor: new window.google.maps.Point(19, 19),
+      };
+
       const marker = new window.google.maps.Marker({
         position: { lat: spot.lat, lng: spot.lon },
         map: mapInstanceRef.current,
         title: spot.title,
+        icon: customIcon,
       });
 
       marker.addListener('click', () => {
