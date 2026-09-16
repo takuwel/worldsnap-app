@@ -91,6 +91,13 @@ export interface PendingUpload {
   dateTime?: string;
 }
 
+export interface PlaceSuggestion {
+  place_id: number;
+  display_name: string;
+  lat: string;
+  lon: string;
+}
+
 const NG_PATTERNS = [
   '死ね', 'しね', '殺す', 'ころす', '消えろ', 'きえろ', 'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす',
   'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'レイプ', 'れいぷ', '売春', 'ばいしゅん',
@@ -245,7 +252,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント (滑らかな動き・クラスタリング・角丸ピン対応)
+// 2. Google Maps API コンポーネント
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -285,7 +292,7 @@ const GoogleMapComponent = ({
         zoom: zoom,
         disableDefaultUI: true,
         zoomControl: false,
-        gestureHandling: 'greedy', // タッチ操作やスクロールを滑らかに追従させる
+        gestureHandling: 'greedy',
         styles: mode === 'rain' ? [
           { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
           { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
@@ -340,7 +347,6 @@ const GoogleMapComponent = ({
 
   useEffect(() => {
     if (mapInstanceRef.current && targetCenter && targetZoom) {
-      // panTo を使用してGoogleマップらしく滑らかにアニメーション移動
       mapInstanceRef.current.panTo({ lat: targetCenter[0], lng: targetCenter[1] });
       mapInstanceRef.current.setZoom(targetZoom);
     }
@@ -525,6 +531,7 @@ export default function WorldSnapApp() {
   
   const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
   const [isSearchingLocation, setIsSearchingLocation] = useState<boolean>(false);
+  const [mapSearchSuggestions, setMapSearchSuggestions] = useState<PlaceSuggestion[]>([]);
 
   const [isAdVisible, setIsAdVisible] = useState<boolean>(true);
 
@@ -567,6 +574,7 @@ export default function WorldSnapApp() {
   const [selectedScopes, setSelectedScopes] = useState<DisplayScope[]>(['world', 'friends', 'my']);
   
   const [addressSearchQuery, setAddressSearchQuery] = useState<string>('');
+  const [addressSuggestions, setAddressSuggestions] = useState<PlaceSuggestion[]>([]);
   const [isSearchingAddress, setIsSearchingAddress] = useState<boolean>(false);
   const [manualLat, setManualLat] = useState<string>('');
   const [manualLon, setManualLon] = useState<string>('');
@@ -660,34 +668,73 @@ export default function WorldSnapApp() {
     setTargetZoom(null);
   };
 
+  // マップ検索バーのサジェスト（自動補完）機能
+  useEffect(() => {
+    if (!mapSearchKeyword.trim() || mapSearchKeyword.startsWith('#')) {
+      setMapSearchSuggestions([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearchKeyword)}&limit=5`);
+        const data = await res.json();
+        setMapSearchSuggestions(data || []);
+      } catch {
+        setMapSearchSuggestions([]);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [mapSearchKeyword]);
+
+  const handleSelectMapSuggestion = (item: PlaceSuggestion) => {
+    const lat = parseFloat(item.lat);
+    const lon = parseFloat(item.lon);
+    setTargetCenter([lat, lon]);
+    setTargetZoom(13);
+    setMapSearchKeyword(item.display_name.split(',')[0]);
+    setMapSearchSuggestions([]);
+    showToast(`📍 ${item.display_name.split(',')[0]} へ移動しました`);
+  };
+
   const handleJumpLocationSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!mapSearchKeyword.trim()) return;
 
     if (mapSearchKeyword.startsWith('#')) {
       showToast(`🏷️ タグ「${mapSearchKeyword}」で絞り込みました`);
+      setMapSearchSuggestions([]);
       return;
     }
 
-    setIsSearchingLocation(true);
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearchKeyword)}`);
-      const data = await res.json();
-      if (data && data.length > 0) {
-        const first = data[0];
-        const lat = parseFloat(first.lat);
-        const lon = parseFloat(first.lon);
-        setTargetCenter([lat, lon]);
-        setTargetZoom(12);
-        showToast(`📍 ${first.display_name.split(',')[0]} へ移動しました！`);
-      } else {
-        showToast('⚠️ 地域が見つかりませんでした');
-      }
-    } catch {
-      showToast('⚠️ 検索に失敗しました');
-    } finally {
-      setIsSearchingLocation(false);
+    if (mapSearchSuggestions.length > 0) {
+      handleSelectMapSuggestion(mapSearchSuggestions[0]);
     }
+  };
+
+  // 投稿時住所検索のサジェスト機能
+  useEffect(() => {
+    if (!addressSearchQuery.trim()) {
+      setAddressSuggestions([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressSearchQuery)}&limit=5`);
+        const data = await res.json();
+        setAddressSuggestions(data || []);
+      } catch {
+        setAddressSuggestions([]);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [addressSearchQuery]);
+
+  const handleSelectAddressSuggestion = (item: PlaceSuggestion) => {
+    setManualLat(item.lat);
+    setManualLon(item.lon);
+    setAddressSearchQuery(item.display_name.split(',')[0]);
+    setAddressSuggestions([]);
+    showToast(`📍 位置を「${item.display_name.split(',')[0]}」に設定しました`);
   };
 
   const filteredSpots = useMemo(() => {
@@ -883,10 +930,6 @@ export default function WorldSnapApp() {
     const files = Array.from(e.target.files);
     const pendingList: PendingUpload[] = [];
 
-    // 動画や位置情報なしの写真を選んだ場合、検索中または直近のキーワードがあればその位置を優先、なければ日本（または国の中央）をデフォルトにする
-    const defaultLat = currentConfig.lat;
-    const defaultLon = currentConfig.lon;
-
     for (const file of files) {
       const fileUrl = URL.createObjectURL(file);
       const isVideo = file.type.startsWith('video/');
@@ -894,15 +937,14 @@ export default function WorldSnapApp() {
 
       if (isVideo) {
         const thumbUrl = await generateVideoThumbnail(file);
+        // 動画の場合、初期位置は未設定（空欄）にし、ユーザーに検索して指定してもらう
         pendingList.push({
           id: fileId,
           file,
           fileUrl,
           thumbUrl: thumbUrl || fileUrl,
           fileType: 'video',
-          lat: defaultLat,
-          lon: defaultLon,
-          hasGps: false, // ユーザーに検索または確認してもらうためfalseに設定
+          hasGps: false,
           dateTime: new Date().toLocaleDateString(),
         });
         continue;
@@ -920,7 +962,7 @@ export default function WorldSnapApp() {
             const lonDecimal = convertDMSToDD(lon, lonRef);
             pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', lat: latDecimal, lon: lonDecimal, hasGps: true, dateTime: new Date().toLocaleDateString() });
           } else {
-            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', lat: defaultLat, lon: defaultLon, hasGps: false, dateTime: new Date().toLocaleDateString() });
+            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', hasGps: false, dateTime: new Date().toLocaleDateString() });
           }
           resolve();
         });
@@ -935,41 +977,13 @@ export default function WorldSnapApp() {
       setPostCategory(viewMode);
       setSelectedScopes(['world', 'friends', 'my']);
       setAddressSearchQuery('');
-      setManualLat(pendingList[0].lat?.toString() || '');
-      setManualLon(pendingList[0].lon?.toString() || '');
-    }
-  };
-
-  const handleSearchAddress = async () => {
-    if (!addressSearchQuery.trim()) return;
-    setIsSearchingAddress(true);
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressSearchQuery)}`);
-      const data = await res.json();
-      if (data && data.length > 0) {
-        const found = data[0];
-        setManualLat(found.lat);
-        setManualLon(found.lon);
-        showToast(`📍 位置を「${found.display_name.split(',')[0]}」に設定しました`);
+      if (pendingList[0].hasGps && pendingList[0].lat !== undefined) {
+        setManualLat(pendingList[0].lat.toString());
+        setManualLon(pendingList[0].lon?.toString() || '');
       } else {
-        showToast('⚠️ 住所が見つかりませんでした');
+        setManualLat('');
+        setManualLon('');
       }
-    } catch {
-      showToast('⚠️ 検索に失敗しました');
-    } finally {
-      setIsSearchingAddress(false);
-    }
-  };
-
-  const toggleScopeSelection = (scope: DisplayScope) => {
-    if (selectedScopes.includes(scope)) {
-      if (selectedScopes.length === 1) {
-        showToast('⚠️ 最低1つの反映先を選択してください');
-        return;
-      }
-      setSelectedScopes((prev) => prev.filter((s) => s !== scope));
-    } else {
-      setSelectedScopes((prev) => [...prev, scope]);
     }
   };
 
@@ -977,11 +991,11 @@ export default function WorldSnapApp() {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
 
-    const finalLat = manualLat !== '' ? parseFloat(manualLat) : (current.lat || currentConfig.lat);
-    const finalLon = manualLon !== '' ? parseFloat(manualLon) : (current.lon || currentConfig.lon);
+    const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
+    const finalHasGps = current.hasGps && current.lat !== undefined && current.lon !== undefined;
 
-    if (isNaN(finalLat) || isNaN(finalLon)) {
-      showWarning('⚠️ 位置情報が設定されていません。「地名・住所検索」で場所を指定してください。');
+    if (!finalHasGps && !hasValidManualLocation) {
+      showWarning('⚠️ 位置情報が指定されていません。必ず「地名・住所検索」で場所を選択してください。');
       return;
     }
 
@@ -994,6 +1008,9 @@ export default function WorldSnapApp() {
 
     setIsSubmitting(true);
     showToast('⏳ メディアを保存中...');
+
+    const finalLat = finalHasGps && manualLat === '' ? current.lat! : parseFloat(manualLat);
+    const finalLon = finalHasGps && manualLon === '' ? current.lon! : parseFloat(manualLon);
 
     let uploadedUrl = current.fileUrl;
     let finalThumbUrl = current.thumbUrl || current.fileUrl;
@@ -1497,22 +1514,40 @@ export default function WorldSnapApp() {
           
           <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none' }}>
             
-            <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '6px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
-              <input
-                type="text"
-                placeholder={t.searchPlaceholder}
-                value={mapSearchKeyword}
-                onChange={(e) => setMapSearchKeyword(e.target.value)}
-                style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '12px', fontWeight: '500', padding: '2px 6px' }}
-              />
-              <button
-                type="submit"
-                disabled={isSearchingLocation}
-                style={{ background: themeAccent, color: '#fff', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
-              >
-                {isSearchingLocation ? '移動中...' : '検索 🚀'}
-              </button>
-            </form>
+            {/* 検索バー（サジェスト付き） */}
+            <div style={{ position: 'relative', pointerEvents: 'auto' }}>
+              <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '6px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)' }}>
+                <input
+                  type="text"
+                  placeholder={t.searchPlaceholder}
+                  value={mapSearchKeyword}
+                  onChange={(e) => setMapSearchKeyword(e.target.value)}
+                  style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '12px', fontWeight: '500', padding: '2px 6px' }}
+                />
+                <button
+                  type="submit"
+                  disabled={isSearchingLocation}
+                  style={{ background: themeAccent, color: '#fff', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  {isSearchingLocation ? '移動中...' : '検索 🚀'}
+                </button>
+              </form>
+
+              {mapSearchSuggestions.length > 0 && (
+                <div style={{ position: 'absolute', top: '44px', insetInline: 0, background: '#ffffff', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden', zIndex: 600, border: '1px solid #e2e8f0' }}>
+                  {mapSearchSuggestions.map((item) => (
+                    <div
+                      key={item.place_id}
+                      onClick={() => handleSelectMapSuggestion(item)}
+                      style={{ padding: '10px 14px', fontSize: '12px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    >
+                      <span>📍</span>
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
               <div style={{ display: 'flex', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '3px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
@@ -2359,18 +2394,18 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px' }}>
+            {/* 住所検索 ＆ サジェストリスト */}
+            <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
               <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
-                📍 撮影場所（下の検索バーで正しい住所を指定してください）
+                📍 撮影場所を指定してください（必須）
               </div>
-              <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
+              <div style={{ display: 'flex', gap: '6px', marginBottom: addressSuggestions.length > 0 ? '4px' : '6px' }}>
                 <input
                   type="text"
-                  placeholder="地名・住所（例: 東京タワー、清水寺）"
+                  placeholder="地名・住所を検索（例: 京都タワー）"
                   value={addressSearchQuery}
                   onChange={(e) => setAddressSearchQuery(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSearchAddress(); } }}
-                  style={{ flex: 1, padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px' }}
+                  style={{ flex: 1, padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff' }}
                 />
                 <button
                   type="button"
@@ -2381,6 +2416,22 @@ export default function WorldSnapApp() {
                   {isSearchingAddress ? '検索中' : '検索'}
                 </button>
               </div>
+
+              {addressSuggestions.length > 0 && (
+                <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1' }}>
+                  {addressSuggestions.map((item) => (
+                    <div
+                      key={item.place_id}
+                      onClick={() => handleSelectAddressSuggestion(item)}
+                      style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <span>📍</span>
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div style={{ display: 'flex', gap: '6px' }}>
                 <input
                   type="number" step="any" placeholder="緯度"
