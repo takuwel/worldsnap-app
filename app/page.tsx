@@ -353,9 +353,7 @@ const GoogleMapComponent = ({
     const map = mapInstanceRef.current;
     const currentZoom = map.getZoom() || zoom;
 
-    // ズームアウトしている時は近くのピンをグループ化（クラスタリング）してまとめる処理
     if (currentZoom <= 8) {
-      // 簡易クラスタリングロジック（グリッド単位で集約）
       const gridMap: Record<string, { spots: Spot[]; latSum: number; lonSum: number }> = {};
       const gridSize = currentZoom <= 4 ? 3.0 : 1.0;
 
@@ -375,10 +373,8 @@ const GoogleMapComponent = ({
         const count = cluster.spots.length;
 
         if (count === 1) {
-          // 1件だけの場合は通常の個別ピン
           createPhotoMarker(cluster.spots[0], map, markersRef, onSelectSpot);
         } else {
-          // 複数ある場合はまとめアイコン（数字付きバッジ）を作成
           const firstSpot = cluster.spots[0];
           const imageUrl = firstSpot.thumbUrl || firstSpot.fileUrl;
 
@@ -391,7 +387,6 @@ const GoogleMapComponent = ({
             img.crossOrigin = 'anonymous';
             img.src = imageUrl;
             img.onload = () => {
-              // 背景・角丸四角形
               ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
               ctx.shadowBlur = 8;
               ctx.fillStyle = '#ffffff';
@@ -407,7 +402,6 @@ const GoogleMapComponent = ({
               ctx.drawImage(img, 6, 6, 52, 52);
               ctx.restore();
 
-              // まとまり数（バッジ）
               ctx.fillStyle = '#ef4444';
               ctx.beginPath();
               ctx.arc(50, 14, 14, 0, Math.PI * 2);
@@ -444,14 +438,12 @@ const GoogleMapComponent = ({
         }
       });
     } else {
-      // ズームインしている時はすべてのピンを個別に表示
       spots.forEach((spot) => {
         createPhotoMarker(spot, map, markersRef, onSelectSpot);
       });
     }
   }, [spots, zoom]);
 
-  // 個別の写真ピン作成ヘルパー関数
   const createPhotoMarker = (spot: Spot, map: any, markersRef: any, onSelectSpot: (s: Spot) => void) => {
     const imageUrl = spot.thumbUrl || spot.fileUrl;
     const marker = new window.google.maps.Marker({
@@ -880,7 +872,6 @@ export default function WorldSnapApp() {
     setSelectedSpot(null);
   };
 
-  // 写真・動画共通のファイル選択処理（動画もサムネイル＆EXIF/メタデータ対応）
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -890,6 +881,10 @@ export default function WorldSnapApp() {
     const files = Array.from(e.target.files);
     const pendingList: PendingUpload[] = [];
 
+    // 動画等でGPSがない場合に備え、現在中心地（currentMapCenter）をデフォルト位置候補として保持
+    const defaultLat = currentMapCenter[0];
+    const defaultLon = currentMapCenter[1];
+
     for (const file of files) {
       const fileUrl = URL.createObjectURL(file);
       const isVideo = file.type.startsWith('video/');
@@ -897,7 +892,18 @@ export default function WorldSnapApp() {
 
       if (isVideo) {
         const thumbUrl = await generateVideoThumbnail(file);
-        pendingList.push({ id: fileId, file, fileUrl, thumbUrl: thumbUrl || fileUrl, fileType: 'video', hasGps: false, dateTime: new Date().toLocaleDateString() });
+        // 動画はEXIFがないため、デフォルトとして現在マップの中心地を仮設定（モーダルで住所検索や変更が可能）
+        pendingList.push({
+          id: fileId,
+          file,
+          fileUrl,
+          thumbUrl: thumbUrl || fileUrl,
+          fileType: 'video',
+          lat: defaultLat,
+          lon: defaultLon,
+          hasGps: true, // 自動でマップ中央の緯度経度を初期セットし、住所適用漏れを防ぐ
+          dateTime: new Date().toLocaleDateString(),
+        });
         continue;
       }
 
@@ -913,7 +919,8 @@ export default function WorldSnapApp() {
             const lonDecimal = convertDMSToDD(lon, lonRef);
             pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', lat: latDecimal, lon: lonDecimal, hasGps: true, dateTime: new Date().toLocaleDateString() });
           } else {
-            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', hasGps: false, dateTime: new Date().toLocaleDateString() });
+            // 写真にGPSがない場合も同様にデフォルト中心地をセット
+            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', lat: defaultLat, lon: defaultLon, hasGps: true, dateTime: new Date().toLocaleDateString() });
           }
           resolve();
         });
@@ -928,10 +935,8 @@ export default function WorldSnapApp() {
       setPostCategory(viewMode);
       setSelectedScopes(['world', 'friends', 'my']);
       setAddressSearchQuery('');
-      if (!pendingList[0].hasGps) {
-        setManualLat('');
-        setManualLon('');
-      }
+      setManualLat(pendingList[0].lat?.toString() || '');
+      setManualLon(pendingList[0].lon?.toString() || '');
     }
   };
 
@@ -972,11 +977,11 @@ export default function WorldSnapApp() {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
 
-    const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
-    const finalHasGps = current.hasGps && current.lat !== undefined && current.lon !== undefined;
+    const finalLat = manualLat !== '' ? parseFloat(manualLat) : (current.lat || currentConfig.lat);
+    const finalLon = manualLon !== '' ? parseFloat(manualLon) : (current.lon || currentConfig.lon);
 
-    if (!finalHasGps && !hasValidManualLocation) {
-      showWarning('⚠️ GPS情報が含まれていないファイルです。必ず「撮影場所を設定（地名・住所検索）」で場所を指定してから投稿してください。');
+    if (isNaN(finalLat) || isNaN(finalLon)) {
+      showWarning('⚠️ 位置情報が正しく設定されていません。場所を指定してください。');
       return;
     }
 
@@ -988,10 +993,7 @@ export default function WorldSnapApp() {
     }
 
     setIsSubmitting(true);
-    showToast('⏳ 写真/動画を保存中...');
-
-    const finalLat = finalHasGps ? current.lat! : parseFloat(manualLat);
-    const finalLon = finalHasGps ? current.lon! : parseFloat(manualLon);
+    showToast('⏳ メディアを保存中...');
 
     let uploadedUrl = current.fileUrl;
     let finalThumbUrl = current.thumbUrl || current.fileUrl;
@@ -1118,8 +1120,8 @@ export default function WorldSnapApp() {
       setPostTitle(pendingUploads[nextIndex].file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
       setAddressSearchQuery('');
-      setManualLat('');
-      setManualLon('');
+      setManualLat(pendingUploads[nextIndex].lat?.toString() || '');
+      setManualLon(pendingUploads[nextIndex].lon?.toString() || '');
     } else {
       setPendingUploads([]);
       setCurrentUploadIndex(0);
@@ -2357,9 +2359,9 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            <div style={{ background: pendingUploads[currentUploadIndex].hasGps ? '#f0fdf4' : '#fffbeb', padding: '10px', borderRadius: '10px', border: `1px solid ${pendingUploads[currentUploadIndex].hasGps ? '#bbf7d0' : '#fef3c7'}`, marginBottom: '12px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 'bold', color: pendingUploads[currentUploadIndex].hasGps ? '#15803d' : '#b45309', marginBottom: '6px' }}>
-                {pendingUploads[currentUploadIndex].hasGps ? '✅ メディアの位置情報を検出しました' : '⚠️ 位置情報なしファイル: 住所・地名を必ず検索してください'}
+            <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
+                📍 撮影場所（現在のマップ中心地または検索地が適用されます）
               </div>
               <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
                 <input
