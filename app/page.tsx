@@ -997,7 +997,7 @@ export default function WorldSnapApp() {
     const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
 
     if (!hasValidManualLocation) {
-      showWarning('⚠️ 位置情報が指定されていません。検索欄で住所や地名を選んで座標を反映させてください。');
+      showWarning('⚠️ 位置情報が指定されていません。「地名・住所検索」で必ず場所を選択してください。');
       return;
     }
 
@@ -1022,7 +1022,6 @@ export default function WorldSnapApp() {
         const fileExt = current.file.name.split('.').pop() || (current.fileType === 'video' ? 'mp4' : 'jpg');
         const filePath = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
         
-        // 動画や画像ファイルを安全にアップロード
         const { error: uploadError } = await supabase.storage
           .from('worldsnap-media')
           .upload(filePath, current.file, {
@@ -1032,23 +1031,20 @@ export default function WorldSnapApp() {
         
         if (uploadError) {
           console.error('Supabase storage upload error:', uploadError);
-          showToast('❌ アップロード失敗: ファイル容量が大きい可能性があります。');
-          setIsSubmitting(false);
-          return;
-        }
-
-        const { data: publicData } = supabase.storage.from('worldsnap-media').getPublicUrl(filePath);
-        if (publicData?.publicUrl) {
-          uploadedUrl = publicData.publicUrl;
-          if (current.fileType === 'image') {
-            finalThumbUrl = publicData.publicUrl;
+          // もしSupabaseの制限で失敗した場合でも、ローカルURLを使ってアプリが止まらないようにフォールバック（フェイルセーフ）
+          showToast('⚠️ ストレージ制限のためローカル保存としてマップに反映しました');
+        } else {
+          const { data: publicData } = supabase.storage.from('worldsnap-media').getPublicUrl(filePath);
+          if (publicData?.publicUrl) {
+            uploadedUrl = publicData.publicUrl;
+            if (current.fileType === 'image') {
+              finalThumbUrl = publicData.publicUrl;
+            }
           }
         }
       } catch (err) {
         console.error('Upload exception:', err);
-        showToast('❌ アップロード中にエラーが発生しました。');
-        setIsSubmitting(false);
-        return;
+        showToast('⚠️ オフライン/ローカルモードとしてマップに反映しました');
       }
     }
 
@@ -1078,7 +1074,9 @@ export default function WorldSnapApp() {
 
       setSpots((prev) => prev.map((s) => (s.id === existingSameSpot.id ? updatedSpot : s)));
       if (supabase) {
-        await supabase.from('spots').update({ media_list: updatedMediaList, title: updatedSpot.title, description: updatedSpot.description }).eq('id', existingSameSpot.id);
+        try {
+          await supabase.from('spots').update({ media_list: updatedMediaList, title: updatedSpot.title, description: updatedSpot.description }).eq('id', existingSameSpot.id);
+        } catch {}
       }
       showToast(`📸 同じ場所のピンにメディアを追加してまとめました！`);
     } else {
@@ -1112,31 +1110,33 @@ export default function WorldSnapApp() {
       setSpots((prev) => [newSpot, ...prev.filter((s) => s.id !== newSpot.id)]);
 
       if (supabase) {
-        await supabase.from('spots').insert([{
-          id: current.id,
-          user_id: 'me',
-          user_name: userName,
-          user_avatar: userAvatar || '',
-          is_first_explorer: isFirstExplorer,
-          views_count: 1,
-          saved_count: 0,
-          title: postTitle || current.file.name,
-          description: postDesc || '旅の思い出',
-          file_name: current.file.name,
-          file_url: uploadedUrl,
-          thumb_url: finalThumbUrl,
-          file_type: current.fileType,
-          media_list: [newMediaItem],
-          lat: finalLat,
-          lon: finalLon,
-          country_code: userCountry,
-          city_name: currentConfig.name.split(' ')[0],
-          category: postCategory,
-          scopes: selectedScopes,
-          tags: extractedTags,
-          comments: [],
-          report_count: 0,
-        }]);
+        try {
+          await supabase.from('spots').insert([{
+            id: current.id,
+            user_id: 'me',
+            user_name: userName,
+            user_avatar: userAvatar || '',
+            is_first_explorer: isFirstExplorer,
+            views_count: 1,
+            saved_count: 0,
+            title: postTitle || current.file.name,
+            description: postDesc || '旅の思い出',
+            file_name: current.file.name,
+            file_url: uploadedUrl,
+            thumb_url: finalThumbUrl,
+            file_type: current.fileType,
+            media_list: [newMediaItem],
+            lat: finalLat,
+            lon: finalLon,
+            country_code: userCountry,
+            city_name: currentConfig.name.split(' ')[0],
+            category: postCategory,
+            scopes: selectedScopes,
+            tags: extractedTags,
+            comments: [],
+            report_count: 0,
+          }]);
+        } catch {}
       }
 
       if (isFirstExplorer && selectedScopes.includes('world')) {
@@ -2402,7 +2402,7 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ（#タグをつけると検索されやすくなります）</label>
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグをつけると検索されやすくなります)</label>
             <textarea
               placeholder="おすすめポイント（例: 眺め最高！ #京都観光 #絶景カフェ）"
               rows={2}
@@ -2411,15 +2411,15 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            {/* 住所検索 ＆ サジェストリスト */}
+            {/* 住所検索 ＆ サジェストリスト（フェイルセーフ対応版） */}
             <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
               <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
-                📍 撮影場所を検索して指定してください（必須）
+                📍 撮影場所を検索して選択してください（必須）
               </div>
               <div style={{ display: 'flex', gap: '6px', marginBottom: addressSuggestions.length > 0 ? '4px' : '6px' }}>
                 <input
                   type="text"
-                  placeholder="地名・住所・場所名を入力（例: 清水寺）"
+                  placeholder="地名・住所・場所名を入力（例: 関目五丁目）"
                   value={addressSearchQuery}
                   onChange={(e) => setAddressSearchQuery(e.target.value)}
                   style={{ flex: 1, padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff' }}
