@@ -10,7 +10,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
-// Google Maps API キー
+// Google Maps API キー（正しいキーに更新済み）
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
@@ -245,7 +245,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント (SVGカスタムピン対応・CORSエラー回避)
+// 2. Google Maps API コンポーネント (角丸四角形・写真サムネイルピン対応)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -351,28 +351,57 @@ const GoogleMapComponent = ({
     markersRef.current = [];
 
     spots.forEach((spot) => {
-      // カテゴリに応じた絵文字アイコンのSVGバッジを作成してCORSエラーを完全に回避
-      const emoji = spot.category === 'gourmet' ? '🍔' : spot.category === 'rain' ? '🌧️' : '📸';
-      const svgString = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42">
-          <circle cx="21" cy="21" r="19" fill="#0284c7" stroke="#ffffff" stroke-width="3"/>
-          <text x="21" y="27" font-size="18" text-anchor="middle">${emoji}</text>
-        </svg>
-      `;
-      const encodedSvg = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgString);
-
-      const customIcon = {
-        url: encodedSvg,
-        scaledSize: new window.google.maps.Size(38, 38),
-        anchor: new window.google.maps.Point(19, 19),
-      };
-
+      const imageUrl = spot.thumbUrl || spot.fileUrl;
       const marker = new window.google.maps.Marker({
         position: { lat: spot.lat, lng: spot.lon },
         map: mapInstanceRef.current,
         title: spot.title,
-        icon: customIcon,
       });
+
+      // Canvasを使って投稿写真を角丸の四角形サムネイルピンに変換（CORS対応）
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = imageUrl;
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = 56;
+          canvas.height = 56;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            // ドロップシャドウ
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+            ctx.shadowBlur = 8;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 3;
+
+            // 白い枠線の背景（角丸四角形）
+            ctx.fillStyle = '#ffffff';
+            const radius = 8;
+            ctx.beginPath();
+            ctx.roundRect(2, 2, 52, 52, radius);
+            ctx.fill();
+
+            // 影をリセットして写真を角丸で切り抜き描画
+            ctx.shadowColor = 'transparent';
+            ctx.save();
+            ctx.beginPath();
+            ctx.roundRect(5, 5, 46, 46, radius - 2);
+            ctx.clip();
+
+            ctx.drawImage(img, 5, 5, 46, 46);
+            ctx.restore();
+
+            marker.setIcon({
+              url: canvas.toDataURL(),
+              scaledSize: new window.google.maps.Size(46, 46),
+              anchor: new window.google.maps.Point(23, 23),
+            });
+          }
+        } catch (e) {
+          console.error('Marker image load error:', e);
+        }
+      };
 
       marker.addListener('click', () => {
         onSelectSpot(spot);
