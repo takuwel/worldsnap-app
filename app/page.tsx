@@ -245,7 +245,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント (クラスタリング機能 & 角丸四角形ピン対応)
+// 2. Google Maps API コンポーネント (滑らかな動き・クラスタリング・角丸ピン対応)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -285,6 +285,7 @@ const GoogleMapComponent = ({
         zoom: zoom,
         disableDefaultUI: true,
         zoomControl: false,
+        gestureHandling: 'greedy', // タッチ操作やスクロールを滑らかに追従させる
         styles: mode === 'rain' ? [
           { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
           { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
@@ -339,6 +340,7 @@ const GoogleMapComponent = ({
 
   useEffect(() => {
     if (mapInstanceRef.current && targetCenter && targetZoom) {
+      // panTo を使用してGoogleマップらしく滑らかにアニメーション移動
       mapInstanceRef.current.panTo({ lat: targetCenter[0], lng: targetCenter[1] });
       mapInstanceRef.current.setZoom(targetZoom);
     }
@@ -881,9 +883,9 @@ export default function WorldSnapApp() {
     const files = Array.from(e.target.files);
     const pendingList: PendingUpload[] = [];
 
-    // 動画等でGPSがない場合に備え、現在中心地（currentMapCenter）をデフォルト位置候補として保持
-    const defaultLat = currentMapCenter[0];
-    const defaultLon = currentMapCenter[1];
+    // 動画や位置情報なしの写真を選んだ場合、検索中または直近のキーワードがあればその位置を優先、なければ日本（または国の中央）をデフォルトにする
+    const defaultLat = currentConfig.lat;
+    const defaultLon = currentConfig.lon;
 
     for (const file of files) {
       const fileUrl = URL.createObjectURL(file);
@@ -892,7 +894,6 @@ export default function WorldSnapApp() {
 
       if (isVideo) {
         const thumbUrl = await generateVideoThumbnail(file);
-        // 動画はEXIFがないため、デフォルトとして現在マップの中心地を仮設定（モーダルで住所検索や変更が可能）
         pendingList.push({
           id: fileId,
           file,
@@ -901,7 +902,7 @@ export default function WorldSnapApp() {
           fileType: 'video',
           lat: defaultLat,
           lon: defaultLon,
-          hasGps: true, // 自動でマップ中央の緯度経度を初期セットし、住所適用漏れを防ぐ
+          hasGps: false, // ユーザーに検索または確認してもらうためfalseに設定
           dateTime: new Date().toLocaleDateString(),
         });
         continue;
@@ -919,8 +920,7 @@ export default function WorldSnapApp() {
             const lonDecimal = convertDMSToDD(lon, lonRef);
             pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', lat: latDecimal, lon: lonDecimal, hasGps: true, dateTime: new Date().toLocaleDateString() });
           } else {
-            // 写真にGPSがない場合も同様にデフォルト中心地をセット
-            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', lat: defaultLat, lon: defaultLon, hasGps: true, dateTime: new Date().toLocaleDateString() });
+            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', lat: defaultLat, lon: defaultLon, hasGps: false, dateTime: new Date().toLocaleDateString() });
           }
           resolve();
         });
@@ -981,7 +981,7 @@ export default function WorldSnapApp() {
     const finalLon = manualLon !== '' ? parseFloat(manualLon) : (current.lon || currentConfig.lon);
 
     if (isNaN(finalLat) || isNaN(finalLon)) {
-      showWarning('⚠️ 位置情報が正しく設定されていません。場所を指定してください。');
+      showWarning('⚠️ 位置情報が設定されていません。「地名・住所検索」で場所を指定してください。');
       return;
     }
 
@@ -2361,7 +2361,7 @@ export default function WorldSnapApp() {
 
             <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px' }}>
               <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
-                📍 撮影場所（現在のマップ中心地または検索地が適用されます）
+                📍 撮影場所（下の検索バーで正しい住所を指定してください）
               </div>
               <div style={{ display: 'flex', gap: '6px', marginBottom: '6px' }}>
                 <input
