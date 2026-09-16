@@ -222,32 +222,36 @@ function convertDMSToDD(dms: number[], ref: string): number {
 
 function generateVideoThumbnail(file: File): Promise<string> {
   return new Promise((resolve) => {
-    const video = document.createElement('video');
-    video.preload = 'metadata';
-    video.src = URL.createObjectURL(file);
-    video.muted = true;
-    video.playsInline = true;
-    video.currentTime = 0.5;
+    try {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.src = URL.createObjectURL(file);
+      video.muted = true;
+      video.playsInline = true;
+      video.currentTime = 0.5;
 
-    video.onloadeddata = () => {
-      setTimeout(() => {
-        try {
-          const canvas = document.createElement('canvas');
-          canvas.width = 160;
-          canvas.height = 120;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL('image/jpeg', 0.8));
-          } else {
+      video.onloadeddata = () => {
+        setTimeout(() => {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 160;
+            canvas.height = 120;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+              resolve(canvas.toDataURL('image/jpeg', 0.8));
+            } else {
+              resolve('');
+            }
+          } catch {
             resolve('');
           }
-        } catch {
-          resolve('');
-        }
-      }, 200);
-    };
-    video.onerror = () => resolve('');
+        }, 200);
+      };
+      video.onerror = () => resolve('');
+    } catch {
+      resolve('');
+    }
   });
 }
 
@@ -1013,7 +1017,6 @@ export default function WorldSnapApp() {
     let uploadedUrl = current.fileUrl;
     let finalThumbUrl = current.thumbUrl || current.fileUrl;
 
-    // Supabaseストレージへのアップロード処理（エラーハンドリング強化）
     if (supabase) {
       try {
         const fileExt = current.file.name.split('.').pop() || (current.fileType === 'video' ? 'mp4' : 'jpg');
@@ -2420,18 +2423,10 @@ export default function WorldSnapApp() {
                   onChange={(e) => setAddressSearchQuery(e.target.value)}
                   style={{ flex: 1, padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff' }}
                 />
-                <button
-                  type="button"
-                  onClick={handleSearchAddress}
-                  disabled={isSearchingAddress}
-                  style={{ padding: '7px 12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
-                >
-                  {isSearchingAddress ? '検索中' : '検索'}
-                </button>
               </div>
 
               {addressSuggestions.length > 0 && (
-                <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1' }}>
+                <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
                   {addressSuggestions.map((item) => (
                     <div
                       key={item.place_id}
