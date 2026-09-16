@@ -10,8 +10,8 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
-// Google Maps API キー（正しいキー）
-const GOOGLE_MAPS_API_KEY = 'AlzaSyCYqbNfMr77hi-gvKwo1bv9xSdADgUaN7l';
+// Google Maps API キー（ご指定のキーを設定済み）
+const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
 // 1. 型定義 & マスターデータ
