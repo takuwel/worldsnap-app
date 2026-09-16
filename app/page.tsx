@@ -997,7 +997,7 @@ export default function WorldSnapApp() {
     const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
 
     if (!hasValidManualLocation) {
-      showWarning('⚠️ 位置情報が指定されていません。「地名・住所検索」で必ず場所を選択してください。');
+      showWarning('⚠️ 位置情報が指定されていません。検索欄で住所や地名を選んで座標を反映させてください。');
       return;
     }
 
@@ -1022,6 +1022,7 @@ export default function WorldSnapApp() {
         const fileExt = current.file.name.split('.').pop() || (current.fileType === 'video' ? 'mp4' : 'jpg');
         const filePath = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
         
+        // 動画や画像ファイルを安全にアップロード
         const { error: uploadError } = await supabase.storage
           .from('worldsnap-media')
           .upload(filePath, current.file, {
@@ -1031,7 +1032,7 @@ export default function WorldSnapApp() {
         
         if (uploadError) {
           console.error('Supabase storage upload error:', uploadError);
-          showToast('❌ アップロードに失敗しました。容量や接続を確認してください。');
+          showToast('❌ アップロード失敗: ファイル容量が大きい可能性があります。');
           setIsSubmitting(false);
           return;
         }
@@ -2413,12 +2414,12 @@ export default function WorldSnapApp() {
             {/* 住所検索 ＆ サジェストリスト */}
             <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
               <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
-                📍 撮影場所を指定してください（必須）
+                📍 撮影場所を検索して指定してください（必須）
               </div>
               <div style={{ display: 'flex', gap: '6px', marginBottom: addressSuggestions.length > 0 ? '4px' : '6px' }}>
                 <input
                   type="text"
-                  placeholder="地名・住所を検索（例: 京都タワー）"
+                  placeholder="地名・住所・場所名を入力（例: 清水寺）"
                   value={addressSearchQuery}
                   onChange={(e) => setAddressSearchQuery(e.target.value)}
                   style={{ flex: 1, padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff' }}
