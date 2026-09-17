@@ -98,18 +98,22 @@ export interface PlaceSuggestion {
   lon: string;
 }
 
+// Apple Store審査対応・超強化されたNGワードリスト（暴言・差別・ハラスメント・下ネタ・暴力等）
 const NG_PATTERNS = [
-  '死ね', 'しね', '殺す', 'ころす', '消えろ', 'きえろ', 'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす',
-  'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'レイプ', 'れいぷ', '売春', 'ばいしゅん',
-  'ドラッグ', 'どらっぐ', '大麻', 'たいま', '覚醒剤', '暴力', '暴行', '自殺', 'じさつ',
-  'ホモ', 'ほも', 'オカマ', 'おかま', '差別', 'さべつ', 'チョン', '中国人差別', '外国人差別',
-  'セックス', 'せっくす', 'エロ', 'えろ', 'ちんこ', 'まんこ', 'おっぱい', 'オナニー', 'おなにー',
-  'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy'
+  '死ね', 'しね', 'しねばいい', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
+  'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
+  'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'きもちわるい', 'ブサイク', 'うざい', 'うせろ',
+  'レイプ', 'れいぷ', '強姦', '売春', 'ばいしゅん', '買春', '援交', 'パパ活', '児童ポルノ',
+  'ドラッグ', 'どらっぐ', '覚醒剤', '大麻', 'たいま', 'コカイン', 'ヘロイン', '違法薬物',
+  '暴力', '暴行', '殴る', '蹴る', 'いじめ', 'いじめる', 'リストカット', '自殺', 'じさつ', '死にたい',
+  'ホモ', 'ほも', 'オカマ', 'おかま', 'ニューハーフ', '差別', 'さべつ', '中国人差別', '韓国人差別', '外国人差別',
+  'セックス', 'せっくす', 'エロ', 'えろ', 'ちんこ', 'まんこ', 'おっぱい', 'オナニー', 'おなにー', '性器', '膣', '精液', 'レイシスト',
+  'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy', 'whore', 'slut', 'killyou', 'suicide', 'nigger', 'faggot'
 ];
 
 function checkInappropriateContent(text: string): { isViolating: boolean; matchedWord: string } {
   if (!text) return { isViolating: false, matchedWord: '' };
-  const lower = text.toLowerCase().replace(/\s+/g, '');
+  const lower = text.toLowerCase().replace(/[\s\-_]/g, '');
   for (const word of NG_PATTERNS) {
     if (lower.includes(word.toLowerCase())) {
       return { isViolating: true, matchedWord: word };
@@ -990,6 +994,18 @@ export default function WorldSnapApp() {
     }
   };
 
+  const toggleScopeSelection = (scope: DisplayScope) => {
+    if (selectedScopes.includes(scope)) {
+      if (selectedScopes.length === 1) {
+        showToast('⚠️ 最低1つの反映先を選択してください');
+        return;
+      }
+      setSelectedScopes((prev) => prev.filter((s) => s !== scope));
+    } else {
+      setSelectedScopes((prev) => [...prev, scope]);
+    }
+  };
+
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -1031,8 +1047,8 @@ export default function WorldSnapApp() {
         
         if (uploadError) {
           console.error('Supabase storage upload error:', uploadError);
-          // もしSupabaseの制限で失敗した場合でも、ローカルURLを使ってアプリが止まらないようにフォールバック（フェイルセーフ）
-          showToast('⚠️ ストレージ制限のためローカル保存としてマップに反映しました');
+          // ストレージ容量・サイズエラーを防ぐフォールバック処理（ローカルObjectURLのまま安全に表示）
+          showToast('⚠️ ストレージ制限のためオフライン・ローカルモードとして反映しました');
         } else {
           const { data: publicData } = supabase.storage.from('worldsnap-media').getPublicUrl(filePath);
           if (publicData?.publicUrl) {
@@ -1044,7 +1060,7 @@ export default function WorldSnapApp() {
         }
       } catch (err) {
         console.error('Upload exception:', err);
-        showToast('⚠️ オフライン/ローカルモードとしてマップに反映しました');
+        showToast('⚠️ ローカルモードとしてマップに反映しました');
       }
     }
 
@@ -1340,6 +1356,21 @@ export default function WorldSnapApp() {
     }
   };
 
+  // SNSシェア機能
+  const handleShareSpot = (spot: Spot) => {
+    const shareText = `WorldSnapで発見したスポット「${spot.title}」をチェック！ 📍 (${spot.cityName})`;
+    if (navigator.share) {
+      navigator.share({
+        title: spot.title,
+        text: shareText,
+        url: window.location.href,
+      }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(window.location.href);
+      showToast('📋 リンクをコピーしました！');
+    }
+  };
+
   const themeAccent = viewMode === 'rain' ? '#38bdf8' : viewMode === 'gourmet' ? '#ea580c' : '#0284c7';
 
   return (
@@ -1617,7 +1648,30 @@ export default function WorldSnapApp() {
               onDoubleTap={handleMapDoubleTap}
             />
 
+            {/* 現在地ボタン（GPS） */}
             <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <button
+                title="現在地へ移動"
+                onClick={() => {
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                      (pos) => {
+                        setTargetCenter([pos.coords.latitude, pos.coords.longitude]);
+                        setTargetZoom(15);
+                        showToast('🎯 現在地に移動しました');
+                      },
+                      () => {
+                        showToast('⚠️ 位置情報の取得に失敗しました');
+                      }
+                    );
+                  } else {
+                    showToast('⚠️ お使いのブラウザは位置情報に対応していません');
+                  }
+                }}
+                style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                🎯
+              </button>
               <button
                 title="段階的に引き戻す"
                 onClick={handleStepZoomOut}
@@ -1949,9 +2003,14 @@ export default function WorldSnapApp() {
             <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
               ← {t.back}
             </button>
-            <span style={{ fontSize: '11px', fontWeight: 'bold', padding: '3px 8px', borderRadius: '20px', background: themeAccent, color: '#fff' }}>
-              {selectedSpot.category === 'view' ? '🏔️ VIEW' : selectedSpot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ 雨の日'}
-            </span>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <span style={{ fontSize: '11px', fontWeight: 'bold', padding: '3px 8px', borderRadius: '20px', background: themeAccent, color: '#fff' }}>
+                {selectedSpot.category === 'view' ? '🏔️ VIEW' : selectedSpot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ 雨の日'}
+              </span>
+              <button onClick={() => handleShareSpot(selectedSpot)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="シェア">
+                🔗
+              </button>
+            </div>
           </div>
 
           <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
@@ -2301,7 +2360,7 @@ export default function WorldSnapApp() {
             </div>
 
             <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
-              🌐 反映先（複数選択可能）
+              🌐 反映先（複数選択可能 - チェックを外して調整可能）
             </label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
               <div
@@ -2402,7 +2461,7 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグをつけると検索されやすくなります)</label>
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグをつけて検索しやすく)</label>
             <textarea
               placeholder="おすすめポイント（例: 眺め最高！ #京都観光 #絶景カフェ）"
               rows={2}
@@ -2411,7 +2470,7 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            {/* 住所検索 ＆ サジェストリスト（フェイルセーフ対応版） */}
+            {/* 住所検索 ＆ サジェストリスト（選択するだけで勝手に座標が入力される） */}
             <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
               <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
                 📍 撮影場所を検索して選択してください（必須）
@@ -2419,7 +2478,7 @@ export default function WorldSnapApp() {
               <div style={{ display: 'flex', gap: '6px', marginBottom: addressSuggestions.length > 0 ? '4px' : '6px' }}>
                 <input
                   type="text"
-                  placeholder="地名・住所・場所名を入力（例: 関目五丁目）"
+                  placeholder="地名・住所・場所名を入力（例: 京都タワー）"
                   value={addressSearchQuery}
                   onChange={(e) => setAddressSearchQuery(e.target.value)}
                   style={{ flex: 1, padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff' }}
