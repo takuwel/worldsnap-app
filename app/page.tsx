@@ -19,6 +19,7 @@ const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
 export type TabType = 'map' | 'ranking' | 'profile';
+export type MapThemeType = 'light' | 'dark' | 'pastel';
 
 export interface CommentItem {
   id: string;
@@ -98,17 +99,30 @@ export interface PlaceSuggestion {
   lon: string;
 }
 
-// Apple Store審査対応・超強化されたNGワードリスト（暴言・差別・ハラスメント・下ネタ・暴力等）
+// グローバルコンプライアンス対応・世界主要言語の暴言・差別・ヘイト・成人向け禁止ワードリスト
 const NG_PATTERNS = [
-  '死ね', 'しね', 'しねばいい', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
+  // 日本語
+  '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
   'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
-  'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'きもちわるい', 'ブサイク', 'うざい', 'うせろ',
+  'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'きもちわるい', 'ブサイク', 'うざい',
   'レイプ', 'れいぷ', '強姦', '売春', 'ばいしゅん', '買春', '援交', 'パパ活', '児童ポルノ',
   'ドラッグ', 'どらっぐ', '覚醒剤', '大麻', 'たいま', 'コカイン', 'ヘロイン', '違法薬物',
-  '暴力', '暴行', '殴る', '蹴る', 'いじめ', 'いじめる', 'リストカット', '自殺', 'じさつ', '死にたい',
-  'ホモ', 'ほも', 'オカマ', 'おかま', 'ニューハーフ', '差別', 'さべつ', '中国人差別', '韓国人差別', '外国人差別',
-  'セックス', 'せっくす', 'エロ', 'えろ', 'ちんこ', 'まんこ', 'おっぱい', 'オナニー', 'おなにー', '性器', '膣', '精液', 'レイシスト',
-  'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy', 'whore', 'slut', 'killyou', 'suicide', 'nigger', 'faggot'
+  '暴力', '暴行', '殴る', '蹴る', 'いじめ', 'いじめる', '自殺', 'じさつ', '死にたい',
+  'ホモ', 'ほも', 'オカマ', 'おかま', '差別', 'さべつ', '中国人差別', '韓国人差別', '外国人差別',
+  'セックス', 'せっくす', 'エロ', 'えろ', 'ちんこ', 'まんこ', 'おっぱい', 'オナニー', 'おなにー',
+  // 英語 (English)
+  'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy', 'whore', 'slut',
+  'nigger', 'faggot', 'retard', 'suicide', 'kill', 'rape', 'cocaine', 'heroin', 'nazi', 'hitler',
+  // 中国語 (Chinese - 簡体字・繁体字)
+  '去死', '混蛋', '白痴', '傻逼', '贱人', '垃圾', '强奸', '卖淫', '吸毒', '自杀', '支那', '翻墙',
+  // 韓国語 (Korean)
+  '죽어', '꺼져', '바보', '쓰레기', '병신', '개새끼', '창녀', '강간', '자살', '마약',
+  // フランス語 (French)
+  'merde', 'connard', 'salope', 'pute', 'enculé', 'suicide', 'viole', 'drogue',
+  // スペイン語 (Spanish)
+  'puta', 'mierda', 'cabrón', 'estúpido', 'idiota', 'suicidio', 'violación', 'droga',
+  // ドイツ語 (German)
+  'scheiße', 'arschloch', 'hure', 'schlampe', 'selbstmord', 'vergewaltigung', 'droge'
 ];
 
 function checkInappropriateContent(text: string): { isViolating: boolean; matchedWord: string } {
@@ -260,7 +274,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント
+// 2. Google Maps API コンポーネント (テーマ切り替え対応)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -268,7 +282,7 @@ const GoogleMapComponent = ({
   zoom,
   targetCenter,
   targetZoom,
-  mode,
+  theme,
   userLang,
   onMoveEnd,
   onSelectSpot,
@@ -279,7 +293,7 @@ const GoogleMapComponent = ({
   zoom: number;
   targetCenter: [number, number] | null;
   targetZoom: number | null;
-  mode: ViewCategory;
+  theme: MapThemeType;
   userLang: string;
   onMoveEnd: (center: [number, number], zoom: number) => void;
   onSelectSpot: (s: Spot) => void;
@@ -288,6 +302,28 @@ const GoogleMapComponent = ({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+
+  // マップスタイルの定義（ライト、ダーク、パステル）
+  const getMapStyles = (themeMode: MapThemeType) => {
+    if (themeMode === 'dark') {
+      return [
+        { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+        { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
+        { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
+        { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
+        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#38414e' }] },
+        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#17263c' }] },
+      ];
+    } else if (themeMode === 'pastel') {
+      return [
+        { elementType: 'geometry', stylers: [{ color: '#f5f3ef' }] },
+        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#cbe2ed' }] },
+        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
+        { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#d5e8d4' }] },
+      ];
+    }
+    return []; // light
+  };
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -301,11 +337,7 @@ const GoogleMapComponent = ({
         disableDefaultUI: true,
         zoomControl: false,
         gestureHandling: 'greedy',
-        styles: mode === 'rain' ? [
-          { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
-          { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
-          { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
-        ] : [],
+        styles: getMapStyles(theme),
       });
 
       mapInstanceRef.current = map;
@@ -352,6 +384,13 @@ const GoogleMapComponent = ({
       initMap();
     }
   }, [userLang]);
+
+  // テーマ変更時にマップスタイルを即時更新
+  useEffect(() => {
+    if (mapInstanceRef.current && window.google && window.google.maps) {
+      mapInstanceRef.current.setOptions({ styles: getMapStyles(theme) });
+    }
+  }, [theme]);
 
   useEffect(() => {
     if (mapInstanceRef.current && targetCenter && targetZoom) {
@@ -534,7 +573,8 @@ export default function WorldSnapApp() {
   const [friendCode] = useState<string>('WS-8823-X9');
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
-  const [viewMode, setViewMode] = useState<ViewCategory>('view');
+  const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']); // カテゴリ別一括フィルター（チェックボックス式）
+  const [mapTheme, setMapTheme] = useState<MapThemeType>('light'); // マップデザインテーマ (light / dark / pastel)
   const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
   
   const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
@@ -676,7 +716,20 @@ export default function WorldSnapApp() {
     setTargetZoom(null);
   };
 
-  // マップ検索バーのサジェスト（自動補完）
+  // カテゴリ一括フィルターの切り替え処理
+  const toggleCategoryFilter = (cat: ViewCategory) => {
+    if (selectedCategories.includes(cat)) {
+      if (selectedCategories.length === 1) {
+        showToast('⚠️ 最低1つのカテゴリを選択してください');
+        return;
+      }
+      setSelectedCategories((prev) => prev.filter((c) => c !== cat));
+    } else {
+      setSelectedCategories((prev) => [...prev, cat]);
+    }
+  };
+
+  // マップ検索バーのサジェスト
   useEffect(() => {
     if (!mapSearchKeyword.trim() || mapSearchKeyword.startsWith('#')) {
       setMapSearchSuggestions([]);
@@ -748,7 +801,7 @@ export default function WorldSnapApp() {
   const filteredSpots = useMemo(() => {
     return spots.filter((s) => {
       if (blockedUsers.includes(s.userId)) return false;
-      if (s.category !== viewMode) return false;
+      if (!selectedCategories.includes(s.category)) return false; // チェックボックス式カテゴリフィルター
 
       if (displayScope === 'friends') {
         const isMyPost = s.userId === 'me';
@@ -771,7 +824,7 @@ export default function WorldSnapApp() {
       }
       return true;
     });
-  }, [spots, blockedUsers, viewMode, displayScope, friendsList, mapSearchKeyword]);
+  }, [spots, blockedUsers, selectedCategories, displayScope, friendsList, mapSearchKeyword]);
 
   const rankingSpots = useMemo(() => {
     return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
@@ -981,7 +1034,7 @@ export default function WorldSnapApp() {
       setCurrentUploadIndex(0);
       setPostTitle(pendingList[0].file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
-      setPostCategory(viewMode);
+      setPostCategory(selectedCategories[0] || 'view');
       setSelectedScopes(['world', 'friends', 'my']);
       setAddressSearchQuery('');
       if (pendingList[0].hasGps && pendingList[0].lat !== undefined) {
@@ -991,18 +1044,6 @@ export default function WorldSnapApp() {
         setManualLat('');
         setManualLon('');
       }
-    }
-  };
-
-  const toggleScopeSelection = (scope: DisplayScope) => {
-    if (selectedScopes.includes(scope)) {
-      if (selectedScopes.length === 1) {
-        showToast('⚠️ 最低1つの反映先を選択してください');
-        return;
-      }
-      setSelectedScopes((prev) => prev.filter((s) => s !== scope));
-    } else {
-      setSelectedScopes((prev) => [...prev, scope]);
     }
   };
 
@@ -1047,7 +1088,6 @@ export default function WorldSnapApp() {
         
         if (uploadError) {
           console.error('Supabase storage upload error:', uploadError);
-          // ストレージ容量・サイズエラーを防ぐフォールバック処理（ローカルObjectURLのまま安全に表示）
           showToast('⚠️ ストレージ制限のためオフライン・ローカルモードとして反映しました');
         } else {
           const { data: publicData } = supabase.storage.from('worldsnap-media').getPublicUrl(filePath);
@@ -1356,7 +1396,6 @@ export default function WorldSnapApp() {
     }
   };
 
-  // SNSシェア機能
   const handleShareSpot = (spot: Spot) => {
     const shareText = `WorldSnapで発見したスポット「${spot.title}」をチェック！ 📍 (${spot.cityName})`;
     if (navigator.share) {
@@ -1371,10 +1410,10 @@ export default function WorldSnapApp() {
     }
   };
 
-  const themeAccent = viewMode === 'rain' ? '#38bdf8' : viewMode === 'gourmet' ? '#ea580c' : '#0284c7';
+  const themeAccent = mapTheme === 'dark' ? '#38bdf8' : mapTheme === 'pastel' ? '#d97706' : '#0284c7';
 
   return (
-    <div style={{ background: '#f8fafc', color: '#0f172a', height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation' }}>
+    <div style={{ background: mapTheme === 'dark' ? '#0f172a' : '#f8fafc', color: mapTheme === 'dark' ? '#f8fafc' : '#0f172a', height: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation' }}>
       
       {warningMessage && (
         <div style={{ position: 'fixed', top: 0, insetInline: 0, background: '#ef4444', color: '#fff', padding: '12px 16px', zIndex: 999999, fontSize: '13px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 4px 16px rgba(239,68,68,0.4)' }}>
@@ -1518,9 +1557,9 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
+      <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
-          <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0 }}>
+          <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: mapTheme === 'dark' ? '#fff' : '#000' }}>
             ☰
           </button>
           <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: themeAccent, letterSpacing: '-0.5px', flexShrink: 0 }}>WorldSnap</h1>
@@ -1534,7 +1573,7 @@ export default function WorldSnapApp() {
                 setTargetZoom(conf.zoom);
               }
             }}
-            style={{ background: '#f1f5f9', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
+            style={{ background: mapTheme === 'dark' ? '#334155' : '#f1f5f9', color: mapTheme === 'dark' ? '#fff' : '#000', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
           >
             {Object.entries(COUNTRIES).map(([code, c]) => (
               <option key={code} value={code}>
@@ -1564,13 +1603,13 @@ export default function WorldSnapApp() {
             
             {/* 検索バー（サジェスト付き） */}
             <div style={{ position: 'relative', pointerEvents: 'auto' }}>
-              <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '6px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)' }}>
+              <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: mapTheme === 'dark' ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.96)', color: mapTheme === 'dark' ? '#fff' : '#000', backdropFilter: 'blur(10px)', padding: '6px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)' }}>
                 <input
                   type="text"
                   placeholder={t.searchPlaceholder}
                   value={mapSearchKeyword}
                   onChange={(e) => setMapSearchKeyword(e.target.value)}
-                  style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '12px', fontWeight: '500', padding: '2px 6px' }}
+                  style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: mapTheme === 'dark' ? '#fff' : '#000', fontSize: '12px', fontWeight: '500', padding: '2px 6px' }}
                 />
                 <button
                   type="submit"
@@ -1582,7 +1621,7 @@ export default function WorldSnapApp() {
               </form>
 
               {mapSearchSuggestions.length > 0 && (
-                <div style={{ position: 'absolute', top: '44px', insetInline: 0, background: '#ffffff', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden', zIndex: 600, border: '1px solid #e2e8f0' }}>
+                <div style={{ position: 'absolute', top: '44px', insetInline: 0, background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', color: mapTheme === 'dark' ? '#fff' : '#000', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden', zIndex: 600, border: '1px solid #e2e8f0' }}>
                   {mapSearchSuggestions.map((item) => (
                     <div
                       key={item.place_id}
@@ -1597,38 +1636,43 @@ export default function WorldSnapApp() {
               )}
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
-              <div style={{ display: 'flex', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '3px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
-                {(['view', 'gourmet', 'rain'] as const).map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => setViewMode(m)}
-                    style={{
-                      padding: '6px 12px',
-                      borderRadius: '20px',
-                      border: 'none',
-                      background: viewMode === m ? themeAccent : 'transparent',
-                      color: viewMode === m ? '#ffffff' : '#64748b',
-                      fontWeight: 'bold',
-                      fontSize: '11px',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                    }}
-                  >
-                    {m === 'view' ? `🏔️ ${t.view}` : m === 'gourmet' ? `🍔 ${t.gourmet}` : `🌧️ ${t.rain}`}
-                  </button>
-                ))}
+            {/* カテゴリ別一括フィルター（チェックボックス式） ＆ スコープ切り替え */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px' }}>
+              <div style={{ display: 'flex', gap: '4px', background: mapTheme === 'dark' ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.96)', padding: '4px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
+                {(['view', 'gourmet', 'rain'] as const).map((cat) => {
+                  const isChecked = selectedCategories.includes(cat);
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => toggleCategoryFilter(cat)}
+                      style={{
+                        padding: '5px 10px',
+                        borderRadius: '20px',
+                        border: 'none',
+                        background: isChecked ? themeAccent : 'transparent',
+                        color: isChecked ? '#ffffff' : '#64748b',
+                        fontWeight: 'bold',
+                        fontSize: '11px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      {isChecked ? '✓ ' : ''}
+                      {cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? '🍔 グルメ' : '🌧️ 雨の日'}
+                    </button>
+                  );
+                })}
               </div>
 
-              <div style={{ display: 'flex', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', padding: '3px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
+              <div style={{ display: 'flex', background: mapTheme === 'dark' ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.96)', padding: '3px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
                 <select
                   value={displayScope}
                   onChange={(e) => setDisplayScope(e.target.value as DisplayScope)}
-                  style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '4px 6px' }}
+                  style={{ background: 'transparent', border: 'none', color: mapTheme === 'dark' ? '#fff' : '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '4px 6px' }}
                 >
-                  <option value="world">🌎 {t.world}</option>
-                  <option value="friends">👥 フレンドマップ (共有)</option>
-                  <option value="my">📍 {t.myMap}</option>
+                  <option value="world" style={{ background: '#0f172a' }}>🌎 {t.world}</option>
+                  <option value="friends" style={{ background: '#0f172a' }}>👥 フレンドマップ</option>
+                  <option value="my" style={{ background: '#0f172a' }}>📍 {t.myMap}</option>
                 </select>
               </div>
             </div>
@@ -1641,14 +1685,14 @@ export default function WorldSnapApp() {
               zoom={currentMapZoom}
               targetCenter={targetCenter}
               targetZoom={targetZoom}
-              mode={viewMode}
+              theme={mapTheme}
               userLang={currentConfig.lang}
               onMoveEnd={handleMapMoveEnd}
               onSelectSpot={handleOpenSpot}
               onDoubleTap={handleMapDoubleTap}
             />
 
-            {/* 現在地ボタン（GPS） */}
+            {/* 現在地ボタン（GPS） ＆ ズームアウトボタン */}
             <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button
                 title="現在地へ移動"
@@ -1692,8 +1736,8 @@ export default function WorldSnapApp() {
           </div>
 
           {isAdVisible && (
-            <div style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '44px', zIndex: 440, touchAction: 'none' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '36px', background: '#ffffff', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
+            <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '44px', zIndex: 440, touchAction: 'none' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '36px', background: mapTheme === 'dark' ? '#0f172a' : '#ffffff', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
                 <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 'bold' }}>
                   📢 <span style={{ color: themeAccent }}>WorldSnap PR</span>: 写真や動画で世界をつなごう！
                 </span>
@@ -1708,7 +1752,7 @@ export default function WorldSnapApp() {
             </div>
           )}
 
-          <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', zIndex: 450, touchAction: 'none' }}>
+          <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', zIndex: 450, touchAction: 'none' }}>
             <div>
               <div style={{ fontSize: '12px', fontWeight: 'bold' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
               <div style={{ fontSize: '10px', color: '#64748b' }}>表示中: {filteredSpots.length}件</div>
@@ -1745,7 +1789,7 @@ export default function WorldSnapApp() {
             <div
               key={spot.id}
               onClick={() => handleOpenSpot(spot)}
-              style={{ background: '#ffffff', borderRadius: '14px', padding: '10px', display: 'flex', gap: '12px', alignItems: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', cursor: 'pointer' }}
+              style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '10px', display: 'flex', gap: '12px', alignItems: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', cursor: 'pointer' }}
             >
               <div style={{ fontSize: '18px', fontWeight: '900', width: '28px', textAlign: 'center', color: idx === 0 ? '#eab308' : idx === 1 ? '#94a3b8' : idx === 2 ? '#b45309' : '#cbd5e1' }}>
                 {idx + 1}
@@ -1775,7 +1819,7 @@ export default function WorldSnapApp() {
 
         {/* ── マイページ ── */}
         <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', touchAction: 'pan-y' }}>
-          <div style={{ background: '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
+          <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <div
@@ -1802,31 +1846,31 @@ export default function WorldSnapApp() {
                   <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748b' }}>{userBio}</p>
                 </div>
               </div>
-              <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '5px 12px', background: '#f1f5f9', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
+              <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '5px 12px', background: mapTheme === 'dark' ? '#334155' : '#f1f5f9', color: mapTheme === 'dark' ? '#fff' : '#0f172a', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
                 編集
               </button>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '6px', margin: '14px 0', textAlign: 'center' }}>
-              <div style={{ background: '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
+              <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{mySpots.length}</div>
                 <div style={{ fontSize: '9px', color: '#64748b' }}>📸 投稿数</div>
               </div>
-              <div style={{ background: '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
+              <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{visitedCountryCount}</div>
                 <div style={{ fontSize: '9px', color: '#64748b' }}>🗺️ 訪問国</div>
               </div>
-              <div style={{ background: '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
+              <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0284c7' }}>{totalMyViewsCount}</div>
                 <div style={{ fontSize: '9px', color: '#64748b' }}>👀 総閲覧</div>
               </div>
-              <div style={{ background: '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
+              <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#f43f5e' }}>{totalMySavedCount}</div>
                 <div style={{ fontSize: '9px', color: '#64748b' }}>💛 保存数</div>
               </div>
             </div>
 
-            <div style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 12px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <span style={{ fontSize: '11px', color: '#64748b' }}>🆔 {t.friendCode}: </span>
                 <span style={{ fontWeight: 'bold', fontSize: '12px' }}>{friendCode}</span>
@@ -1853,7 +1897,7 @@ export default function WorldSnapApp() {
                   padding: '8px',
                   borderRadius: '10px',
                   border: 'none',
-                  background: profileSubTab === tab ? themeAccent : '#ffffff',
+                  background: profileSubTab === tab ? themeAccent : mapTheme === 'dark' ? '#1e293b' : '#ffffff',
                   color: profileSubTab === tab ? '#fff' : '#64748b',
                   fontWeight: 'bold',
                   fontSize: '11px',
@@ -1896,14 +1940,14 @@ export default function WorldSnapApp() {
           )}
 
           {profileSubTab === 'friends' && (
-            <div style={{ background: '#ffffff', borderRadius: '14px', padding: '14px' }}>
+            <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '14px' }}>
               <div style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
                 <input
                   type="text"
                   placeholder="友達コードを入力"
                   value={inputFriendCode}
                   onChange={(e) => setInputFriendCode(e.target.value)}
-                  style={{ flex: 1, padding: '8px 10px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8fafc', fontSize: '12px' }}
+                  style={{ flex: 1, padding: '8px 10px', borderRadius: '8px', border: '1px solid #e2e8f0', background: mapTheme === 'dark' ? '#334155' : '#f8fafc', color: mapTheme === 'dark' ? '#fff' : '#000', fontSize: '12px' }}
                 />
                 <button
                   onClick={() => {
@@ -1947,7 +1991,7 @@ export default function WorldSnapApp() {
       {/* ── フレンドプロフィール ＆ メッセージモーダル ── */}
       {selectedFriend && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', width: '100%', maxWidth: '420px', borderRadius: '20px', padding: '20px', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: '#ffffff', width: '100%', maxWidth: '420px', borderRadius: '20px', padding: '20px', maxHeight: '85vh', display: 'flex', flexDirection: 'column', color: '#0f172a' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px', marginBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: themeAccent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
@@ -1998,7 +2042,7 @@ export default function WorldSnapApp() {
 
       {/* ── 詳細モーダル ── */}
       {selectedSpot && (
-        <div style={{ position: 'fixed', inset: 0, background: '#ffffff', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+        <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
           <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
             <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
               ← {t.back}
@@ -2230,7 +2274,7 @@ export default function WorldSnapApp() {
       {/* ── 投稿編集モーダル ── */}
       {editingSpot && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 5500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '380px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '18px', maxWidth: '380px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <h3 style={{ margin: '0 0 12px 0', fontSize: '15px', fontWeight: 'bold' }}>✏️ 投稿の編集</h3>
 
             <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
@@ -2293,7 +2337,7 @@ export default function WorldSnapApp() {
       {/* ── 詳細な通報選択モーダル ── */}
       {isReportModalOpen && selectedSpot && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '380px', width: '100%' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '18px', maxWidth: '380px', width: '100%' }}>
             <h3 style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: 'bold' }}>⚠️ 投稿の通報</h3>
             <p style={{ margin: '0 0 12px 0', fontSize: '11px', color: '#64748b' }}>
               問題の理由を選択してください。（※30件以上の通報が集まると自動的に削除されます）
@@ -2346,7 +2390,7 @@ export default function WorldSnapApp() {
       {/* ── 投稿モーダル ── */}
       {pendingUploads.length > 0 && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 'bold' }}>
               📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
             </h3>
@@ -2470,7 +2514,7 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            {/* 住所検索 ＆ サジェストリスト（選択するだけで勝手に座標が入力される） */}
+            {/* 住所検索 ＆ サジェストリスト */}
             <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
               <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
                 📍 撮影場所を検索して選択してください（必須）
@@ -2559,10 +2603,10 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── 設定モーダル ── */}
+      {/* ── 設定モーダル (テーマ切替機能追加) ── */}
       {isSettingsOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', width: '100%', maxWidth: '440px', borderRadius: '20px', padding: '20px', maxHeight: '85vh', overflowY: 'auto' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', width: '100%', maxWidth: '440px', borderRadius: '20px', padding: '20px', maxHeight: '85vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h2 style={{ margin: 0, fontSize: '16px' }}>⚙️ 設定</h2>
               <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', color: '#94a3b8', cursor: 'pointer' }}>
@@ -2571,7 +2615,35 @@ export default function WorldSnapApp() {
             </div>
 
             <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '6px' }}>▼ アカウント & 言語</div>
+              <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '6px' }}>▼ マップ & デザインテーマ</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '10px' }}>
+                {[
+                  { id: 'light', label: '☀️ 標準' },
+                  { id: 'dark', label: '🌙 ダーク' },
+                  { id: 'pastel', label: '🎨 パステル' },
+                ].map((th) => (
+                  <button
+                    key={th.id}
+                    onClick={() => setMapTheme(th.id as MapThemeType)}
+                    style={{
+                      padding: '8px',
+                      borderRadius: '8px',
+                      border: `2px solid ${mapTheme === th.id ? themeAccent : '#e2e8f0'}`,
+                      background: mapTheme === th.id ? '#f0f9ff' : '#f8fafc',
+                      fontWeight: 'bold',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      color: mapTheme === th.id ? themeAccent : '#64748b'
+                    }}
+                  >
+                    {th.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '6px' }}>▼ アカウント</div>
               <div onClick={() => setIsEditProfileOpen(true)} style={{ padding: '10px', background: '#f8fafc', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer', marginBottom: '6px', fontSize: '13px' }}>
                 <span>👤 プロフィール編集</span>
                 <span style={{ color: '#94a3b8' }}>&gt;</span>
@@ -2645,7 +2717,7 @@ export default function WorldSnapApp() {
       {/* ── プロフィール編集モーダル ── */}
       {isEditProfileOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', padding: '20px', borderRadius: '18px', maxWidth: '360px', width: '100%' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '18px', maxWidth: '360px', width: '100%' }}>
             <h3 style={{ margin: '0 0 12px 0', fontSize: '15px' }}>👤 プロフィール編集</h3>
 
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
@@ -2707,7 +2779,7 @@ export default function WorldSnapApp() {
       {/* ── EULAモーダル ── */}
       {isEulaModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', padding: '24px', borderRadius: '20px', maxWidth: '480px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '480px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
             <h3 style={{ margin: '0 0 12px 0', fontSize: '16px' }}>{t.termsTitle}</h3>
             <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
               {EULA_FULL_TEXT}
@@ -2727,7 +2799,7 @@ export default function WorldSnapApp() {
         style={{
           height: 'calc(54px + env(safe-area-inset-bottom, 0px))',
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-          background: '#ffffff',
+          background: mapTheme === 'dark' ? '#1e293b' : '#ffffff',
           borderTop: '1px solid #e2e8f0',
           display: 'flex',
           justifyContent: 'space-around',
