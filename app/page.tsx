@@ -101,7 +101,6 @@ export interface PlaceSuggestion {
 
 // グローバルコンプライアンス対応・世界主要言語の暴言・差別・ヘイト・成人向け禁止ワードリスト
 const NG_PATTERNS = [
-  // 日本語
   '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
   'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
   'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'きもちわるい', 'ブサイク', 'うざい',
@@ -110,18 +109,12 @@ const NG_PATTERNS = [
   '暴力', '暴行', '殴る', '蹴る', 'いじめ', 'いじめる', '自殺', 'じさつ', '死にたい',
   'ホモ', 'ほも', 'オカマ', 'おかま', '差別', 'さべつ', '中国人差別', '韓国人差別', '外国人差別',
   'セックス', 'せっくす', 'エロ', 'えろ', 'ちんこ', 'まんこ', 'おっぱい', 'オナニー', 'おなにー',
-  // 英語 (English)
   'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy', 'whore', 'slut',
   'nigger', 'faggot', 'retard', 'suicide', 'kill', 'rape', 'cocaine', 'heroin', 'nazi', 'hitler',
-  // 中国語 (Chinese - 簡体字・繁体字)
   '去死', '混蛋', '白痴', '傻逼', '贱人', '垃圾', '强奸', '卖淫', '吸毒', '自杀', '支那', '翻墙',
-  // 韓国語 (Korean)
   '죽어', '꺼져', '바보', '쓰레기', '병신', '개새끼', '창녀', '강간', '자살', '마약',
-  // フランス語 (French)
   'merde', 'connard', 'salope', 'pute', 'enculé', 'suicide', 'viole', 'drogue',
-  // スペイン語 (Spanish)
   'puta', 'mierda', 'cabrón', 'estúpido', 'idiota', 'suicidio', 'violación', 'droga',
-  // ドイツ語 (German)
   'scheiße', 'arschloch', 'hure', 'schlampe', 'selbstmord', 'vergewaltigung', 'droge'
 ];
 
@@ -274,7 +267,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント (テーマ切り替え対応)
+// 2. Google Maps API コンポーネント
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -303,7 +296,6 @@ const GoogleMapComponent = ({
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
 
-  // マップスタイルの定義（ライト、ダーク、パステル）
   const getMapStyles = (themeMode: MapThemeType) => {
     if (themeMode === 'dark') {
       return [
@@ -322,7 +314,7 @@ const GoogleMapComponent = ({
         { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#d5e8d4' }] },
       ];
     }
-    return []; // light
+    return [];
   };
 
   useEffect(() => {
@@ -385,7 +377,6 @@ const GoogleMapComponent = ({
     }
   }, [userLang]);
 
-  // テーマ変更時にマップスタイルを即時更新
   useEffect(() => {
     if (mapInstanceRef.current && window.google && window.google.maps) {
       mapInstanceRef.current.setOptions({ styles: getMapStyles(theme) });
@@ -573,8 +564,8 @@ export default function WorldSnapApp() {
   const [friendCode] = useState<string>('WS-8823-X9');
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
-  const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']); // カテゴリ別一括フィルター（チェックボックス式）
-  const [mapTheme, setMapTheme] = useState<MapThemeType>('light'); // マップデザインテーマ (light / dark / pastel)
+  const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
+  const [mapTheme, setMapTheme] = useState<MapThemeType>('light');
   const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
   
   const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
@@ -716,7 +707,6 @@ export default function WorldSnapApp() {
     setTargetZoom(null);
   };
 
-  // カテゴリ一括フィルターの切り替え処理
   const toggleCategoryFilter = (cat: ViewCategory) => {
     if (selectedCategories.includes(cat)) {
       if (selectedCategories.length === 1) {
@@ -729,7 +719,6 @@ export default function WorldSnapApp() {
     }
   };
 
-  // マップ検索バーのサジェスト
   useEffect(() => {
     if (!mapSearchKeyword.trim() || mapSearchKeyword.startsWith('#')) {
       setMapSearchSuggestions([]);
@@ -772,7 +761,6 @@ export default function WorldSnapApp() {
     }
   };
 
-  // 投稿時住所検索のサジェスト
   useEffect(() => {
     if (!addressSearchQuery.trim()) {
       setAddressSuggestions([]);
@@ -801,7 +789,7 @@ export default function WorldSnapApp() {
   const filteredSpots = useMemo(() => {
     return spots.filter((s) => {
       if (blockedUsers.includes(s.userId)) return false;
-      if (!selectedCategories.includes(s.category)) return false; // チェックボックス式カテゴリフィルター
+      if (!selectedCategories.includes(s.category)) return false;
 
       if (displayScope === 'friends') {
         const isMyPost = s.userId === 'me';
@@ -1044,6 +1032,18 @@ export default function WorldSnapApp() {
         setManualLat('');
         setManualLon('');
       }
+    }
+  };
+
+  const toggleScopeSelection = (scope: DisplayScope) => {
+    if (selectedScopes.includes(scope)) {
+      if (selectedScopes.length === 1) {
+        showToast('⚠️ 最低1つの反映先を選択してください');
+        return;
+      }
+      setSelectedScopes((prev) => prev.filter((s) => s !== scope));
+    } else {
+      setSelectedScopes((prev) => [...prev, scope]);
     }
   };
 
@@ -1991,7 +1991,7 @@ export default function WorldSnapApp() {
       {/* ── フレンドプロフィール ＆ メッセージモーダル ── */}
       {selectedFriend && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', width: '100%', maxWidth: '420px', borderRadius: '20px', padding: '20px', maxHeight: '85vh', display: 'flex', flexDirection: 'column', color: '#0f172a' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', width: '100%', maxWidth: '420px', borderRadius: '20px', padding: '20px', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px', marginBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: themeAccent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
@@ -2603,15 +2603,28 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── 設定モーダル (テーマ切替機能追加) ── */}
+      {/* ── 設定モーダル (小学生でもわかりやすい操作説明＆ボタンギミックガイド追加) ── */}
       {isSettingsOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', width: '100%', maxWidth: '440px', borderRadius: '20px', padding: '20px', maxHeight: '85vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ margin: 0, fontSize: '16px' }}>⚙️ 設定</h2>
+              <h2 style={{ margin: 0, fontSize: '16px' }}>⚙️ 設定 ＆ 使い方ガイド</h2>
               <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', color: '#94a3b8', cursor: 'pointer' }}>
                 ✕
               </button>
+            </div>
+
+            {/* 小学生でもわかりやすい操作ガイド・ボタンギミック説明 */}
+            <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '14px', padding: '14px', marginBottom: '16px' }}>
+              <div style={{ fontSize: '13px', fontWeight: '900', color: '#0369a1', marginBottom: '8px' }}>📖 WorldSnapの遊び方・ボタン説明</div>
+              <div style={{ fontSize: '11px', color: '#334155', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div>📍 **写真・動画ピン**: マップ上の四角い写真はみんなの思い出！タップすると大きく見られたりコメントできるよ。</div>
+                <div>📷＋ **追加ボタン**: 下のバーにあるボタンから、写真や動画を選んで自分の旅をマップに残そう！</div>
+                <div>🎯 **現在地ボタン**: マップ右下の目標（ターゲット）ボタンを押すと、今いる場所に地図がシューッと飛ぶよ。</div>
+                <div>🪟 **戻すボタン**: マップのズームを段階的に引いて、都道府県や世界全体のマップに戻せるよ。</div>
+                <div>🏆 **ランキング**: みんなから人気のあるすごいスポットがわかるよ！</div>
+                <div>🎨 **デザインテーマ**: 下の「マップテーマ設定」で、お気に入りの色（標準・ダーク・パステル）に変えられるよ！</div>
+              </div>
             </div>
 
             <div style={{ marginBottom: '16px' }}>
