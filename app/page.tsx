@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & マスターデータ
+// 1. 型定義 & マスターデータ (国籍をすべて元の数に完全復元)
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -277,6 +277,7 @@ const GoogleMapComponent = ({
   targetZoom,
   theme,
   userLang,
+  footprintCountry,
   onMoveEnd,
   onSelectSpot,
   onDoubleTap,
@@ -288,6 +289,7 @@ const GoogleMapComponent = ({
   targetZoom: number | null;
   theme: MapThemeType;
   userLang: string;
+  footprintCountry: string | null;
   onMoveEnd: (center: [number, number], zoom: number) => void;
   onSelectSpot: (s: Spot) => void;
   onDoubleTap: (lat: number, lon: number) => void;
@@ -295,6 +297,7 @@ const GoogleMapComponent = ({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const circlesRef = useRef<any[]>([]);
 
   const getMapStyles = (themeMode: MapThemeType) => {
     if (themeMode === 'dark') {
@@ -326,7 +329,7 @@ const GoogleMapComponent = ({
       const map = new window.google.maps.Map(mapRef.current, {
         center: { lat: center[0], lng: center[1] },
         zoom: zoom,
-        minZoom: 3, // 引きすぎ防止
+        minZoom: 3,
         maxZoom: 18,
         disableDefaultUI: true,
         zoomControl: false,
@@ -392,6 +395,31 @@ const GoogleMapComponent = ({
       mapInstanceRef.current.setZoom(targetZoom);
     }
   }, [targetCenter, targetZoom]);
+
+  // 足跡マップ連動：選択された国・地域のスポット周辺をオレンジ色の円でハイライト
+  useEffect(() => {
+    if (!mapInstanceRef.current || !window.google || !window.google.maps) return;
+
+    circlesRef.current.forEach((c) => c.setMap(null));
+    circlesRef.current = [];
+
+    if (footprintCountry) {
+      const targetSpots = spots.filter((s) => s.countryCode === footprintCountry && s.userId === 'me');
+      targetSpots.forEach((spot) => {
+        const circle = new window.google.maps.Circle({
+          strokeColor: '#ea580c',
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: '#ea580c',
+          fillOpacity: 0.35,
+          map: mapInstanceRef.current,
+          center: { lat: spot.lat, lng: spot.lon },
+          radius: 15000,
+        });
+        circlesRef.current.push(circle);
+      });
+    }
+  }, [footprintCountry, spots]);
 
   useEffect(() => {
     if (!mapInstanceRef.current || !window.google || !window.google.maps) return;
@@ -568,7 +596,7 @@ export default function WorldSnapApp() {
   const [friendCode] = useState<string>('WS-8823-X9');
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
-  const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>('view' as any); // 初期値配列修正
+  const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
   const [mapTheme, setMapTheme] = useState<MapThemeType>('light');
   const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
   
@@ -713,10 +741,11 @@ export default function WorldSnapApp() {
     setTargetZoom(null);
   };
 
+  // カテゴリフィルター：すべて外すことができないよう最低1つは維持する制御
   const toggleCategoryFilter = (cat: ViewCategory) => {
     if (selectedCategories.includes(cat)) {
       if (selectedCategories.length === 1) {
-        showToast('⚠️ 最低1つのカテゴリを選択してください');
+        showToast('⚠️ 最低1つのカテゴリを選択する必要があります');
         return;
       }
       setSelectedCategories((prev) => prev.filter((c) => c !== cat));
@@ -1031,9 +1060,10 @@ export default function WorldSnapApp() {
       setPostCategory(selectedCategories[0] || 'view');
       setSelectedScopes(['world', 'friends', 'my']);
       setAddressSearchQuery('');
-      if (pendingList[0].hasGps && pendingList[0].lat !== undefined) {
+      if (pendingList[0].hasGps && pendingList[0].lat !== undefined && pendingList[0].lon !== undefined) {
         setManualLat(pendingList[0].lat.toString());
-        setManualLon(pendingList[0].lon?.toString() || '');
+        setManualLon(pendingList[0].lon.toString());
+        setAddressSearchQuery('EXIF位置情報');
       } else {
         setManualLat('');
         setManualLon('');
@@ -1270,7 +1300,7 @@ export default function WorldSnapApp() {
     showToast('✏️ 投稿の修正を保存しました！');
   };
 
-  // マップ共有機能（マップ画像保存：クリーン化・余計なボタン除外・薄いWorldSnapロゴ付き）
+  // 保存・共有ボタン（確実にシェア画面／ダウンロードが走る改善版）
   const handleSaveMyMap = async () => {
     if (!exportRef.current) return;
     showToast('📸 マップ画像を生成中...');
@@ -1290,8 +1320,7 @@ export default function WorldSnapApp() {
             element.classList?.contains('gmnopr') ||
             element.tagName === 'BUTTON' ||
             element.tagName === 'INPUT' ||
-            element.tagName === 'SELECT' ||
-            element.style.position === 'absolute' && element.style.bottom !== ''
+            element.tagName === 'SELECT'
           );
         },
       });
@@ -1301,7 +1330,6 @@ export default function WorldSnapApp() {
         const brandText = '🗺️ WorldSnap';
         ctx.font = '700 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
         const paddingX = 18;
-        const paddingY = 12;
         const metrics = ctx.measureText(brandText);
         const badgeWidth = metrics.width + paddingX * 2;
         const badgeHeight = 40;
@@ -1313,7 +1341,7 @@ export default function WorldSnapApp() {
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 2;
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'; // 薄いカラーのウォーターマーク
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
         ctx.beginPath();
         if (ctx.roundRect) {
           ctx.roundRect(x, y, badgeWidth, badgeHeight, 20);
@@ -1344,7 +1372,7 @@ export default function WorldSnapApp() {
               text: 'My WorldSnap Map',
               files: [file],
             });
-            showToast('✅ 写真への保存メニューを開きました');
+            showToast('✅ 共有メニューを開きました');
             return;
           } catch (err: any) {
             if (err.name === 'AbortError') return;
@@ -1359,11 +1387,11 @@ export default function WorldSnapApp() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showToast('💾 写真フォルダ / ダウンロードに保存しました！');
+        showToast('💾 マップ画像を保存しました！');
       }, 'image/png');
     } catch (err) {
       console.error('Export error:', err);
-      showToast('❌ 保存に失敗しました');
+      showToast('❌ 画像生成に失敗しました');
     }
   };
 
@@ -1441,7 +1469,7 @@ export default function WorldSnapApp() {
       <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
       <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-      {/* 初回オンボーディング：利用規約最後までスクロールしないと同意できない機能 */}
+      {/* 初回オンボーディング：利用規約最後までスクロール必須 */}
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -1664,7 +1692,7 @@ export default function WorldSnapApp() {
               )}
             </div>
 
-            {/* カテゴリ別一括フィルター ＆ スコープ切り替え */}
+            {/* カテゴリ別一括フィルター（最低1つ選択必須） ＆ スコープ切り替え */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px' }}>
               <div style={{ display: 'flex', gap: '4px', background: mapTheme === 'dark' ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.96)', padding: '4px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
                 {(['view', 'gourmet', 'rain'] as const).map((cat) => {
@@ -1715,12 +1743,13 @@ export default function WorldSnapApp() {
               targetZoom={targetZoom}
               theme={mapTheme}
               userLang={currentConfig.lang}
+              footprintCountry={activeFootprintCountry}
               onMoveEnd={handleMapMoveEnd}
               onSelectSpot={handleOpenSpot}
               onDoubleTap={handleMapDoubleTap}
             />
 
-            {/* 現在地ボタン（GPS） ＆ ズームアウトボタン ＆ マップ共有（保存）ボタン */}
+            {/* 現在地ボタン・ズームアウト・マップ保存共有ボタン */}
             <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button
                 title="現在地へ移動"
@@ -1778,7 +1807,8 @@ export default function WorldSnapApp() {
             </div>
           )}
 
-          <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', zIndex: 450, touchAction: 'none' }}>
+          {/* 下部バー：写真・動画追加ボタンを中央に大きく、目立つアクセントカラーで配置 */}
+          <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderTop: '1px solid #e2e8f0', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none' }}>
             <div>
               <div style={{ fontSize: '12px', fontWeight: 'bold' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
               <div style={{ fontSize: '10px', color: '#64748b' }}>表示中: {filteredSpots.length}件</div>
@@ -1786,20 +1816,25 @@ export default function WorldSnapApp() {
 
             <label
               style={{
-                padding: '8px 16px',
-                background: themeAccent,
+                flex: 1,
+                maxWidth: '220px',
+                padding: '12px 20px',
+                background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
                 color: '#fff',
-                borderRadius: '24px',
-                fontWeight: 'bold',
-                fontSize: '12px',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
+                borderRadius: '30px',
+                fontWeight: '900',
+                fontSize: '14px',
+                boxShadow: '0 6px 20px rgba(2,132,199,0.4)',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '4px',
+                justifyContent: 'center',
+                gap: '8px',
+                textAlign: 'center',
+                letterSpacing: '0.5px'
               }}
             >
-              <span>📷＋</span>
+              <span style={{ fontSize: '16px' }}>📷＋</span>
               <span>{t.addPhoto}</span>
               <input type="file" accept="image/*,video/*" multiple onChange={handlePhotoSelect} style={{ display: 'none' }} />
             </label>
@@ -1953,11 +1988,11 @@ export default function WorldSnapApp() {
             </div>
           )}
 
-          {/* 足跡マップ（タップするとオレンジ色になり、マップ上でその地域にジャンプ） */}
+          {/* 足跡マップ（タップするとオレンジ色になりマップがハイライト） */}
           {profileSubTab === 'footprint' && (
             <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '16px', textAlign: 'center' }}>
               <div style={{ fontSize: '15px', fontWeight: '900', marginBottom: '4px' }}>🌍 行ったことのある地域（足跡マップ）</div>
-              <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '14px' }}>タップするとオレンジ色に変わり、マップでその場所が表示されます</p>
+              <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '14px' }}>タップするとオレンジ色に変わり、マップ上でその場所がハイライトされます</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {Array.from(new Set(mySpots.map(s => s.countryCode))).map((code) => {
                   const countryName = COUNTRIES[code]?.name || code;
@@ -1975,7 +2010,7 @@ export default function WorldSnapApp() {
                           setTargetZoom(7);
                           setDisplayScope('my');
                           setCurrentTab('map');
-                          showToast(`🍊 ${countryName} の足跡を選択しました！`);
+                          showToast(`🍊 ${countryName} の足跡をオレンジハイライトしました！`);
                         }
                       }}
                       style={{
