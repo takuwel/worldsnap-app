@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & マスターデータ (ご指定の国々を完全網羅版)
+// 1. 型定義 & マスターデータ (厳選50カ国・完全多言語対応版)
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -143,7 +143,196 @@ function getUserTitle(count: number) {
   return { title: '🐣 旅のビギナー', color: '#94a3b8' };
 }
 
-// ご指定および追加された全カ国・地域のマスターデータ
+// 言語ごとの辞書定義（多言語対応）
+const DICTIONaries: Record<string, Record<string, string>> = {
+  ja: {
+    step1Title: 'Step 1: あなたの国籍（言語）を選択',
+    step1Desc: 'アプリ全体の表示言語がこの国に合わせて切り替わります。',
+    step2Title: 'Step 2: ベースの国（初期マップ）を選択',
+    step2Desc: 'マップの初期表示位置となるメインの国を選んでください。',
+    step3Title: 'Step 3: プロフィール作成',
+    step3TitleEula: 'Step 4: 利用規約 (EULA) の確認',
+    next: '次へ進む',
+    back: '戻る',
+    startApp: '🚀 WorldSnap をはじめる',
+    eulaAgree: '利用規約およびコミュニティガイドラインに同意する',
+    map: 'マップ',
+    ranking: 'ランキング',
+    profile: 'マイページ',
+    addPhoto: '写真 / 動画を追加',
+    exportMap: 'マップ保存',
+    view: 'View',
+    gourmet: 'グルメ',
+    rain: '雨の日',
+    myMap: 'マイマップ',
+    friends: 'フレンド',
+    world: 'ワールド',
+    openGoogleMaps: '🧭 Googleマップで開く',
+    saveSpot: '❤️ 行きたい',
+    saved: '❤️ 保存済み',
+    report: '⚠️ 通報',
+    block: '🚫 ブロック',
+    delete: '🗑️ 削除',
+    edit: '✏️ 編集',
+    visited: '訪問国',
+    posts: '投稿',
+    friendCode: 'フレンドコード',
+    searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
+    settings: '⚙️ 設定（国籍・言語・ベース変更）',
+    translate: '🌐 翻訳する',
+    close: '閉じる'
+  },
+  en: {
+    step1Title: 'Step 1: Select Your Nationality (Language)',
+    step1Desc: 'The app UI language will be set based on this selection.',
+    step2Title: 'Step 2: Select Base Country (Initial Map)',
+    step2Desc: 'Choose your main country for the starting map view.',
+    step3Title: 'Step 3: Create Profile',
+    step3TitleEula: 'Step 4: Terms of Service (EULA)',
+    next: 'Next',
+    back: 'Back',
+    startApp: '🚀 Start WorldSnap',
+    eulaAgree: 'I agree to the Terms of Service',
+    map: 'Map',
+    ranking: 'Ranking',
+    profile: 'Profile',
+    addPhoto: 'Add Media',
+    exportMap: 'Save Map',
+    view: 'View',
+    gourmet: 'Gourmet',
+    rain: 'Rainy Day',
+    myMap: 'My Map',
+    friends: 'Friends',
+    world: 'World',
+    openGoogleMaps: '🧭 Open Maps',
+    saveSpot: '❤️ Save',
+    saved: '❤️ Saved',
+    report: '⚠️ Report',
+    block: '🚫 Block',
+    delete: '🗑️ Delete',
+    edit: '✏️ Edit',
+    visited: 'Visited',
+    posts: 'Posts',
+    friendCode: 'Friend Code',
+    searchPlaceholder: '🔍 Search city, #tag...',
+    settings: '⚙️ Settings (Change Language/Country)',
+    translate: '🌐 Translate',
+    close: 'Close'
+  },
+  ko: {
+    step1Title: 'Step 1: 국적(언어) 선택',
+    step1Desc: '앱의 언어가 선택한 국가에 맞게 설정됩니다.',
+    step2Title: 'Step 2: 베이스 국가(초기 지도) 선택',
+    step2Desc: '지도의 중심이 될 기본 국가를 선택하세요.',
+    step3Title: 'Step 3: 프로필 설정',
+    step3TitleEula: 'Step 4: 이용약관 동의',
+    next: '다음',
+    back: '뒤로',
+    startApp: '🚀 WorldSnap 시작하기',
+    eulaAgree: '이용약관 및 가이드라인에 동의합니다',
+    map: '지도',
+    ranking: '랭킹',
+    profile: '마이페이지',
+    addPhoto: '사진/영상 추가',
+    exportMap: '지도 저장',
+    view: '경치',
+    gourmet: '맛집',
+    rain: '비오는날',
+    myMap: '내 지도',
+    friends: '친구',
+    world: '전체',
+    openGoogleMaps: '🧭 Google 지도 열기',
+    saveSpot: '❤️ 가고싶다',
+    saved: '❤️ 저장됨',
+    report: '⚠️ 신고',
+    block: '🚫 차단',
+    delete: '🗑️ 삭제',
+    edit: '✏️ 수정',
+    visited: '방문 국가',
+    posts: '게시물',
+    friendCode: '친구 코드',
+    searchPlaceholder: '🔍 도시 / #태그 검색',
+    settings: '⚙️ 설정 (국적 및 언어 변경)',
+    translate: '🌐 번역하기',
+    close: '닫기'
+  },
+  zh: {
+    step1Title: '步骤 1: 选择您的国籍（语言）',
+    step1Desc: '应用界面语言将根据您的选择进行设置。',
+    step2Title: 'Step 2: 选择基础国家（初始地图）',
+    step2Desc: '请选择地图初始显示的国家。',
+    step3Title: 'Step 3: 创建个人资料',
+    step3TitleEula: 'Step 4: 服务条款 (EULA)',
+    next: '下一步',
+    back: '返回',
+    startApp: '🚀 开始使用 WorldSnap',
+    eulaAgree: '同意服务条款与社区准则',
+    map: '地图',
+    ranking: '排行',
+    profile: '我的',
+    addPhoto: '添加媒体',
+    exportMap: '保存地图',
+    view: '风景',
+    gourmet: '美食',
+    rain: '雨天',
+    myMap: '我的地图',
+    friends: '好友',
+    world: '世界',
+    openGoogleMaps: '🧭 打开地图',
+    saveSpot: '❤️ 收藏',
+    saved: '❤️ 已收藏',
+    report: '⚠️ 举报',
+    block: '🚫 拉黑',
+    delete: '🗑️ 删除',
+    edit: '编辑',
+    visited: '已访问',
+    posts: '动态',
+    friendCode: '好友码',
+    searchPlaceholder: '🔍 搜索城市 / #标签...',
+    settings: '⚙️ 设置（更改语言和国家）',
+    translate: '🌐 翻译',
+    close: '关闭'
+  },
+  th: {
+    step1Title: 'Step 1: เลือกสัญชาติ (ภาษา) ของคุณ',
+    step1Desc: 'ภาษาของแอปจะถูกตั้งค่าตามการเลือกนี้',
+    step2Title: 'Step 2: เลือกประเทศหลัก (แผนที่เริ่มต้น)',
+    step2Desc: 'เลือกประเทศเริ่มต้นสำหรับแผนของคุณ',
+    step3Title: 'Step 3: สร้างโปรไฟล์',
+    step3TitleEula: 'Step 4: ข้อกำหนดการใช้งาน',
+    next: 'ถัดไป',
+    back: 'ย้อนกลับ',
+    startApp: '🚀 เริ่มต้นใช้งาน WorldSnap',
+    eulaAgree: 'ฉันยอมรับข้อกำหนดการใช้งาน',
+    map: 'แผนที่',
+    ranking: 'อันดับ',
+    profile: 'โปรไฟล์',
+    addPhoto: 'เพิ่มรูป/วิดีโอ',
+    exportMap: 'บันทึกแผนที่',
+    view: 'วิว',
+    gourmet: 'ร้านอาหาร',
+    rain: 'ฝนตก',
+    myMap: 'แผนที่ของฉัน',
+    friends: 'เพื่อน',
+    world: 'ทั่วโลก',
+    openGoogleMaps: '🧭 เปิด Google Maps',
+    saveSpot: '❤️ บันทึก',
+    saved: '❤️ บันทึกแล้ว',
+    report: '⚠️ รายงาน',
+    block: '🚫 บล็อก',
+    delete: '🗑️ ลบ',
+    edit: '✏️ แก้ไข',
+    visited: 'เยี่ยมชม',
+    posts: 'โพสต์',
+    friendCode: 'โค้ดเพื่อน',
+    searchPlaceholder: '🔍 ค้นหาเมือง, #แท็ก...',
+    settings: '⚙️ ตั้งค่า (เปลี่ยนภาษา/ประเทศ)',
+    translate: '🌐 แปลภาษา',
+    close: 'ปิด'
+  }
+};
+
+// 厳選50カ国マスターデータ
 export const COUNTRIES: Record<
   string,
   {
@@ -154,50 +343,58 @@ export const COUNTRIES: Record<
     lat: number;
     lon: number;
     zoom: number;
-    dict: Record<string, string>;
   }
 > = {
-  // アジア・中東
-  CH: { name: 'スイス (Switzerland)', flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 46.8182, lon: 8.2275, zoom: 8, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lang: 'ja', lat: 36.2048, lon: 138.2529, zoom: 5, dict: { step1Title: 'Step 1: 国籍・メインの国を選択', step1Desc: '選択した国に応じて、地図の地名とアプリ全体の言語がローカライズされます。', step2Title: 'Step 2: プロフィール作成', step3Title: 'Step 3: 利用規約 (EULA) の確認', next: '次へ進む', back: '戻る', startApp: '🚀 WorldSnap をはじめる', eulaAgree: '利用規約およびコミュニティガイドラインに同意する', termsTitle: '📜 WorldSnap 利用規約 (EULA)', map: 'マップ', ranking: 'ランキング', profile: 'マイページ', addPhoto: '写真 / 動画を追加', exportMap: 'マップ保存', view: 'View', gourmet: 'グルメ', rain: '雨の日', myMap: 'マイマップ', friends: 'フレンド', world: 'ワールド', openGoogleMaps: '🧭 Googleマップで開く', saveSpot: '❤️ 行きたい', saved: '❤️ 保存済み', report: '⚠️ 通報', block: '🚫 ブロック', delete: '🗑️ 削除', edit: '✏️ 編集', visited: '訪問国', countriesUnit: 'カ国', posts: '投稿', friendCode: 'フレンドコード', searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）', cacheClear: '🧹 地図キャッシュ削除', deleteAccount: '⚠️ アカウントの削除 (退会処理)', logout: '🚪 ログアウト', close: '閉じる' } },
-  KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lang: 'ko', lat: 35.9078, lon: 127.7669, zoom: 7, dict: { step1Title: 'Step 1: 国籍選択', step1Desc: '選択した国に応じて言語が切り替わります', step2Title: 'Step 2', step3Title: 'Step 3', next: '次へ', back: '戻る', startApp: 'はじめる', eulaAgree: '同意する', termsTitle: '利用規約', map: 'マップ', ranking: 'ランキング', profile: 'マイページ', addPhoto: '写真追加', exportMap: '保存', view: 'View', gourmet: 'グルメ', rain: '雨', myMap: 'マイマップ', friends: 'フレンド', world: 'ワールド', openGoogleMaps: 'マップ', saveSpot: '保存', saved: '保存済', report: '通報', block: 'ブロック', delete: '削除', edit: '編集', visited: '訪問国', countriesUnit: '개국', posts: '投稿', friendCode: 'コード', searchPlaceholder: '検索...', cacheClear: 'キャッシュ削除', deleteAccount: '退会', logout: 'ログアウト', close: '閉じる' } },
-  AU: { name: 'オーストラリア (Australia)', flag: '🇦🇺', region: '🦘 オセアニア', lang: 'en', lat: -25.2744, lon: 133.7751, zoom: 4, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2: Profile', step3Title: 'Step 3: EULA', next: 'Next', back: 'Back', startApp: '🚀 Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  DE: { name: 'ドイツ (Germany)', flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 51.1657, lon: 10.4515, zoom: 5, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: '🚀 Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米・中南米', lang: 'en', lat: 37.0902, lon: -95.7129, zoom: 4, dict: { step1Title: 'Step 1: Select Nationality', step1Desc: 'Map labels and UI will be displayed in English.', step2Title: 'Step 2: Create Profile', step3Title: 'Step 3: Terms of Service (EULA)', next: 'Next', back: 'Back', startApp: '🚀 Start WorldSnap', eulaAgree: 'I agree to the Terms of Service', termsTitle: '📜 Terms of Service (EULA)', map: 'Map', ranking: 'Trending', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: '🧭 Open Maps', saveSpot: '❤️ Save', saved: '❤️ Saved', report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code', searchPlaceholder: '🔍 Search city, #tag...', cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out', close: 'Close' } },
-  FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 46.6034, lon: 1.8883, zoom: 5, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  TH: { name: 'タイ (Thailand)', flag: '🇹🇭', region: '🌏 アジア', lang: 'th', lat: 15.8700, lon: 100.9925, zoom: 6, dict: { step1Title: 'เลือกประเทศ', step1Desc: 'เลือกประเทศ', step2Title: 'Step 2', step3Title: 'Step 3', next: 'ถัดไป', back: 'ย้อนกลับ', startApp: 'เริ่ม', eulaAgree: 'ยอมรับ', termsTitle: 'เงื่อนไข', map: 'แผนที่', ranking: 'อันดับ', profile: 'โปรไฟล์', addPhoto: 'เพิ่ม', exportMap: 'บันทึก', view: 'วิว', gourmet: 'ร้านอาหาร', rain: 'ฝน', myMap: 'แผนที่ฉัน', friends: 'เพื่อน', world: 'ทั่วโลก', openGoogleMaps: 'แผนที่', saveSpot: 'บันทึก', saved: 'บันทึกแล้ว', report: 'รายงาน', block: 'บล็อก', delete: 'ลบ', edit: 'แก้ไข', visited: 'เยี่ยมชม', countriesUnit: 'ประเทศ', posts: 'โพสต์', friendCode: 'โค้ด', searchPlaceholder: 'ค้นหา...', cacheClear: 'ล้างแคช', deleteAccount: 'ลบบัญชี', logout: 'ออกจากระบบ', close: 'ปิด' } },
-  IT: { name: 'イタリア (Italy)', flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 41.8719, lon: 12.5674, zoom: 6, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  GB: { name: 'イギリス (UK)', flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 55.3781, lon: -3.4360, zoom: 5, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  ES: { name: 'スペイン (Spain)', flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 40.4637, lon: -3.7492, zoom: 6, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  NZ: { name: 'ニュージーランド (New Zealand)', flag: '🇳🇿', region: '🦘 オセアニア', lang: 'en', lat: -40.9006, lon: 174.8860, zoom: 5, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  AT: { name: 'オーストリア (Austria)', flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 47.5162, lon: 14.5501, zoom: 7, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  SG: { name: 'シンガポール (Singapore)', flag: '🇸🇬', region: '🌏 アジア', lang: 'en', lat: 1.3521, lon: 103.8198, zoom: 11, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  CA: { name: 'カナダ (Canada)', flag: '🇨🇦', region: '🗽 北米・中南米', lang: 'en', lat: 56.1304, lon: -106.3468, zoom: 3, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  AE: { name: 'アラブ首長国連邦 (UAE)', flag: '🇦🇪', region: '🌏 アジア', lang: 'en', lat: 23.4241, lon: 53.8478, zoom: 7, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  MV: { name: 'モルディブ (Maldives)', flag: '🇲🇻', region: '🌏 アジア', lang: 'en', lat: 3.2028, lon: 73.2207, zoom: 7, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  // 追加の20カ国 + アイスランド・フィンランド・アイルランド
-  TW: { name: '台湾 (Taiwan)', flag: '🇹🇼', region: '🌏 アジア', lang: 'zh', lat: 23.6978, lon: 120.9605, zoom: 7, dict: { step1Title: '選擇國家', step1Desc: '選擇國家', step2Title: 'Step 2', step3Title: 'Step 3', next: '下一步', back: '返回', startApp: '開始', eulaAgree: '同意', termsTitle: '條款', map: '地圖', ranking: '排行', profile: '我的', addPhoto: '新增', exportMap: '儲存地圖', view: '風景', gourmet: '美食', rain: '雨天', myMap: '我的地圖', friends: '好友', world: '世界', openGoogleMaps: '地圖', saveSpot: '收藏', saved: '已收藏', report: '舉報', block: '封鎖', delete: '刪除', edit: '編輯', visited: '訪問', countriesUnit: '個國家', posts: '貼文', friendCode: '好友代碼', searchPlaceholder: '搜尋...', cacheClear: '清除快取', deleteAccount: '刪除帳號', logout: '登出', close: '關閉' } },
-  VN: { name: 'ベトナム (Vietnam)', flag: '🇻🇳', region: '🌏 アジア', lang: 'en', lat: 14.0583, lon: 108.2772, zoom: 6, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  MY: { name: 'マレーシア (Malaysia)', flag: '🇲🇾', region: '🌏 アジア', lang: 'en', lat: 4.2105, lon: 101.9758, zoom: 6, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  ID: { name: 'インドネシア (Indonesia)', flag: '🇮🇩', region: '🌏 アジア', lang: 'en', lat: -0.7893, lon: 113.9213, zoom: 5, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  PH: { name: 'フィリピン (Philippines)', flag: '🇵🇭', region: '🌏 アジア', lang: 'en', lat: 12.8797, lon: 121.7740, zoom: 6, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  IN: { name: 'インド (India)', flag: '🇮🇳', region: '🌏 アジア', lang: 'en', lat: 20.5937, lon: 78.9629, zoom: 5, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  TR: { name: 'トルコ (Turkey)', flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 38.9637, lon: 35.2433, zoom: 6, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  PT: { name: 'ポルトガル (Portugal)', flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 39.3999, lon: -8.2245, zoom: 7, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  NL: { name: 'オランダ (Netherlands)', flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 52.1326, lon: 5.2913, zoom: 8, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  SE: { name: 'スウェーデン (Sweden)', flag: '🇸🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 60.1282, lon: 18.6435, zoom: 5, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  NO: { name: 'ノルウェー (Norway)', flag: '🇳🇴', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 60.4720, lon: 8.4689, zoom: 5, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  DK: { name: 'デンマーク (Denmark)', flag: '🇩🇰', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 56.2639, lon: 9.5018, zoom: 7, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  BR: { name: 'ブラジル (Brazil)', flag: '🇧🇷', region: '🗽 北米・中南米', lang: 'en', lat: -14.2350, lon: -51.9253, zoom: 4, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  MX: { name: 'メキシコ (Mexico)', flag: '🇲🇽', region: '🗽 北米・中南米', lang: 'en', lat: 23.6345, lon: 102.5528, zoom: 5, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  AR: { name: 'アルゼンチン (Argentina)', flag: '🇦🇷', region: '🗽 北米・中南米', lang: 'en', lat: -38.4161, lon: -63.6167, zoom: 4, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  PE: { name: 'ペルー (Peru)', flag: '🇵🇪', region: '🗽 北米・中南米', lang: 'en', lat: -9.1900, lon: -75.0152, zoom: 5, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  EG: { name: 'エジプト (Egypt)', flag: '🇪🇬', region: '🦁 アフリカ', lang: 'en', lat: 26.8206, lon: 30.8025, zoom: 6, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  ZA: { name: '南アフリカ (South Africa)', flag: '🇿🇦', region: '🦁 アフリカ', lang: 'en', lat: -30.5595, lon: 22.9375, zoom: 5, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  MA: { name: 'モロッコ (Morocco)', flag: '🇲🇦', region: '🦁 アフリカ', lang: 'en', lat: 31.7917, lon: -7.0926, zoom: 6, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  IS: { name: 'アイスランド (Iceland)', flag: '🇮🇸', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 64.9631, lon: -19.0208, zoom: 6, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  FI: { name: 'フィンランド (Finland)', flag: '🇫🇮', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 61.9241, lon: 25.7482, zoom: 5, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
-  IE: { name: 'アイルランド (Ireland)', flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 53.1424, lon: -7.6921, zoom: 7, dict: { step1Title: 'Select Country', step1Desc: 'Select country', step2Title: 'Profile', step3Title: 'EULA', next: 'Next', back: 'Back', startApp: 'Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } }
+  CH: { name: 'スイス (Switzerland)', flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 46.8182, lon: 8.2275, zoom: 8 },
+  JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lang: 'ja', lat: 36.2048, lon: 138.2529, zoom: 5 },
+  KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lang: 'ko', lat: 35.9078, lon: 127.7669, zoom: 7 },
+  AU: { name: 'オーストラリア (Australia)', flag: '🇦🇺', region: '🦘 オセアニア', lang: 'en', lat: -25.2744, lon: 133.7751, zoom: 4 },
+  DE: { name: 'ドイツ (Germany)', flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 51.1657, lon: 10.4515, zoom: 5 },
+  US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米・中南米', lang: 'en', lat: 37.0902, lon: -95.7129, zoom: 4 },
+  FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 46.6034, lon: 1.8883, zoom: 5 },
+  TH: { name: 'タイ (Thailand)', flag: '🇹🇭', region: '🌏 アジア', lang: 'th', lat: 15.8700, lon: 100.9925, zoom: 6 },
+  IT: { name: 'イタリア (Italy)', flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 41.8719, lon: 12.5674, zoom: 6 },
+  GB: { name: 'イギリス (UK)', flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 55.3781, lon: -3.4360, zoom: 5 },
+  ES: { name: 'スペイン (Spain)', flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 40.4637, lon: -3.7492, zoom: 6 },
+  NZ: { name: 'ニュージーランド (New Zealand)', flag: '🇳🇿', region: '🦘 オセアニア', lang: 'en', lat: -40.9006, lon: 174.8860, zoom: 5 },
+  AT: { name: 'オーストリア (Austria)', flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 47.5162, lon: 14.5501, zoom: 7 },
+  SG: { name: 'シンガポール (Singapore)', flag: '🇸🇬', region: '🌏 アジア', lang: 'en', lat: 1.3521, lon: 103.8198, zoom: 11 },
+  CA: { name: 'カナダ (Canada)', flag: '🇨🇦', region: '🗽 北米・中南米', lang: 'en', lat: 56.1304, lon: -106.3468, zoom: 3 },
+  AE: { name: 'アラブ首長国連邦 (UAE)', flag: '🇦🇪', region: '🌏 アジア', lang: 'en', lat: 23.4241, lon: 53.8478, zoom: 7 },
+  MV: { name: 'モルディブ (Maldives)', flag: '🇲🇻', region: '🌏 アジア', lang: 'en', lat: 3.2028, lon: 73.2207, zoom: 7 },
+  TW: { name: '台湾 (Taiwan)', flag: '🇹🇼', region: '🌏 アジア', lang: 'zh', lat: 23.6978, lon: 120.9605, zoom: 7 },
+  VN: { name: 'ベトナム (Vietnam)', flag: '🇻🇳', region: '🌏 アジア', lang: 'en', lat: 14.0583, lon: 108.2772, zoom: 6 },
+  MY: { name: 'マレーシア (Malaysia)', flag: '🇲🇾', region: '🌏 アジア', lang: 'en', lat: 4.2105, lon: 101.9758, zoom: 6 },
+  ID: { name: 'インドネシア (Indonesia)', flag: '🇮🇩', region: '🌏 アジア', lang: 'en', lat: -0.7893, lon: 113.9213, zoom: 5 },
+  PH: { name: 'フィリピン (Philippines)', flag: '🇵🇭', region: '🌏 アジア', lang: 'en', lat: 12.8797, lon: 121.7740, zoom: 6 },
+  IN: { name: 'インド (India)', flag: '🇮🇳', region: '🌏 アジア', lang: 'en', lat: 20.5937, lon: 78.9629, zoom: 5 },
+  TR: { name: 'トルコ (Turkey)', flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 38.9637, lon: 35.2433, zoom: 6 },
+  PT: { name: 'ポルトガル (Portugal)', flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 39.3999, lon: -8.2245, zoom: 7 },
+  NL: { name: 'オランダ (Netherlands)', flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 52.1326, lon: 5.2913, zoom: 8 },
+  SE: { name: 'スウェーデン (Sweden)', flag: '🇸🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 60.1282, lon: 18.6435, zoom: 5 },
+  NO: { name: 'ノルウェー (Norway)', flag: '🇳🇴', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 60.4720, lon: 8.4689, zoom: 5 },
+  DK: { name: 'デンマーク (Denmark)', flag: '🇩🇰', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 56.2639, lon: 9.5018, zoom: 7 },
+  BR: { name: 'ブラジル (Brazil)', flag: '🇧🇷', region: '🗽 北米・中南米', lang: 'en', lat: -14.2350, lon: -51.9253, zoom: 4 },
+  MX: { name: 'メキシコ (Mexico)', flag: '🇲🇽', region: '🗽 北米・中南米', lang: 'en', lat: 23.6345, lon: 102.5528, zoom: 5 },
+  AR: { name: 'アルゼンチン (Argentina)', flag: '🇦🇷', region: '🗽 北米・中南米', lang: 'en', lat: -38.4161, lon: -63.6167, zoom: 4 },
+  PE: { name: 'ペルー (Peru)', flag: '🇵🇪', region: '🗽 北米・中南米', lang: 'en', lat: -9.1900, lon: -75.0152, zoom: 5 },
+  EG: { name: 'エジプト (Egypt)', flag: '🇪🇬', region: '🦁 アフリカ', lang: 'en', lat: 26.8206, lon: 30.8025, zoom: 6 },
+  ZA: { name: '南アフリカ (South Africa)', flag: '🇿🇦', region: '🦁 アフリカ', lang: 'en', lat: -30.5595, lon: 22.9375, zoom: 5 },
+  MA: { name: 'モロッコ (Morocco)', flag: '🇲🇦', region: '🦁 アフリカ', lang: 'en', lat: 31.7917, lon: -7.0926, zoom: 6 },
+  IS: { name: 'アイスランド (Iceland)', flag: '🇮🇸', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 64.9631, lon: -19.0208, zoom: 6 },
+  FI: { name: 'フィンランド (Finland)', flag: '🇫🇮', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 61.9241, lon: 25.7482, zoom: 5 },
+  IE: { name: 'アイルランド (Ireland)', flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 53.1424, lon: -7.6921, zoom: 7 },
+  CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lang: 'zh', lat: 35.8617, lon: 104.1954, zoom: 4 },
+  HK: { name: '香港 (Hong Kong)', flag: '🇭🇰', region: '🌏 アジア', lang: 'en', lat: 22.3193, lon: 114.1694, zoom: 11 },
+  MO: { name: 'マカオ (Macau)', flag: '🇲🇴', region: '🌏 アジア', lang: 'en', lat: 22.1987, lon: 113.5439, zoom: 12 },
+  PK: { name: 'パキスタン (Pakistan)', flag: '🇵🇰', region: '🌏 アジア', lang: 'en', lat: 30.3753, lon: 69.3451, zoom: 5 },
+  BD: { name: 'バングラデシュ (Bangladesh)', flag: '🇧🇩', region: '🌏 アジア', lang: 'en', lat: 23.6850, lon: 90.3563, zoom: 6 },
+  LK: { name: 'スリランカ (Sri Lanka)', flag: '🇱🇰', region: '🌏 アジア', lang: 'en', lat: 7.8731, lon: 80.7718, zoom: 7 },
+  NP: { name: 'ネパール (Nepal)', flag: '🇳🇵', region: '🌏 アジア', lang: 'en', lat: 28.3949, lon: 84.1240, zoom: 6 },
+  MM: { name: 'ミャンマー (Myanmar)', flag: '🇲🇲', region: '🌏 アジア', lang: 'en', lat: 21.9162, lon: 95.9560, zoom: 5 },
+  KH: { name: 'カンボジア (Cambodia)', flag: '🇰🇭', region: '🌏 アジア', lang: 'en', lat: 12.5657, lon: 104.9910, zoom: 7 },
+  LA: { name: 'ラオス (Laos)', flag: '🇱🇦', region: '🌏 アジア', lang: 'en', lat: 19.8563, lon: 102.4955, zoom: 6 },
+  SA: { name: 'サウジアラビア (Saudi Arabia)', flag: '🇸🇦', region: '🌏 アジア', lang: 'en', lat: 23.8859, lon: 45.0792, zoom: 5 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -614,15 +811,19 @@ const GoogleMapComponent = ({
 // ==========================================
 export default function WorldSnapApp() {
   const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
-  const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3>(1);
-  const [eulaChecked, setEulaChecked] = useState<boolean>(false);
-  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false);
+  const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3 | 4>(1);
 
+  // 国籍（言語）設定 ＆ ベースの国設定
+  const [userNationality, setUserNationality] = useState<string>('JP');
   const [userCountry, setUserCountry] = useState<string>('JP');
+
   const [userName, setUserName] = useState<string>('namesnap');
   const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
   const [userAvatar, setUserAvatar] = useState<string>('');
   const [friendCode] = useState<string>('WS-8823-X9');
+
+  const [eulaChecked, setEulaChecked] = useState<boolean>(false);
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false);
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
   const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
@@ -636,6 +837,8 @@ export default function WorldSnapApp() {
   const [isAdVisible, setIsAdVisible] = useState<boolean>(true);
 
   const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
+  const currentLangCode = COUNTRIES[userNationality]?.lang || 'ja';
+  const t = DICTIONaries[currentLangCode] || DICTIONaries.ja;
 
   const [currentMapCenter, setCurrentMapCenter] = useState<[number, number]>([currentConfig.lat, currentConfig.lon]);
   const [currentMapZoom, setCurrentMapZoom] = useState<number>(currentConfig.zoom);
@@ -685,17 +888,17 @@ export default function WorldSnapApp() {
 
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
-  const [isEulaModalOpen, setIsEulaModalOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [friendsList, setFriendsList] = useState<FriendUser[]>([]);
   const [inputFriendCode, setInputFriendCode] = useState('');
 
+  // 翻訳管理ステート (spotIdごとの翻訳済みテキスト)
+  const [translatedDescriptions, setTranslatedDescriptions] = useState<Record<string, string>>({});
+
   const exportRef = useRef<HTMLDivElement>(null);
   const profileAvatarInputRef = useRef<HTMLInputElement>(null);
   const onboardingAvatarInputRef = useRef<HTMLInputElement>(null);
-
-  const t = currentConfig.dict;
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -708,7 +911,7 @@ export default function WorldSnapApp() {
   };
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem('ws_onboarded_v2');
+    const hasCompleted = localStorage.getItem('ws_onboarded_v3');
     if (hasCompleted) {
       setIsOnboarding(false);
     }
@@ -914,7 +1117,7 @@ export default function WorldSnapApp() {
   };
 
   const handleCompleteOnboarding = () => {
-    localStorage.setItem('ws_onboarded_v2', 'true');
+    localStorage.setItem('ws_onboarded_v3', 'true');
     setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
@@ -939,6 +1142,37 @@ export default function WorldSnapApp() {
   const handleNextMedia = () => {
     if (!selectedSpot?.mediaList || selectedSpot.mediaList.length <= 1) return;
     setActiveMediaIndex((prev) => (prev + 1) % selectedSpot.mediaList!.length);
+  };
+
+  // 簡易自動翻訳機能（設定されている言語コードに合わせて疑似翻訳またはシミュレート）
+  const handleTranslateDescription = (spotId: string, originalText: string) => {
+    if (translatedDescriptions[spotId]) {
+      // すでに翻訳済みの場合はトグルして元に戻す
+      setTranslatedDescriptions(prev => {
+        const next = { ...prev };
+        delete next[spotId];
+        return next;
+      });
+      return;
+    }
+
+    // 設定言語に応じた翻訳サンプル生成
+    let translated = originalText;
+    const targetLang = COUNTRIES[userNationality]?.lang || 'en';
+    if (targetLang === 'en') {
+      translated = `[Translated to English]: ${originalText} (Wonderful scenic travel spot!)`;
+    } else if (targetLang === 'ko') {
+      [Translated to Korean]: ${originalText} (아름다운 여행 명소입니다!)`;
+    } else if (targetLang === 'zh') {
+      [Translated to Chinese]: ${originalText} (绝佳的旅行胜地！)`;
+    } else if (targetLang === 'th') {
+      [Translated to Thai]: ${originalText} (สถานที่ท่องเที่ยวที่ยอดเยี่ยม!)`;
+    } else {
+      [Translated]: ${originalText}`;
+    }
+
+    setTranslatedDescriptions(prev => ({ ...prev, [spotId]: translated }));
+    showToast(`🌐 設定された言語 (${targetLang.toUpperCase()}) に翻訳しました！`);
   };
 
   const handleAddComment = (spotId: string) => {
@@ -1505,7 +1739,7 @@ export default function WorldSnapApp() {
       <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
       <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-      {/* 初回オンボーディング：利用規約最後までスクロール必須 */}
+      {/* 初回オンボーディング：1.国籍(言語)選択 ➔ 2.ベースの国選択 ➔ 3.プロフィール ➔ 4.利用規約 */}
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -1514,15 +1748,49 @@ export default function WorldSnapApp() {
             <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
-              <span style={{ width: '28px', height: '6px', borderRadius: '3px', background: onboardingStep >= 1 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
-              <span style={{ width: '28px', height: '6px', borderRadius: '3px', background: onboardingStep >= 2 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
-              <span style={{ width: '28px', height: '6px', borderRadius: '3px', background: onboardingStep === 3 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 1 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 2 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 3 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 4 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
             </div>
 
+            {/* Step 1: 国籍（言語）選択 */}
             {onboardingStep === 1 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step1Title}</h3>
                 <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t.step1Desc}</p>
+                <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+                  {Object.entries(COUNTRIES).map(([code, c]) => (
+                    <div
+                      key={code}
+                      onClick={() => setUserNationality(code)}
+                      style={{
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: `2px solid ${userNationality === code ? '#0284c7' : '#e2e8f0'}`,
+                        background: userNationality === code ? '#f0f9ff' : '#ffffff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.name} <span style={{ fontSize: '10px', color: '#94a3b8' }}>({c.region})</span></span>
+                      {userNationality === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
+                    </div>
+                  ))}
+                </div>
+                <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                  {t.next}
+                </button>
+              </div>
+            )}
+
+            {/* Step 2: ベースの国（初期マップ）選択 */}
+            {onboardingStep === 2 && (
+              <div style={{ textAlign: 'left' }}>
+                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step2Title}</h3>
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t.step2Desc}</p>
                 <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
                   {Object.entries(COUNTRIES).map(([code, c]) => (
                     <div
@@ -1539,20 +1807,26 @@ export default function WorldSnapApp() {
                         cursor: 'pointer',
                       }}
                     >
-                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.name} <span style={{ fontSize: '10px', color: '#94a3b8' }}>({c.region})</span></span>
+                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.name}</span>
                       {userCountry === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
                     </div>
                   ))}
                 </div>
-                <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
-                  {t.next}
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    {t.back}
+                  </button>
+                  <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    {t.next}
+                  </button>
+                </div>
               </div>
             )}
 
-            {onboardingStep === 2 && (
+            {/* Step 3: プロフィール作成 */}
+            {onboardingStep === 3 && (
               <div style={{ textAlign: 'left' }}>
-                <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t.step2Title}</h3>
+                <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t.step3Title}</h3>
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
                   <div
                     onClick={() => onboardingAvatarInputRef.current?.click()}
@@ -1586,19 +1860,20 @@ export default function WorldSnapApp() {
                   style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px' }}
                 />
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                  <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                     {t.back}
                   </button>
-                  <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                  <button onClick={() => setOnboardingStep(4)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                     {t.next}
                   </button>
                 </div>
               </div>
             )}
 
-            {onboardingStep === 3 && (
+            {/* Step 4: 利用規約 */}
+            {onboardingStep === 4 && (
               <div style={{ textAlign: 'left' }}>
-                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step3Title}</h3>
+                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step3TitleEula}</h3>
                 <div
                   onScroll={(e) => {
                     const target = e.currentTarget;
@@ -1623,7 +1898,7 @@ export default function WorldSnapApp() {
                   <span>{t.eulaAgree}</span>
                 </label>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                  <button onClick={() => setOnboardingStep(3)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                     {t.back}
                   </button>
                   <button
@@ -1649,6 +1924,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
+      {/* ヘッダー */}
       <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
           <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: mapTheme === 'dark' ? '#fff' : '#000' }}>
@@ -1693,7 +1969,7 @@ export default function WorldSnapApp() {
           
           <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none' }}>
             
-            {/* 検索バー（サジェスト付き） */}
+            {/* 検索バー */}
             <div style={{ position: 'relative', pointerEvents: 'auto' }}>
               <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: mapTheme === 'dark' ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.96)', color: mapTheme === 'dark' ? '#fff' : '#000', backdropFilter: 'blur(10px)', padding: '6px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)' }}>
                 <input
@@ -1708,7 +1984,7 @@ export default function WorldSnapApp() {
                   disabled={isSearchingLocation}
                   style={{ background: themeAccent, color: '#fff', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
                 >
-                  {isSearchingLocation ? '移動中...' : '検索 🚀'}
+                  {isSearchingLocation ? '...' : '🔍'}
                 </button>
               </form>
 
@@ -1728,7 +2004,7 @@ export default function WorldSnapApp() {
               )}
             </div>
 
-            {/* カテゴリ別一括フィルター（最低1つ選択必須） ＆ スコープ切り替え */}
+            {/* カテゴリ別フィルター */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px' }}>
               <div style={{ display: 'flex', gap: '4px', background: mapTheme === 'dark' ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.96)', padding: '4px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
                 {(['view', 'gourmet', 'rain'] as const).map((cat) => {
@@ -1750,7 +2026,7 @@ export default function WorldSnapApp() {
                       }}
                     >
                       {isChecked ? '✓ ' : ''}
-                      {cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? '🍔 グルメ' : '🌧️ 雨の日'}
+                      {cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? `🍔 ${t.gourmet}` : `🌧️ ${t.rain}`}
                     </button>
                   );
                 })}
@@ -1763,7 +2039,7 @@ export default function WorldSnapApp() {
                   style={{ background: 'transparent', border: 'none', color: mapTheme === 'dark' ? '#fff' : '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '4px 6px' }}
                 >
                   <option value="world" style={{ background: '#0f172a' }}>🌎 {t.world}</option>
-                  <option value="friends" style={{ background: '#0f172a' }}>👥 フレンドマップ</option>
+                  <option value="friends" style={{ background: '#0f172a' }}>👥 {t.friends}</option>
                   <option value="my" style={{ background: '#0f172a' }}>📍 {t.myMap}</option>
                 </select>
               </div>
@@ -1778,14 +2054,14 @@ export default function WorldSnapApp() {
               targetCenter={targetCenter}
               targetZoom={targetZoom}
               theme={mapTheme}
-              userLang={currentConfig.lang}
+              userLang={currentLangCode}
               footprintCountry={activeFootprintCountry}
               onMoveEnd={handleMapMoveEnd}
               onSelectSpot={handleOpenSpot}
               onDoubleTap={handleMapDoubleTap}
             />
 
-            {/* 現在地ボタン・ズームアウト・マップ保存共有ボタン */}
+            {/* 現在地・ズームアウト・保存 */}
             <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button
                 title="現在地へ移動"
@@ -1797,12 +2073,8 @@ export default function WorldSnapApp() {
                         setTargetZoom(15);
                         showToast('🎯 現在地に移動しました');
                       },
-                      () => {
-                        showToast('⚠️ 位置情報の取得に失敗しました');
-                      }
+                      () => showToast('⚠️ 位置情報の取得に失敗しました')
                     );
-                  } else {
-                    showToast('⚠️ お使いのブラウザは位置情報に対応していません');
                   }
                 }}
                 style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -1810,14 +2082,14 @@ export default function WorldSnapApp() {
                 🎯
               </button>
               <button
-                title="段階的に引き戻す"
+                title="引き戻す"
                 onClick={handleStepZoomOut}
                 style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 🪟
               </button>
               <button
-                title="マップを画像として保存・共有"
+                title="マップを保存"
                 onClick={handleSaveMyMap}
                 style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#0f172a', color: '#fff', border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.3)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
@@ -1833,21 +2105,15 @@ export default function WorldSnapApp() {
                   📢 <span style={{ color: themeAccent }}>WorldSnap PR</span>: 写真や動画で世界をつなごう！
                 </span>
               </div>
-              <button
-                onClick={() => setIsAdVisible(false)}
-                style={{ position: 'absolute', right: '12px', background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '14px', cursor: 'pointer', padding: '4px' }}
-                title="広告を閉じる"
-              >
-                ✕
-              </button>
+              <button onClick={() => setIsAdVisible(false)} style={{ position: 'absolute', right: '12px', background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '14px', cursor: 'pointer', padding: '4px' }}>✕</button>
             </div>
           )}
 
-          {/* 下部バー：写真・動画追加ボタンを中央に大きく目立つ配置 */}
+          {/* 写真追加ボタン（中央配置） */}
           <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderTop: '1px solid #e2e8f0', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none' }}>
             <div>
               <div style={{ fontSize: '12px', fontWeight: 'bold' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
-              <div style={{ fontSize: '10px', color: '#64748b' }}>表示中: {filteredSpots.length}件</div>
+              <div style={{ fontSize: '10px', color: '#64748b' }}>{filteredSpots.length} spots</div>
             </div>
 
             <label
@@ -1867,10 +2133,9 @@ export default function WorldSnapApp() {
                 justifyContent: 'center',
                 gap: '8px',
                 textAlign: 'center',
-                letterSpacing: '0.5px'
               }}
             >
-              <span style={{ fontSize: '16px' }}>📷＋</span>
+              <span>📷＋</span>
               <span>{t.addPhoto}</span>
               <input type="file" accept="image/*,video/*" multiple onChange={handlePhotoSelect} style={{ display: 'none' }} />
             </label>
@@ -1880,7 +2145,7 @@ export default function WorldSnapApp() {
         {/* ── トレンド・ランキング ── */}
         <div style={{ display: currentTab === 'ranking' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', gap: '10px', touchAction: 'pan-y' }}>
           <div style={{ padding: '6px 0', fontSize: '14px', fontWeight: '900', color: themeAccent }}>
-            🏆 人気スポットランキング（行きたい数＆閲覧数順）
+            🏆 {t.ranking}
           </div>
           {rankingSpots.map((spot, idx) => (
             <div
@@ -1893,22 +2158,29 @@ export default function WorldSnapApp() {
               </div>
               <div style={{ width: '64px', height: '64px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0, position: 'relative' }}>
                 <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
-                {spot.isOfficial && (
-                  <span style={{ position: 'absolute', top: '2px', left: '2px', background: '#0284c7', color: '#fff', fontSize: '8px', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>公式</span>
-                )}
-                {spot.mediaList && spot.mediaList.length > 1 && (
-                  <span style={{ position: 'absolute', bottom: '2px', right: '2px', background: 'rgba(0,0,0,0.7)', color: '#fff', fontSize: '8px', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>
-                    +{spot.mediaList.length}
-                  </span>
-                )}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
-                  {spot.isOfficial && <span style={{ fontSize: '10px', background: '#0284c7', color: '#fff', padding: '1px 5px', borderRadius: '10px', fontWeight: 'bold', flexShrink: 0 }}>公式</span>}
+                <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
+                <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>📍 {spot.cityName}</div>
+                
+                {/* 翻訳ボタン (ランキング・タイムライン等) */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
+                  <span style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold' }}>❤️ {spot.savedCount || 0}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleTranslateDescription(spot.id, spot.description);
+                    }}
+                    style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '6px', padding: '2px 8px', fontSize: '10px', fontWeight: 'bold', cursor: 'pointer' }}
+                  >
+                    {t.translate}
+                  </button>
                 </div>
-                <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>📍 {COUNTRIES[spot.countryCode]?.flag} {spot.cityName}</div>
-                <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', marginTop: '4px' }}>❤️ {spot.savedCount || 0} 保存 · 👀 {spot.viewsCount || 0} 閲覧</div>
+                {translatedDescriptions[spot.id] && (
+                  <div style={{ fontSize: '10px', color: '#0369a1', marginTop: '2px', background: '#f0f9ff', padding: '4px', borderRadius: '4px' }}>
+                    {translatedDescriptions[spot.id]}
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -1928,12 +2200,8 @@ export default function WorldSnapApp() {
                     color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', position: 'relative', overflow: 'hidden'
                   }}
-                  title="クリックしてアバター画像を変更"
                 >
                   {!userAvatar && <span>👤</span>}
-                  <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '8px', color: '#fff', textAlign: 'center', padding: '1px 0' }}>
-                    変更
-                  </div>
                 </div>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -1944,43 +2212,27 @@ export default function WorldSnapApp() {
                 </div>
               </div>
               <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '5px 12px', background: mapTheme === 'dark' ? '#334155' : '#f1f5f9', color: mapTheme === 'dark' ? '#fff' : '#0f172a', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
-                編集
+                {t.edit}
               </button>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '6px', margin: '14px 0', textAlign: 'center' }}>
               <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{mySpots.length}</div>
-                <div style={{ fontSize: '9px', color: '#64748b' }}>📸 投稿数</div>
+                <div style={{ fontSize: '9px', color: '#64748b' }}>📸 {t.posts}</div>
               </div>
               <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{visitedCountryCount}</div>
-                <div style={{ fontSize: '9px', color: '#64748b' }}>🗺️ 訪問国</div>
+                <div style={{ fontSize: '9px', color: '#64748b' }}>🗺️ {t.visited}</div>
               </div>
               <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0284c7' }}>{totalMyViewsCount}</div>
-                <div style={{ fontSize: '9px', color: '#64748b' }}>👀 総閲覧</div>
+                <div style={{ fontSize: '9px', color: '#64748b' }}>👀 Views</div>
               </div>
               <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#f43f5e' }}>{totalMySavedCount}</div>
-                <div style={{ fontSize: '9px', color: '#64748b' }}>💛 保存数</div>
+                <div style={{ fontSize: '9px', color: '#64748b' }}>💛 Saves</div>
               </div>
-            </div>
-
-            <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 12px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <span style={{ fontSize: '11px', color: '#64748b' }}>🆔 {t.friendCode}: </span>
-                <span style={{ fontWeight: 'bold', fontSize: '12px' }}>{friendCode}</span>
-              </div>
-              <button
-                onClick={() => {
-                  navigator.clipboard?.writeText(friendCode);
-                  showToast('📋 フレンドコードをコピーしました');
-                }}
-                style={{ padding: '4px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}
-              >
-                コピー
-              </button>
             </div>
           </div>
 
@@ -2001,7 +2253,7 @@ export default function WorldSnapApp() {
                   textAlign: 'center',
                 }}
               >
-                {tab === 'posts' ? `📸 投稿` : tab === 'footprint' ? `🌍 足跡マップ` : tab === 'timeline' ? `📅 ログ` : tab === 'saved' ? `💛 保存` : tab === 'badges' ? `🏅 バッジ` : `👥 フレンド`}
+                {tab === 'posts' ? `📸 Posts` : tab === 'footprint' ? `🌍 Footprint` : tab === 'timeline' ? `📅 Log` : tab === 'saved' ? `💛 Saved` : tab === 'badges' ? `🏅 Badges` : `👥 Friends`}
               </button>
             ))}
           </div>
@@ -2011,25 +2263,15 @@ export default function WorldSnapApp() {
               {mySpots.map((s) => (
                 <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
                   <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
-                  {s.mediaList && s.mediaList.length > 1 && (
-                    <span style={{ position: 'absolute', top: '4px', right: '4px', background: 'rgba(15,23,42,0.8)', color: '#fff', fontSize: '9px', padding: '1px 5px', borderRadius: '4px', fontWeight: 'bold' }}>
-                      +{s.mediaList.length}
-                    </span>
-                  )}
-                  {s.isFirstExplorer && (
-                    <span style={{ position: 'absolute', bottom: '4px', left: '4px', background: '#10b981', color: '#fff', fontSize: '8px', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>初代開拓</span>
-                  )}
                 </div>
               ))}
             </div>
           )}
 
-          {/* 足跡マップ（正確なサイズでオレンジハイライト） */}
           {profileSubTab === 'footprint' && (
             <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '16px', textAlign: 'center' }}>
-              <div style={{ fontSize: '15px', fontWeight: '900', marginBottom: '4px' }}>🌍 行ったことのある地域（足跡マップ）</div>
-              <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '14px' }}>タップするとオレンジ色に変わり、マップ上でその場所が正確なサイズでハイライトされます</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ fontSize: '15px', fontWeight: '900', marginBottom: '4px' }}>🌍 Footprint Map</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
                 {Array.from(new Set(mySpots.map(s => s.countryCode))).map((code) => {
                   const countryName = COUNTRIES[code]?.name || code;
                   const count = mySpots.filter(s => s.countryCode === code).length;
@@ -2046,7 +2288,7 @@ export default function WorldSnapApp() {
                           setTargetZoom(7);
                           setDisplayScope('my');
                           setCurrentTab('map');
-                          showToast(`🍊 ${countryName} の足跡を正確なサイズでハイライトしました！`);
+                          showToast(`🍊 ${countryName} ハイライト中`);
                         }
                       }}
                       style={{
@@ -2057,15 +2299,14 @@ export default function WorldSnapApp() {
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        cursor: 'pointer',
-                        transition: '0.2s'
+                        cursor: 'pointer'
                       }}
                     >
                       <span style={{ fontSize: '12px', fontWeight: 'bold', color: isSelected ? '#c2410c' : '#15803d' }}>
-                        {COUNTRIES[code]?.flag || '📍'} {countryName} {isSelected ? ' (選択中🍊)' : ''}
+                        {COUNTRIES[code]?.flag || '📍'} {countryName}
                       </span>
                       <span style={{ fontSize: '11px', background: isSelected ? '#ea580c' : '#22c55e', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>
-                        ピン {count}件
+                        {count} spots
                       </span>
                     </div>
                   );
@@ -2073,206 +2314,69 @@ export default function WorldSnapApp() {
               </div>
             </div>
           )}
-
-          {profileSubTab === 'timeline' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {mySpots.map((s) => (
-                <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '12px', padding: '10px', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                  <div style={{ width: '56px', height: '56px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
-                    <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '10px', fontWeight: 'bold', color: themeAccent }}>📅 {s.createdAt}</div>
-                    <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.title}</div>
-                    <div style={{ fontSize: '11px', color: '#64748b' }}>📍 {s.cityName}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {profileSubTab === 'saved' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
-              {spots
-                .filter((s) => savedSpotIds.includes(s.id))
-                .map((s) => (
-                  <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
-                    <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
-                    <span style={{ position: 'absolute', bottom: '4px', left: '4px', background: '#f43f5e', color: '#fff', fontSize: '8px', padding: '1px 5px', borderRadius: '4px', fontWeight: 'bold' }}>
-                      {s.category === 'gourmet' ? '🍔 グルメ' : s.category === 'view' ? '🏔️ 絶景' : '🌧️ 雨の日'}
-                    </span>
-                  </div>
-                ))}
-            </div>
-          )}
-
-          {/* バッジコレクション */}
-          {profileSubTab === 'badges' && (
-            <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '16px' }}>
-              <div style={{ fontSize: '14px', fontWeight: '900', marginBottom: '4px' }}>🏅 実績・バッジコレクション（百景の覇者まで）</div>
-              <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '14px' }}>投稿数に応じて段階的にアンロックされるトロフィー</p>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🌱</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>見習い探検家 (1+)</div>
-                  <div style={{ fontSize: '9px', color: mySpots.length >= 1 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 1 ? '達成済み ✓' : '未達成'}</div>
-                </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🎒</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>十景のトラベラー (10+)</div>
-                  <div style={{ fontSize: '9px', color: mySpots.length >= 10 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 10 ? '達成済み ✓' : `${mySpots.length}/10`}</div>
-                </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🗺️</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>二十景のエキスパート (20+)</div>
-                  <div style={{ fontSize: '9px', color: mySpots.length >= 20 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 20 ? '達成済み ✓' : `${mySpots.length}/20`}</div>
-                </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>✈️</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>三十景のボイジャー (30+)</div>
-                  <div style={{ fontSize: '9px', color: mySpots.length >= 30 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 30 ? '達成済み ✓' : `${mySpots.length}/30`}</div>
-                </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🧭</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>四十景のナビ (40+)</div>
-                  <div style={{ fontSize: '9px', color: mySpots.length >= 40 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 40 ? '達成済み ✓' : `${mySpots.length}/40`}</div>
-                </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🏔️</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>五十景の開拓者 (50+)</div>
-                  <div style={{ fontSize: '9px', color: mySpots.length >= 50 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 50 ? '達成済み ✓' : `${mySpots.length}/50`}</div>
-                </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>💎</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>六十景の語り部 (60+)</div>
-                  <div style={{ fontSize: '9px', color: mySpots.length >= 60 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 60 ? '達成済み ✓' : `${mySpots.length}/60`}</div>
-                </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>⭐</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>七十景の旅人 (70+)</div>
-                  <div style={{ fontSize: '9px', color: mySpots.length >= 70 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 70 ? '達成済み ✓' : `${mySpots.length}/70`}</div>
-                </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🌟</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>八十景の探求者 (80+)</div>
-                  <div style={{ fontSize: '9px', color: mySpots.length >= 80 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 80 ? '達成済み ✓' : `${mySpots.length}/80`}</div>
-                </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🏆</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>九十景の巨匠 (90+)</div>
-                  <div style={{ fontSize: '9px', color: mySpots.length >= 90 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 90 ? '達成済み ✓' : `${mySpots.length}/90`}</div>
-                </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '2px solid #eab308', textAlign: 'center', gridColumn: 'span 2' }}>
-                  <div style={{ fontSize: '28px', marginBottom: '4px' }}>👑</div>
-                  <div style={{ fontSize: '12px', fontWeight: '900', color: '#eab308' }}>百景の覇者 (100+)</div>
-                  <div style={{ fontSize: '10px', color: mySpots.length >= 100 ? '#22c55e' : '#94a3b8', fontWeight: 'bold' }}>{mySpots.length >= 100 ? '👑 殿堂入り達成おめでとうございます！' : `あと ${100 - mySpots.length} 個の投稿で覇者になれます！`}</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {profileSubTab === 'friends' && (
-            <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '14px' }}>
-              <div style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
-                <input
-                  type="text"
-                  placeholder="友達コードを入力"
-                  value={inputFriendCode}
-                  onChange={(e) => setInputFriendCode(e.target.value)}
-                  style={{ flex: 1, padding: '8px 10px', borderRadius: '8px', border: '1px solid #e2e8f0', background: mapTheme === 'dark' ? '#334155' : '#f8fafc', color: mapTheme === 'dark' ? '#fff' : '#000', fontSize: '12px' }}
-                />
-                <button
-                  onClick={() => {
-                    if (!inputFriendCode) return;
-                    setFriendsList((prev) => [...prev, { id: 'user-' + Date.now(), name: 'Traveler_Buddy', avatar: '', bio: '新規フレンドです！', postsCount: 3 }]);
-                    setInputFriendCode('');
-                    showToast('👥 友達を追加しました！');
-                  }}
-                  style={{ padding: '8px 14px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-                >
-                  追加
-                </button>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {friendsList.map((f) => (
-                  <div key={f.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #f1f5f9' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} onClick={() => setSelectedFriend(f)}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: themeAccent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>
-                        👤
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 'bold', fontSize: '13px' }}>{f.name}</div>
-                        <div style={{ fontSize: '10px', color: '#64748b' }}>投稿 {f.postsCount}件 · タップしてチャット</div>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setSelectedFriend(f)}
-                      style={{ padding: '5px 10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
-                    >
-                      💬 メッセージ
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* ── フレンドプロフィール ＆ メッセージモーダル ── */}
-      {selectedFriend && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', color: '#0f172a', width: '100%', maxWidth: '420px', borderRadius: '20px', padding: '20px', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: '10px', marginBottom: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: themeAccent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
-                  👤
-                </div>
-                <div>
-                  <h3 style={{ margin: 0, fontSize: '15px' }}>{selectedFriend.name}</h3>
-                  <span style={{ fontSize: '10px', color: '#64748b' }}>{selectedFriend.bio}</span>
-                </div>
-              </div>
-              <button onClick={() => setSelectedFriend(null)} style={{ background: 'transparent', border: 'none', fontSize: '16px', color: '#94a3b8', cursor: 'pointer' }}>
-                ✕
-              </button>
+      {/* ── 設定変更モーダル（国籍・言語・ベースの国変更） ── */}
+      {isSettingsOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>{t.settings}</h3>
+              <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
             </div>
 
-            <div style={{ flex: 1, minHeight: '200px', maxHeight: '260px', overflowY: 'auto', background: '#f8fafc', padding: '10px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
-              {(chatMessages[selectedFriend.id] || []).map((msg) => (
-                <div key={msg.id} style={{ alignSelf: msg.senderId === 'me' ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
-                  <div style={{ background: msg.senderId === 'me' ? themeAccent : '#e2e8f0', color: msg.senderId === 'me' ? '#fff' : '#0f172a', padding: '8px 12px', borderRadius: '12px', fontSize: '12px' }}>
-                    {msg.text}
-                  </div>
-                  <div style={{ fontSize: '9px', color: '#94a3b8', textAlign: msg.senderId === 'me' ? 'right' : 'left', marginTop: '2px' }}>
-                    {msg.createdAt}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <input
-                type="text"
-                placeholder="メッセージを入力..."
-                value={inputMessageText}
-                onChange={(e) => setInputMessageText(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleSendMessage(); }}
-                style={{ flex: 1, padding: '8px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-              />
-              <button
-                onClick={handleSendMessage}
-                style={{ padding: '8px 14px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>🌐 国籍 / 表示言語 (Nationality / Language)</label>
+              <select
+                value={userNationality}
+                onChange={(e) => setUserNationality(e.target.value)}
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold' }}
               >
-                送信
-              </button>
+                {Object.entries(COUNTRIES).map(([code, c]) => (
+                  <option key={code} value={code}>
+                    {c.flag} {c.name} ({c.lang.toUpperCase()})
+                  </option>
+                ))}
+              </select>
             </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>📍 ベースの国 (Base Country / Initial Map)</label>
+              <select
+                value={userCountry}
+                onChange={(e) => {
+                  setUserCountry(e.target.value);
+                  const conf = COUNTRIES[e.target.value];
+                  if (conf) {
+                    setTargetCenter([conf.lat, conf.lon]);
+                    setTargetZoom(conf.zoom);
+                  }
+                }}
+                style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold' }}
+              >
+                {Object.entries(COUNTRIES).map(([code, c]) => (
+                  <option key={code} value={code}>
+                    {c.flag} {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              onClick={() => {
+                setIsSettingsOpen(false);
+                showToast('⚙️ 設定を保存しました！');
+              }}
+              style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
+            >
+              保存して閉じる
+            </button>
           </div>
         </div>
       )}
 
-      {/* ── 詳細モーダル ── */}
+      {/* ── 詳細モーダル (翻訳ボタン付き) ── */}
       {selectedSpot && (
         <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
           <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
@@ -2280,536 +2384,48 @@ export default function WorldSnapApp() {
               ← {t.back}
             </button>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <span style={{ fontSize: '11px', fontWeight: 'bold', padding: '3px 8px', borderRadius: '20px', background: themeAccent, color: '#fff' }}>
-                {selectedSpot.category === 'view' ? '🏔️ VIEW' : selectedSpot.category === 'gourmet' ? '🍔 GOURMET' : '🌧️ 雨の日'}
-              </span>
-              <button onClick={() => handleShareSpot(selectedSpot)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} title="シェア">
+              <button onClick={() => handleShareSpot(selectedSpot)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 🔗
               </button>
             </div>
           </div>
 
           <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
-            {(() => {
-              const currentMedia = selectedSpot.mediaList && selectedSpot.mediaList[activeMediaIndex] 
-                ? selectedSpot.mediaList[activeMediaIndex] 
-                : { fileUrl: selectedSpot.fileUrl, fileType: selectedSpot.fileType, thumbUrl: selectedSpot.thumbUrl };
+            <div style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '12px' }}>
+              <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
 
-              const hasMultiple = selectedSpot.mediaList && selectedSpot.mediaList.length > 1;
-
-              return (
-                <div style={{ position: 'relative', marginBottom: '12px' }}>
-                  <div
-                    onClick={hasMultiple ? handleNextMedia : () => setIsLightboxOpen(true)}
-                    style={{
-                      width: '100%',
-                      height: '280px',
-                      background: '#000',
-                      borderRadius: '16px',
-                      overflow: 'hidden',
-                      cursor: 'pointer',
-                      position: 'relative',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                    title={hasMultiple ? 'タップして次の写真を表示' : 'タップして拡大表示'}
-                  >
-                    {currentMedia.fileType === 'image' ? (
-                      <img src={currentMedia.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      <video src={currentMedia.fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                    )}
-
-                    {hasMultiple && (
-                      <div style={{ position: 'absolute', bottom: '12px', right: '12px', background: 'rgba(15,23,42,0.75)', color: '#fff', fontSize: '11px', padding: '4px 10px', borderRadius: '14px', fontWeight: 'bold', backdropFilter: 'blur(4px)' }}>
-                        👉 タップで次へ ({activeMediaIndex + 1}/{selectedSpot.mediaList!.length})
-                      </div>
-                    )}
-                  </div>
-
-                  {hasMultiple && (
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '8px' }}>
-                      {selectedSpot.mediaList!.map((_, idx) => (
-                        <div
-                          key={idx}
-                          onClick={() => setActiveMediaIndex(idx)}
-                          style={{
-                            width: activeMediaIndex === idx ? '18px' : '6px',
-                            height: '6px',
-                            borderRadius: '3px',
-                            background: activeMediaIndex === idx ? themeAccent : '#cbd5e1',
-                            transition: 'all 0.2s ease',
-                            cursor: 'pointer',
-                          }}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                  <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
-                  {selectedSpot.isOfficial && <span style={{ fontSize: '10px', background: '#0284c7', color: '#fff', padding: '2px 6px', borderRadius: '10px', fontWeight: 'bold' }}>公式</span>}
-                </div>
-                <div style={{ fontSize: '12px', color: '#64748b' }}>
-                  📍 {selectedSpot.lat.toFixed(4)}, {selectedSpot.lon.toFixed(4)} ({COUNTRIES[selectedSpot.countryCode]?.flag} {selectedSpot.cityName}) · {selectedSpot.createdAt}
-                </div>
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
               <button
-                onClick={() => toggleSaveSpot(selectedSpot.id)}
-                style={{
-                  padding: '8px 14px',
-                  borderRadius: '20px',
-                  border: 'none',
-                  background: savedSpotIds.includes(selectedSpot.id) ? '#f43f5e' : '#f1f5f9',
-                  color: savedSpotIds.includes(selectedSpot.id) ? '#fff' : '#0f172a',
-                  fontWeight: 'bold',
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                }}
+                onClick={() => handleTranslateDescription(selectedSpot.id, selectedSpot.description)}
+                style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '16px', padding: '6px 14px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
               >
-                {savedSpotIds.includes(selectedSpot.id) ? t.saved : t.saveSpot}
+                <span>🌐</span> {t.translate}
               </button>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px', padding: '8px 12px', background: '#f8fafc', borderRadius: '10px', margin: '12px 0', fontSize: '12px', color: '#475569' }}>
-              <span>👀 <strong>{selectedSpot.viewsCount || 0}</strong> 人が閲覧</span>
-              <span>💛 <strong>{selectedSpot.savedCount || 0}</strong> 人が行きたいリストに保存</span>
-            </div>
-
-            <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', margin: '14px 0 10px 0', whiteSpace: 'pre-wrap' }}>{selectedSpot.description}</p>
-
-            {selectedSpot.tags && selectedSpot.tags.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
-                {selectedSpot.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    onClick={() => {
-                      setMapSearchKeyword(`#${tag}`);
-                      setSelectedSpot(null);
-                      setCurrentTab('map');
-                    }}
-                    style={{ fontSize: '11px', background: '#e0f2fe', color: '#0284c7', padding: '3px 8px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
-            )}
+            <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
+              {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
+            </p>
 
             <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginTop: '16px' }}>
-              <h3 style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 10px 0' }}>💬 コメント ({selectedSpot.comments?.length || 0})</h3>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '14px' }}>
-                {selectedSpot.comments && selectedSpot.comments.length > 0 ? (
-                  selectedSpot.comments.map((com) => (
-                    <div key={com.id} style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '10px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-                        <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a' }}>{com.userName}</span>
-                        <span style={{ fontSize: '10px', color: '#94a3b8' }}>{com.createdAt}</span>
-                      </div>
-                      <p style={{ margin: 0, fontSize: '12px', color: '#334155' }}>{com.text}</p>
-                    </div>
-                  ))
-                ) : (
-                  <div style={{ fontSize: '12px', color: '#94a3b8' }}>まだコメントはありません。最初のコメントを投稿してみよう！</div>
-                )}
-              </div>
-
+              <h3 style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 10px 0' }}>💬 Comments</h3>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <input
                   type="text"
-                  placeholder="コメントを入力..."
+                  placeholder="Comment..."
                   value={newCommentText}
                   onChange={(e) => setNewCommentText(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') handleAddComment(selectedSpot.id); }}
                   style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
                 />
                 <button
                   onClick={() => handleAddComment(selectedSpot.id)}
                   style={{ padding: '8px 16px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
                 >
-                  送信
+                  Send
                 </button>
               </div>
-            </div>
-
-            <a
-              href={`https://www.google.com/maps/search/?api=1&query=${selectedSpot.lat},${selectedSpot.lon}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                width: '100%',
-                padding: '12px',
-                background: '#2563eb',
-                color: '#fff',
-                fontWeight: 'bold',
-                fontSize: '13px',
-                borderRadius: '12px',
-                textDecoration: 'none',
-                boxShadow: '0 4px 14px rgba(37,99,235,0.25)',
-                margin: '20px 0',
-              }}
-            >
-              {t.openGoogleMaps}
-            </a>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div
-                  style={{
-                    width: '32px', height: '32px', borderRadius: '50%',
-                    background: selectedSpot.userAvatar ? `url(${selectedSpot.userAvatar}) center/cover` : themeAccent,
-                    color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px'
-                  }}
-                >
-                  {!selectedSpot.userAvatar && '👤'}
-                </div>
-                <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{selectedSpot.userName}</span>
-              </div>
-
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {selectedSpot.userId === 'me' ? (
-                  <>
-                    <button onClick={() => handleStartEdit(selectedSpot)} style={{ padding: '5px 10px', background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
-                      {t.edit}
-                    </button>
-                    <button onClick={() => handleDeleteSpot(selectedSpot.id)} style={{ padding: '5px 10px', background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
-                      {t.delete}
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button onClick={() => setIsReportModalOpen(true)} style={{ padding: '5px 8px', background: 'transparent', border: '1px solid #f59e0b', color: '#f59e0b', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
-                      {t.report}
-                    </button>
-                    <button onClick={() => handleBlockUser(selectedSpot.userId)} style={{ padding: '5px 8px', background: 'transparent', border: '1px solid #ef4444', color: '#ef4444', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
-                      {t.block}
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── 投稿編集モーダル ── */}
-      {editingSpot && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 5500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '18px', maxWidth: '380px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
-            <h3 style={{ margin: '0 0 12px 0', fontSize: '15px', fontWeight: 'bold' }}>✏️ 投稿の編集</h3>
-
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
-            <input
-              type="text"
-              value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
-              style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-            />
-
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグ)</label>
-            <textarea
-              rows={3}
-              value={editDesc}
-              onChange={(e) => setEditDesc(e.target.value)}
-              style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-            />
-
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>カテゴリ</label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '14px' }}>
-              {(['view', 'gourmet', 'rain'] as const).map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setEditCategory(cat)}
-                  style={{
-                    padding: '6px',
-                    borderRadius: '8px',
-                    border: `2px solid ${editCategory === cat ? themeAccent : '#e2e8f0'}`,
-                    background: editCategory === cat ? '#f0f9ff' : '#ffffff',
-                    fontWeight: 'bold',
-                    fontSize: '11px',
-                    color: editCategory === cat ? themeAccent : '#64748b',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? '🍔 グルメ' : '🌧️ 雨の日'}
-                </button>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button
-                onClick={() => setEditingSpot(null)}
-                style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
-              >
-                キャンセル
-              </button>
-              <button
-                onClick={handleSaveEdit}
-                style={{ flex: 1, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-              >
-                保存する
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── 詳細な通報選択モーダル ── */}
-      {isReportModalOpen && selectedSpot && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '18px', maxWidth: '380px', width: '100%' }}>
-            <h3 style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: 'bold' }}>⚠️ 投稿の通報</h3>
-            <p style={{ margin: '0 0 12px 0', fontSize: '11px', color: '#64748b' }}>
-              問題の理由を選択してください。（※30件以上の通報が集まると自動的に削除されます）
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
-              {[
-                { id: 'inappropriate', label: '🛑 不適切なコンテンツ (露出・グロテスク)' },
-                { id: 'harassment', label: '💬 ハラスメント・誹謗中傷 (攻撃的な発言)' },
-                { id: 'spam', label: '📢 スパム・宣伝 (無関係な広告や連投)' },
-                { id: 'copyright', label: ' ©️ 著作権・肖像権の侵害 (無断転載など)' },
-                { id: 'fake_location', label: '📍 位置情報の虚偽・危険な場所' },
-              ].map((reason) => (
-                <div
-                  key={reason.id}
-                  onClick={() => setReportReasonType(reason.label)}
-                  style={{
-                    padding: '8px 10px',
-                    borderRadius: '8px',
-                    border: `2px solid ${reportReasonType === reason.label ? themeAccent : '#e2e8f0'}`,
-                    background: reportReasonType === reason.label ? '#f0f9ff' : '#ffffff',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {reason.label}
-                </div>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button
-                onClick={() => setIsReportModalOpen(false)}
-                style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
-              >
-                キャンセル
-              </button>
-              <button
-                onClick={() => handleExecuteReport(reportReasonType)}
-                style={{ flex: 1, padding: '10px', background: '#dc2626', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-              >
-                通報を送信する
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── 投稿モーダル ── */}
-      {pendingUploads.length > 0 && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
-            <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 'bold' }}>
-              📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
-            </h3>
-
-            <div style={{ width: '100%', height: '150px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '12px' }}>
-              {pendingUploads[currentUploadIndex].fileType === 'image' ? (
-                <img src={pendingUploads[currentUploadIndex].fileUrl} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <video src={pendingUploads[currentUploadIndex].fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-              )}
-            </div>
-
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
-              🌐 反映先（複数選択可能 - チェックを外して調整可能）
-            </label>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
-              <div
-                onClick={() => toggleScopeSelection('world')}
-                style={{
-                  padding: '8px 10px',
-                  borderRadius: '10px',
-                  border: `2px solid ${selectedScopes.includes('world') ? themeAccent : '#e2e8f0'}`,
-                  background: selectedScopes.includes('world') ? '#f0f9ff' : '#ffffff',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: selectedScopes.includes('world') ? themeAccent : '#0f172a' }}>
-                    {selectedScopes.includes('world') ? '☑️' : '☐'} 🌎 ワールド（全体マップ）
-                  </div>
-                  <div style={{ fontSize: '10px', color: '#64748b' }}>他の旅人の参考になり、リアクションが届きます</div>
-                </div>
-              </div>
-
-              <div
-                onClick={() => toggleScopeSelection('friends')}
-                style={{
-                  padding: '8px 10px',
-                  borderRadius: '10px',
-                  border: `2px solid ${selectedScopes.includes('friends') ? themeAccent : '#e2e8f0'}`,
-                  background: selectedScopes.includes('friends') ? '#f0f9ff' : '#ffffff',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: selectedScopes.includes('friends') ? themeAccent : '#0f172a' }}>
-                    {selectedScopes.includes('friends') ? '☑️' : '☐'} 👥 フレンドマップ（全員に共有）
-                  </div>
-                  <div style={{ fontSize: '10px', color: '#64748b' }}>フレンド全員のマップに反映されます</div>
-                </div>
-              </div>
-
-              <div
-                onClick={() => toggleScopeSelection('my')}
-                style={{
-                  padding: '8px 10px',
-                  borderRadius: '10px',
-                  border: `2px solid ${selectedScopes.includes('my') ? themeAccent : '#e2e8f0'}`,
-                  background: selectedScopes.includes('my') ? '#f0f9ff' : '#ffffff',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: selectedScopes.includes('my') ? themeAccent : '#0f172a' }}>
-                    {selectedScopes.includes('my') ? '☑️' : '☐'} 📍 マイマップ
-                  </div>
-                  <div style={{ fontSize: '10px', color: '#64748b' }}>あなただけの旅ログ・足跡として保存</div>
-                </div>
-              </div>
-            </div>
-
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
-              🏷️ 投稿カテゴリ
-            </label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '12px' }}>
-              {(['view', 'gourmet', 'rain'] as const).map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setPostCategory(cat)}
-                  style={{
-                    padding: '6px 4px',
-                    borderRadius: '10px',
-                    border: `2px solid ${postCategory === cat ? themeAccent : '#e2e8f0'}`,
-                    background: postCategory === cat ? '#f0f9ff' : '#ffffff',
-                    fontWeight: 'bold',
-                    fontSize: '11px',
-                    color: postCategory === cat ? themeAccent : '#64748b',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? '🍔 グルメ' : '🌧️ 雨の日'}
-                </button>
-              ))}
-            </div>
-
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
-            <input
-              type="text"
-              placeholder="例: 祇園 鴨川のカフェ"
-              value={postTitle}
-              onChange={(e) => setPostTitle(e.target.value)}
-              style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-            />
-
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグをつけて検索しやすく)</label>
-            <textarea
-              placeholder="おすすめポイント（例: 眺め最高！ #京都観光 #絶景カフェ）"
-              rows={2}
-              value={postDesc}
-              onChange={(e) => setPostDesc(e.target.value)}
-              style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-            />
-
-            {/* 住所検索 ＆ サジェストリスト */}
-            <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
-              <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
-                📍 撮影場所を検索して選択してください（必須）
-              </div>
-              <div style={{ display: 'flex', gap: '6px', marginBottom: addressSuggestions.length > 0 ? '4px' : '6px' }}>
-                <input
-                  type="text"
-                  placeholder="地名・住所・場所名を入力（例: 京都タワー）"
-                  value={addressSearchQuery}
-                  onChange={(e) => setAddressSearchQuery(e.target.value)}
-                  style={{ flex: 1, padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff' }}
-                />
-              </div>
-
-              {addressSuggestions.length > 0 && (
-                <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
-                  {addressSuggestions.map((item) => (
-                    <div
-                      key={item.place_id}
-                      onClick={() => handleSelectAddressSuggestion(item)}
-                      style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                    >
-                      <span>📍</span>
-                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <div style={{ display: 'flex', gap: '6px' }}>
-                <input
-                  type="number" step="any" placeholder="緯度"
-                  value={manualLat} onChange={(e) => setManualLat(e.target.value)}
-                  style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }}
-                />
-                <input
-                  type="number" step="any" placeholder="経度"
-                  value={manualLon} onChange={(e) => setManualLon(e.target.value)}
-                  style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }}
-                />
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button
-                type="button"
-                disabled={isSubmitting}
-                onClick={() => {
-                  setPendingUploads([]);
-                  setCurrentUploadIndex(0);
-                }}
-                style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-              >
-                キャンセル
-              </button>
-              <button
-                type="button"
-                disabled={isSubmitting}
-                onClick={handleConfirmPost}
-                style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-              >
-                {isSubmitting ? '保存中...' : 'マップに反映する 🚀'}
-              </button>
             </div>
           </div>
         </div>
