@@ -589,6 +589,9 @@ export default function WorldSnapApp() {
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
 
+  // マイページの新タブ管理 ('posts' | 'footprint' | 'timeline' | 'saved' | 'badges' | 'friends')
+  const [profileSubTab, setProfileSubTab] = useState<'posts' | 'footprint' | 'timeline' | 'saved' | 'badges' | 'friends'>('posts');
+
   const [editingSpot, setEditingSpot] = useState<Spot | null>(null);
   const [editTitle, setEditTitle] = useState<string>('');
   const [editDesc, setEditDesc] = useState<string>('');
@@ -624,7 +627,6 @@ export default function WorldSnapApp() {
   const [isEulaModalOpen, setIsEulaModalOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const [profileSubTab, setProfileSubTab] = useState<'posts' | 'saved' | 'friends'>('posts');
   const [friendsList, setFriendsList] = useState<FriendUser[]>([]);
   const [inputFriendCode, setInputFriendCode] = useState('');
 
@@ -1817,7 +1819,7 @@ export default function WorldSnapApp() {
           ))}
         </div>
 
-        {/* ── マイページ ── */}
+        {/* ── マイページ (機能拡張版: 投稿・足跡マップ・タイムライン・保存・バッジ・フレンド) ── */}
         <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', touchAction: 'pan-y' }}>
           <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -1887,14 +1889,14 @@ export default function WorldSnapApp() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '6px', marginBottom: '10px' }}>
-            {(['posts', 'saved', 'friends'] as const).map((tab) => (
+          {/* マイページサブタブ切替 */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '10px' }}>
+            {(['posts', 'footprint', 'timeline', 'saved', 'badges', 'friends'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setProfileSubTab(tab)}
                 style={{
-                  flex: 1,
-                  padding: '8px',
+                  padding: '8px 4px',
                   borderRadius: '10px',
                   border: 'none',
                   background: profileSubTab === tab ? themeAccent : mapTheme === 'dark' ? '#1e293b' : '#ffffff',
@@ -1902,13 +1904,15 @@ export default function WorldSnapApp() {
                   fontWeight: 'bold',
                   fontSize: '11px',
                   cursor: 'pointer',
+                  textAlign: 'center',
                 }}
               >
-                {tab === 'posts' ? `📸 ${t.posts}` : tab === 'saved' ? `💛 ${t.saved}` : `👥 ${t.friends}`}
+                {tab === 'posts' ? `📸 投稿` : tab === 'footprint' ? `🌍 足跡` : tab === 'timeline' ? `📅 ログ` : tab === 'saved' ? `💛 保存` : tab === 'badges' ? `🏅 バッジ` : `👥 フレンド`}
               </button>
             ))}
           </div>
 
+          {/* ① 投稿一覧 */}
           {profileSubTab === 'posts' && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
               {mySpots.map((s) => (
@@ -1927,6 +1931,45 @@ export default function WorldSnapApp() {
             </div>
           )}
 
+          {/* ② 足跡マップ（統計ビュー） */}
+          {profileSubTab === 'footprint' && (
+            <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '16px', textAlign: 'center' }}>
+              <div style={{ fontSize: '15px', fontWeight: '900', marginBottom: '4px' }}>🌍 旅の足跡スタンプラリー</div>
+              <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '14px' }}>これまでに開拓した国とエリアのコレクション</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ padding: '12px', background: '#f0fdf4', borderRadius: '10px', border: '1px solid #bbf7d0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#15803d' }}>🇯🇵 日本 (Japan)</span>
+                  <span style={{ fontSize: '11px', background: '#22c55e', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>制覇中 ({mySpots.filter(s => s.countryCode === 'JP').length}スポット)</span>
+                </div>
+                {visitedCountryCount > 1 && (
+                  <div style={{ padding: '12px', background: '#eff6ff', borderRadius: '10px', border: '1px solid #bfdbfe', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#1d4ed8' }}>🌐 海外エリア</span>
+                    <span style={{ fontSize: '11px', background: '#3b82f6', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>{visitedCountryCount - 1}カ国訪問</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ③ タイムライン（時系列の旅ログ） */}
+          {profileSubTab === 'timeline' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {mySpots.map((s) => (
+                <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '12px', padding: '10px', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                  <div style={{ width: '56px', height: '56px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
+                    <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '10px', fontWeight: 'bold', color: themeAccent }}>📅 {s.createdAt}</div>
+                    <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.title}</div>
+                    <div style={{ fontSize: '11px', color: '#64748b' }}>📍 {s.cityName}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ④ 行きたいリスト（保存スポット・カテゴリ管理） */}
           {profileSubTab === 'saved' && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
               {spots
@@ -1934,11 +1977,45 @@ export default function WorldSnapApp() {
                 .map((s) => (
                   <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
                     <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                    <span style={{ position: 'absolute', bottom: '4px', left: '4px', background: '#f43f5e', color: '#fff', fontSize: '8px', padding: '1px 5px', borderRadius: '4px', fontWeight: 'bold' }}>
+                      {s.category === 'gourmet' ? '🍔 グルメ' : s.category === 'view' ? '🏔️ 絶景' : '🌧️ 雨の日'}
+                    </span>
                   </div>
                 ))}
             </div>
           )}
 
+          {/* ⑤ 実績・バッジコレクション */}
+          {profileSubTab === 'badges' && (
+            <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '16px' }}>
+              <div style={{ fontSize: '14px', fontWeight: '900', marginBottom: '4px' }}>🏅 獲得した称号・バッジ</div>
+              <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '14px' }}>旅を続けることでアンロックされるトロフィー</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🌱</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>見習い探検家</div>
+                  <div style={{ fontSize: '9px', color: '#22c55e' }}>達成済み ✓</div>
+                </div>
+                <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🗺️</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>エリアトラベラー</div>
+                  <div style={{ fontSize: '9px', color: mySpots.length >= 30 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 30 ? '達成済み ✓' : '進行中...'}</div>
+                </div>
+                <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🎉</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>初代開拓者</div>
+                  <div style={{ fontSize: '9px', color: mySpots.some(s => s.isFirstExplorer) ? '#22c55e' : '#94a3b8' }}>{mySpots.some(s => s.isFirstExplorer) ? '達成済み ✓' : '未達成'}</div>
+                </div>
+                <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>👑</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>百景の覇者</div>
+                  <div style={{ fontSize: '9px', color: mySpots.length >= 100 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 100 ? '達成済み ✓' : '進行中...'}</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ⑥ フレンドリスト */}
           {profileSubTab === 'friends' && (
             <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '14px' }}>
               <div style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
@@ -1971,7 +2048,7 @@ export default function WorldSnapApp() {
                       </div>
                       <div>
                         <div style={{ fontWeight: 'bold', fontSize: '13px' }}>{f.name}</div>
-                        <div style={{ fontSize: '10px', color: '#64748b' }}>投稿 {f.postsCount}件 · タップしてプロフィール・メッセージ</div>
+                        <div style={{ fontSize: '10px', color: '#64748b' }}>投稿 {f.postsCount}件 · タップしてチャット</div>
                       </div>
                     </div>
                     <button
@@ -2600,210 +2677,6 @@ export default function WorldSnapApp() {
           <button onClick={() => setIsLightboxOpen(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'transparent', border: 'none', color: '#fff', fontSize: '28px', cursor: 'pointer' }}>
             ✕
           </button>
-        </div>
-      )}
-
-      {/* ── 設定モーダル (小学生でもわかりやすい操作説明＆ボタンギミックガイド追加) ── */}
-      {isSettingsOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 5000, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', color: '#0f172a', width: '100%', maxWidth: '440px', borderRadius: '20px', padding: '20px', maxHeight: '85vh', overflowY: 'auto' }}>
-            <div style={{ display: 'flex', borderBottom: '1px solid #f1f5f9', paddingBottom: '12px', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h2 style={{ margin: 0, fontSize: '16px' }}>⚙️ 設定 ＆ 使い方ガイド</h2>
-              <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', color: '#94a3b8', cursor: 'pointer' }}>
-                ✕
-              </button>
-            </div>
-
-            {/* 小学生でもわかりやすい操作ガイド・ボタンギミック説明 */}
-            <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '14px', padding: '14px', marginBottom: '16px' }}>
-              <div style={{ fontSize: '13px', fontWeight: '900', color: '#0369a1', marginBottom: '8px' }}>📖 WorldSnapの遊び方・ボタン説明</div>
-              <div style={{ fontSize: '11px', color: '#334155', lineHeight: '1.6', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <div>📍 **写真・動画ピン**: マップ上の四角い写真はみんなの思い出！タップすると大きく見られたりコメントできるよ。</div>
-                <div>📷＋ **追加ボタン**: 下のバーにあるボタンから、写真や動画を選んで自分の旅をマップに残そう！</div>
-                <div>🎯 **現在地ボタン**: マップ右下の目標（ターゲット）ボタンを押すと、今いる場所に地図がシューッと飛ぶよ。</div>
-                <div>🪟 **戻すボタン**: マップのズームを段階的に引いて、都道府県や世界全体のマップに戻せるよ。</div>
-                <div>🏆 **ランキング**: みんなから人気のあるすごいスポットがわかるよ！</div>
-                <div>🎨 **デザインテーマ**: 下の「マップテーマ設定」で、お気に入りの色（標準・ダーク・パステル）に変えられるよ！</div>
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '6px' }}>▼ マップ & デザインテーマ</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '10px' }}>
-                {[
-                  { id: 'light', label: '☀️ 標準' },
-                  { id: 'dark', label: '🌙 ダーク' },
-                  { id: 'pastel', label: '🎨 パステル' },
-                ].map((th) => (
-                  <button
-                    key={th.id}
-                    onClick={() => setMapTheme(th.id as MapThemeType)}
-                    style={{
-                      padding: '8px',
-                      borderRadius: '8px',
-                      border: `2px solid ${mapTheme === th.id ? themeAccent : '#e2e8f0'}`,
-                      background: mapTheme === th.id ? '#f0f9ff' : '#f8fafc',
-                      fontWeight: 'bold',
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      color: mapTheme === th.id ? themeAccent : '#64748b'
-                    }}
-                  >
-                    {th.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '6px' }}>▼ アカウント</div>
-              <div onClick={() => setIsEditProfileOpen(true)} style={{ padding: '10px', background: '#f8fafc', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer', marginBottom: '6px', fontSize: '13px' }}>
-                <span>👤 プロフィール編集</span>
-                <span style={{ color: '#94a3b8' }}>&gt;</span>
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', marginBottom: '6px' }}>▼ 安全対策 & キャッシュ</div>
-              <div
-                onClick={() => {
-                  fetchSpots();
-                  showToast('✨ 最新データを再読み込みしました');
-                }}
-                style={{ padding: '10px', background: '#f8fafc', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer', marginBottom: '6px', fontSize: '13px' }}
-              >
-                <span>{t.cacheClear}</span>
-                <span style={{ color: themeAccent, fontWeight: 'bold' }}>再読込</span>
-              </div>
-              <div
-                onClick={() => {
-                  if (blockedUsers.length === 0) showToast('ブロック中のユーザーはいません');
-                  else {
-                    setBlockedUsers([]);
-                    showToast('ブロックを解除しました');
-                  }
-                }}
-                style={{ padding: '10px', background: '#f8fafc', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer', marginBottom: '6px', fontSize: '13px' }}
-              >
-                <span>🚫 ブロック管理</span>
-                <span style={{ color: '#94a3b8' }}>{blockedUsers.length}人 &gt;</span>
-              </div>
-              <div
-                onClick={() => setIsEulaModalOpen(true)}
-                style={{ padding: '10px', background: '#f8fafc', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', cursor: 'pointer', fontSize: '13px' }}
-              >
-                <span>📜 {t.termsTitle}</span>
-                <span style={{ color: themeAccent, fontWeight: 'bold' }}>開く</span>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '20px' }}>
-              <button
-                onClick={() => {
-                  showToast('🚪 ログアウトしました');
-                  setIsSettingsOpen(false);
-                }}
-                style={{ width: '100%', padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-              >
-                {t.logout}
-              </button>
-              <button
-                onClick={() => {
-                  if (prompt('退会する場合は「削除する」と入力してください:') === '削除する') {
-                    localStorage.removeItem('ws_onboarded_v2');
-                    setSpots(INITIAL_SPOTS);
-                    showToast('⚠️ アカウントを削除しました');
-                    setIsSettingsOpen(false);
-                    setIsOnboarding(true);
-                    setOnboardingStep(1);
-                  }
-                }}
-                style={{ width: '100%', padding: '10px', background: '#fee2e2', border: 'none', borderRadius: '10px', color: '#dc2626', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-              >
-                {t.deleteAccount}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── プロフィール編集モーダル ── */}
-      {isEditProfileOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '18px', maxWidth: '360px', width: '100%' }}>
-            <h3 style={{ margin: '0 0 12px 0', fontSize: '15px' }}>👤 プロフィール編集</h3>
-
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
-              <div
-                onClick={() => profileAvatarInputRef.current?.click()}
-                style={{
-                  width: '64px', height: '64px', borderRadius: '50%',
-                  background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
-                  color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer', position: 'relative', overflow: 'hidden'
-                }}
-                title="クリックしてアバター画像を変更"
-              >
-                {!userAvatar && <span>👤</span>}
-                <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '9px', color: '#fff', textAlign: 'center', padding: '1px 0' }}>
-                  変更
-                </div>
-              </div>
-            </div>
-
-            <label style={{ fontSize: '11px', color: '#64748b' }}>名前</label>
-            <input
-              type="text"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              style={{ width: '100%', padding: '8px', margin: '4px 0 10px 0', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-            />
-            <label style={{ fontSize: '11px', color: '#64748b' }}>紹介文</label>
-            <textarea
-              value={userBio}
-              onChange={(e) => setUserBio(e.target.value)}
-              rows={2}
-              style={{ width: '100%', padding: '8px', margin: '4px 0 14px 0', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-            />
-            <div style={{ display: 'flex', gap: '6px' }}>
-              <button onClick={() => setIsEditProfileOpen(false)} style={{ flex: 1, padding: '8px', background: '#f1f5f9', border: 'none', borderRadius: '6px', fontSize: '12px', cursor: 'pointer' }}>
-                キャンセル
-              </button>
-              <button
-                onClick={() => {
-                  const check = checkInappropriateContent(userName);
-                  const checkBio = checkInappropriateContent(userBio);
-                  if (check.isViolating || checkBio.isViolating) {
-                    showWarning('⚠️ ユーザー名または紹介文に不適切な表現が含まれています');
-                    return;
-                  }
-                  setIsEditProfileOpen(false);
-                  showToast('✨ 更新しました');
-                }}
-                style={{ flex: 1, padding: '8px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-              >
-                保存
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── EULAモーダル ── */}
-      {isEulaModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '480px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
-            <h3 style={{ margin: '0 0 12px 0', fontSize: '16px' }}>{t.termsTitle}</h3>
-            <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line' }}>
-              {EULA_FULL_TEXT}
-            </div>
-            <button
-              onClick={() => setIsEulaModalOpen(false)}
-              style={{ width: '100%', marginTop: '16px', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }}
-            >
-              {t.close}
-            </button>
-          </div>
         </div>
       )}
 
