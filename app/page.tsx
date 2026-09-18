@@ -143,7 +143,7 @@ function getUserTitle(count: number) {
   return { title: '🐣 旅のビギナー', color: '#94a3b8' };
 }
 
-// 多言語辞書の定義
+// 多言語辞書定義
 const DICTIONaries: Record<string, Record<string, string>> = {
   ja: {
     step1Title: 'Step 1: あなたの国籍（言語）を選択',
@@ -178,7 +178,12 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     posts: '投稿',
     friendCode: 'フレンドコード',
     searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
-    settings: '⚙️ 設定（国籍・言語・ベース変更）',
+    settings: '⚙️ 設定メニュー',
+    nationalitySetting: '🌐 国籍 / 表示言語',
+    baseCountrySetting: '📍 ベースの国 (初期マップ)',
+    blockListTitle: '🚫 ブロック中ユーザー管理',
+    eulaTitle: '📜 利用規約 (EULA)',
+    guideTitle: '📖 アプリの使い方ガイド',
     translate: '🌐 翻訳する',
     close: '閉じる'
   },
@@ -215,7 +220,12 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     posts: 'Posts',
     friendCode: 'Friend Code',
     searchPlaceholder: '🔍 Search city, #tag...',
-    settings: '⚙️ Settings (Change Language/Country)',
+    settings: '⚙️ Settings Menu',
+    nationalitySetting: '🌐 Nationality / UI Language',
+    baseCountrySetting: '📍 Base Country (Initial Map)',
+    blockListTitle: '🚫 Blocked Users',
+    eulaTitle: '📜 Terms of Service (EULA)',
+    guideTitle: '📖 App Guide',
     translate: '🌐 Translate',
     close: 'Close'
   },
@@ -252,7 +262,12 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     posts: '게시물',
     friendCode: '친구 코드',
     searchPlaceholder: '🔍 도시 / #태그 검색',
-    settings: '⚙️ 설정 (국적 및 언어 변경)',
+    settings: '⚙️ 설정 메뉴',
+    nationalitySetting: '🌐 국적 및 언어',
+    baseCountrySetting: '📍 기본 국가',
+    blockListTitle: '🚫 차단된 사용자',
+    eulaTitle: '📜 이용약관 (EULA)',
+    guideTitle: '📖 앱 사용 가이드',
     translate: '🌐 번역하기',
     close: '닫기'
   },
@@ -289,7 +304,12 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     posts: '动态',
     friendCode: '好友码',
     searchPlaceholder: '🔍 搜索城市 / #标签...',
-    settings: '⚙️ 设置（更改语言和国家）',
+    settings: '⚙️ 设置菜单',
+    nationalitySetting: '🌐 国籍与语言',
+    baseCountrySetting: '📍 基础国家',
+    blockListTitle: '🚫 已屏蔽用户',
+    eulaTitle: '📜 服务条款 (EULA)',
+    guideTitle: '📖 应用使用指南',
     translate: '🌐 翻译',
     close: '关闭'
   },
@@ -326,13 +346,18 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     posts: 'โพสต์',
     friendCode: 'โค้ดเพื่อน',
     searchPlaceholder: '🔍 ค้นหาเมือง, #แท็ก...',
-    settings: '⚙️ ตั้งค่า (เปลี่ยนภาษา/ประเทศ)',
+    settings: '⚙️ เมนูตั้งค่า',
+    nationalitySetting: '🌐 สัญชาติ / ภาษา',
+    baseCountrySetting: '📍 ประเทศหลัก',
+    blockListTitle: '🚫 ผู้ใช้ที่ถูกบล็อก',
+    eulaTitle: '📜 ข้อกำหนดการใช้งาน',
+    guideTitle: '📖 คู่มือการใช้งาน',
     translate: '🌐 แปลภาษา',
     close: 'ปิด'
   }
 };
 
-// 指定の厳選50カ国マスターデータ
+// 厳選50カ国マスターデータ
 export const COUNTRIES: Record<
   string,
   {
@@ -445,6 +470,12 @@ const EULA_FULL_TEXT = `【WorldSnap 利用規約 (EULA)】
 第3条（不適切なコンテンツへの対処・モデレーション）
 ・通報機能（Report）：ユーザーは不適切な写真・ピンを通報できます。通報が30件に達したコンテンツおよびユーザーは自動的に削除・1週間凍結されます。
 ・ブロック機能（Block）：ユーザーは特定の他ユーザーをブロックでき、ブロックされたユーザーの投稿やピンは即座に非表示となります。`;
+
+const GUIDE_FULL_TEXT = `【WorldSnap の使い方ガイド】
+1. マップ機能：日本を含む世界50カ国の主要スポットを閲覧できます。ダブルタップでズームイン。
+2. 写真・投稿：下部の「📷＋ 写真 / 動画を追加」から、アルバムの写真（EXIF位置情報付き）を簡単にマップに共有できます。
+3. 足跡マップ：マイページの「足跡マップ」で訪問国をタップすると、周辺エリアがオレンジ色にハイライトされます。
+4. 自動翻訳：投稿詳細にある翻訳ボタンを押すと、ご自身の選択した国籍の言語に一瞬で翻訳されます。`;
 
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
@@ -813,7 +844,6 @@ export default function WorldSnapApp() {
   const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
   const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3 | 4>(1);
 
-  // 国籍（言語）設定 ＆ ベースの国設定
   const [userNationality, setUserNationality] = useState<string>('JP');
   const [userCountry, setUserCountry] = useState<string>('JP');
 
@@ -886,14 +916,17 @@ export default function WorldSnapApp() {
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
+  // 設定・モーダル関連ステート（ブロックリスト・利用規約・ガイド用）
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
+  const [isEulaModalOpen, setIsEulaModalOpen] = useState<boolean>(false);
+  const [isGuideModalOpen, setIsGuideModalOpen] = useState<boolean>(false);
+  const [isBlockListModalOpen, setIsBlockListModalOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [friendsList, setFriendsList] = useState<FriendUser[]>([]);
   const [inputFriendCode, setInputFriendCode] = useState('');
 
-  // 翻訳管理ステート
   const [translatedDescriptions, setTranslatedDescriptions] = useState<Record<string, string>>({});
 
   const exportRef = useRef<HTMLDivElement>(null);
@@ -1264,6 +1297,7 @@ export default function WorldSnapApp() {
     setSelectedSpot(null);
   };
 
+  // 写真選択時：確実に投稿作成画面が開くように修正
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -1736,7 +1770,7 @@ export default function WorldSnapApp() {
       <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
       <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-      {/* 初回オンボーディング：多言語対応ステップ付き */}
+      {/* 初回オンボーディング */}
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -1751,7 +1785,6 @@ export default function WorldSnapApp() {
               <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 4 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
             </div>
 
-            {/* Step 1: 国籍（言語）選択 */}
             {onboardingStep === 1 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step1Title}</h3>
@@ -1783,7 +1816,6 @@ export default function WorldSnapApp() {
               </div>
             )}
 
-            {/* Step 2: ベースの国選択 */}
             {onboardingStep === 2 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step2Title}</h3>
@@ -1820,7 +1852,6 @@ export default function WorldSnapApp() {
               </div>
             )}
 
-            {/* Step 3: プロフィール */}
             {onboardingStep === 3 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t.step3Title}</h3>
@@ -1867,7 +1898,6 @@ export default function WorldSnapApp() {
               </div>
             )}
 
-            {/* Step 4: 利用規約 */}
             {onboardingStep === 4 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step3TitleEula}</h3>
@@ -2314,7 +2344,7 @@ export default function WorldSnapApp() {
         </div>
       </div>
 
-      {/* ── 設定変更モーダル（国籍・言語・ベース変更） ── */}
+      {/* ── 設定メニューモーダル（利用規約・ブロックリスト・使い方ガイド等を復旧） ── */}
       {isSettingsOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
@@ -2323,8 +2353,8 @@ export default function WorldSnapApp() {
               <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
             </div>
 
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>🌐 国籍 / 表示言語 (Nationality / Language)</label>
+            <div style={{ marginBottom: '14px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t.nationalitySetting}</label>
               <select
                 value={userNationality}
                 onChange={(e) => setUserNationality(e.target.value)}
@@ -2339,7 +2369,7 @@ export default function WorldSnapApp() {
             </div>
 
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>📍 ベースの国 (Base Country / Initial Map)</label>
+              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t.baseCountrySetting}</label>
               <select
                 value={userCountry}
                 onChange={(e) => {
@@ -2360,6 +2390,28 @@ export default function WorldSnapApp() {
               </select>
             </div>
 
+            {/* 各種復旧ボタン群 */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+              <button
+                onClick={() => setIsGuideModalOpen(true)}
+                style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
+              >
+                📖 {t.guideTitle}
+              </button>
+              <button
+                onClick={() => setIsEulaModalOpen(true)}
+                style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
+              >
+                📜 {t.eulaTitle}
+              </button>
+              <button
+                onClick={() => setIsBlockListModalOpen(true)}
+                style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left', color: '#dc2626' }}
+              >
+                🚫 {t.blockListTitle} ({blockedUsers.length})
+              </button>
+            </div>
+
             <button
               onClick={() => {
                 setIsSettingsOpen(false);
@@ -2368,6 +2420,68 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
             >
               保存して閉じる
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 利用規約モーダル */}
+      {isEulaModalOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t.eulaTitle}</h3>
+            <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
+              {EULA_FULL_TEXT}
+            </div>
+            <button onClick={() => setIsEulaModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+              {t.close}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 使い方ガイドモーダル */}
+      {isGuideModalOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t.guideTitle}</h3>
+            <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
+              {GUIDE_FULL_TEXT}
+            </div>
+            <button onClick={() => setIsGuideModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+              {t.close}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ブロックリスト管理モーダル */}
+      {isBlockListModalOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%' }}>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t.blockListTitle}</h3>
+            {blockedUsers.length === 0 ? (
+              <p style={{ fontSize: '12px', color: '#64748b' }}>現在ブロックしているユーザーはいません。</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
+                {blockedUsers.map((uid) => (
+                  <div key={uid} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '8px 12px', borderRadius: '8px' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 'bold' }}>ID: {uid}</span>
+                    <button
+                      onClick={() => {
+                        setBlockedUsers(prev => prev.filter(id => id !== uid));
+                        showToast('ブロックを解除しました');
+                      }}
+                      style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', padding: '4px 8px', fontSize: '11px', cursor: 'pointer' }}
+                    >
+                      解除
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <button onClick={() => setIsBlockListModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+              {t.close}
             </button>
           </div>
         </div>
@@ -2423,6 +2537,122 @@ export default function WorldSnapApp() {
                   Send
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 写真・動画追加時の投稿作成モーダル ── */}
+      {pendingUploads.length > 0 && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 'bold' }}>
+              📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
+            </h3>
+
+            <div style={{ width: '100%', height: '150px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '12px' }}>
+              {pendingUploads[currentUploadIndex].fileType === 'image' ? (
+                <img src={pendingUploads[currentUploadIndex].fileUrl} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <video src={pendingUploads[currentUploadIndex].fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              )}
+            </div>
+
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+              🌐 反映先（複数選択可能）
+            </label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
+              {(['world', 'friends', 'my'] as const).map((scope) => {
+                const isSelected = selectedScopes.includes(scope);
+                return (
+                  <div
+                    key={scope}
+                    onClick={() => toggleScopeSelection(scope)}
+                    style={{
+                      padding: '8px 10px',
+                      borderRadius: '10px',
+                      border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
+                      background: isSelected ? '#f0f9ff' : '#ffffff',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      fontWeight: 'bold',
+                      color: isSelected ? themeAccent : '#0f172a'
+                    }}
+                  >
+                    {isSelected ? '☑️ ' : '☐ '}
+                    {scope === 'world' ? '🌎 ワールド（全体マップ）' : scope === 'friends' ? '👥 フレンドマップ' : '📍 マイマップ'}
+                  </div>
+                );
+              })}
+            </div>
+
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
+            <input
+              type="text"
+              value={postTitle}
+              onChange={(e) => setPostTitle(e.target.value)}
+              style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+            />
+
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグ)</label>
+            <textarea
+              rows={2}
+              value={postDesc}
+              onChange={(e) => setPostDesc(e.target.value)}
+              style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+            />
+
+            {/* 住所検索 ＆ サジェストリスト */}
+            <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
+              <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
+                📍 撮影場所を検索して選択してください（必須）
+              </div>
+              <input
+                type="text"
+                placeholder="地名・住所・場所名を入力"
+                value={addressSearchQuery}
+                onChange={(e) => setAddressSearchQuery(e.target.value)}
+                style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff', marginBottom: '4px' }}
+              />
+
+              {addressSuggestions.length > 0 && (
+                <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
+                  {addressSuggestions.map((item) => (
+                    <div
+                      key={item.place_id}
+                      onClick={() => handleSelectAddressSuggestion(item)}
+                      style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <span>📍</span>
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
+                <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={() => setPendingUploads([])}
+                style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+              >
+                キャンセル
+              </button>
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={handleConfirmPost}
+                style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+              >
+                {isSubmitting ? '保存中...' : 'マップに反映する 🚀'}
+              </button>
             </div>
           </div>
         </div>
