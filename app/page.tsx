@@ -10,7 +10,6 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
-// Google Maps API キー
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
@@ -99,7 +98,6 @@ export interface PlaceSuggestion {
   lon: string;
 }
 
-// グローバルコンプライアンス対応・世界主要言語の暴言・差別・ヘイト・成人向け禁止ワードリスト
 const NG_PATTERNS = [
   '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
   'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
@@ -130,20 +128,17 @@ function checkInappropriateContent(text: string): { isViolating: boolean; matche
 }
 
 function getUserTitle(count: number) {
-  if (count >= 300) return { title: '🪐 宇宙級の旅人', color: '#ec4899' };
-  if (count >= 250) return { title: '🌏 ワールドレジェンド', color: '#d946ef' };
-  if (count >= 200) return { title: '💎 地球の語り部', color: '#06b6d4' };
-  if (count >= 150) return { title: '🌌 歴戦の探求者', color: '#10b981' };
   if (count >= 100) return { title: '👑 百景の覇者', color: '#eab308' };
-  if (count >= 90) return { title: '🏆 ワールドナビゲーター', color: '#f97316' };
-  if (count >= 80) return { title: '🌟 グローバルウォーカー', color: '#f59e0b' };
-  if (count >= 70) return { title: '⭐ トラベルマスター', color: '#f43f5e' };
-  if (count >= 60) return { title: '🏔️ 開拓エキスパート', color: '#8b5cf6' };
-  if (count >= 50) return { title: '🧭 ジャーニーガイド', color: '#6366f1' };
-  if (count >= 40) return { title: '✈️ 熟練ボイジャー', color: '#3b82f6' };
-  if (count >= 30) return { title: '🗺️ エリアトラベラー', color: '#0284c7' };
-  if (count >= 20) return { title: '📷 スポットハンター', color: '#0ea5e9' };
-  if (count >= 10) return { title: '🎒 トラベルビギナー', color: '#38bdf8' };
+  if (count >= 90) return { title: '🏆 九十景の巨匠', color: '#f97316' };
+  if (count >= 80) return { title: '🌟 八十景の探求者', color: '#f59e0b' };
+  if (count >= 70) return { title: '⭐ 七十景の旅人', color: '#f43f5e' };
+  if (count >= 60) return { title: '💎 六十景の語り部', color: '#06b6d4' };
+  if (count >= 50) return { title: '🏔️ 五十景の開拓者', color: '#8b5cf6' };
+  if (count >= 40) return { title: '🧭 四十景のナビゲーター', color: '#6366f1' };
+  if (count >= 30) return { title: '✈️ 三十景のボイジャー', color: '#3b82f6' };
+  if (count >= 20) return { title: '🗺️ 二十景のエキスパート', color: '#0284c7' };
+  if (count >= 10) return { title: '🎒 十景のトラベラー', color: '#38bdf8' };
+  if (count >= 5) return { title: '📷 五景のハンター', color: '#0ea5e9' };
   if (count >= 1) return { title: '🌱 見習い探検家', color: '#22c55e' };
   return { title: '🐣 旅のビギナー', color: '#94a3b8' };
 }
@@ -168,6 +163,11 @@ export const COUNTRIES: Record<
   TH: { name: 'ประเทศไทย (タイ)', flag: '🇹🇭', region: '🌏 アジア', lang: 'th', lat: 15.8700, lon: 100.9925, zoom: 6, dict: { step1Title: 'Step 1: เลือกประเทศ', step1Desc: 'เลือกประเทศ', step2Title: 'Step 2', step3Title: 'Step 3', next: 'ถัดไป', back: 'ย้อนกลับ', startApp: 'เริ่ม', eulaAgree: 'ยอมรับ', termsTitle: 'เงื่อนไข', map: 'แผนที่', ranking: 'อันดับ', profile: 'โปรไฟล์', addPhoto: 'เพิ่ม', exportMap: 'บันทึกแผนที่', view: 'วิว', gourmet: 'ร้านอาหาร', rain: 'ฝน', myMap: 'แผนที่ฉัน', friends: 'เพื่อน', world: 'ทั่วโลก', openGoogleMaps: 'แผนที่', saveSpot: 'บันทึก', saved: 'บันทึกแล้ว', report: 'รายงาน', block: 'บล็อก', delete: 'ลบ', edit: 'แก้ไข', visited: 'เยี่ยมชม', countriesUnit: 'ประเทศ', posts: 'โพสต์', friendCode: 'โค้ด', searchPlaceholder: 'ค้นหา...', cacheClear: 'ล้างแคช', deleteAccount: 'ลบบัญชี', logout: 'ออกจากระบบ', close: 'ปิด' } },
   US: { name: 'USA (アメリカ)', flag: '🇺🇸', region: '🗽 北米・中南米', lang: 'en', lat: 37.0902, lon: -95.7129, zoom: 4, dict: { step1Title: 'Step 1: Select Nationality', step1Desc: 'Map labels and UI will be displayed in English.', step2Title: 'Step 2: Create Profile', step3Title: 'Step 3: Terms of Service (EULA)', next: 'Next', back: 'Back', startApp: '🚀 Start WorldSnap', eulaAgree: 'I agree to the Terms of Service', termsTitle: '📜 Terms of Service (EULA)', map: 'Map', ranking: 'Trending', profile: 'Profile', addPhoto: 'Add Media', exportMap: 'Save Map', view: 'View', gourmet: 'Gourmet', rain: 'Rainy Day', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: '🧭 Open Maps', saveSpot: '❤️ Save', saved: '❤️ Saved', report: '⚠️ Report', block: '🚫 Block', delete: '🗑️ Delete', edit: '✏️ Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Friend Code', searchPlaceholder: '🔍 Search city, #tag...', cacheClear: '🧹 Clear Cache', deleteAccount: '⚠️ Delete Account', logout: '🚪 Log Out', close: 'Close' } },
   AU: { name: 'Australia (オーストラリア)', flag: '🇦🇺', region: '🦘 オセアニア', lang: 'en', lat: -25.2744, lon: 133.7751, zoom: 4, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2: Profile', step3Title: 'Step 3: EULA', next: 'Next', back: 'Back', startApp: '🚀 Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
+  GB: { name: 'UK (イギリス)', flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 55.3781, lon: -3.4360, zoom: 5, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2: Profile', step3Title: 'Step 3: EULA', next: 'Next', back: 'Back', startApp: '🚀 Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
+  FR: { name: 'France (フランス)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 46.6034, lon: 1.8883, zoom: 5, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2: Profile', step3Title: 'Step 3: EULA', next: 'Next', back: 'Back', startApp: '🚀 Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
+  DE: { name: 'Germany (ドイツ)', flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 51.1657, lon: 10.4515, zoom: 5, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2: Profile', step3Title: 'Step 3: EULA', next: 'Next', back: 'Back', startApp: '🚀 Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
+  CA: { name: 'Canada (カナダ)', flag: '🇨🇦', region: '🗽 北米・中南米', lang: 'en', lat: 56.1304, lon: -106.3468, zoom: 3, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2: Profile', step3Title: 'Step 3: EULA', next: 'Next', back: 'Back', startApp: '🚀 Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } },
+  BR: { name: 'Brasil (ブラジル)', flag: '🇧🇷', region: '🗽 北米・中南米', lang: 'en', lat: -14.2350, lon: -51.9253, zoom: 4, dict: { step1Title: 'Step 1: Country', step1Desc: 'Select country', step2Title: 'Step 2: Profile', step3Title: 'Step 3: EULA', next: 'Next', back: 'Back', startApp: '🚀 Start', eulaAgree: 'I agree', termsTitle: 'Terms', map: 'Map', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Add', exportMap: 'Save', view: 'View', gourmet: 'Gourmet', rain: 'Rain', myMap: 'My Map', friends: 'Friends', world: 'World', openGoogleMaps: 'Maps', saveSpot: 'Save', saved: 'Saved', report: 'Report', block: 'Block', delete: 'Delete', edit: 'Edit', visited: 'Visited', countriesUnit: 'countries', posts: 'Posts', friendCode: 'Code', searchPlaceholder: 'Search...', cacheClear: 'Clear', deleteAccount: 'Delete', logout: 'Logout', close: 'Close' } }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -267,7 +267,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント
+// 2. Google Maps API コンポーネント (最小ズーム・白飛びラグ改善)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -326,10 +326,13 @@ const GoogleMapComponent = ({
       const map = new window.google.maps.Map(mapRef.current, {
         center: { lat: center[0], lng: center[1] },
         zoom: zoom,
+        minZoom: 3, // 引きすぎ防止
+        maxZoom: 18,
         disableDefaultUI: true,
         zoomControl: false,
         gestureHandling: 'greedy',
         styles: getMapStyles(theme),
+        backgroundColor: theme === 'dark' ? '#0f172a' : '#f1f5f9', // 白飛び・ラグ時の背景チラつき防止
       });
 
       mapInstanceRef.current = map;
@@ -589,7 +592,6 @@ export default function WorldSnapApp() {
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
 
-  // マイページの新タブ管理 ('posts' | 'footprint' | 'timeline' | 'saved' | 'badges' | 'friends')
   const [profileSubTab, setProfileSubTab] = useState<'posts' | 'footprint' | 'timeline' | 'saved' | 'badges' | 'friends'>('posts');
 
   const [editingSpot, setEditingSpot] = useState<Spot | null>(null);
@@ -847,7 +849,7 @@ export default function WorldSnapApp() {
       showToast(`🇯🇵 ${conf.name} 全体へ戻しました`);
     } else {
       setTargetCenter([20.0, 0.0]);
-      setTargetZoom(2);
+      setTargetZoom(3);
       showToast('🌎 世界全体マップへ戻しました');
     }
   };
@@ -1638,7 +1640,7 @@ export default function WorldSnapApp() {
               )}
             </div>
 
-            {/* カテゴリ別一括フィルター（チェックボックス式） ＆ スコープ切り替え */}
+            {/* カテゴリ別一括フィルター ＆ スコープ切り替え */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px' }}>
               <div style={{ display: 'flex', gap: '4px', background: mapTheme === 'dark' ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.96)', padding: '4px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
                 {(['view', 'gourmet', 'rain'] as const).map((cat) => {
@@ -1819,7 +1821,7 @@ export default function WorldSnapApp() {
           ))}
         </div>
 
-        {/* ── マイページ (機能拡張版: 投稿・足跡マップ・タイムライン・保存・バッジ・フレンド) ── */}
+        {/* ── マイページ ── */}
         <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', touchAction: 'pan-y' }}>
           <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -1889,7 +1891,6 @@ export default function WorldSnapApp() {
             </div>
           </div>
 
-          {/* マイページサブタブ切替 */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '10px' }}>
             {(['posts', 'footprint', 'timeline', 'saved', 'badges', 'friends'] as const).map((tab) => (
               <button
@@ -1907,12 +1908,11 @@ export default function WorldSnapApp() {
                   textAlign: 'center',
                 }}
               >
-                {tab === 'posts' ? `📸 投稿` : tab === 'footprint' ? `🌍 足跡` : tab === 'timeline' ? `📅 ログ` : tab === 'saved' ? `💛 保存` : tab === 'badges' ? `🏅 バッジ` : `👥 フレンド`}
+                {tab === 'posts' ? `📸 投稿` : tab === 'footprint' ? `🌍 足跡マップ` : tab === 'timeline' ? `📅 ログ` : tab === 'saved' ? `💛 保存` : tab === 'badges' ? `🏅 バッジ` : `👥 フレンド`}
               </button>
             ))}
           </div>
 
-          {/* ① 投稿一覧 */}
           {profileSubTab === 'posts' && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
               {mySpots.map((s) => (
@@ -1931,27 +1931,39 @@ export default function WorldSnapApp() {
             </div>
           )}
 
-          {/* ② 足跡マップ（統計ビュー） */}
+          {/* ③ 足跡マップ（押すとマップタブに切り替わり、自分の足跡地域にジャンプして色が変わるインタラクティブ連動） */}
           {profileSubTab === 'footprint' && (
             <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '16px', textAlign: 'center' }}>
-              <div style={{ fontSize: '15px', fontWeight: '900', marginBottom: '4px' }}>🌍 旅の足跡スタンプラリー</div>
-              <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '14px' }}>これまでに開拓した国とエリアのコレクション</p>
+              <div style={{ fontSize: '15px', fontWeight: '900', marginBottom: '4px' }}>🌍 訪れた地域・足跡マップ</div>
+              <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '14px' }}>タップすると、メインマップに切り替わり足跡の場所へ移動します</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ padding: '12px', background: '#f0fdf4', borderRadius: '10px', border: '1px solid #bbf7d0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#15803d' }}>🇯🇵 日本 (Japan)</span>
-                  <span style={{ fontSize: '11px', background: '#22c55e', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>制覇中 ({mySpots.filter(s => s.countryCode === 'JP').length}スポット)</span>
-                </div>
-                {visitedCountryCount > 1 && (
-                  <div style={{ padding: '12px', background: '#eff6ff', borderRadius: '10px', border: '1px solid #bfdbfe', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#1d4ed8' }}>🌐 海外エリア</span>
-                    <span style={{ fontSize: '11px', background: '#3b82f6', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>{visitedCountryCount - 1}カ国訪問</span>
-                  </div>
-                )}
+                {Array.from(new Set(mySpots.map(s => s.countryCode))).map((code) => {
+                  const countryName = COUNTRIES[code]?.name || code;
+                  const count = mySpots.filter(s => s.countryCode === code).length;
+                  const firstSpot = mySpots.find(s => s.countryCode === code);
+                  return (
+                    <div
+                      key={code}
+                      onClick={() => {
+                        if (firstSpot) {
+                          setTargetCenter([firstSpot.lat, firstSpot.lon]);
+                          setTargetZoom(7);
+                          setDisplayScope('my');
+                          setCurrentTab('map');
+                          showToast(`🗺️ ${countryName} の足跡へジャンプしました！`);
+                        }
+                      }}
+                      style={{ padding: '12px', background: '#f0fdf4', borderRadius: '10px', border: '1px solid #bbf7d0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
+                    >
+                      <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#15803d' }}>{COUNTRIES[code]?.flag || '📍'} {countryName}</span>
+                      <span style={{ fontSize: '11px', background: '#22c55e', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>足跡ピン {count}件 (タップして確認)</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
 
-          {/* ③ タイムライン（時系列の旅ログ） */}
           {profileSubTab === 'timeline' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {mySpots.map((s) => (
@@ -1969,7 +1981,6 @@ export default function WorldSnapApp() {
             </div>
           )}
 
-          {/* ④ 行きたいリスト（保存スポット・カテゴリ管理） */}
           {profileSubTab === 'saved' && (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
               {spots
@@ -1985,37 +1996,71 @@ export default function WorldSnapApp() {
             </div>
           )}
 
-          {/* ⑤ 実績・バッジコレクション */}
+          {/* バッジコレクション（百景の覇者まで） */}
           {profileSubTab === 'badges' && (
             <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '16px' }}>
-              <div style={{ fontSize: '14px', fontWeight: '900', marginBottom: '4px' }}>🏅 獲得した称号・バッジ</div>
-              <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '14px' }}>旅を続けることでアンロックされるトロフィー</p>
+              <div style={{ fontSize: '14px', fontWeight: '900', marginBottom: '4px' }}>🏅 実績・バッジコレクション（百景の覇者まで）</div>
+              <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '14px' }}>投稿数に応じて段階的にアンロックされるトロフィー</p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
                   <div style={{ fontSize: '24px', marginBottom: '4px' }}>🌱</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>見習い探検家</div>
-                  <div style={{ fontSize: '9px', color: '#22c55e' }}>達成済み ✓</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>見習い探検家 (1+)</div>
+                  <div style={{ fontSize: '9px', color: mySpots.length >= 1 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 1 ? '達成済み ✓' : '未達成'}</div>
                 </div>
-                <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🎒</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>十景のトラベラー (10+)</div>
+                  <div style={{ fontSize: '9px', color: mySpots.length >= 10 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 10 ? '達成済み ✓' : `${mySpots.length}/10`}</div>
+                </div>
+                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
                   <div style={{ fontSize: '24px', marginBottom: '4px' }}>🗺️</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>エリアトラベラー</div>
-                  <div style={{ fontSize: '9px', color: mySpots.length >= 30 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 30 ? '達成済み ✓' : '進行中...'}</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>二十景のエキスパート (20+)</div>
+                  <div style={{ fontSize: '9px', color: mySpots.length >= 20 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 20 ? '達成済み ✓' : `${mySpots.length}/20`}</div>
                 </div>
-                <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🎉</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>初代開拓者</div>
-                  <div style={{ fontSize: '9px', color: mySpots.some(s => s.isFirstExplorer) ? '#22c55e' : '#94a3b8' }}>{mySpots.some(s => s.isFirstExplorer) ? '達成済み ✓' : '未達成'}</div>
+                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>✈️</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>三十景のボイジャー (30+)</div>
+                  <div style={{ fontSize: '9px', color: mySpots.length >= 30 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 30 ? '達成済み ✓' : `${mySpots.length}/30`}</div>
                 </div>
-                <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>👑</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>百景の覇者</div>
-                  <div style={{ fontSize: '9px', color: mySpots.length >= 100 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 100 ? '達成済み ✓' : '進行中...'}</div>
+                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🧭</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>四十景のナビ (40+)</div>
+                  <div style={{ fontSize: '9px', color: mySpots.length >= 40 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 40 ? '達成済み ✓' : `${mySpots.length}/40`}</div>
+                </div>
+                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🏔️</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>五十景の開拓者 (50+)</div>
+                  <div style={{ fontSize: '9px', color: mySpots.length >= 50 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 50 ? '達成済み ✓' : `${mySpots.length}/50`}</div>
+                </div>
+                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>💎</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>六十景の語り部 (60+)</div>
+                  <div style={{ fontSize: '9px', color: mySpots.length >= 60 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 60 ? '達成済み ✓' : `${mySpots.length}/60`}</div>
+                </div>
+                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>⭐</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>七十景の旅人 (70+)</div>
+                  <div style={{ fontSize: '9px', color: mySpots.length >= 70 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 70 ? '達成済み ✓' : `${mySpots.length}/70`}</div>
+                </div>
+                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🌟</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>八十景の探求者 (80+)</div>
+                  <div style={{ fontSize: '9px', color: mySpots.length >= 80 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 80 ? '達成済み ✓' : `${mySpots.length}/80`}</div>
+                </div>
+                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: '24px', marginBottom: '4px' }}>🏆</div>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold' }}>九十景の巨匠 (90+)</div>
+                  <div style={{ fontSize: '9px', color: mySpots.length >= 90 ? '#22c55e' : '#94a3b8' }}>{mySpots.length >= 90 ? '達成済み ✓' : `${mySpots.length}/90`}</div>
+                </div>
+                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '10px', borderRadius: '10px', border: '2px solid #eab308', textAlign: 'center', gridColumn: 'span 2' }}>
+                  <div style={{ fontSize: '28px', marginBottom: '4px' }}>👑</div>
+                  <div style={{ fontSize: '12px', fontWeight: '900', color: '#eab308' }}>百景の覇者 (100+)</div>
+                  <div style={{ fontSize: '10px', color: mySpots.length >= 100 ? '#22c55e' : '#94a3b8', fontWeight: 'bold' }}>{mySpots.length >= 100 ? '👑 殿堂入り達成おめでとうございます！' : `あと ${100 - mySpots.length} 個の投稿で覇者になれます！`}</div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* ⑥ フレンドリスト */}
           {profileSubTab === 'friends' && (
             <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '14px' }}>
               <div style={{ display: 'flex', gap: '6px', marginBottom: '14px' }}>
