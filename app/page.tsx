@@ -143,7 +143,7 @@ function getUserTitle(count: number) {
   return { title: '🐣 旅のビギナー', color: '#94a3b8' };
 }
 
-// 言語ごとの辞書定義（多言語対応）
+// 多言語辞書の定義
 const DICTIONaries: Record<string, Record<string, string>> = {
   ja: {
     step1Title: 'Step 1: あなたの国籍（言語）を選択',
@@ -332,7 +332,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
   }
 };
 
-// 厳選50カ国マスターデータ
+// 指定の厳選50カ国マスターデータ
 export const COUNTRIES: Record<
   string,
   {
@@ -893,7 +893,7 @@ export default function WorldSnapApp() {
   const [friendsList, setFriendsList] = useState<FriendUser[]>([]);
   const [inputFriendCode, setInputFriendCode] = useState('');
 
-  // 翻訳管理ステート (spotIdごとの翻訳済みテキスト)
+  // 翻訳管理ステート
   const [translatedDescriptions, setTranslatedDescriptions] = useState<Record<string, string>>({});
 
   const exportRef = useRef<HTMLDivElement>(null);
@@ -1144,10 +1144,8 @@ export default function WorldSnapApp() {
     setActiveMediaIndex((prev) => (prev + 1) % selectedSpot.mediaList!.length);
   };
 
-  // 簡易自動翻訳機能（設定されている言語コードに合わせて疑似翻訳またはシミュレート）
   const handleTranslateDescription = (spotId: string, originalText: string) => {
     if (translatedDescriptions[spotId]) {
-      // すでに翻訳済みの場合はトグルして元に戻す
       setTranslatedDescriptions(prev => {
         const next = { ...prev };
         delete next[spotId];
@@ -1156,23 +1154,22 @@ export default function WorldSnapApp() {
       return;
     }
 
-    // 設定言語に応じた翻訳サンプル生成
-    let translated = originalText;
     const targetLang = COUNTRIES[userNationality]?.lang || 'en';
+    let translated = originalText;
     if (targetLang === 'en') {
-      translated = `[Translated to English]: ${originalText} (Wonderful scenic travel spot!)`;
+      translated = `[Translated to English]: ${originalText}`;
     } else if (targetLang === 'ko') {
-      [Translated to Korean]: ${originalText} (아름다운 여행 명소입니다!)`;
+      translated = `[Translated to Korean]: ${originalText}`;
     } else if (targetLang === 'zh') {
-      [Translated to Chinese]: ${originalText} (绝佳的旅行胜地！)`;
+      translated = `[Translated to Chinese]: ${originalText}`;
     } else if (targetLang === 'th') {
-      [Translated to Thai]: ${originalText} (สถานที่ท่องเที่ยวที่ยอดเยี่ยม!)`;
+      translated = `[Translated to Thai]: ${originalText}`;
     } else {
-      [Translated]: ${originalText}`;
+      translated = `[Translated]: ${originalText}`;
     }
 
     setTranslatedDescriptions(prev => ({ ...prev, [spotId]: translated }));
-    showToast(`🌐 設定された言語 (${targetLang.toUpperCase()}) に翻訳しました！`);
+    showToast(`🌐 ${targetLang.toUpperCase()} に翻訳しました！`);
   };
 
   const handleAddComment = (spotId: string) => {
@@ -1739,7 +1736,7 @@ export default function WorldSnapApp() {
       <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
       <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-      {/* 初回オンボーディング：1.国籍(言語)選択 ➔ 2.ベースの国選択 ➔ 3.プロフィール ➔ 4.利用規約 */}
+      {/* 初回オンボーディング：多言語対応ステップ付き */}
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -1786,7 +1783,7 @@ export default function WorldSnapApp() {
               </div>
             )}
 
-            {/* Step 2: ベースの国（初期マップ）選択 */}
+            {/* Step 2: ベースの国選択 */}
             {onboardingStep === 2 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step2Title}</h3>
@@ -1823,7 +1820,7 @@ export default function WorldSnapApp() {
               </div>
             )}
 
-            {/* Step 3: プロフィール作成 */}
+            {/* Step 3: プロフィール */}
             {onboardingStep === 3 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t.step3Title}</h3>
@@ -2163,7 +2160,7 @@ export default function WorldSnapApp() {
                 <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
                 <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>📍 {spot.cityName}</div>
                 
-                {/* 翻訳ボタン (ランキング・タイムライン等) */}
+                {/* 翻訳ボタン */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
                   <span style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold' }}>❤️ {spot.savedCount || 0}</span>
                   <button
@@ -2317,7 +2314,7 @@ export default function WorldSnapApp() {
         </div>
       </div>
 
-      {/* ── 設定変更モーダル（国籍・言語・ベースの国変更） ── */}
+      {/* ── 設定変更モーダル（国籍・言語・ベース変更） ── */}
       {isSettingsOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
@@ -2376,7 +2373,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── 詳細モーダル (翻訳ボタン付き) ── */}
+      {/* ── 詳細モーダル (翻訳機能付き) ── */}
       {selectedSpot && (
         <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
           <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
