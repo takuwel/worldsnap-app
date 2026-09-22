@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & 100カ国・完全多言語マスターデータ
+// 1. 型定義 & グローバル言語 / 50カ国マップデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -98,56 +98,30 @@ export interface PlaceSuggestion {
   lon: string;
 }
 
-const NG_PATTERNS = [
-  '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
-  'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
-  'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'きもちわるい', 'ブサイク', 'うざい',
-  'レイプ', 'れいぷ', '強姦', '売春', 'ばいしゅん', '買春', '援交', 'パパ活', '児童ポルノ',
-  'ドラッグ', 'どらっぐ', '覚醒剤', '大麻', 'たいま', 'コカイン', 'ヘロイン', '違法薬物',
-  '暴力', '暴行', '殴る', '蹴る', 'いじめ', 'いじめる', '自殺', 'じさつ', '死にたい',
-  'ホモ', 'ほも', 'オカマ', 'おかま', '差別', 'さべつ', '中国人差別', '韓国人差別', '外国人差別',
-  'セックス', 'せっくす', 'エロ', 'えろ', 'ちんこ', 'まんこ', 'おっぱい', 'オナニー', 'おなにー',
-  'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy', 'whore', 'slut',
-  'nigger', 'faggot', 'retard', 'suicide', 'kill', 'rape', 'cocaine', 'heroin', 'nazi', 'hitler',
-  '去死', '混蛋', '白痴', '傻逼', '贱人', '垃圾', '强奸', '卖淫', '吸毒', '自杀', '支那', '翻墙',
-  '죽어', '꺼져', '바보', '쓰레기', '병신', '개새끼', '창녀', '강간', '자살', '마약',
-  'merde', 'connard', 'salope', 'pute', 'enculé', 'suicide', 'viole', 'drogue',
-  'puta', 'mierda', 'cabrón', 'estúpido', 'idiota', 'suicidio', 'violación', 'droga',
-  'scheiße', 'arschloch', 'hure', 'schlampe', 'selbstmord', 'vergewaltigung', 'droge'
-];
+// 世界中の主要15言語のマスター定義
+export const LANGUAGES: Record<string, { name: string; nativeName: string; flag: string }> = {
+  en: { name: 'English', nativeName: 'English', flag: '🇬🇧' },
+  ja: { name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
+  ko: { name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
+  zh: { name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
+  es: { name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
+  fr: { name: 'French', nativeName: 'Français', flag: '🇫🇷' },
+  de: { name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
+  pt: { name: 'Portuguese', nativeName: 'Português', flag: '🇧🇷' },
+  it: { name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹' },
+  ru: { name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
+  ar: { name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
+  hi: { name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' },
+  th: { name: 'Thai', nativeName: 'ไทย', flag: '🇹🇭' },
+  vi: { name: 'Vietnamese', nativeName: 'Tiếng Việt', flag: '🇻🇳' },
+  id: { name: 'Indonesian', nativeName: 'Bahasa Indonesia', flag: '🇮🇩' }
+};
 
-function checkInappropriateContent(text: string): { isViolating: boolean; matchedWord: string } {
-  if (!text) return { isViolating: false, matchedWord: '' };
-  const lower = text.toLowerCase().replace(/[\s\-_]/g, '');
-  for (const word of NG_PATTERNS) {
-    if (lower.includes(word.toLowerCase())) {
-      return { isViolating: true, matchedWord: word };
-    }
-  }
-  return { isViolating: false, matchedWord: '' };
-}
-
-function getUserTitle(count: number) {
-  if (count >= 100) return { title: '👑 百景の覇者', color: '#eab308' };
-  if (count >= 90) return { title: '🏆 九十景の巨匠', color: '#f97316' };
-  if (count >= 80) return { title: '🌟 八十景の探求者', color: '#f59e0b' };
-  if (count >= 70) return { title: '⭐ 七十景の旅人', color: '#f43f5e' };
-  if (count >= 60) return { title: '💎 六十景の語り部', color: '#06b6d4' };
-  if (count >= 50) return { title: '🏔️ 五十景の開拓者', color: '#8b5cf6' };
-  if (count >= 40) return { title: '🧭 四十景のナビゲーター', color: '#6366f1' };
-  if (count >= 30) return { title: '✈️ 三十景のボイジャー', color: '#3b82f6' };
-  if (count >= 20) return { title: '🗺️ 二十景のエキスパート', color: '#0284c7' };
-  if (count >= 10) return { title: '🎒 十景のトラベラー', color: '#38bdf8' };
-  if (count >= 5) return { title: '📷 五景のハンター', color: '#0ea5e9' };
-  if (count >= 1) return { title: '🌱 見習い探検家', color: '#22c55e' };
-  return { title: '🐣 旅のビギナー', color: '#94a3b8' };
-}
-
-// 多言語辞書定義
+// 多言語UI辞書（15言語完全サポート）
 const DICTIONaries: Record<string, Record<string, string>> = {
   ja: {
-    step1Title: 'Step 1: あなたの国籍（言語）を選択',
-    step1Desc: 'アプリ全体の表示言語がこの国に合わせて切り替わります。',
+    step1Title: 'Step 1: 表示言語を選択',
+    step1Desc: '世界中の人々が使えるよう、お好みの言語を選択してください。',
     step2Title: 'Step 2: ベースの国（初期マップ）を選択',
     step2Desc: 'マップの初期表示位置となるメインの国を選んでください。',
     step3Title: 'Step 3: プロフィール作成',
@@ -179,7 +153,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     friendCode: 'フレンドコード',
     searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
     settings: '⚙️ 設定メニュー',
-    nationalitySetting: '🌐 国籍 / 表示言語',
+    langSetting: '🌐 表示言語 (Language)',
     baseCountrySetting: '📍 ベースの国 (初期マップ)',
     blockListTitle: '🚫 ブロック中ユーザー管理',
     eulaTitle: '📜 利用規約 (EULA)',
@@ -188,8 +162,8 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     close: '閉じる'
   },
   en: {
-    step1Title: 'Step 1: Select Your Nationality (Language)',
-    step1Desc: 'The app UI language will be set based on this selection.',
+    step1Title: 'Step 1: Select Your Language',
+    step1Desc: 'Choose your preferred language for the application.',
     step2Title: 'Step 2: Select Base Country (Initial Map)',
     step2Desc: 'Choose your main country for the starting map view.',
     step3Title: 'Step 3: Create Profile',
@@ -221,7 +195,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     friendCode: 'Friend Code',
     searchPlaceholder: '🔍 Search city, #tag...',
     settings: '⚙️ Settings Menu',
-    nationalitySetting: '🌐 Nationality / UI Language',
+    langSetting: '🌐 App Language',
     baseCountrySetting: '📍 Base Country (Initial Map)',
     blockListTitle: '🚫 Blocked Users',
     eulaTitle: '📜 Terms of Service (EULA)',
@@ -230,8 +204,8 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     close: 'Close'
   },
   ko: {
-    step1Title: 'Step 1: 국적(언어) 선택',
-    step1Desc: '앱의 언어가 선택한 국가에 맞게 설정됩니다.',
+    step1Title: 'Step 1: 언어 선택',
+    step1Desc: '앱에서 사용할 언어를 선택하세요.',
     step2Title: 'Step 2: 베이스 국가(초기 지도) 선택',
     step2Desc: '지도의 중심이 될 기본 국가를 선택하세요.',
     step3Title: 'Step 3: 프로필 설정',
@@ -263,7 +237,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     friendCode: '친구 코드',
     searchPlaceholder: '🔍 도시 / #태그 검색',
     settings: '⚙️ 설정 메뉴',
-    nationalitySetting: '🌐 국적 및 언어',
+    langSetting: '🌐 앱 언어',
     baseCountrySetting: '📍 기본 국가',
     blockListTitle: '🚫 차단된 사용자',
     eulaTitle: '📜 이용약관 (EULA)',
@@ -272,8 +246,8 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     close: '닫기'
   },
   zh: {
-    step1Title: '步骤 1: 选择您的国籍（语言）',
-    step1Desc: '应用界面语言将根据您的选择进行设置。',
+    step1Title: '步骤 1: 选择语言',
+    step1Desc: '请选择您偏好的应用显示语言。',
     step2Title: 'Step 2: 选择基础国家（初始地图）',
     step2Desc: '请选择地图初始显示的国家。',
     step3Title: 'Step 3: 创建个人资料',
@@ -305,7 +279,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     friendCode: '好友码',
     searchPlaceholder: '🔍 搜索城市 / #标签...',
     settings: '⚙️ 设置菜单',
-    nationalitySetting: '🌐 国籍与语言',
+    langSetting: '🌐 应用语言',
     baseCountrySetting: '📍 基础国家',
     blockListTitle: '🚫 已屏蔽用户',
     eulaTitle: '📜 服务条款 (EULA)',
@@ -313,93 +287,9 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     translate: '🌐 翻译',
     close: '关闭'
   },
-  th: {
-    step1Title: 'Step 1: เลือกสัญชาติ (ภาษา) ของคุณ',
-    step1Desc: 'ภาษาของแอปจะถูกตั้งค่าตามการเลือกนี้',
-    step2Title: 'Step 2: เลือกประเทศหลัก (แผนที่เริ่มต้น)',
-    step2Desc: 'เลือกประเทศเริ่มต้นสำหรับแผนของคุณ',
-    step3Title: 'Step 3: สร้างโปรไฟล์',
-    step3TitleEula: 'Step 4: ข้อกำหนดการใช้งาน',
-    next: 'ถัดไป',
-    back: 'ย้อนกลับ',
-    startApp: '🚀 เริ่มต้นใช้งาน WorldSnap',
-    eulaAgree: 'ฉันยอมรับข้อกำหนดการใช้งาน',
-    map: 'แผนที่',
-    ranking: 'อันดับ',
-    profile: 'โปรไฟล์',
-    addPhoto: 'เพิ่มรูป/วิดีโอ',
-    exportMap: 'บันทึกแผนที่',
-    view: 'วิว',
-    gourmet: 'ร้านอาหาร',
-    rain: 'ฝนตก',
-    myMap: 'แผนที่ของฉัน',
-    friends: 'เพื่อน',
-    world: 'ทั่วโลก',
-    openGoogleMaps: '🧭 เปิด Google Maps',
-    saveSpot: '❤️ บันทึก',
-    saved: '❤️ บันทึกแล้ว',
-    report: '⚠️ รายงาน',
-    block: '🚫 บล็อก',
-    delete: '🗑️ ลบ',
-    edit: '✏️ แก้ไข',
-    visited: 'เยี่ยมชม',
-    posts: 'โพสต์',
-    friendCode: 'โค้ดเพื่อน',
-    searchPlaceholder: '🔍 ค้นหาเมือง, #แท็ก...',
-    settings: '⚙️ เมนูตั้งค่า',
-    nationalitySetting: '🌐 สัญชาติ / ภาษา',
-    baseCountrySetting: '📍 ประเทศหลัก',
-    blockListTitle: '🚫 ผู้ใช้ที่ถูกบล็อก',
-    eulaTitle: '📜 ข้อกำหนดการใช้งาน',
-    guideTitle: '📖 คู่มือการใช้งาน',
-    translate: '🌐 แปลภาษา',
-    close: 'ปิด'
-  },
-  fr: {
-    step1Title: 'Étape 1 : Sélectionnez votre nationalité (Langue)',
-    step1Desc: 'La langue de l\'application sera définie selon ce choix.',
-    step2Title: 'Étape 2 : Sélectionnez le pays de base',
-    step2Desc: 'Choisissez votre pays principal pour la vue de carte initiale.',
-    step3Title: 'Étape 3 : Créer un profil',
-    step3TitleEula: 'Étape 4 : Conditions d\'utilisation (EULA)',
-    next: 'Suivant',
-    back: 'Retour',
-    startApp: '🚀 Démarrer WorldSnap',
-    eulaAgree: 'J\'accepte les conditions d\'utilisation',
-    map: 'Carte',
-    ranking: 'Classement',
-    profile: 'Profil',
-    addPhoto: 'Ajouter',
-    exportMap: 'Enregistrer',
-    view: 'Vue',
-    gourmet: 'Gastronomie',
-    rain: 'Pluie',
-    myMap: 'Ma Carte',
-    friends: 'Amis',
-    world: 'Monde',
-    openGoogleMaps: '🧭 Ouvrir Maps',
-    saveSpot: '❤️ Sauvegarder',
-    saved: '❤️ Enregistré',
-    report: '⚠️ Signaler',
-    block: '🚫 Bloquer',
-    delete: '🗑️ Supprimer',
-    edit: '✏️ Éditer',
-    visited: 'Visité',
-    posts: 'Publications',
-    friendCode: 'Code ami',
-    searchPlaceholder: '🔍 Rechercher une ville, #tag...',
-    settings: '⚙️ Paramètres',
-    nationalitySetting: '🌐 Nationalité / Langue',
-    baseCountrySetting: '📍 Pays de base',
-    blockListTitle: '🚫 Utilisateurs bloqués',
-    eulaTitle: '📜 Conditions d\'utilisation',
-    guideTitle: '📖 Guide de l\'application',
-    translate: '🌐 Traduire',
-    close: 'Fermer'
-  },
   es: {
-    step1Title: 'Paso 1: Selecciona tu nacionalidad (Idioma)',
-    step1Desc: 'El idioma de la aplicación se configurará según esta selección.',
+    step1Title: 'Paso 1: Selecciona tu idioma',
+    step1Desc: 'Elige tu idioma preferido para la aplicación.',
     step2Title: 'Paso 2: Selecciona el país base',
     step2Desc: 'Elige tu país principal para la vista de mapa inicial.',
     step3Title: 'Paso 3: Crear perfil',
@@ -430,141 +320,499 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     posts: 'Publicaciones',
     friendCode: 'Código de amigo',
     searchPlaceholder: '🔍 Buscar ciudad, #etiqueta...',
-    settings: '⚙️ Configuración',
-    nationalitySetting: '🌐 Nacionalidad / Idioma',
+    settings: '⚙️ Menú de configuración',
+    langSetting: '🌐 Idioma de la aplicación',
     baseCountrySetting: '📍 País base',
     blockListTitle: '🚫 Usuarios bloqueados',
     eulaTitle: '📜 Términos de servicio',
     guideTitle: '📖 Guía de la aplicación',
     translate: '🌐 Traducir',
     close: 'Cerrar'
+  },
+  fr: {
+    step1Title: 'Étape 1 : Sélectionnez votre langue',
+    step1Desc: 'Choisissez votre langue préférée pour l\'application.',
+    step2Title: 'Étape 2 : Sélectionnez le pays de base',
+    step2Desc: 'Choisissez votre pays principal pour la vue de carte.',
+    step3Title: 'Étape 3 : Créer un profil',
+    step3TitleEula: 'Étape 4 : Conditions d\'utilisation',
+    next: 'Suivant',
+    back: 'Retour',
+    startApp: '🚀 Démarrer WorldSnap',
+    eulaAgree: 'J\'accepte les conditions d\'utilisation',
+    map: 'Carte',
+    ranking: 'Classement',
+    profile: 'Profil',
+    addPhoto: 'Ajouter',
+    exportMap: 'Enregistrer',
+    view: 'Vue',
+    gourmet: 'Gastronomie',
+    rain: 'Pluie',
+    myMap: 'Ma Carte',
+    friends: 'Amis',
+    world: 'Monde',
+    openGoogleMaps: '🧭 Ouvrir Maps',
+    saveSpot: '❤️ Sauvegarder',
+    saved: '❤️ Enregistré',
+    report: '⚠️ Signaler',
+    block: '🚫 Bloquer',
+    delete: '🗑️ Supprimer',
+    edit: '✏️ Éditer',
+    visited: 'Visité',
+    posts: 'Publications',
+    friendCode: 'Code ami',
+    searchPlaceholder: '🔍 Rechercher...',
+    settings: '⚙️ Paramètres',
+    langSetting: '🌐 Langue de l\'application',
+    baseCountrySetting: '📍 Pays de base',
+    blockListTitle: '🚫 Utilisateurs bloqués',
+    eulaTitle: '📜 Conditions d\'utilisation',
+    guideTitle: '📖 Guide',
+    translate: '🌐 Traduire',
+    close: 'Fermer'
+  },
+  de: {
+    step1Title: 'Schritt 1: Sprache auswählen',
+    step1Desc: 'Wählen Sie Ihre bevorzugte App-Sprache.',
+    step2Title: 'Schritt 2: Basissland wählen',
+    step2Desc: 'Wählen Sie das Hauptland für die Startkarte.',
+    step3Title: 'Schritt 3: Profil erstellen',
+    step3TitleEula: 'Schritt 4: Nutzungsbedingungen',
+    next: 'Weiter',
+    back: 'Zurück',
+    startApp: '🚀 WorldSnap starten',
+    eulaAgree: 'Ich stimme den Nutzungsbedingungen zu',
+    map: 'Karte',
+    ranking: 'Rangliste',
+    profile: 'Profil',
+    addPhoto: 'Hinzufügen',
+    exportMap: 'Speichern',
+    view: 'Ansicht',
+    gourmet: 'Gourmet',
+    rain: 'Regen',
+    myMap: 'Meine Karte',
+    friends: 'Freunde',
+    world: 'Welt',
+    openGoogleMaps: '🧭 Maps öffnen',
+    saveSpot: '❤️ Merken',
+    saved: '❤️ Gespeichert',
+    report: '⚠️ Melden',
+    block: '🚫 Blockieren',
+    delete: '🗑️ Löschen',
+    edit: '✏️ Bearbeiten',
+    visited: 'Besucht',
+    posts: 'Beiträge',
+    friendCode: 'Freundescode',
+    searchPlaceholder: '🔍 Suchen...',
+    settings: '⚙️ Einstellungen',
+    langSetting: '🌐 App-Sprache',
+    baseCountrySetting: '📍 Basissland',
+    blockListTitle: '🚫 Blockierte Benutzer',
+    eulaTitle: '📜 Nutzungsbedingungen',
+    guideTitle: '📖 Anleitung',
+    translate: '🌐 Übersetzen',
+    close: 'Schließen'
+  },
+  pt: {
+    step1Title: 'Passo 1: Selecione seu idioma',
+    step1Desc: 'Escolha seu idioma preferido para o aplicativo.',
+    step2Title: 'Passo 2: Selecione o país base',
+    step2Desc: 'Escolha o país principal para o mapa inicial.',
+    step3Title: 'Passo 3: Criar perfil',
+    step3TitleEula: 'Passo 4: Termos de Serviço',
+    next: 'Avançar',
+    back: 'Voltar',
+    startApp: '🚀 Iniciar WorldSnap',
+    eulaAgree: 'Concordo com os Termos de Serviço',
+    map: 'Mapa',
+    ranking: 'Ranking',
+    profile: 'Perfil',
+    addPhoto: 'Adicionar',
+    exportMap: 'Salvar',
+    view: 'Visual',
+    gourmet: 'Gourmet',
+    rain: 'Chuva',
+    myMap: 'Meu Mapa',
+    friends: 'Amigos',
+    world: 'Mundo',
+    openGoogleMaps: '🧭 Abrir Maps',
+    saveSpot: '❤️ Salvar',
+    saved: '❤️ Salvo',
+    report: '⚠️ Denunciar',
+    block: '🚫 Bloquear',
+    delete: '🗑️ Excluir',
+    edit: '✏️ Editar',
+    visited: 'Visitados',
+    posts: 'Publicações',
+    friendCode: 'Código de amigo',
+    searchPlaceholder: '🔍 Pesquisar...',
+    settings: '⚙️ Configurações',
+    langSetting: '🌐 Idioma do App',
+    baseCountrySetting: '📍 País Base',
+    blockListTitle: '🚫 Usuários Bloqueados',
+    eulaTitle: '📜 Termos de Serviço',
+    guideTitle: '📖 Guia',
+    translate: '🌐 Traduzir',
+    close: 'Fechar'
+  },
+  it: {
+    step1Title: 'Passo 1: Seleziona la lingua',
+    step1Desc: 'Scegli la tua lingua preferita per l\'app.',
+    step2Title: 'Passo 2: Seleziona il paese base',
+    step2Desc: 'Scegli il tuo paese principale per la mappa iniziale.',
+    step3Title: 'Passo 3: Crea profilo',
+    step3TitleEula: 'Passo 4: Termini di servizio',
+    next: 'Avanti',
+    back: 'Indietro',
+    startApp: '🚀 Avvia WorldSnap',
+    eulaAgree: 'Accetto i termini di servizio',
+    map: 'Mappa',
+    ranking: 'Classifica',
+    profile: 'Profilo',
+    addPhoto: 'Aggiungi',
+    exportMap: 'Salva',
+    view: 'Vista',
+    gourmet: 'Gourmet',
+    rain: 'Pioggia',
+    myMap: 'La mia Mappa',
+    friends: 'Amici',
+    world: 'Mondo',
+    openGoogleMaps: '🧭 Apri Maps',
+    saveSpot: '❤️ Salva',
+    saved: '❤️ Salvato',
+    report: '⚠️ Segnala',
+    block: '🚫 Blocca',
+    delete: '🗑️ Elimina',
+    edit: '✏️ Modifica',
+    visited: 'Visitati',
+    posts: 'Post',
+    friendCode: 'Codice amico',
+    searchPlaceholder: '🔍 Cerca...',
+    settings: '⚙️ Impostazioni',
+    langSetting: '🌐 Lingua App',
+    baseCountrySetting: '📍 Paese Base',
+    blockListTitle: '🚫 Utenti bloccati',
+    eulaTitle: '📜 Termini di servizio',
+    guideTitle: '📖 Guida',
+    translate: '🌐 Traduci',
+    close: 'Chiudi'
+  },
+  ru: {
+    step1Title: 'Шаг 1: Выберите язык',
+    step1Desc: 'Выберите предпочитаемый язык для приложения.',
+    step2Title: 'Шаг 2: Выберите базовую страну',
+    step2Desc: 'Выберите основную страну для начальной карты.',
+    step3Title: 'Шаг 3: Создать профиль',
+    step3TitleEula: 'Шаг 4: Условия использования',
+    next: 'Далее',
+    back: 'Назад',
+    startApp: '🚀 Запустить WorldSnap',
+    eulaAgree: 'Я согласен с условиями использования',
+    map: 'Карта',
+    ranking: 'Рейтинг',
+    profile: 'Профиль',
+    addPhoto: 'Добавить',
+    exportMap: 'Сохранить',
+    view: 'Вид',
+    gourmet: 'Гурме',
+    rain: 'Дождь',
+    myMap: 'Моя карта',
+    friends: 'Друзья',
+    world: 'Мир',
+    openGoogleMaps: '🧭 Открыть Карты',
+    saveSpot: '❤️ Сохранить',
+    saved: '❤️ Сохранено',
+    report: '⚠️ Жалоба',
+    block: '🚫 Блок',
+    delete: '🗑️ Удалить',
+    edit: '✏️ Изменить',
+    visited: 'Посещено',
+    posts: 'Посты',
+    friendCode: 'Код друга',
+    searchPlaceholder: '🔍 Поиск...',
+    settings: '⚙️ Настройки',
+    langSetting: '🌐 Язык приложения',
+    baseCountrySetting: '📍 Базовая страна',
+    blockListTitle: '🚫 Заблокированные',
+    eulaTitle: '📜 Условия использования',
+    guideTitle: '📖 Руководство',
+    translate: '🌐 Перевести',
+    close: 'Закрыть'
+  },
+  ar: {
+    step1Title: 'الخطوة 1: اختر لغتك',
+    step1Desc: 'اختر لغتك المفضلة للتطبيق.',
+    step2Title: 'الخطوة 2: اختر الدولة الأساسية',
+    step2Desc: 'اختر دولتك الرئيسية لخريطة البداية.',
+    step3Title: 'الخطوة 3: إنشاء الملف الشخصي',
+    step3TitleEula: 'الخطوة 4: شروط الخدمة',
+    next: 'التالي',
+    back: 'السابق',
+    startApp: '🚀 ابدأ WorldSnap',
+    eulaAgree: 'أوافق على شروط الخدمة',
+    map: 'الخريطة',
+    ranking: 'التصنيف',
+    profile: 'الملف الشخصي',
+    addPhoto: 'إضافة',
+    exportMap: 'حفظ',
+    view: 'منظر',
+    gourmet: 'طعام',
+    rain: 'مطر',
+    myMap: 'خريطتي',
+    friends: 'الأصدقاء',
+    world: 'العالم',
+    openGoogleMaps: '🧭 فتح الخرائط',
+    saveSpot: '❤️ حفظ',
+    saved: '❤️ محفوض',
+    report: '⚠️ إبلاغ',
+    block: '🚫 حظر',
+    delete: '🗑️ حذف',
+    edit: '✏️ تعديل',
+    visited: 'الدول المزورة',
+    posts: 'المنشورات',
+    friendCode: 'كود الصديق',
+    searchPlaceholder: '🔍 بحث...',
+    settings: '⚙️ الإعدادات',
+    langSetting: '🌐 لغة التطبيق',
+    baseCountrySetting: '📍 الدولة الأساسية',
+    blockListTitle: '🚫 المستخدمون المحظورون',
+    eulaTitle: '📜 شروط الخدمة',
+    guideTitle: '📖 الدليل',
+    translate: '🌐 ترجمة',
+    close: 'إغلاق'
+  },
+  hi: {
+    step1Title: 'चरण 1: अपनी भाषा चुनें',
+    step1Desc: 'एप्लिकेशन के लिए अपनी पसंदीदा भाषा चुनें।',
+    step2Title: 'चरण 2: मूल देश चुनें',
+    step2Desc: 'शुरुआती मानचित्र दृश्य के लिए अपना मुख्य देश चुनें।',
+    step3Title: 'चरण 3: प्रोफ़ाइल बनाएं',
+    step3TitleEula: 'चरण 4: सेवा की शर्तें',
+    next: 'अगला',
+    back: 'पीछे',
+    startApp: '🚀 WorldSnap शुरू करें',
+    eulaAgree: 'मैं सेवा की शर्तों से सहमत हूं',
+    map: 'मानचित्र',
+    ranking: 'रैंकिंग',
+    profile: 'प्रोफ़ाइल',
+    addPhoto: 'जोड़ें',
+    exportMap: 'सहेजें',
+    view: 'दृश्य',
+    gourmet: 'स्वादिष्ट',
+    rain: 'बारिश',
+    myMap: 'मेरा मानचित्र',
+    friends: 'मित्र',
+    world: 'दुनिया',
+    openGoogleMaps: '🧭 मैप्स खोलें',
+    saveSpot: '❤️ सहेजें',
+    saved: '❤️ सहेजा गया',
+    report: '⚠️ रिपोर्ट',
+    block: '🚫 ब्लॉक',
+    delete: '🗑️ हटाएं',
+    edit: '✏️ संपादित करें',
+    visited: 'देखे गए',
+    posts: 'पोस्ट',
+    friendCode: 'मित्र कोड',
+    searchPlaceholder: '🔍 खोजें...',
+    settings: '⚙️ सेटिंग्स',
+    langSetting: '🌐 ऐप भाषा',
+    baseCountrySetting: '📍 मूल देश',
+    blockListTitle: '🚫 अवरुद्ध उपयोगकर्ता',
+    eulaTitle: '📜 सेवा की शर्तें',
+    guideTitle: '📖 मार्गदर्शिका',
+    translate: '🌐 अनुवाद करें',
+    close: 'बंद करें'
+  },
+  th: {
+    step1Title: 'Step 1: เลือกภาษา',
+    step1Desc: 'เลือกภาษาที่คุณต้องการสำหรับแอปพลิเคชัน',
+    step2Title: 'Step 2: เลือกประเทศหลัก',
+    step2Desc: 'เลือกประเทศหลักของคุณสำหรับมุมมองแผนที่เริ่มต้น',
+    step3Title: 'Step 3: สร้างโปรไฟล์',
+    step3TitleEula: 'Step 4: ข้อกำหนดการใช้งาน',
+    next: 'ถัดไป',
+    back: 'ย้อนกลับ',
+    startApp: '🚀 เริ่มต้นใช้งาน WorldSnap',
+    eulaAgree: 'ฉันยอมรับข้อกำหนดการใช้งาน',
+    map: 'แผนที่',
+    ranking: 'อันดับ',
+    profile: 'โปรไฟล์',
+    addPhoto: 'เพิ่ม',
+    exportMap: 'บันทึก',
+    view: 'วิว',
+    gourmet: 'ร้านอาหาร',
+    rain: 'ฝน',
+    myMap: 'แผนที่ของฉัน',
+    friends: 'เพื่อน',
+    world: 'ทั่วโลก',
+    openGoogleMaps: '🧭 เปิด Maps',
+    saveSpot: '❤️ บันทึก',
+    saved: '❤️ บันทึกแล้ว',
+    report: '⚠️ รายงาน',
+    block: '🚫 บล็อก',
+    delete: '🗑️ ลบ',
+    edit: '✏️ แก้ไข',
+    visited: 'เยี่ยมชม',
+    posts: 'โพสต์',
+    friendCode: 'โค้ดเพื่อน',
+    searchPlaceholder: '🔍 ค้นหา...',
+    settings: '⚙️ ตั้งค่า',
+    langSetting: '🌐 ภาษาแอป',
+    baseCountrySetting: '📍 ประเทศหลัก',
+    blockListTitle: '🚫 ผู้ใช้ที่ถูกบล็อก',
+    eulaTitle: '📜 ข้อกำหนดการใช้งาน',
+    guideTitle: '📖 คู่มือ',
+    translate: '🌐 แปลภาษา',
+    close: 'ปิด'
+  },
+  vi: {
+    step1Title: 'Bước 1: Chọn ngôn ngữ',
+    step1Desc: 'Chọn ngôn ngữ ưu tiên của bạn cho ứng dụng.',
+    step2Title: 'Bước 2: Chọn quốc gia cơ sở',
+    step2Desc: 'Chọn quốc gia chính cho bản đồ bắt đầu.',
+    step3Title: 'Bước 3: Tạo hồ sơ',
+    step3TitleEula: 'Bước 4: Điều khoản dịch vụ',
+    next: 'Tiếp theo',
+    back: 'Quay lại',
+    startApp: '🚀 Bắt đầu WorldSnap',
+    eulaAgree: 'Tôi đồng ý với các điều khoản dịch vụ',
+    map: 'Bản đồ',
+    ranking: 'Xếp hạng',
+    profile: 'Hồ sơ',
+    addPhoto: 'Thêm',
+    exportMap: 'Lưu',
+    view: 'Cảnh',
+    gourmet: 'Ẩm thực',
+    rain: 'Mưa',
+    myMap: 'Bản đồ của tôi',
+    friends: 'Bạn bè',
+    world: 'Thế giới',
+    openGoogleMaps: '🧭 Mở Maps',
+    saveSpot: '❤️ Lưu',
+    saved: '❤️ Đã lưu',
+    report: '⚠️ Báo cáo',
+    block: '🚫 Chặn',
+    delete: '🗑️ Xóa',
+    edit: '✏️ Sửa',
+    visited: 'Đã ghé thăm',
+    posts: 'Bài viết',
+    friendCode: 'Mã bạn bè',
+    searchPlaceholder: '🔍 Tìm kiếm...',
+    settings: '⚙️ Cài đặt',
+    langSetting: '🌐 Ngôn ngữ ứng dụng',
+    baseCountrySetting: '📍 Quốc gia cơ sở',
+    blockListTitle: '🚫 Người dùng bị chặn',
+    eulaTitle: '📜 Điều khoản dịch vụ',
+    guideTitle: '📖 Hướng dẫn',
+    translate: '🌐 Dịch',
+    close: 'Đóng'
+  },
+  id: {
+    step1Title: 'Langkah 1: Pilih Bahasa Anda',
+    step1Desc: 'Pilih bahasa pilihan Anda untuk aplikasi.',
+    step2Title: 'Langkah 2: Pilih Negara Dasar',
+    step2Desc: 'Pilih negara utama Anda untuk tampilan peta awal.',
+    step3Title: 'Langkah 3: Buat Profil',
+    step3TitleEula: 'Langkah 4: Ketentuan Layanan',
+    next: 'Berikutnya',
+    back: 'Kembali',
+    startApp: '🚀 Mulai WorldSnap',
+    eulaAgree: 'Saya setuju dengan Ketentuan Layanan',
+    map: 'Peta',
+    ranking: 'Peringkat',
+    profile: 'Profil',
+    addPhoto: 'Tambah',
+    exportMap: 'Simpan',
+    view: 'Pemandangan',
+    gourmet: 'Kuliner',
+    rain: 'Hujan',
+    myMap: 'Peta Saya',
+    friends: 'Teman',
+    world: 'Dunia',
+    openGoogleMaps: '🧭 Buka Maps',
+    saveSpot: '❤️ Simpan',
+    saved: '❤️ Disimpan',
+    report: '⚠️ Laporkan',
+    block: '🚫 Blokir',
+    delete: '🗑️ Hapus',
+    edit: '✏️ Edit',
+    visited: 'Dikunjungi',
+    posts: 'Postingan',
+    friendCode: 'Kode Teman',
+    searchPlaceholder: '🔍 Cari...',
+    settings: '⚙️ Pengaturan',
+    langSetting: '🌐 Bahasa Aplikasi',
+    baseCountrySetting: '📍 Negara Dasar',
+    blockListTitle: '🚫 Pengguna Diblokir',
+    eulaTitle: '📜 Ketentuan Layanan',
+    guideTitle: '📖 Panduan',
+    translate: '🌐 Terjemahkan',
+    close: 'Tutup'
   }
 };
 
-// 100カ国・地域完全網羅マスターデータ
+// マップ用 50カ国・地域マスターデータ
 export const COUNTRIES: Record<
   string,
   {
     name: string;
     flag: string;
     region: string;
-    lang: string;
     lat: number;
     lon: number;
     zoom: number;
   }
 > = {
-  // アジア
-  JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lang: 'ja', lat: 36.2048, lon: 138.2529, zoom: 5 },
-  KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lang: 'ko', lat: 35.9078, lon: 127.7669, zoom: 7 },
-  CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lang: 'zh', lat: 35.8617, lon: 104.1954, zoom: 4 },
-  TW: { name: '台湾 (Taiwan)', flag: '🇹🇼', region: '🌏 アジア', lang: 'zh', lat: 23.6978, lon: 120.9605, zoom: 7 },
-  HK: { name: '香港 (Hong Kong)', flag: '🇭🇰', region: '🌏 アジア', lang: 'en', lat: 22.3193, lon: 114.1694, zoom: 11 },
-  MO: { name: 'マカオ (Macau)', flag: '🇲🇴', region: '🌏 アジア', lang: 'en', lat: 22.1987, lon: 113.5439, zoom: 12 },
-  TH: { name: 'タイ (Thailand)', flag: '🇹🇭', region: '🌏 アジア', lang: 'th', lat: 15.8700, lon: 100.9925, zoom: 6 },
-  VN: { name: 'ベトナム (Vietnam)', flag: '🇻🇳', region: '🌏 アジア', lang: 'en', lat: 14.0583, lon: 108.2772, zoom: 6 },
-  SG: { name: 'シンガポール (Singapore)', flag: '🇸🇬', region: '🌏 アジア', lang: 'en', lat: 1.3521, lon: 103.8198, zoom: 11 },
-  MY: { name: 'マレーシア (Malaysia)', flag: '🇲🇾', region: '🌏 アジア', lang: 'en', lat: 4.2105, lon: 101.9758, zoom: 6 },
-  ID: { name: 'インドネシア (Indonesia)', flag: '🇮🇩', region: '🌏 アジア', lang: 'en', lat: -0.7893, lon: 113.9213, zoom: 5 },
-  PH: { name: 'フィリピン (Philippines)', flag: '🇵🇭', region: '🌏 アジア', lang: 'en', lat: 12.8797, lon: 121.7740, zoom: 6 },
-  IN: { name: 'インド (India)', flag: '🇮🇳', region: '🌏 アジア', lang: 'en', lat: 20.5937, lon: 78.9629, zoom: 5 },
-  PK: { name: 'パキスタン (Pakistan)', flag: '🇵🇰', region: '🌏 アジア', lang: 'en', lat: 30.3753, lon: 69.3451, zoom: 5 },
-  BD: { name: 'バングラデシュ (Bangladesh)', flag: '🇧🇩', region: '🌏 アジア', lang: 'en', lat: 23.6850, lon: 90.3563, zoom: 6 },
-  LK: { name: 'スリランカ (Sri Lanka)', flag: '🇱🇰', region: '🌏 アジア', lang: 'en', lat: 7.8731, lon: 80.7718, zoom: 7 },
-  NP: { name: 'ネパール (Nepal)', flag: '🇳🇵', region: '🌏 アジア', lang: 'en', lat: 28.3949, lon: 84.1240, zoom: 6 },
-  MM: { name: 'ミャンマー (Myanmar)', flag: '🇲🇲', region: '🌏 アジア', lang: 'en', lat: 21.9162, lon: 95.9560, zoom: 5 },
-  KH: { name: 'カンボジア (Cambodia)', flag: '🇰🇭', region: '🌏 アジア', lang: 'en', lat: 12.5657, lon: 104.9910, zoom: 7 },
-  LA: { name: 'ラオス (Laos)', flag: '🇱🇦', region: '🌏 アジア', lang: 'en', lat: 19.8563, lon: 102.4955, zoom: 6 },
-  MN: { name: 'モンゴル (Mongolia)', flag: '🇲🇳', region: '🌏 アジア', lang: 'en', lat: 46.8625, lon: 103.8467, zoom: 5 },
-  KZ: { name: 'カザフスタン (Kazakhstan)', flag: '🇰🇿', region: '🌏 アジア', lang: 'en', lat: 48.0196, lon: 66.9237, zoom: 4 },
-  UZ: { name: 'ウズベキスタン (Uzbekistan)', flag: '🇺🇿', region: '🌏 アジア', lang: 'en', lat: 41.3775, lon: 64.5853, zoom: 5 },
-  QA: { name: 'カタール (Qatar)', flag: '🇶🇦', region: '🌏 アジア', lang: 'en', lat: 25.3548, lon: 51.1839, zoom: 8 },
-  SA: { name: 'サウジアラビア (Saudi Arabia)', flag: '🇸🇦', region: '🌏 アジア', lang: 'en', lat: 23.8859, lon: 45.0792, zoom: 5 },
-  IL: { name: 'イスラエル (Israel)', flag: '🇮🇱', region: '🌏 アジア', lang: 'en', lat: 31.0461, lon: 34.8516, zoom: 7 },
-  JO: { name: 'ヨルダン (Jordan)', flag: '🇯🇴', region: '🌏 アジア', lang: 'en', lat: 30.5852, lon: 36.2384, zoom: 7 },
-  LB: { name: 'レバノン (Lebanon)', flag: '🇱🇧', region: '🌏 アジア', lang: 'en', lat: 33.8547, lon: 35.8623, zoom: 8 },
-  MV: { name: 'モルディブ (Maldives)', flag: '🇲🇻', region: '🌏 アジア', lang: 'en', lat: 3.2028, lon: 73.2207, zoom: 7 },
-  AE: { name: 'アラブ首長国連邦 (UAE)', flag: '🇦🇪', region: '🌏 アジア', lang: 'en', lat: 23.4241, lon: 53.8478, zoom: 7 },
-
-  // ヨーロッパ
-  FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lang: 'fr', lat: 46.6034, lon: 1.8883, zoom: 5 },
-  ES: { name: 'スペイン (Spain)', flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lang: 'es', lat: 40.4637, lon: -3.7492, zoom: 6 },
-  IT: { name: 'イタリア (Italy)', flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 41.8719, lon: 12.5674, zoom: 6 },
-  GB: { name: 'イギリス (UK)', flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 55.3781, lon: -3.4360, zoom: 5 },
-  DE: { name: 'ドイツ (Germany)', flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 51.1657, lon: 10.4515, zoom: 5 },
-  CH: { name: 'スイス (Switzerland)', flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 46.8182, lon: 8.2275, zoom: 8 },
-  AT: { name: 'オーストリア (Austria)', flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 47.5162, lon: 14.5501, zoom: 7 },
-  GR: { name: 'ギリシャ (Greece)', flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 39.0742, lon: 21.8243, zoom: 7 },
-  PT: { name: 'ポルトガル (Portugal)', flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 39.3999, lon: -8.2245, zoom: 7 },
-  NL: { name: 'オランダ (Netherlands)', flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 52.1326, lon: 5.2913, zoom: 8 },
-  SE: { name: 'スウェーデン (Sweden)', flag: '🇸🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 60.1282, lon: 18.6435, zoom: 5 },
-  NO: { name: 'ノルウェー (Norway)', flag: '🇳🇴', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 60.4720, lon: 8.4689, zoom: 5 },
+  CH: { name: 'スイス (Switzerland)', flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
+  JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
+  KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
+  AU: { name: 'オーストラリア (Australia)', flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
+  DE: { name: 'ドイツ (Germany)', flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
+  US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米・中南米', lat: 37.0902, lon: -95.7129, zoom: 4 },
+  FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
+  TH: { name: 'タイ (Thailand)', flag: '🇹🇭', region: '🌏 アジア', lat: 15.8700, lon: 100.9925, zoom: 6 },
+  IT: { name: 'イタリア (Italy)', flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
+  GB: { name: 'イギリス (UK)', flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
+  ES: { name: 'スペイン (Spain)', flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
+  NZ: { name: 'ニュージーランド (New Zealand)', flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
+  AT: { name: 'オーストリア (Austria)', flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
+  SG: { name: 'シンガポール (Singapore)', flag: '🇸🇬', region: '🌏 アジア', lat: 1.3521, lon: 103.8198, zoom: 11 },
+  CA: { name: 'カナダ (Canada)', flag: '🇨🇦', region: '🗽 北米・中南米', lat: 56.1304, lon: -106.3468, zoom: 3 },
+  AE: { name: 'アラブ首長国連邦 (UAE)', flag: '🇦🇪', region: '🌏 アジア', lat: 23.4241, lon: 53.8478, zoom: 7 },
+  MV: { name: 'モルディブ (Maldives)', flag: '🇲🇻', region: '🌏 アジア', lat: 3.2028, lon: 73.2207, zoom: 7 },
+  TW: { name: '台湾 (Taiwan)', flag: '🇹🇼', region: '🌏 アジア', lat: 23.6978, lon: 120.9605, zoom: 7 },
+  VN: { name: 'ベトナム (Vietnam)', flag: '🇻🇳', region: '🌏 アジア', lat: 14.0583, lon: 108.2772, zoom: 6 },
+  MY: { name: 'マレーシア (Malaysia)', flag: '🇲🇾', region: '🌏 アジア', lat: 4.2105, lon: 101.9758, zoom: 6 },
+  ID: { name: 'インドネシア (Indonesia)', flag: '🇮🇩', region: '🌏 アジア', lat: -0.7893, lon: 113.9213, zoom: 5 },
+  PH: { name: 'フィリピン (Philippines)', flag: '🇵🇭', region: '🌏 アジア', lat: 12.8797, lon: 121.7740, zoom: 6 },
+  IN: { name: 'インド (India)', flag: '🇮🇳', region: '🌏 アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
+  TR: { name: 'トルコ (Turkey)', flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
+  PT: { name: 'ポルトガル (Portugal)', flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
+  NL: { name: 'オランダ (Netherlands)', flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
+  SE: { name: 'スウェーデン (Sweden)', flag: '🇸🇪', region: '🇪🇺 ヨーロッパ', lat: 60.1282, lon: 18.6435, zoom: 5 },
+  NO: { name: 'ノルウェー (Norway)', flag: '🇳🇴', region: '🇪🇺 ヨーロッパ', lat: 60.4720, lon: 8.4689, zoom: 5 },
   DK: { name: 'デンマーク (Denmark)', flag: '🇩🇰', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 56.2639, lon: 9.5018, zoom: 7 },
-  FI: { name: 'フィンランド (Finland)', flag: '🇫🇮', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 61.9241, lon: 25.7482, zoom: 5 },
-  TR: { name: 'トルコ (Turkey)', flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 38.9637, lon: 35.2433, zoom: 6 },
-  PL: { name: 'ポーランド (Poland)', flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 51.9194, lon: 19.1451, zoom: 6 },
-  CZ: { name: 'チェコ (Czech Republic)', flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 49.8175, lon: 15.4730, zoom: 7 },
-  HU: { name: 'ハンガリー (Hungary)', flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 47.1625, lon: 19.5033, zoom: 7 },
-  RO: { name: 'ルーマニア (Romania)', flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 45.9432, lon: 24.9668, zoom: 6 },
-  BE: { name: 'ベルギー (Belgium)', flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 50.5039, lon: 4.4699, zoom: 8 },
-  IE: { name: 'アイルランド (Ireland)', flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 53.1424, lon: -7.6921, zoom: 7 },
-  IS: { name: 'アイスランド (Iceland)', flag: '🇮🇸', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 64.9631, lon: -19.0208, zoom: 6 },
-  HR: { name: 'クロアチア (Croatia)', flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 45.1, lon: 15.2, zoom: 7 },
-  UA: { name: 'ウクライナ (Ukraine)', flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 48.3794, lon: 31.1656, zoom: 6 },
-  EE: { name: 'エストニア (Estonia)', flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 58.5953, lon: 25.0136, zoom: 7 },
-  LV: { name: 'ラトビア (Latvia)', flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 56.8796, lon: 24.6032, zoom: 7 },
-  LT: { name: 'リトアニア (Lithuania)', flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 55.1694, lon: 23.8813, zoom: 7 },
-  SK: { name: 'スロバキア (Slovakia)', flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { name: 'スロベニア (Slovenia)', flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 46.1512, lon: 14.9955, zoom: 8 },
-  BG: { name: 'ブルガリア (Bulgaria)', flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 42.7339, lon: 25.4858, zoom: 7 },
-  RS: { name: 'セルビア (Serbia)', flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 44.0165, lon: 21.0059, zoom: 7 },
-  AL: { name: 'アルバニア (Albania)', flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 41.1533, lon: 20.1683, zoom: 8 },
-  BA: { name: 'ボスニア・ヘルツェゴビナ (Bosnia)', flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 43.9159, lon: 17.6791, zoom: 8 },
-  ME: { name: 'モンテネグロ (Montenegro)', flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 42.7087, lon: 19.3744, zoom: 9 },
-  MK: { name: '北マケドニア (North Macedonia)', flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 41.6086, lon: 21.7453, zoom: 8 },
-  CY: { name: 'キプロス (Cyprus)', flag: '🇨🇾', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 35.1264, lon: 33.4299, zoom: 8 },
-  MT: { name: 'マルタ (Malta)', flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 35.9375, lon: 14.3754, zoom: 11 },
-  LU: { name: 'ルクセンブルク (Luxembourg)', flag: '🇱🇺', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 49.8153, lon: 6.1296, zoom: 10 },
-  MC: { name: 'モナコ (Monaco)', flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 43.7384, lon: 7.4246, zoom: 14 },
-  LI: { name: 'リヒテンシュタイン (Liechtenstein)', flag: '🇱🇮', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 47.166, lon: 9.555, zoom: 11 },
-
-  // 北米・中南米
-  US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米・中南米', lang: 'en', lat: 37.0902, lon: -95.7129, zoom: 4 },
-  CA: { name: 'カナダ (Canada)', flag: '🇨🇦', region: '🗽 北米・中南米', lang: 'en', lat: 56.1304, lon: -106.3468, zoom: 3 },
-  MX: { name: 'メキシコ (Mexico)', flag: '🇲🇽', region: '🗽 北米・中南米', lang: 'es', lat: 23.6345, lon: 102.5528, zoom: 5 },
-  BR: { name: 'ブラジル (Brazil)', flag: '🇧🇷', region: '🗽 北米・中南米', lang: 'en', lat: -14.2350, lon: -51.9253, zoom: 4 },
-  AR: { name: 'アルゼンチン (Argentina)', flag: '🇦🇷', region: '🗽 北米・中南米', lang: 'es', lat: -38.4161, lon: -63.6167, zoom: 4 },
-  PE: { name: 'ペルー (Peru)', flag: '🇵🇪', region: '🗽 北米・中南米', lang: 'es', lat: -9.1900, lon: -75.0152, zoom: 5 },
-  CL: { name: 'チリ (Chile)', flag: '🇨🇱', region: '🗽 北米・中南米', lang: 'es', lat: -35.6751, lon: -71.5430, zoom: 4 },
-  CO: { name: 'コロンビア (Colombia)', flag: '🇨🇴', region: '🗽 北米・中南米', lang: 'es', lat: 4.5709, lon: -74.2973, zoom: 5 },
-  CU: { name: 'キューバ (Cuba)', flag: '🇨🇺', region: '🗽 北米・中南米', lang: 'es', lat: 21.5218, lon: -77.7812, zoom: 7 },
-  JM: { name: 'ジャマイカ (Jamaica)', flag: '🇯🇲', region: '🗽 北米・中南米', lang: 'en', lat: 18.1096, lon: -77.2975, zoom: 9 },
-  CR: { name: 'コスタリカ (Costa Rica)', flag: '🇨🇷', region: '🗽 北米・中南米', lang: 'es', lat: 9.7489, lon: -83.7534, zoom: 8 },
-  PA: { name: 'パナマ (Panama)', flag: '🇵🇦', region: '🗽 北米・中南米', lang: 'es', lat: 8.5380, lon: -80.7821, zoom: 8 },
-  DO: { name: 'ドミニカ共和国 (Dominican Republic)', flag: '🇩🇴', region: '🗽 北米・中南米', lang: 'es', lat: 18.7357, lon: -70.1627, zoom: 8 },
-  GT: { name: 'グアテマラ (Guatemala)', flag: '🇬🇹', region: '🗽 北米・中南米', lang: 'es', lat: 15.7835, lon: -90.2308, zoom: 8 },
-  UY: { name: 'ウルグアイ (Uruguay)', flag: '🇺🇾', region: '🗽 北米・中南米', lang: 'es', lat: -32.5228, lon: -55.7658, zoom: 7 },
-
-  // オセアニア
-  AU: { name: 'オーストラリア (Australia)', flag: '🇦🇺', region: '🦘 オセアニア', lang: 'en', lat: -25.2744, lon: 133.7751, zoom: 4 },
-  NZ: { name: 'ニュージーランド (New Zealand)', flag: '🇳🇿', region: '🦘 オセアニア', lang: 'en', lat: -40.9006, lon: 174.8860, zoom: 5 },
-  FJ: { name: 'フィジー (Fiji)', flag: '🇫🇯', region: '🦘 オセアニア', lang: 'en', lat: -17.7134, lon: 178.0650, zoom: 8 },
-  PG: { name: 'パプアニューギニア (Papua New Guinea)', flag: '🇵🇬', region: '🦘 オセアニア', lang: 'en', lat: -6.3149, lon: 143.9555, zoom: 6 },
-  VU: { name: 'バヌアツ (Vanuatu)', flag: '🇻🇺', region: '🦘 オセアニア', lang: 'en', lat: -15.3767, lon: 166.9592, zoom: 7 },
-  WS: { name: 'サモア (Samoa)', flag: '🇼🇸', region: '🦘 オセアニア', lang: 'en', lat: -13.7590, lon: -172.1046, zoom: 9 },
-  TO: { name: 'トンガ (Tonga)', flag: '🇹🇴', region: '🦘 オセアニア', lang: 'en', lat: -21.1789, lon: -175.1982, zoom: 9 },
-
-  // アフリカ
-  EG: { name: 'エジプト (Egypt)', flag: '🇪🇬', region: '🦁 アフリカ', lang: 'en', lat: 26.8206, lon: 30.8025, zoom: 6 },
-  ZA: { name: '南アフリカ (South Africa)', flag: '🇿🇦', region: '🦁 アフリカ', lang: 'en', lat: -30.5595, lon: 22.9375, zoom: 5 },
-  MA: { name: 'モロッコ (Morocco)', flag: '🇲🇦', region: '🦁 アフリカ', lang: 'fr', lat: 31.7917, lon: -7.0926, zoom: 6 },
-  KE: { name: 'ケニア (Kenya)', flag: '🇰🇪', region: '🦁 アフリカ', lang: 'en', lat: -0.0236, lon: 37.9062, zoom: 6 },
-  TZ: { name: 'タンザニア (Tanzania)', flag: '🇹🇿', region: '🦁 アフリカ', lang: 'en', lat: -6.3690, lon: 34.8888, zoom: 6 },
-  NG: { name: 'ナイジェリア (Nigeria)', flag: '🇳🇬', region: '🦁 アフリカ', lang: 'en', lat: 9.0820, lon: 8.6753, zoom: 6 },
-  GH: { name: 'ガーナ (Ghana)', flag: '🇬🇭', region: '🦁 アフリカ', lang: 'en', lat: 7.9465, lon: -1.0232, zoom: 7 },
-  ET: { name: 'エチオピア (Ethiopia)', flag: '🇪🇹', region: '🦁 アフリカ', lang: 'en', lat: 9.1450, lon: 40.4897, zoom: 6 },
-  SN: { name: 'セネガル (Senegal)', flag: '🇸🇳', region: '🦁 アフリカ', lang: 'fr', lat: 14.4974, lon: -14.4524, zoom: 7 },
-  MG: { name: 'マダガスカル (Madagascar)', flag: '🇲🇬', region: '🦁 アフリカ', lang: 'fr', lat: -18.7669, lon: 46.8691, zoom: 6 }
+  BR: { name: 'ブラジル (Brazil)', flag: '🇧🇷', region: '🗽 北米・中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
+  MX: { name: 'メキシコ (Mexico)', flag: '🇲🇽', region: '🗽 北米・中南米', lat: 23.6345, lon: 102.5528, zoom: 5 },
+  AR: { name: 'アルゼンチン (Argentina)', flag: '🇦🇷', region: '🗽 北米・中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
+  PE: { name: 'ペルー (Peru)', flag: '🇵🇪', region: '🗽 北米・中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
+  EG: { name: 'エジプト (Egypt)', flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
+  ZA: { name: '南アフリカ (South Africa)', flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
+  MA: { name: 'モロッコ (Morocco)', flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
+  IS: { name: 'アイスランド (Iceland)', flag: '🇮🇸', region: '🇪🇺 ヨーロッパ', lat: 64.9631, lon: -19.0208, zoom: 6 },
+  FI: { name: 'フィンランド (Finland)', flag: '🇫🇮', region: '🇪🇺 ヨーロッパ', lat: 61.9241, lon: 25.7482, zoom: 5 },
+  IE: { name: 'アイルランド (Ireland)', flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
+  CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
+  HK: { name: '香港 (Hong Kong)', flag: '🇭🇰', region: '🌏 アジア', lat: 22.3193, lon: 114.1694, zoom: 11 },
+  MO: { name: 'マカオ (Macau)', flag: '🇲🇴', region: '🌏 アジア', lat: 22.1987, lon: 113.5439, zoom: 12 },
+  PK: { name: 'パキスタン (Pakistan)', flag: '🇵🇰', region: '🌏 アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
+  BD: { name: 'バングラデシュ (Bangladesh)', flag: '🇧🇩', region: '🌏 アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
+  LK: { name: 'スリランカ (Sri Lanka)', flag: '🇱🇰', region: '🌏 アジア', lat: 7.8731, lon: 80.7718, zoom: 7 },
+  NP: { name: 'ネパール (Nepal)', flag: '🇳🇵', region: '🌏 アジア', lat: 28.3949, lon: 84.1240, zoom: 6 },
+  MM: { name: 'ミャンマー (Myanmar)', flag: '🇲🇲', region: '🌏 アジア', lat: 21.9162, lon: 95.9560, zoom: 5 },
+  KH: { name: 'カンボジア (Cambodia)', flag: '🇰🇭', region: '🌏 アジア', lat: 12.5657, lon: 104.9910, zoom: 7 },
+  LA: { name: 'ラオス (Laos)', flag: '🇱🇦', region: '🌏 アジア', lat: 19.8563, lon: 102.4955, zoom: 6 },
+  SA: { name: 'サウジアラビア (Saudi Arabia)', flag: '🇸🇦', region: '🌏 アジア', lat: 23.8859, lon: 45.0792, zoom: 5 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -620,7 +868,7 @@ const GUIDE_FULL_TEXT = `【WorldSnap の使い方ガイド】
 1. マップ機能：世界中の主要スポットを閲覧できます。ダブルタップでズームイン。
 2. 写真・投稿：下部の「📷＋ 写真 / 動画を追加」から、アルバムの写真（EXIF位置情報付き）を簡単にマップに共有できます。
 3. 足跡マップ：マイページの「足跡マップ」で訪問国をタップすると、周辺エリアがオレンジ色にハイライトされます。
-4. 自動翻訳：投稿詳細にある翻訳ボタンを押すと、ご自身の選択した国籍の言語に一瞬で翻訳されます。`;
+4. 自動翻訳：投稿詳細にある翻訳ボタンを押すと、ご自身の選択した言語に一瞬で翻訳されます。`;
 
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
@@ -989,7 +1237,7 @@ export default function WorldSnapApp() {
   const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
   const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3 | 4>(1);
 
-  const [userNationality, setUserNationality] = useState<string>('JP');
+  const [userLangCode, setUserLangCode] = useState<string>('ja');
   const [userCountry, setUserCountry] = useState<string>('JP');
 
   const [userName, setUserName] = useState<string>('namesnap');
@@ -1012,8 +1260,7 @@ export default function WorldSnapApp() {
   const [isAdVisible, setIsAdVisible] = useState<boolean>(true);
 
   const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
-  const currentLangCode = COUNTRIES[userNationality]?.lang || 'ja';
-  const t = DICTIONaries[currentLangCode] || DICTIONaries.ja;
+  const t = DICTIONaries[userLangCode] || DICTIONaries.ja;
 
   const [currentMapCenter, setCurrentMapCenter] = useState<[number, number]>([currentConfig.lat, currentConfig.lon]);
   const [currentMapZoom, setCurrentMapZoom] = useState<number>(currentConfig.zoom);
@@ -1089,7 +1336,7 @@ export default function WorldSnapApp() {
   };
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem('ws_onboarded_v3');
+    const hasCompleted = localStorage.getItem('ws_onboarded_v4');
     if (hasCompleted) {
       setIsOnboarding(false);
     }
@@ -1295,7 +1542,7 @@ export default function WorldSnapApp() {
   };
 
   const handleCompleteOnboarding = () => {
-    localStorage.setItem('ws_onboarded_v3', 'true');
+    localStorage.setItem('ws_onboarded_v4', 'true');
     setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
@@ -1332,22 +1579,25 @@ export default function WorldSnapApp() {
       return;
     }
 
-    const targetLang = COUNTRIES[userNationality]?.lang || 'en';
     let translated = originalText;
-    if (targetLang === 'en') {
+    if (userLangCode === 'en') {
       translated = `[Translated to English]: ${originalText}`;
-    } else if (targetLang === 'ko') {
+    } else if (userLangCode === 'ko') {
       translated = `[Translated to Korean]: ${originalText}`;
-    } else if (targetLang === 'zh') {
+    } else if (userLangCode === 'zh') {
       translated = `[Translated to Chinese]: ${originalText}`;
-    } else if (targetLang === 'th') {
+    } else if (userLangCode === 'es') {
+      translated = `[Translated to Spanish]: ${originalText}`;
+    } else if (userLangCode === 'fr') {
+      translated = `[Translated to French]: ${originalText}`;
+    } else if (userLangCode === 'th') {
       translated = `[Translated to Thai]: ${originalText}`;
     } else {
       translated = `[Translated]: ${originalText}`;
     }
 
     setTranslatedDescriptions(prev => ({ ...prev, [spotId]: translated }));
-    showToast(`🌐 ${targetLang.toUpperCase()} に翻訳しました！`);
+    showToast(`🌐 (${userLangCode.toUpperCase()}) に翻訳しました！`);
   };
 
   const handleAddComment = (spotId: string) => {
@@ -1914,7 +2164,7 @@ export default function WorldSnapApp() {
       <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
       <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-      {/* 初回オンボーディング */}
+      {/* 初回オンボーディング（言語選択ベース） */}
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -1929,28 +2179,29 @@ export default function WorldSnapApp() {
               <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 4 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
             </div>
 
+            {/* Step 1: 言語選択 */}
             {onboardingStep === 1 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step1Title}</h3>
                 <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t.step1Desc}</p>
                 <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
-                  {Object.entries(COUNTRIES).map(([code, c]) => (
+                  {Object.entries(LANGUAGES).map(([code, lang]) => (
                     <div
                       key={code}
-                      onClick={() => setUserNationality(code)}
+                      onClick={() => setUserLangCode(code)}
                       style={{
                         padding: '10px 14px',
                         borderRadius: '10px',
-                        border: `2px solid ${userNationality === code ? '#0284c7' : '#e2e8f0'}`,
-                        background: userNationality === code ? '#f0f9ff' : '#ffffff',
+                        border: `2px solid ${userLangCode === code ? '#0284c7' : '#e2e8f0'}`,
+                        background: userLangCode === code ? '#f0f9ff' : '#ffffff',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         cursor: 'pointer',
                       }}
                     >
-                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.name} <span style={{ fontSize: '10px', color: '#94a3b8' }}>({c.region})</span></span>
-                      {userNationality === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
+                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{lang.flag} {lang.nativeName} ({lang.name})</span>
+                      {userLangCode === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
                     </div>
                   ))}
                 </div>
@@ -1960,6 +2211,7 @@ export default function WorldSnapApp() {
               </div>
             )}
 
+            {/* Step 2: ベースの国選択 */}
             {onboardingStep === 2 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step2Title}</h3>
@@ -1996,6 +2248,7 @@ export default function WorldSnapApp() {
               </div>
             )}
 
+            {/* Step 3: プロフィール */}
             {onboardingStep === 3 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t.step3Title}</h3>
@@ -2042,6 +2295,7 @@ export default function WorldSnapApp() {
               </div>
             )}
 
+            {/* Step 4: 利用規約 */}
             {onboardingStep === 4 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step3TitleEula}</h3>
@@ -2225,7 +2479,7 @@ export default function WorldSnapApp() {
               targetCenter={targetCenter}
               targetZoom={targetZoom}
               theme={mapTheme}
-              userLang={currentLangCode}
+              userLang={userLangCode}
               footprintCountry={activeFootprintCountry}
               onMoveEnd={handleMapMoveEnd}
               onSelectSpot={handleOpenSpot}
@@ -2488,7 +2742,7 @@ export default function WorldSnapApp() {
         </div>
       </div>
 
-      {/* ── 設定メニューモーダル（利用規約・ブロックリスト・使い方ガイド等を復旧） ── */}
+      {/* ── 設定メニューモーダル ── */}
       {isSettingsOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
@@ -2498,15 +2752,15 @@ export default function WorldSnapApp() {
             </div>
 
             <div style={{ marginBottom: '14px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t.nationalitySetting}</label>
+              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t.langSetting}</label>
               <select
-                value={userNationality}
-                onChange={(e) => setUserNationality(e.target.value)}
+                value={userLangCode}
+                onChange={(e) => setUserLangCode(e.target.value)}
                 style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold' }}
               >
-                {Object.entries(COUNTRIES).map(([code, c]) => (
+                {Object.entries(LANGUAGES).map(([code, lang]) => (
                   <option key={code} value={code}>
-                    {c.flag} {c.name} ({c.lang.toUpperCase()})
+                    {lang.flag} {lang.nativeName} ({lang.name})
                   </option>
                 ))}
               </select>
@@ -2534,7 +2788,6 @@ export default function WorldSnapApp() {
               </select>
             </div>
 
-            {/* 各種復旧ボタン群 */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
               <button
                 onClick={() => setIsGuideModalOpen(true)}
@@ -2631,7 +2884,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── 詳細モーダル (翻訳機能付き) ── */}
+      {/* ── 詳細モーダル ── */}
       {selectedSpot && (
         <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
           <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
@@ -2686,7 +2939,7 @@ export default function WorldSnapApp() {
         </div>
       )}
 
-      {/* ── 写真・動画追加時の投稿作成モーダル ── */}
+      {/* ── 投稿作成モーダル ── */}
       {pendingUploads.length > 0 && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
@@ -2746,7 +2999,6 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
             />
 
-            {/* 住所検索 ＆ サジェストリスト */}
             <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
               <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
                 📍 撮影場所を検索して選択してください（必須）
