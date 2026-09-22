@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & グローバル言語 / 50カ国マップデータ
+// 1. 型定義 & 言語・マップマスターデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -98,7 +98,52 @@ export interface PlaceSuggestion {
   lon: string;
 }
 
-// 世界中の主要15言語のマスター定義
+const NG_PATTERNS = [
+  '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
+  'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
+  'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'きもちわるい', 'ブサイク', 'うざい',
+  'レイプ', 'れいぷ', '強姦', '売春', 'ばいしゅん', '買春', '援交', 'パパ活', '児童ポルノ',
+  'ドラッグ', 'どらっぐ', '覚醒剤', '大麻', 'たいま', 'コカイン', 'ヘロイン', '違法薬物',
+  '暴力', '暴行', '殴る', '蹴る', 'いじめ', 'いじめる', '自殺', 'じさつ', '死にたい',
+  'ホモ', 'ほも', 'オカマ', 'おかま', '差別', 'さべつ', '中国人差別', '韓国人差別', '外国人差別',
+  'セックス', 'せっくす', 'エロ', 'えろ', 'ちんこ', 'まんこ', 'おっぱい', 'オナニー', 'おなにー',
+  'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy', 'whore', 'slut',
+  'nigger', 'faggot', 'retard', 'suicide', 'kill', 'rape', 'cocaine', 'heroin', 'nazi', 'hitler',
+  '去死', '混蛋', '白痴', '傻逼', '贱人', '垃圾', '强奸', '卖淫', '吸毒', '自杀', '支那', '翻墙',
+  '죽어', '꺼져', '바보', '쓰레기', '병신', '개새끼', '창녀', '강간', '자살', '마약',
+  'merde', 'connard', 'salope', 'pute', 'enculé', 'suicide', 'viole', 'drogue',
+  'puta', 'mierda', 'cabrón', 'estúpido', 'idiota', 'suicidio', 'violación', 'droga',
+  'scheiße', 'arschloch', 'hure', 'schlampe', 'selbstmord', 'vergewaltigung', 'droge'
+];
+
+function checkInappropriateContent(text: string): { isViolating: boolean; matchedWord: string } {
+  if (!text) return { isViolating: false, matchedWord: '' };
+  const lower = text.toLowerCase().replace(/[\s\-_]/g, '');
+  for (const word of NG_PATTERNS) {
+    if (lower.includes(word.toLowerCase())) {
+      return { isViolating: true, matchedWord: word };
+    }
+  }
+  return { isViolating: false, matchedWord: '' };
+}
+
+function getUserTitle(count: number) {
+  if (count >= 100) return { title: '👑 百景の覇者', color: '#eab308' };
+  if (count >= 90) return { title: '🏆 九十景の巨匠', color: '#f97316' };
+  if (count >= 80) return { title: '🌟 八十景の探求者', color: '#f59e0b' };
+  if (count >= 70) return { title: '⭐ 七十景の旅人', color: '#f43f5e' };
+  if (count >= 60) return { title: '💎 六十景の語り部', color: '#06b6d4' };
+  if (count >= 50) return { title: '🏔️ 五十景の開拓者', color: '#8b5cf6' };
+  if (count >= 40) return { title: '🧭 四十景のナビゲーター', color: '#6366f1' };
+  if (count >= 30) return { title: '✈️ 三十景のボイジャー', color: '#3b82f6' };
+  if (count >= 20) return { title: '🗺️ 二十景のエキスパート', color: '#0284c7' };
+  if (count >= 10) return { title: '🎒 十景のトラベラー', color: '#38bdf8' };
+  if (count >= 5) return { title: '📷 五景のハンター', color: '#0ea5e9' };
+  if (count >= 1) return { title: '🌱 見習い探検家', color: '#22c55e' };
+  return { title: '🐣 旅のビギナー', color: '#94a3b8' };
+}
+
+// 世界主要15言語の定義
 export const LANGUAGES: Record<string, { name: string; nativeName: string; flag: string }> = {
   en: { name: 'English', nativeName: 'English', flag: '🇬🇧' },
   ja: { name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
@@ -430,7 +475,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     addPhoto: 'Adicionar',
     exportMap: 'Salvar',
     view: 'Visual',
-    gourmet: 'Gourmet',
+    gourmet: 'Kuliner',
     rain: 'Chuva',
     myMap: 'Meu Mapa',
     friends: 'Amigos',
@@ -623,48 +668,6 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     translate: '🌐 अनुवाद करें',
     close: 'बंद करें'
   },
-  th: {
-    step1Title: 'Step 1: เลือกภาษา',
-    step1Desc: 'เลือกภาษาที่คุณต้องการสำหรับแอปพลิเคชัน',
-    step2Title: 'Step 2: เลือกประเทศหลัก',
-    step2Desc: 'เลือกประเทศหลักของคุณสำหรับมุมมองแผนที่เริ่มต้น',
-    step3Title: 'Step 3: สร้างโปรไฟล์',
-    step3TitleEula: 'Step 4: ข้อกำหนดการใช้งาน',
-    next: 'ถัดไป',
-    back: 'ย้อนกลับ',
-    startApp: '🚀 เริ่มต้นใช้งาน WorldSnap',
-    eulaAgree: 'ฉันยอมรับข้อกำหนดการใช้งาน',
-    map: 'แผนที่',
-    ranking: 'อันดับ',
-    profile: 'โปรไฟล์',
-    addPhoto: 'เพิ่ม',
-    exportMap: 'บันทึก',
-    view: 'วิว',
-    gourmet: 'ร้านอาหาร',
-    rain: 'ฝน',
-    myMap: 'แผนที่ของฉัน',
-    friends: 'เพื่อน',
-    world: 'ทั่วโลก',
-    openGoogleMaps: '🧭 เปิด Maps',
-    saveSpot: '❤️ บันทึก',
-    saved: '❤️ บันทึกแล้ว',
-    report: '⚠️ รายงาน',
-    block: '🚫 บล็อก',
-    delete: '🗑️ ลบ',
-    edit: '✏️ แก้ไข',
-    visited: 'เยี่ยมชม',
-    posts: 'โพสต์',
-    friendCode: 'โค้ดเพื่อน',
-    searchPlaceholder: '🔍 ค้นหา...',
-    settings: '⚙️ ตั้งค่า',
-    langSetting: '🌐 ภาษาแอป',
-    baseCountrySetting: '📍 ประเทศหลัก',
-    blockListTitle: '🚫 ผู้ใช้ที่ถูกบล็อก',
-    eulaTitle: '📜 ข้อกำหนดการใช้งาน',
-    guideTitle: '📖 คู่มือ',
-    translate: '🌐 แปลภาษา',
-    close: 'ปิด'
-  },
   vi: {
     step1Title: 'Bước 1: Chọn ngôn ngữ',
     step1Desc: 'Chọn ngôn ngữ ưu tiên của bạn cho ứng dụng.',
@@ -751,7 +754,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
   }
 };
 
-// マップ用 50カ国・地域マスターデータ
+// 50カ国・地域マスターデータ
 export const COUNTRIES: Record<
   string,
   {
@@ -791,7 +794,7 @@ export const COUNTRIES: Record<
   NL: { name: 'オランダ (Netherlands)', flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
   SE: { name: 'スウェーデン (Sweden)', flag: '🇸🇪', region: '🇪🇺 ヨーロッパ', lat: 60.1282, lon: 18.6435, zoom: 5 },
   NO: { name: 'ノルウェー (Norway)', flag: '🇳🇴', region: '🇪🇺 ヨーロッパ', lat: 60.4720, lon: 8.4689, zoom: 5 },
-  DK: { name: 'デンマーク (Denmark)', flag: '🇩🇰', region: '🇪🇺 ヨーロッパ', lang: 'en', lat: 56.2639, lon: 9.5018, zoom: 7 },
+  DK: { name: 'デンマーク (Denmark)', flag: '🇩🇰', region: '🇪🇺 ヨーロッパ', lat: 56.2639, lon: 9.5018, zoom: 7 },
   BR: { name: 'ブラジル (Brazil)', flag: '🇧🇷', region: '🗽 北米・中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
   MX: { name: 'メキシコ (Mexico)', flag: '🇲🇽', region: '🗽 北米・中南米', lat: 23.6345, lon: 102.5528, zoom: 5 },
   AR: { name: 'アルゼンチン (Argentina)', flag: '🇦🇷', region: '🗽 北米・中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
@@ -1308,7 +1311,7 @@ export default function WorldSnapApp() {
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // 設定メニューおよび各種モーダル管理用ステート
+  // 設定・モーダル関連ステート
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
   const [isEulaModalOpen, setIsEulaModalOpen] = useState<boolean>(false);
@@ -1579,23 +1582,7 @@ export default function WorldSnapApp() {
       return;
     }
 
-    let translated = originalText;
-    if (userLangCode === 'en') {
-      translated = `[Translated to English]: ${originalText}`;
-    } else if (userLangCode === 'ko') {
-      translated = `[Translated to Korean]: ${originalText}`;
-    } else if (userLangCode === 'zh') {
-      translated = `[Translated to Chinese]: ${originalText}`;
-    } else if (userLangCode === 'es') {
-      translated = `[Translated to Spanish]: ${originalText}`;
-    } else if (userLangCode === 'fr') {
-      translated = `[Translated to French]: ${originalText}`;
-    } else if (userLangCode === 'th') {
-      translated = `[Translated to Thai]: ${originalText}`;
-    } else {
-      translated = `[Translated]: ${originalText}`;
-    }
-
+    let translated = `[Translated to ${userLangCode.toUpperCase()}]: ${originalText}`;
     setTranslatedDescriptions(prev => ({ ...prev, [spotId]: translated }));
     showToast(`🌐 (${userLangCode.toUpperCase()}) に翻訳しました！`);
   };
@@ -2179,7 +2166,6 @@ export default function WorldSnapApp() {
               <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 4 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
             </div>
 
-            {/* Step 1: 言語選択 */}
             {onboardingStep === 1 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step1Title}</h3>
@@ -2211,7 +2197,6 @@ export default function WorldSnapApp() {
               </div>
             )}
 
-            {/* Step 2: ベースの国選択 */}
             {onboardingStep === 2 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step2Title}</h3>
@@ -2248,7 +2233,6 @@ export default function WorldSnapApp() {
               </div>
             )}
 
-            {/* Step 3: プロフィール */}
             {onboardingStep === 3 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t.step3Title}</h3>
@@ -2295,7 +2279,6 @@ export default function WorldSnapApp() {
               </div>
             )}
 
-            {/* Step 4: 利用規約 */}
             {onboardingStep === 4 && (
               <div style={{ textAlign: 'left' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step3TitleEula}</h3>
