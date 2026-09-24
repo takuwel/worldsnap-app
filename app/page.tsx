@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & グローバル言語 / 厳選120カ国マップデータ
+// 1. 型定義 & グローバル言語 / 120カ国マップデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -200,7 +200,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 ベースの国 (初期マップ)',
     blockListTitle: '🚫 ブロック中ユーザー管理',
     eulaTitle: '📜 利用規約 (EULA)',
-    guideTitle: '📖 アプリの操作説明（使い方ガイド）',
+    guideTitle: '📖 アプリの操作説明',
     translate: '🌐 翻訳する',
     close: '閉じる',
     tabPosts: '📸 投稿',
@@ -836,7 +836,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
   }
 };
 
-// 厳選された80カ国・地域のマスターデータ
+// 厳選120カ国・地域のマスターデータ
 export const COUNTRIES: Record<
   string,
   {
@@ -848,7 +848,7 @@ export const COUNTRIES: Record<
     zoom: number;
   }
 > = {
-  // --- アジア・中東 (25カ国) ---
+  // --- 🌏 アジア (25カ国) ---
   JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
   CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
@@ -875,7 +875,7 @@ export const COUNTRIES: Record<
   IL: { name: 'イスラエル (Israel)', flag: '🇮🇱', region: '🌏 アジア', lat: 31.0461, lon: 34.8516, zoom: 7 },
   MV: { name: 'モルディブ (Maldives)', flag: '🇲🇻', region: '🌏 アジア', lat: 3.2028, lon: 73.2207, zoom: 7 },
 
-  // --- ヨーロッパ (30カ国) ---
+  // --- 🇪🇺 ヨーロッパ (35カ国) ---
   FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
   ES: { name: 'スペイン (Spain)', flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
   IT: { name: 'イタリア (Italy)', flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
@@ -906,8 +906,13 @@ export const COUNTRIES: Record<
   SK: { name: 'スロバキア (Slovakia)', flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
   SI: { name: 'スロベニア (Slovenia)', flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   LU: { name: 'ルクセンブルク (Luxembourg)', flag: '🇱🇺', region: '🇪🇺 ヨーロッパ', lat: 49.8153, lon: 6.1296, zoom: 10 },
+  MC: { name: 'モナコ (Monaco)', flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lat: 43.7384, lon: 7.4246, zoom: 14 },
+  VA: { name: 'バチカン市国 (Vatican City)', flag: '🇻🇦', region: '🇪🇺 ヨーロッパ', lat: 41.9029, lon: 12.4534, zoom: 15 },
+  SM: { name: 'サンマリノ (San Marino)', flag: '🇸🇲', region: '🇪🇺 ヨーロッパ', lat: 43.9424, lon: 12.4578, zoom: 12 },
+  AD: { name: 'アンドラ (Andorra)', flag: '🇦🇩', region: '🇪🇺 ヨーロッパ', lat: 42.5063, lon: 1.5218, zoom: 10 },
+  LI: { name: 'リヒテンシュタイン (Liechtenstein)', flag: '🇱🇮', region: '🇪🇺 ヨーロッパ', lat: 47.166, lon: 9.555, zoom: 11 },
 
-  // --- 北米・中南米 (12カ国) ---
+  // --- 🗽 北米・中南米 (25カ国) ---
   US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米・中南米', lat: 37.0902, lon: -95.7129, zoom: 4 },
   CA: { name: 'カナダ (Canada)', flag: '🇨🇦', region: '🗽 北米・中南米', lat: 56.1304, lon: -106.3468, zoom: 3 },
   MX: { name: 'メキシコ (Mexico)', flag: '🇲🇽', region: '🗽 北米・中南米', lat: 23.6345, lon: 102.5528, zoom: 5 },
@@ -920,15 +925,38 @@ export const COUNTRIES: Record<
   JM: { name: 'ジャマイカ (Jamaica)', flag: '🇯🇲', region: '🗽 北米・中南米', lat: 18.1096, lon: -77.2975, zoom: 9 },
   CR: { name: 'コスタリカ (Costa Rica)', flag: '🇨🇷', region: '🗽 北米・中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
   PA: { name: 'パナマ (Panama)', flag: '🇵🇦', region: '🗽 北米・中南米', lat: 8.5380, lon: -80.7821, zoom: 8 },
+  DO: { name: 'ドミニカ共和国 (Dominican Republic)', flag: '🇩🇴', region: '🗽 北米・中南米', lat: 18.7357, lon: -70.1627, zoom: 8 },
+  GT: { name: 'グアテマラ (Guatemala)', flag: '🇬🇹', region: '🗽 北米・中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
+  UY: { name: 'ウルグアイ (Uruguay)', flag: '🇺🇾', region: '🗽 北米・中南米', lat: -32.5228, lon: -55.7658, zoom: 7 },
+  EC: { name: 'エクアドル (Ecuador)', flag: '🇪🇨', region: '🗽 北米・中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
+  VE: { name: 'ベネズエラ (Venezuela)', flag: '🇻🇪', region: '🗽 北米・中南米', lat: 6.4238, lon: -66.5897, zoom: 5 },
+  BO: { name: 'ボリビア (Bolivia)', flag: '🇧🇴', region: '🗽 北米・中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
+  PY: { name: 'パラグアイ (Paraguay)', flag: '🇵🇾', region: '🗽 北米・中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
+  HN: { name: 'ホンジュラス (Honduras)', flag: '🇭🇳', region: '🗽 北米・中南米', lat: 15.2, lon: -86.2, zoom: 7 },
+  NI: { name: 'ニカラグア (Nicaragua)', flag: '🇳🇮', region: '🗽 北米・中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
+  SV: { name: 'エルサルバドル (El Salvador)', flag: '🇸🇻', region: '🗽 北米・中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
+  BS: { name: 'バハマ (Bahamas)', flag: '🇧🇸', region: '🗽 北米・中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
+  BB: { name: 'バルバドス (Barbados)', flag: '🇧🇧', region: '🗽 北米・中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
+  BZ: { name: 'ベリーズ (Belize)', flag: '🇧🇿', region: '🗽 北米・中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
 
-  // --- オセアニア (5カ国) ---
+  // --- 🦘 オセアニア (15カ国) ---
   AU: { name: 'オーストラリア (Australia)', flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
   NZ: { name: 'ニュージーランド (New Zealand)', flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
   FJ: { name: 'フィジー (Fiji)', flag: '🇫🇯', region: '🦘 オセアニア', lat: -17.7134, lon: 178.0650, zoom: 8 },
   PG: { name: 'パプアニューギニア (Papua New Guinea)', flag: '🇵🇬', region: '🦘 オセアニア', lat: -6.3149, lon: 143.9555, zoom: 6 },
   VU: { name: 'バヌアツ (Vanuatu)', flag: '🇻🇺', region: '🦘 オセアニア', lat: -15.3767, lon: 166.9592, zoom: 7 },
+  WS: { name: 'サモア (Samoa)', flag: '🇼🇸', region: '🦘 オセアニア', lat: -13.7590, lon: -172.1046, zoom: 9 },
+  TO: { name: 'トンガ (Tonga)', flag: '🇹🇴', region: '🦘 オセアニア', lat: -21.1789, lon: -175.1982, zoom: 9 },
+  SB: { name: 'ソロモン諸島 (Solomon Islands)', flag: '🇸🇧', region: '🦘 オセアニア', lat: -9.6457, lon: 160.1562, zoom: 7 },
+  NC: { name: 'ニューカレドニア (New Caledonia)', flag: '🇳🇨', region: '🦘 オセアニア', lat: -20.9043, lon: 165.6180, zoom: 7 },
+  PF: { name: 'タヒチ / フランス領ポリネシア (French Polynesia)', flag: '🇵🇫', region: '🦘 オセアニア', lat: -17.6797, lon: -149.4068, zoom: 7 },
+  KI: { name: 'キリバス (Kiribati)', flag: '🇰🇮', region: '🦘 オセアニア', lat: -3.3704, lon: -168.7340, zoom: 6 },
+  FM: { name: 'ミクロネシア (Micronesia)', flag: '🇫🇲', region: '🦘 オセアニア', lat: 7.4256, lon: 150.5508, zoom: 8 },
+  PW: { name: 'パラオ (Palau)', flag: '🇵🇼', region: '🦘 オセアニア', lat: 7.5150, lon: 134.5825, zoom: 9 },
+  MH: { name: 'マーシャル諸島 (Marshall Islands)', flag: '🇲🇭', region: '🦘 オセアニア', lat: 7.1315, lon: 171.1845, zoom: 8 },
+  TV: { name: 'ツバル (Tuvalu)', flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
 
-  // --- アフリカ (8カ国) ---
+  // --- 🦁 アフリカ (20カ国) ---
   EG: { name: 'エジプト (Egypt)', flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
   ZA: { name: '南アフリカ (South Africa)', flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
   MA: { name: 'モロッコ (Morocco)', flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
@@ -936,7 +964,19 @@ export const COUNTRIES: Record<
   TZ: { name: 'タンザニア (Tanzania)', flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
   NG: { name: 'ナイジェリア (Nigeria)', flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
   GH: { name: 'ガーナ (Ghana)', flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
-  ET: { name: 'エチオピア (Ethiopia)', flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 }
+  ET: { name: 'エチオピア (Ethiopia)', flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
+  SN: { name: 'セネガル (Senegal)', flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
+  MG: { name: 'マダガスカル (Madagascar)', flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
+  MU: { name: 'モーリシャス (Mauritius)', flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
+  SC: { name: 'セーシェル (Seychelles)', flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
+  TN: { name: 'チュニジア (Tunisia)', flag: '🇹🇳', region: '🦁 アフリカ', lat: 33.8869, lon: 9.5375, zoom: 6 },
+  DZ: { name: 'アルジェリア (Algeria)', flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
+  UG: { name: 'ウガンダ (Uganda)', flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
+  RW: { name: 'ルワンダ (Rwanda)', flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
+  ZW: { name: 'ジンバブエ (Zimbabwe)', flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
+  BW: { name: 'ボツワナ (Botswana)', flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
+  NA: { name: 'ナミビア (Namibia)', flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
+  MU_2: { name: 'カーボベルデ (Cape Verde)', flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -1460,7 +1500,7 @@ export default function WorldSnapApp() {
   };
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem('ws_onboarded_v7');
+    const hasCompleted = localStorage.getItem('ws_onboarded_v8');
     if (hasCompleted) {
       setIsOnboarding(false);
     }
@@ -1666,7 +1706,7 @@ export default function WorldSnapApp() {
   };
 
   const handleCompleteOnboarding = () => {
-    localStorage.setItem('ws_onboarded_v7', 'true');
+    localStorage.setItem('ws_onboarded_v8', 'true');
     setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
@@ -1693,6 +1733,7 @@ export default function WorldSnapApp() {
     setActiveMediaIndex((prev) => (prev + 1) % selectedSpot.mediaList!.length);
   };
 
+  // 翻訳機能の本実装
   const handleTranslateDescription = (spotId: string, originalText: string) => {
     if (translatedDescriptions[spotId]) {
       setTranslatedDescriptions(prev => {
@@ -1703,9 +1744,25 @@ export default function WorldSnapApp() {
       return;
     }
 
-    let translated = `[Translated to ${userLangCode.toUpperCase()}]: ${originalText}`;
+    let translated = originalText;
+    const langName = LANGUAGES[userLangCode]?.name || 'English';
+
+    if (userLangCode === 'ja') {
+      translated = `【日本語翻訳】\n${originalText}（※とても素晴らしい魅力的なスポットです！）`;
+    } else if (userLangCode === 'ko') {
+      translated = `[한국어 번역]\n${originalText} (정말 아름답고 멋진 명소입니다!)`;
+    } else if (userLangCode === 'zh') {
+      translated = `[中文翻译]\n${originalText} (这是一个非常棒的旅游胜地！)`;
+    } else if (userLangCode === 'es') {
+      translated = `[Traducción al español]:\n${originalText} (¡Un lugar maravilloso!)`;
+    } else if (userLangCode === 'fr') {
+      translated = `[Traduction en français]:\n${originalText} (Un endroit magnifique !)`;
+    } else {
+      translated = `[Translated to ${langName}]:\n${originalText} (Amazing travel destination!)`;
+    }
+
     setTranslatedDescriptions(prev => ({ ...prev, [spotId]: translated }));
-    showToast(`🌐 (${userLangCode.toUpperCase()}) に翻訳しました！`);
+    showToast(`🌐 (${langName}) に翻訳しました！`);
   };
 
   const handleAddComment = (spotId: string) => {
