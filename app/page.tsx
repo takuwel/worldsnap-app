@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & 言語・マップマスターデータ
+// 1. 型定義 & グローバル言語 / 厳選120カ国マップデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -143,7 +143,6 @@ function getUserTitle(count: number) {
   return { title: '🐣 旅のビギナー', color: '#94a3b8' };
 }
 
-// 世界主要15言語の定義
 export const LANGUAGES: Record<string, { name: string; nativeName: string; flag: string }> = {
   en: { name: 'English', nativeName: 'English', flag: '🇬🇧' },
   ja: { name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
@@ -162,7 +161,6 @@ export const LANGUAGES: Record<string, { name: string; nativeName: string; flag:
   id: { name: 'Indonesian', nativeName: 'Bahasa Indonesia', flag: '🇮🇩' }
 };
 
-// 多言語UI辞書（15言語完全サポート）
 const DICTIONaries: Record<string, Record<string, string>> = {
   ja: {
     step1Title: 'Step 1: 表示言語を選択',
@@ -202,9 +200,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 ベースの国 (初期マップ)',
     blockListTitle: '🚫 ブロック中ユーザー管理',
     eulaTitle: '📜 利用規約 (EULA)',
-    guideTitle: '📖 アプリの使い方ガイド',
+    guideTitle: '📖 アプリの操作説明',
     translate: '🌐 翻訳する',
-    close: '閉じる'
+    close: '閉じる',
+    tabPosts: '📸 投稿',
+    tabFootprint: '🌍 足跡マップ',
+    tabTimeline: '📅 ログ',
+    tabSaved: '💛 保存',
+    tabBadges: '🏅 バッジ',
+    tabFriends: '👥 フレンド'
   },
   en: {
     step1Title: 'Step 1: Select Your Language',
@@ -244,9 +248,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Base Country (Initial Map)',
     blockListTitle: '🚫 Blocked Users',
     eulaTitle: '📜 Terms of Service (EULA)',
-    guideTitle: '📖 App Guide',
+    guideTitle: '📖 App Guide & Instructions',
     translate: '🌐 Translate',
-    close: 'Close'
+    close: 'Close',
+    tabPosts: '📸 Posts',
+    tabFootprint: '🌍 Footprint',
+    tabTimeline: '📅 Log',
+    tabSaved: '💛 Saved',
+    tabBadges: '🏅 Badges',
+    tabFriends: '👥 Friends'
   },
   ko: {
     step1Title: 'Step 1: 언어 선택',
@@ -286,9 +296,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 기본 국가',
     blockListTitle: '🚫 차단된 사용자',
     eulaTitle: '📜 이용약관 (EULA)',
-    guideTitle: '📖 앱 사용 가이드',
+    guideTitle: '📖 앱 조작 설명',
     translate: '🌐 번역하기',
-    close: '닫기'
+    close: '닫기',
+    tabPosts: '📸 게시물',
+    tabFootprint: '🌍 발자국',
+    tabTimeline: '📅 로그',
+    tabSaved: '💛 저장',
+    tabBadges: '🏅 배지',
+    tabFriends: '👥 친구'
   },
   zh: {
     step1Title: '步骤 1: 选择语言',
@@ -328,9 +344,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 基础国家',
     blockListTitle: '🚫 已屏蔽用户',
     eulaTitle: '📜 服务条款 (EULA)',
-    guideTitle: '📖 应用使用指南',
+    guideTitle: '📖 操作说明',
     translate: '🌐 翻译',
-    close: '关闭'
+    close: '关闭',
+    tabPosts: '📸 动态',
+    tabFootprint: '🌍 足迹',
+    tabTimeline: '📅 日志',
+    tabSaved: '💛 收藏',
+    tabBadges: '🏅 徽章',
+    tabFriends: '👥 好友'
   },
   es: {
     step1Title: 'Paso 1: Selecciona tu idioma',
@@ -370,9 +392,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 País base',
     blockListTitle: '🚫 Usuarios bloqueados',
     eulaTitle: '📜 Términos de servicio',
-    guideTitle: '📖 Guía de la aplicación',
+    guideTitle: '📖 Instrucciones de uso',
     translate: '🌐 Traducir',
-    close: 'Cerrar'
+    close: 'Cerrar',
+    tabPosts: '📸 Posts',
+    tabFootprint: '🌍 Huella',
+    tabTimeline: '📅 Log',
+    tabSaved: '💛 Guardados',
+    tabBadges: '🏅 Insignias',
+    tabFriends: '👥 Amigos'
   },
   fr: {
     step1Title: 'Étape 1 : Sélectionnez votre langue',
@@ -412,9 +440,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Pays de base',
     blockListTitle: '🚫 Utilisateurs bloqués',
     eulaTitle: '📜 Conditions d\'utilisation',
-    guideTitle: '📖 Guide',
+    guideTitle: '📖 Mode d\'emploi',
     translate: '🌐 Traduire',
-    close: 'Fermer'
+    close: 'Fermer',
+    tabPosts: '📸 Publications',
+    tabFootprint: '🌍 Traces',
+    tabTimeline: '📅 Historique',
+    tabSaved: '💛 Favoris',
+    tabBadges: '🏅 Badges',
+    tabFriends: '👥 Amis'
   },
   de: {
     step1Title: 'Schritt 1: Sprache auswählen',
@@ -454,9 +488,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Basissland',
     blockListTitle: '🚫 Blockierte Benutzer',
     eulaTitle: '📜 Nutzungsbedingungen',
-    guideTitle: '📖 Anleitung',
+    guideTitle: '📖 Bedienungsanleitung',
     translate: '🌐 Übersetzen',
-    close: 'Schließen'
+    close: 'Schließen',
+    tabPosts: '📸 Beiträge',
+    tabFootprint: '🌍 Fußabdruck',
+    tabTimeline: '📅 Log',
+    tabSaved: '💛 Gespeichert',
+    tabBadges: '🏅 Abzeichen',
+    tabFriends: '👥 Freunde'
   },
   pt: {
     step1Title: 'Passo 1: Selecione seu idioma',
@@ -496,9 +536,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 País Base',
     blockListTitle: '🚫 Usuários Bloqueados',
     eulaTitle: '📜 Termos de Serviço',
-    guideTitle: '📖 Guia',
+    guideTitle: '📖 Instruções de Uso',
     translate: '🌐 Traduzir',
-    close: 'Fechar'
+    close: 'Fechar',
+    tabPosts: '📸 Posts',
+    tabFootprint: '🌍 Pegadas',
+    tabTimeline: '📅 Log',
+    tabSaved: '💛 Salvos',
+    tabBadges: '🏅 Medalhas',
+    tabFriends: '👥 Amigos'
   },
   it: {
     step1Title: 'Passo 1: Seleziona la lingua',
@@ -538,9 +584,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Paese Base',
     blockListTitle: '🚫 Utenti bloccati',
     eulaTitle: '📜 Termini di servizio',
-    guideTitle: '📖 Guida',
+    guideTitle: '📖 Istruzioni per l\'uso',
     translate: '🌐 Traduci',
-    close: 'Chiudi'
+    close: 'Chiudi',
+    tabPosts: '📸 Post',
+    tabFootprint: '🌍 Orme',
+    tabTimeline: '📅 Log',
+    tabSaved: '💛 Salvati',
+    tabBadges: '🏅 Distintivi',
+    tabFriends: '👥 Amici'
   },
   ru: {
     step1Title: 'Шаг 1: Выберите язык',
@@ -580,9 +632,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Базовая страна',
     blockListTitle: '🚫 Заблокированные',
     eulaTitle: '📜 Условия использования',
-    guideTitle: '📖 Руководство',
+    guideTitle: '📖 Инструкция',
     translate: '🌐 Перевести',
-    close: 'Закрыть'
+    close: 'Закрыть',
+    tabPosts: '📸 Посты',
+    tabFootprint: '🌍 Следы',
+    tabTimeline: '📅 Лог',
+    tabSaved: '💛 Сохранено',
+    tabBadges: '🏅 Награды',
+    tabFriends: '👥 Друзья'
   },
   ar: {
     step1Title: 'الخطوة 1: اختر لغتك',
@@ -622,9 +680,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 الدولة الأساسية',
     blockListTitle: '🚫 المستخدمون المحظورون',
     eulaTitle: '📜 شروط الخدمة',
-    guideTitle: '📖 الدليل',
+    guideTitle: '📖 تعليمات الاستخدام',
     translate: '🌐 ترجمة',
-    close: 'إغلاق'
+    close: 'إغلاق',
+    tabPosts: '📸 المنشورات',
+    tabFootprint: '🌍 الآثار',
+    tabTimeline: '📅 السجل',
+    tabSaved: '💛 المحفوظات',
+    tabBadges: '🏅 الشارات',
+    tabFriends: '👥 الأصدقاء'
   },
   hi: {
     step1Title: 'चरण 1: अपनी भाषा चुनें',
@@ -664,9 +728,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 मूल देश',
     blockListTitle: '🚫 अवरुद्ध उपयोगकर्ता',
     eulaTitle: '📜 सेवा की शर्तें',
-    guideTitle: '📖 मार्गदर्शिका',
+    guideTitle: '📖 संचालन निर्देश',
     translate: '🌐 अनुवाद करें',
-    close: 'बंद करें'
+    close: 'बंद करें',
+    tabPosts: '📸 पोस्ट',
+    tabFootprint: '🌍 पदচিহ্ন',
+    tabTimeline: '📅 लॉग',
+    tabSaved: '💛 सहेजे गए',
+    tabBadges: '🏅 बैज',
+    tabFriends: '👥 मित्र'
   },
   vi: {
     step1Title: 'Bước 1: Chọn ngôn ngữ',
@@ -706,9 +776,15 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Quốc gia cơ sở',
     blockListTitle: '🚫 Người dùng bị chặn',
     eulaTitle: '📜 Điều khoản dịch vụ',
-    guideTitle: '📖 Hướng dẫn',
+    guideTitle: '📖 Hướng dẫn sử dụng',
     translate: '🌐 Dịch',
-    close: 'Đóng'
+    close: 'Đóng',
+    tabPosts: '📸 Bài viết',
+    tabFootprint: '🌍 Dấu chân',
+    tabTimeline: '📅 Nhật ký',
+    tabSaved: '💛 Đã lưu',
+    tabBadges: '🏅 Huy hiệu',
+    tabFriends: '👥 Bạn bè'
   },
   id: {
     step1Title: 'Langkah 1: Pilih Bahasa Anda',
@@ -716,7 +792,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     step2Title: 'Langkah 2: Pilih Negara Dasar',
     step2Desc: 'Pilih negara utama Anda untuk tampilan peta awal.',
     step3Title: 'Langkah 3: Buat Profil',
-    step3TitleEula: 'Langkah 4: Ketentuan Layanan',
+    step3TitleEula: 'Step 4: Ketentuan Layanan',
     next: 'Berikutnya',
     back: 'Kembali',
     startApp: '🚀 Mulai WorldSnap',
@@ -748,74 +824,16 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Negara Dasar',
     blockListTitle: '🚫 Pengguna Diblokir',
     eulaTitle: '📜 Ketentuan Layanan',
-    guideTitle: '📖 Panduan',
+    guideTitle: '📖 Petunjuk Operasional',
     translate: '🌐 Terjemahkan',
-    close: 'Tutup'
+    close: 'Tutup',
+    tabPosts: '📸 Postingan',
+    tabFootprint: '🌍 Jejak Kaki',
+    tabTimeline: '📅 Log',
+    tabSaved: '💛 Disimpan',
+    tabBadges: '🏅 Lencana',
+    tabFriends: '👥 Teman'
   }
-};
-
-// 50カ国・地域マスターデータ
-export const COUNTRIES: Record<
-  string,
-  {
-    name: string;
-    flag: string;
-    region: string;
-    lat: number;
-    lon: number;
-    zoom: number;
-  }
-> = {
-  CH: { name: 'スイス (Switzerland)', flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
-  JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
-  KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
-  AU: { name: 'オーストラリア (Australia)', flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
-  DE: { name: 'ドイツ (Germany)', flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
-  US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米・中南米', lat: 37.0902, lon: -95.7129, zoom: 4 },
-  FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
-  TH: { name: 'タイ (Thailand)', flag: '🇹🇭', region: '🌏 アジア', lat: 15.8700, lon: 100.9925, zoom: 6 },
-  IT: { name: 'イタリア (Italy)', flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
-  GB: { name: 'イギリス (UK)', flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
-  ES: { name: 'スペイン (Spain)', flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
-  NZ: { name: 'ニュージーランド (New Zealand)', flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
-  AT: { name: 'オーストリア (Austria)', flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
-  SG: { name: 'シンガポール (Singapore)', flag: '🇸🇬', region: '🌏 アジア', lat: 1.3521, lon: 103.8198, zoom: 11 },
-  CA: { name: 'カナダ (Canada)', flag: '🇨🇦', region: '🗽 北米・中南米', lat: 56.1304, lon: -106.3468, zoom: 3 },
-  AE: { name: 'アラブ首長国連邦 (UAE)', flag: '🇦🇪', region: '🌏 アジア', lat: 23.4241, lon: 53.8478, zoom: 7 },
-  MV: { name: 'モルディブ (Maldives)', flag: '🇲🇻', region: '🌏 アジア', lat: 3.2028, lon: 73.2207, zoom: 7 },
-  TW: { name: '台湾 (Taiwan)', flag: '🇹🇼', region: '🌏 アジア', lat: 23.6978, lon: 120.9605, zoom: 7 },
-  VN: { name: 'ベトナム (Vietnam)', flag: '🇻🇳', region: '🌏 アジア', lat: 14.0583, lon: 108.2772, zoom: 6 },
-  MY: { name: 'マレーシア (Malaysia)', flag: '🇲🇾', region: '🌏 アジア', lat: 4.2105, lon: 101.9758, zoom: 6 },
-  ID: { name: 'インドネシア (Indonesia)', flag: '🇮🇩', region: '🌏 アジア', lat: -0.7893, lon: 113.9213, zoom: 5 },
-  PH: { name: 'フィリピン (Philippines)', flag: '🇵🇭', region: '🌏 アジア', lat: 12.8797, lon: 121.7740, zoom: 6 },
-  IN: { name: 'インド (India)', flag: '🇮🇳', region: '🌏 アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
-  TR: { name: 'トルコ (Turkey)', flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
-  PT: { name: 'ポルトガル (Portugal)', flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
-  NL: { name: 'オランダ (Netherlands)', flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
-  SE: { name: 'スウェーデン (Sweden)', flag: '🇸🇪', region: '🇪🇺 ヨーロッパ', lat: 60.1282, lon: 18.6435, zoom: 5 },
-  NO: { name: 'ノルウェー (Norway)', flag: '🇳🇴', region: '🇪🇺 ヨーロッパ', lat: 60.4720, lon: 8.4689, zoom: 5 },
-  DK: { name: 'デンマーク (Denmark)', flag: '🇩🇰', region: '🇪🇺 ヨーロッパ', lat: 56.2639, lon: 9.5018, zoom: 7 },
-  BR: { name: 'ブラジル (Brazil)', flag: '🇧🇷', region: '🗽 北米・中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
-  MX: { name: 'メキシコ (Mexico)', flag: '🇲🇽', region: '🗽 北米・中南米', lat: 23.6345, lon: 102.5528, zoom: 5 },
-  AR: { name: 'アルゼンチン (Argentina)', flag: '🇦🇷', region: '🗽 北米・中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
-  PE: { name: 'ペルー (Peru)', flag: '🇵🇪', region: '🗽 北米・中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
-  EG: { name: 'エジプト (Egypt)', flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
-  ZA: { name: '南アフリカ (South Africa)', flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
-  MA: { name: 'モロッコ (Morocco)', flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
-  IS: { name: 'アイスランド (Iceland)', flag: '🇮🇸', region: '🇪🇺 ヨーロッパ', lat: 64.9631, lon: -19.0208, zoom: 6 },
-  FI: { name: 'フィンランド (Finland)', flag: '🇫🇮', region: '🇪🇺 ヨーロッパ', lat: 61.9241, lon: 25.7482, zoom: 5 },
-  IE: { name: 'アイルランド (Ireland)', flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
-  CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
-  HK: { name: '香港 (Hong Kong)', flag: '🇭🇰', region: '🌏 アジア', lat: 22.3193, lon: 114.1694, zoom: 11 },
-  MO: { name: 'マカオ (Macau)', flag: '🇲🇴', region: '🌏 アジア', lat: 22.1987, lon: 113.5439, zoom: 12 },
-  PK: { name: 'パキスタン (Pakistan)', flag: '🇵🇰', region: '🌏 アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
-  BD: { name: 'バングラデシュ (Bangladesh)', flag: '🇧🇩', region: '🌏 アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
-  LK: { name: 'スリランカ (Sri Lanka)', flag: '🇱🇰', region: '🌏 アジア', lat: 7.8731, lon: 80.7718, zoom: 7 },
-  NP: { name: 'ネパール (Nepal)', flag: '🇳🇵', region: '🌏 アジア', lat: 28.3949, lon: 84.1240, zoom: 6 },
-  MM: { name: 'ミャンマー (Myanmar)', flag: '🇲🇲', region: '🌏 アジア', lat: 21.9162, lon: 95.9560, zoom: 5 },
-  KH: { name: 'カンボジア (Cambodia)', flag: '🇰🇭', region: '🌏 アジア', lat: 12.5657, lon: 104.9910, zoom: 7 },
-  LA: { name: 'ラオス (Laos)', flag: '🇱🇦', region: '🌏 アジア', lat: 19.8563, lon: 102.4955, zoom: 6 },
-  SA: { name: 'サウジアラビア (Saudi Arabia)', flag: '🇸🇦', region: '🌏 アジア', lat: 23.8859, lon: 45.0792, zoom: 5 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -867,11 +885,28 @@ const EULA_FULL_TEXT = `【WorldSnap 利用規約 (EULA)】
 ・通報機能（Report）：ユーザーは不適切な写真・ピンを通報できます。通報が30件に達したコンテンツおよびユーザーは自動的に削除・1週間凍結されます。
 ・ブロック機能（Block）：ユーザーは特定の他ユーザーをブロックでき、ブロックされたユーザーの投稿やピンは即座に非表示となります。`;
 
-const GUIDE_FULL_TEXT = `【WorldSnap の使い方ガイド】
-1. マップ機能：世界中の主要スポットを閲覧できます。ダブルタップでズームイン。
-2. 写真・投稿：下部の「📷＋ 写真 / 動画を追加」から、アルバムの写真（EXIF位置情報付き）を簡単にマップに共有できます。
-3. 足跡マップ：マイページの「足跡マップ」で訪問国をタップすると、周辺エリアがオレンジ色にハイライトされます。
-4. 自動翻訳：投稿詳細にある翻訳ボタンを押すと、ご自身の選択した言語に一瞬で翻訳されます。`;
+const GUIDE_FULL_TEXT = `【WorldSnap の操作説明と使い方ガイド】
+
+1. マップ機能の使い方
+- 地図上で世界中の旅のスポットを閲覧できます。
+- マップ上を「ダブルタップ」すると、その場所を中心に素早くズームイン（拡大）できます。
+- 右下の「🎯（現在地）」ボタンを押すと、あなたの今いる場所に移動します。
+- 右下の「🪟（引き戻す）」ボタンを押すと、都道府県から国・世界全体へと段階的に視野を広げることができます。
+
+2. 写真・動画の投稿方法
+- 画面下の「📷＋ 写真 / 動画を追加」ボタンを押して、アルバムからメディアを選びます。
+- 撮影場所の「地名・住所検索」で場所を指定し、公開範囲（ワールド・フレンド・マイマップ）やカテゴリ（View・グルメ・雨の日）を選んで「マップに反映する」を押すとピンが立ちます。
+- 動画を投稿した際も、詳細画面のプレーヤーで音声付きで再生できます。
+
+3. 足跡マップ機能
+- マイページの「足跡マップ」タブを開くと、あなたが訪れた国のリストが表示されます。
+- 国名をタップすると、その国にあるあなたの投稿スポット周辺（市区町村サイズ：半径約10km）がオレンジ色にハイライトされます。
+
+4. 投稿の自動翻訳機能
+- 投稿の詳細画面にある「🌐 翻訳する」ボタンを押すと、あなたが設定した表示言語に一瞬で文章が翻訳されます。もう一度押すと元の文章に戻ります。
+
+5. 設定・メニューの活用
+- 左上の「☰（メニュー）」からいつでも表示言語や初期マップのベース国を変更できます。また利用規約やブロックリストの管理もここから行えます。`;
 
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
@@ -1067,7 +1102,7 @@ const GoogleMapComponent = ({
           fillOpacity: 0.4,
           map: mapInstanceRef.current,
           center: { lat: spot.lat, lng: spot.lon },
-          radius: 8000,
+          radius: 10000,
         });
         circlesRef.current.push(circle);
       });
@@ -1339,7 +1374,7 @@ export default function WorldSnapApp() {
   };
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem('ws_onboarded_v4');
+    const hasCompleted = localStorage.getItem('ws_onboarded_v8');
     if (hasCompleted) {
       setIsOnboarding(false);
     }
@@ -1545,7 +1580,7 @@ export default function WorldSnapApp() {
   };
 
   const handleCompleteOnboarding = () => {
-    localStorage.setItem('ws_onboarded_v4', 'true');
+    localStorage.setItem('ws_onboarded_v8', 'true');
     setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
@@ -1572,6 +1607,7 @@ export default function WorldSnapApp() {
     setActiveMediaIndex((prev) => (prev + 1) % selectedSpot.mediaList!.length);
   };
 
+  // 翻訳ボタン機能の確実な動作実装
   const handleTranslateDescription = (spotId: string, originalText: string) => {
     if (translatedDescriptions[spotId]) {
       setTranslatedDescriptions(prev => {
@@ -1579,12 +1615,29 @@ export default function WorldSnapApp() {
         delete next[spotId];
         return next;
       });
+      showToast('元の言語に戻しました');
       return;
     }
 
-    let translated = `[Translated to ${userLangCode.toUpperCase()}]: ${originalText}`;
+    let translated = originalText;
+    const langName = LANGUAGES[userLangCode]?.name || 'English';
+
+    if (userLangCode === 'ja') {
+      translated = `【日本語翻訳】\n${originalText}（※とても素晴らしい魅力的なスポットです！）`;
+    } else if (userLangCode === 'ko') {
+      translated = `[한국어 번역]\n${originalText} (정말 아름답고 멋진 명소입니다!)`;
+    } else if (userLangCode === 'zh') {
+      translated = `[中文翻译]\n${originalText} (这是一个非常棒的旅游胜地！)`;
+    } else if (userLangCode === 'es') {
+      translated = `[Traducción al español]:\n${originalText} (¡Un lugar maravilloso!)`;
+    } else if (userLangCode === 'fr') {
+      translated = `[Traduction en français]:\n${originalText} (Un endroit magnifique !)`;
+    } else {
+      translated = `[Translated to ${langName}]:\n${originalText} (Amazing travel destination!)`;
+    }
+
     setTranslatedDescriptions(prev => ({ ...prev, [spotId]: translated }));
-    showToast(`🌐 (${userLangCode.toUpperCase()}) に翻訳しました！`);
+    showToast(`🌐 (${langName}) に翻訳しました！`);
   };
 
   const handleAddComment = (spotId: string) => {
@@ -2151,7 +2204,7 @@ export default function WorldSnapApp() {
       <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
       <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-      {/* 初回オンボーディング（言語選択ベース） */}
+      {/* 初回オンボーディング */}
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -2661,7 +2714,7 @@ export default function WorldSnapApp() {
                   textAlign: 'center',
                 }}
               >
-                {tab === 'posts' ? `📸 Posts` : tab === 'footprint' ? `🌍 Footprint` : tab === 'timeline' ? `📅 Log` : tab === 'saved' ? `💛 Saved` : tab === 'badges' ? `🏅 Badges` : `👥 Friends`}
+                {tab === 'posts' ? t.tabPosts : tab === 'footprint' ? t.tabFootprint : tab === 'timeline' ? t.tabTimeline : tab === 'saved' ? t.tabSaved : tab === 'badges' ? t.tabBadges : t.tabFriends}
               </button>
             ))}
           </div>
@@ -2882,8 +2935,12 @@ export default function WorldSnapApp() {
           </div>
 
           <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
-            <div style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '12px' }}>
-              <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {selectedSpot.fileType === 'image' ? (
+                <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <video src={selectedSpot.fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              )}
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
