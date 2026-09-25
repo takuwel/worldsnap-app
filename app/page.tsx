@@ -836,7 +836,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
   }
 };
 
-// 120カ国・地域のマスターデータ定義
+// 厳選120カ国・地域のマスターデータ
 export const COUNTRIES: Record<
   string,
   {
