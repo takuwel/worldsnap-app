@@ -836,7 +836,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
   }
 };
 
-// 厳選120カ国・地域のマスターデータ
+// 120カ国・地域のマスターデータ定義
 export const COUNTRIES: Record<
   string,
   {
@@ -983,3 +983,4 @@ export const COUNTRIES: Record<
   NA: { name: 'ナミビア (Namibia)', flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
   CV: { name: 'カーボベルデ (Cape Verde)', flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 }
 };
+```eof
