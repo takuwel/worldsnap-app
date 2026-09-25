@@ -392,7 +392,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 País base',
     blockListTitle: '🚫 Usuarios bloqueados',
     eulaTitle: '📜 Términos de servicio',
-    guideTitle: '📖 Guía de la aplicación',
+    guideTitle: '📖 Instrucciones de uso',
     translate: '🌐 Traducir',
     close: 'Cerrar',
     tabPosts: '📸 Posts',
@@ -440,7 +440,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Pays de base',
     blockListTitle: '🚫 Utilisateurs bloqués',
     eulaTitle: '📜 Conditions d\'utilisation',
-    guideTitle: '📖 Guide',
+    guideTitle: '📖 Mode d\'emploi',
     translate: '🌐 Traduire',
     close: 'Fermer',
     tabPosts: '📸 Publications',
@@ -488,7 +488,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Basissland',
     blockListTitle: '🚫 Blockierte Benutzer',
     eulaTitle: '📜 Nutzungsbedingungen',
-    guideTitle: '📖 Anleitung',
+    guideTitle: '📖 Bedienungsanleitung',
     translate: '🌐 Übersetzen',
     close: 'Schließen',
     tabPosts: '📸 Beiträge',
@@ -536,7 +536,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 País Base',
     blockListTitle: '🚫 Usuários Bloqueados',
     eulaTitle: '📜 Termos de Serviço',
-    guideTitle: '📖 Guia',
+    guideTitle: '📖 Instruções de Uso',
     translate: '🌐 Traduzir',
     close: 'Fechar',
     tabPosts: '📸 Posts',
@@ -584,7 +584,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Paese Base',
     blockListTitle: '🚫 Utenti bloccati',
     eulaTitle: '📜 Termini di servizio',
-    guideTitle: '📖 Guida',
+    guideTitle: '📖 Istruzioni per l\'uso',
     translate: '🌐 Traduci',
     close: 'Chiudi',
     tabPosts: '📸 Post',
@@ -632,7 +632,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Базовая страна',
     blockListTitle: '🚫 Заблокированные',
     eulaTitle: '📜 Условия использования',
-    guideTitle: '📖 Руководство',
+    guideTitle: '📖 Инструкция',
     translate: '🌐 Перевести',
     close: 'Закрыть',
     tabPosts: '📸 Посты',
@@ -680,7 +680,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 الدولة الأساسية',
     blockListTitle: '🚫 المستخدمون المحظورون',
     eulaTitle: '📜 شروط الخدمة',
-    guideTitle: '📖 الدليل',
+    guideTitle: '📖 تعليمات الاستخدام',
     translate: '🌐 ترجمة',
     close: 'إغلاق',
     tabPosts: '📸 المنشورات',
@@ -728,7 +728,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 मूल देश',
     blockListTitle: '🚫 अवरुद्ध उपयोगकर्ता',
     eulaTitle: '📜 सेवा की शर्तें',
-    guideTitle: '📖 मार्गदर्शिका',
+    guideTitle: '📖 संचालन निर्देश',
     translate: '🌐 अनुवाद करें',
     close: 'बंद करें',
     tabPosts: '📸 पोस्ट',
@@ -744,7 +744,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     step2Title: 'Bước 2: Chọn quốc gia cơ sở',
     step2Desc: 'Chọn quốc gia chính cho bản đồ bắt đầu.',
     step3Title: 'Bước 3: Tạo hồ sơ',
-    step3TitleEula: 'Step 4: Điều khoản dịch vụ',
+    step3TitleEula: 'Bước 4: Điều khoản dịch vụ',
     next: 'Tiếp theo',
     back: 'Quay lại',
     startApp: '🚀 Bắt đầu WorldSnap',
@@ -776,7 +776,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Quốc gia cơ sở',
     blockListTitle: '🚫 Người dùng bị chặn',
     eulaTitle: '📜 Điều khoản dịch vụ',
-    guideTitle: '📖 Hướng dẫn',
+    guideTitle: '📖 Hướng dẫn sử dụng',
     translate: '🌐 Dịch',
     close: 'Đóng',
     tabPosts: '📸 Bài viết',
@@ -792,7 +792,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     step2Title: 'Langkah 2: Pilih Negara Dasar',
     step2Desc: 'Pilih negara utama Anda untuk tampilan peta awal.',
     step3Title: 'Langkah 3: Buat Profil',
-    step3TitleEula: 'Step 4: Ketentuan Layanan',
+    step3TitleEula: 'Langkah 4: Ketentuan Layanan',
     next: 'Berikutnya',
     back: 'Kembali',
     startApp: '🚀 Mulai WorldSnap',
@@ -824,7 +824,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     baseCountrySetting: '📍 Negara Dasar',
     blockListTitle: '🚫 Pengguna Diblokir',
     eulaTitle: '📜 Ketentuan Layanan',
-    guideTitle: '📖 Panduan',
+    guideTitle: '📖 Petunjuk Operasional',
     translate: '🌐 Terjemahkan',
     close: 'Tutup',
     tabPosts: '📸 Postingan',
@@ -836,6 +836,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
   }
 };
 
+// 厳選120カ国・地域のマスターデータ
 export const COUNTRIES: Record<
   string,
   {
@@ -847,16 +848,135 @@ export const COUNTRIES: Record<
     zoom: number;
   }
 > = {
+  // --- 🌏 アジア (25カ国) ---
   JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
-  US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
-  FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
-  GB: { name: 'イギリス (UK)', flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
-  AU: { name: 'オーストラリア (Australia)', flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
+  CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
+  TW: { name: '台湾 (Taiwan)', flag: '🇹🇼', region: '🌏 アジア', lat: 23.6978, lon: 120.9605, zoom: 7 },
+  HK: { name: '香港 (Hong Kong)', flag: '🇭🇰', region: '🌏 アジア', lat: 22.3193, lon: 114.1694, zoom: 11 },
+  MO: { name: 'マカオ (Macau)', flag: '🇲🇴', region: '🌏 アジア', lat: 22.1987, lon: 113.5439, zoom: 12 },
   TH: { name: 'タイ (Thailand)', flag: '🇹🇭', region: '🌏 アジア', lat: 15.8700, lon: 100.9925, zoom: 6 },
+  VN: { name: 'ベトナム (Vietnam)', flag: '🇻🇳', region: '🌏 アジア', lat: 14.0583, lon: 108.2772, zoom: 6 },
   SG: { name: 'シンガポール (Singapore)', flag: '🇸🇬', region: '🌏 アジア', lat: 1.3521, lon: 103.8198, zoom: 11 },
+  MY: { name: 'マレーシア (Malaysia)', flag: '🇲🇾', region: '🌏 アジア', lat: 4.2105, lon: 101.9758, zoom: 6 },
+  ID: { name: 'インドネシア (Indonesia)', flag: '🇮🇩', region: '🌏 アジア', lat: -0.7893, lon: 113.9213, zoom: 5 },
+  PH: { name: 'フィリピン (Philippines)', flag: '🇵🇭', region: '🌏 アジア', lat: 12.8797, lon: 121.7740, zoom: 6 },
+  IN: { name: 'インド (India)', flag: '🇮🇳', region: '🌏 アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
+  PK: { name: 'パキスタン (Pakistan)', flag: '🇵🇰', region: '🌏 アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
+  BD: { name: 'バングラデシュ (Bangladesh)', flag: '🇧🇩', region: '🌏 アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
+  LK: { name: 'スリランカ (Sri Lanka)', flag: '🇱🇰', region: '🌏 アジア', lat: 7.8731, lon: 80.7718, zoom: 7 },
+  NP: { name: 'ネパール (Nepal)', flag: '🇳🇵', region: '🌏 アジア', lat: 28.3949, lon: 84.1240, zoom: 6 },
+  MM: { name: 'ミャンマー (Myanmar)', flag: '🇲🇲', region: '🌏 アジア', lat: 21.9162, lon: 95.9560, zoom: 5 },
+  KH: { name: 'カンボジア (Cambodia)', flag: '🇰🇭', region: '🌏 アジア', lat: 12.5657, lon: 104.9910, zoom: 7 },
+  LA: { name: 'ラオス (Laos)', flag: '🇱🇦', region: '🌏 アジア', lat: 19.8563, lon: 102.4955, zoom: 6 },
+  MN: { name: 'モンゴル (Mongolia)', flag: '🇲🇳', region: '🌏 アジア', lat: 46.8625, lon: 103.8467, zoom: 5 },
+  AE: { name: 'アラブ首長国連邦 (UAE)', flag: '🇦🇪', region: '🌏 アジア', lat: 23.4241, lon: 53.8478, zoom: 7 },
+  SA: { name: 'サウジアラビア (Saudi Arabia)', flag: '🇸🇦', region: '🌏 アジア', lat: 23.8859, lon: 45.0792, zoom: 5 },
+  IL: { name: 'イスラエル (Israel)', flag: '🇮🇱', region: '🌏 アジア', lat: 31.0461, lon: 34.8516, zoom: 7 },
+  MV: { name: 'モルディブ (Maldives)', flag: '🇲🇻', region: '🌏 アジア', lat: 3.2028, lon: 73.2207, zoom: 7 },
+
+  // --- 🇪🇺 ヨーロッパ (35カ国) ---
+  FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
+  ES: { name: 'スペイン (Spain)', flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
+  IT: { name: 'イタリア (Italy)', flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
+  GB: { name: 'イギリス (UK)', flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
   DE: { name: 'ドイツ (Germany)', flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
-  IT: { name: 'イタリア (Italy)', flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 }
+  CH: { name: 'スイス (Switzerland)', flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
+  AT: { name: 'オーストリア (Austria)', flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
+  GR: { name: 'ギリシャ (Greece)', flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
+  PT: { name: 'ポルトガル (Portugal)', flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
+  NL: { name: 'オランダ (Netherlands)', flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
+  SE: { name: 'スウェーデン (Sweden)', flag: '🇸🇪', region: '🇪🇺 ヨーロッパ', lat: 60.1282, lon: 18.6435, zoom: 5 },
+  NO: { name: 'ノルウェー (Norway)', flag: '🇳🇴', region: '🇪🇺 ヨーロッパ', lat: 60.4720, lon: 8.4689, zoom: 5 },
+  DK: { name: 'デンマーク (Denmark)', flag: '🇩🇰', region: '🇪🇺 ヨーロッパ', lat: 56.2639, lon: 9.5018, zoom: 7 },
+  FI: { name: 'フィンランド (Finland)', flag: '🇫🇮', region: '🇪🇺 ヨーロッパ', lat: 61.9241, lon: 25.7482, zoom: 5 },
+  TR: { name: 'トルコ (Turkey)', flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
+  PL: { name: 'ポーランド (Poland)', flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
+  CZ: { name: 'チェコ (Czech Republic)', flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
+  HU: { name: 'ハンガリー (Hungary)', flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
+  RO: { name: 'ルーマニア (Romania)', flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
+  BE: { name: 'ベルギー (Belgium)', flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
+  IE: { name: 'アイルランド (Ireland)', flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
+  IS: { name: 'アイスランド (Iceland)', flag: '🇮🇸', region: '🇪🇺 ヨーロッパ', lat: 64.9631, lon: -19.0208, zoom: 6 },
+  HR: { name: 'クロアチア (Croatia)', flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1, lon: 15.2, zoom: 7 },
+  UA: { name: 'ウクライナ (Ukraine)', flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
+  EE: { name: 'エストニア (Estonia)', flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
+  LV: { name: 'ラトビア (Latvia)', flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
+  LT: { name: 'リトアニア (Lithuania)', flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
+  SK: { name: 'スロバキア (Slovakia)', flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
+  SI: { name: 'スロベニア (Slovenia)', flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  LU: { name: 'ルクセンブルク (Luxembourg)', flag: '🇱🇺', region: '🇪🇺 ヨーロッパ', lat: 49.8153, lon: 6.1296, zoom: 10 },
+  MC: { name: 'モナコ (Monaco)', flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lat: 43.7384, lon: 7.4246, zoom: 14 },
+  VA: { name: 'バチカン市国 (Vatican City)', flag: '🇻🇦', region: '🇪🇺 ヨーロッパ', lat: 41.9029, lon: 12.4534, zoom: 15 },
+  SM: { name: 'サンマリノ (San Marino)', flag: '🇸🇲', region: '🇪🇺 ヨーロッパ', lat: 43.9424, lon: 12.4578, zoom: 12 },
+  AD: { name: 'アンドラ (Andorra)', flag: '🇦🇩', region: '🇪🇺 ヨーロッパ', lat: 42.5063, lon: 1.5218, zoom: 10 },
+  LI: { name: 'リヒテンシュタイン (Liechtenstein)', flag: '🇱🇮', region: '🇪🇺 ヨーロッパ', lat: 47.166, lon: 9.555, zoom: 11 },
+
+  // --- 🗽 北米・中南米 (25カ国) ---
+  US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米・中南米', lat: 37.0902, lon: -95.7129, zoom: 4 },
+  CA: { name: 'カナダ (Canada)', flag: '🇨🇦', region: '🗽 北米・中南米', lat: 56.1304, lon: -106.3468, zoom: 3 },
+  MX: { name: 'メキシコ (Mexico)', flag: '🇲🇽', region: '🗽 北米・中南米', lat: 23.6345, lon: 102.5528, zoom: 5 },
+  BR: { name: 'ブラジル (Brazil)', flag: '🇧🇷', region: '🗽 北米・中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
+  AR: { name: 'アルゼンチン (Argentina)', flag: '🇦🇷', region: '🗽 北米・中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
+  PE: { name: 'ペルー (Peru)', flag: '🇵🇪', region: '🗽 北米・中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
+  CL: { name: 'チリ (Chile)', flag: '🇨🇱', region: '🗽 北米・中南米', lat: -35.6751, lon: -71.5430, zoom: 4 },
+  CO: { name: 'コロンビア (Colombia)', flag: '🇨🇴', region: '🗽 北米・中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
+  CU: { name: 'キューバ (Cuba)', flag: '🇨🇺', region: '🗽 北米・中南米', lat: 21.5218, lon: -77.7812, zoom: 7 },
+  JM: { name: 'ジャマイカ (Jamaica)', flag: '🇯🇲', region: '🗽 北米・中南米', lat: 18.1096, lon: -77.2975, zoom: 9 },
+  CR: { name: 'コスタリカ (Costa Rica)', flag: '🇨🇷', region: '🗽 北米・中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
+  PA: { name: 'パナマ (Panama)', flag: '🇵🇦', region: '🗽 北米・中南米', lat: 8.5380, lon: -80.7821, zoom: 8 },
+  DO: { name: 'ドミニカ共和国 (Dominican Republic)', flag: '🇩🇴', region: '🗽 北米・中南米', lat: 18.7357, lon: -70.1627, zoom: 8 },
+  GT: { name: 'グアテマラ (Guatemala)', flag: '🇬🇹', region: '🗽 北米・中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
+  UY: { name: 'ウルグアイ (Uruguay)', flag: '🇺🇾', region: '🗽 北米・中南米', lat: -32.5228, lon: -55.7658, zoom: 7 },
+  EC: { name: 'エクアドル (Ecuador)', flag: '🇪🇨', region: '🗽 北米・中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
+  VE: { name: 'ベネズエラ (Venezuela)', flag: '🇻🇪', region: '🗽 北米・中南米', lat: 6.4238, lon: -66.5897, zoom: 5 },
+  BO: { name: 'ボリビア (Bolivia)', flag: '🇧🇴', region: '🗽 北米・中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
+  PY: { name: 'パラグアイ (Paraguay)', flag: '🇵🇾', region: '🗽 北米・中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
+  HN: { name: 'ホンジュラス (Honduras)', flag: '🇭🇳', region: '🗽 北米・中南米', lat: 15.2, lon: -86.2, zoom: 7 },
+  NI: { name: 'ニカラグア (Nicaragua)', flag: '🇳🇮', region: '🗽 北米・中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
+  SV: { name: 'エルサルバドル (El Salvador)', flag: '🇸🇻', region: '🗽 北米・中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
+  BS: { name: 'バハマ (Bahamas)', flag: '🇧🇸', region: '🗽 北米・中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
+  BB: { name: 'バルバドス (Barbados)', flag: '🇧🇧', region: '🗽 北米・中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
+  BZ: { name: 'ベリーズ (Belize)', flag: '🇧🇿', region: '🗽 北米・中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
+
+  // --- 🦘 オセアニア (15カ国) ---
+  AU: { name: 'オーストラリア (Australia)', flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
+  NZ: { name: 'ニュージーランド (New Zealand)', flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
+  FJ: { name: 'フィジー (Fiji)', flag: '🇫🇯', region: '🦘 オセアニア', lat: -17.7134, lon: 178.0650, zoom: 8 },
+  PG: { name: 'パプアニューギニア (Papua New Guinea)', flag: '🇵🇬', region: '🦘 オセアニア', lat: -6.3149, lon: 143.9555, zoom: 6 },
+  VU: { name: 'バヌアツ (Vanuatu)', flag: '🇻🇺', region: '🦘 オセアニア', lat: -15.3767, lon: 166.9592, zoom: 7 },
+  WS: { name: 'サモア (Samoa)', flag: '🇼🇸', region: '🦘 オセアニア', lat: -13.7590, lon: -172.1046, zoom: 9 },
+  TO: { name: 'トンガ (Tonga)', flag: '🇹🇴', region: '🦘 オセアニア', lat: -21.1789, lon: -175.1982, zoom: 9 },
+  SB: { name: 'ソロモン諸島 (Solomon Islands)', flag: '🇸🇧', region: '🦘 オセアニア', lat: -9.6457, lon: 160.1562, zoom: 7 },
+  NC: { name: 'ニューカレドニア (New Caledonia)', flag: '🇳🇨', region: '🦘 オセアニア', lat: -20.9043, lon: 165.6180, zoom: 7 },
+  PF: { name: 'タヒチ / フランス領ポリネシア (French Polynesia)', flag: '🇵🇫', region: '🦘 オセアニア', lat: -17.6797, lon: -149.4068, zoom: 7 },
+  KI: { name: 'キリバス (Kiribati)', flag: '🇰🇮', region: '🦘 オセアニア', lat: -3.3704, lon: -168.7340, zoom: 6 },
+  FM: { name: 'ミクロネシア (Micronesia)', flag: '🇫🇲', region: '🦘 オセアニア', lat: 7.4256, lon: 150.5508, zoom: 8 },
+  PW: { name: 'パラオ (Palau)', flag: '🇵🇼', region: '🦘 オセアニア', lat: 7.5150, lon: 134.5825, zoom: 9 },
+  MH: { name: 'マーシャル諸島 (Marshall Islands)', flag: '🇲🇭', region: '🦘 オセアニア', lat: 7.1315, lon: 171.1845, zoom: 8 },
+  TV: { name: 'ツバル (Tuvalu)', flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
+
+  // --- 🦁 アフリカ (20カ国) ---
+  EG: { name: 'エジプト (Egypt)', flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
+  ZA: { name: '南アフリカ (South Africa)', flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
+  MA: { name: 'モロッコ (Morocco)', flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
+  KE: { name: 'ケニア (Kenya)', flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
+  TZ: { name: 'タンザニア (Tanzania)', flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
+  NG: { name: 'ナイジェリア (Nigeria)', flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
+  GH: { name: 'ガーナ (Ghana)', flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
+  ET: { name: 'エチオピア (Ethiopia)', flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
+  SN: { name: 'セネガル (Senegal)', flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
+  MG: { name: 'マダガスカル (Madagascar)', flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
+  MU: { name: 'モーリシャス (Mauritius)', flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
+  SC: { name: 'セーシェル (Seychelles)', flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
+  TN: { name: 'チュニジア (Tunisia)', flag: '🇹🇳', region: '🦁 アフリカ', lat: 33.8869, lon: 9.5375, zoom: 6 },
+  DZ: { name: 'アルジェリア (Algeria)', flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
+  UG: { name: 'ウガンダ (Uganda)', flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
+  RW: { name: 'ルワンダ (Rwanda)', flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
+  ZW: { name: 'ジンバブエ (Zimbabwe)', flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
+  BW: { name: 'ボツワナ (Botswana)', flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
+  NA: { name: 'ナミビア (Namibia)', flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
+  MU_2: { name: 'カーボベルデ (Cape Verde)', flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -891,36 +1011,28 @@ const INITIAL_SPOTS: Spot[] = [
   },
 ];
 
-const EULA_FULL_TEXT = `【WorldSnap 利用規約および位置情報ポリシー（Apple審査対応版）】
+const EULA_FULL_TEXT = `【WorldSnap 利用規約 (EULA)】
 
-第1条（目的および同意）
-本規約は、当サービス「WorldSnap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
+第1条（適用および同意）
+本規約は、当サービスを利用するすべてのユーザーに適用されます。利用規約およびプライバシーポリシーに同意いただけない場合、投稿および共有機能はご利用いただけません。
 
-第2条（位置情報の取得・利用について・Apple審査対応）
-1. 当サービスは、ユーザーがマップ画面右下の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一時的に取得します。
-2. 取得した位置情報は、ユーザーの現在の現在地をマップの中心に表示する機能、および周辺の旅のスポットを検索・閲覧する機能の提供にのみ使用されます。
-3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。ユーザーは端末の設定からいつでも位置情報の許可をオフにすることができます。
+第2条（ユーザー生成コンテンツの安全方針と禁止事項）
+当サービスは、すべてのユーザーが安全かつ快適に旅の思い出を記録・共有できる環境を重視しています。ユーザーは以下のコンテンツの投稿および行為を行ってはなりません。
+・性的、暴力的、過度にグロテスク、差別的、または他者に不快感を与える画像・動画・テキストの投稿
+・特定の個人・団体への嫌がらせ、名誉毀損、脅迫、いじめ、ストーカー行為
+・法令または公序良俗に反する行為、犯罪行為を助長する行為
+・第三者の著作権、肖像権、商標権その他の権利を侵害する行為
+・個人情報の無断開示、スパム目的の連投
 
-第3条（コンテンツの安全性と禁止事項）
-公序良俗に反する投稿、誹謗中傷、暴言、過激なコンテンツの投稿は禁止されています。違反した場合は通報機能により自動削除およびアカウント凍結となります。`;
+第3条（不適切なコンテンツへの対処・モデレーション）
+・通報機能（Report）：ユーザーは不適切な写真・ピンを通報できます。通報が30件に達したコンテンツおよびユーザーは自動的に削除・1週間凍結されます。
+・ブロック機能（Block）：ユーザーは特定の他ユーザーをブロックでき、ブロックされたユーザーの投稿やピンは即座に非表示となります。`;
 
-const GUIDE_FULL_TEXT = `【WorldSnap の操作説明と使い方ガイド】
-
-1. 現在地に移動する「🎯ボタン」
-- マップ画面の右下にある「🎯（現在地ボタン）」をタップすると、ブラウザの位置情報のアクセス許可確認画面が表示されます。
-- 許可すると、一瞬であなたの現在地へと地図がジャンプします（Apple審査ガイドライン対応の安全な取得設計）。
-
-2. マップの操作とズーム
-- マップ上をダブルタップすると、その場所が拡大（ズームイン）します。
-- 右下の「🪟（引き戻すボタン）」を押すと、都道府県から国・世界全体へと視野を段階的に広げることができます。
-
-3. 写真や動画の投稿
-- 下部の「📷＋ 写真 / 動画を追加」ボタンからアルバムのメディアを選択できます。
-- 撮影場所の「地名・住所検索」で場所を指定し、公開範囲（ワールド・フレンド・マイマップ）やカテゴリを選んで投稿するとマップに反映されます。動画も音声付きで再生可能です。
-
-4. 足跡マップと自動翻訳
-- マイページの「足跡マップ」で国をタップすると、その周辺がオレンジ色にハイライトされます。
-- 詳細画面の「🌐 翻訳する」ボタンを押すと、お好みの言語へ一瞬で文章が翻訳されます。`;
+const GUIDE_FULL_TEXT = `【WorldSnap の使い方ガイド】
+1. マップ機能：世界中の主要スポットを閲覧できます。ダブルタップでズームイン。
+2. 写真・投稿：下部の「📷＋ 写真 / 動画を追加」から、アルバムの写真（EXIF位置情報付き）を簡単にマップに共有できます。
+3. 足跡マップ：マイページの「足跡マップ」で訪問国をタップすると、周辺エリアがオレンジ色にハイライトされます。
+4. 自動翻訳：投稿詳細にある翻訳ボタンを押すと、ご自身の選択した言語に一瞬で翻訳されます。`;
 
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
@@ -1323,14 +1435,28 @@ export default function WorldSnapApp() {
   const [spots, setSpots] = useState<Spot[]>(INITIAL_SPOTS);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
 
   const [profileSubTab, setProfileSubTab] = useState<'posts' | 'footprint' | 'timeline' | 'saved' | 'badges' | 'friends'>('posts');
   const [activeFootprintCountry, setActiveFootprintCountry] = useState<string | null>(null);
 
+  const [editingSpot, setEditingSpot] = useState<Spot | null>(null);
+  const [editTitle, setEditTitle] = useState<string>('');
+  const [editDesc, setEditDesc] = useState<string>('');
+  const [editCategory, setEditCategory] = useState<ViewCategory>('view');
+  const [editScopes, setEditScopes] = useState<DisplayScope[]>(['world']);
+
   const [newCommentText, setNewCommentText] = useState<string>('');
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
+
+  const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
+  const [reportReasonType, setReportReasonType] = useState<string>('inappropriate');
+
+  const [selectedFriend, setSelectedFriend] = useState<FriendUser | null>(null);
+  const [chatMessages, setChatMessages] = useState<Record<string, ChatMessage[]>>({});
+  const [inputMessageText, setInputMessageText] = useState<string>('');
 
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
@@ -1341,6 +1467,7 @@ export default function WorldSnapApp() {
   
   const [addressSearchQuery, setAddressSearchQuery] = useState<string>('');
   const [addressSuggestions, setAddressSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [isSearchingAddress, setIsSearchingAddress] = useState<boolean>(false);
   const [manualLat, setManualLat] = useState<string>('');
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -1354,6 +1481,8 @@ export default function WorldSnapApp() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [friendsList, setFriendsList] = useState<FriendUser[]>([]);
+  const [inputFriendCode, setInputFriendCode] = useState('');
+
   const [translatedDescriptions, setTranslatedDescriptions] = useState<Record<string, string>>({});
 
   const exportRef = useRef<HTMLDivElement>(null);
@@ -1371,7 +1500,7 @@ export default function WorldSnapApp() {
   };
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem('ws_onboarded_v15');
+    const hasCompleted = localStorage.getItem('ws_onboarded_v8');
     if (hasCompleted) {
       setIsOnboarding(false);
     }
@@ -1577,7 +1706,7 @@ export default function WorldSnapApp() {
   };
 
   const handleCompleteOnboarding = () => {
-    localStorage.setItem('ws_onboarded_v15', 'true');
+    localStorage.setItem('ws_onboarded_v8', 'true');
     setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
@@ -1599,6 +1728,12 @@ export default function WorldSnapApp() {
     setActiveMediaIndex(0);
   };
 
+  const handleNextMedia = () => {
+    if (!selectedSpot?.mediaList || selectedSpot.mediaList.length <= 1) return;
+    setActiveMediaIndex((prev) => (prev + 1) % selectedSpot.mediaList!.length);
+  };
+
+  // 翻訳機能の本実装
   const handleTranslateDescription = (spotId: string, originalText: string) => {
     if (translatedDescriptions[spotId]) {
       setTranslatedDescriptions(prev => {
@@ -1606,7 +1741,6 @@ export default function WorldSnapApp() {
         delete next[spotId];
         return next;
       });
-      showToast('元の言語に戻しました');
       return;
     }
 
@@ -1664,6 +1798,63 @@ export default function WorldSnapApp() {
     );
     setNewCommentText('');
     showToast('💬 コメントを投稿しました！');
+  };
+
+  const handleSendMessage = () => {
+    const trimmedMsg = inputMessageText.trim();
+    if (!trimmedMsg || !selectedFriend) return;
+
+    const check = checkInappropriateContent(trimmedMsg);
+    if (check.isViolating) {
+      showWarning('⚠️ 暴言・差別発言・下ネタ等の不適切な表現が含まれているため、メッセージを送信できません。');
+      return;
+    }
+
+    const newMsg: ChatMessage = {
+      id: 'msg-' + Date.now(),
+      senderId: 'me',
+      text: trimmedMsg,
+      createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    setChatMessages((prev) => ({
+      ...prev,
+      [selectedFriend.id]: [...(prev[selectedFriend.id] || []), newMsg],
+    }));
+    setInputMessageText('');
+  };
+
+  const handleExecuteReport = async (reason: string) => {
+    if (!selectedSpot) return;
+    const spotId = selectedSpot.id;
+    const targetUserId = selectedSpot.userId;
+
+    setSpots((prev) =>
+      prev.map((s) => {
+        if (s.id === spotId) {
+          const nextCount = (s.reportCount || 0) + 1;
+          return { ...s, reportCount: nextCount };
+        }
+        return s;
+      })
+    );
+
+    const currentSpot = spots.find((s) => s.id === spotId);
+    const updatedReportCount = (currentSpot?.reportCount || 0) + 1;
+
+    if (updatedReportCount >= 30) {
+      setSpots((prev) => prev.filter((s) => s.id !== spotId));
+      setBlockedUsers((prev) => [...prev, targetUserId]);
+      if (supabase) {
+        await supabase.from('spots').delete().eq('id', spotId);
+      }
+      showToast('⚠️ 通報が30件に達したため、この投稿は自動削除されました。');
+    } else {
+      showToast(`✅ 通報を受け付けました（理由: ${reason}）。`);
+    }
+
+    setIsReportModalOpen(false);
+    setSelectedSpot(null);
   };
 
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1924,6 +2115,52 @@ export default function WorldSnapApp() {
     }
   };
 
+  const handleStartEdit = (spot: Spot) => {
+    setEditingSpot(spot);
+    setEditTitle(spot.title);
+    setEditDesc(spot.description);
+    setEditCategory(spot.category);
+    setEditScopes(spot.scopes);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingSpot) return;
+
+    const checkTitle = checkInappropriateContent(editTitle);
+    const checkDesc = checkInappropriateContent(editDesc);
+    if (checkTitle.isViolating || checkDesc.isViolating) {
+      showWarning('⚠️ 暴言・差別発言・不適切な表現が含まれているため変更を保存できません。');
+      return;
+    }
+
+    const updatedSpot: Spot = {
+      ...editingSpot,
+      title: editTitle.trim() || editingSpot.title,
+      description: editDesc.trim(),
+      category: editCategory,
+      scopes: editScopes,
+      tags: extractHashtags(editDesc.trim()),
+    };
+
+    setSpots((prev) => prev.map((s) => (s.id === editingSpot.id ? updatedSpot : s)));
+    if (selectedSpot && selectedSpot.id === editingSpot.id) {
+      setSelectedSpot(updatedSpot);
+    }
+
+    if (supabase) {
+      await supabase.from('spots').update({
+        title: updatedSpot.title,
+        description: updatedSpot.description,
+        category: updatedSpot.category,
+        scopes: updatedSpot.scopes,
+        tags: updatedSpot.tags,
+      }).eq('id', editingSpot.id);
+    }
+
+    setEditingSpot(null);
+    showToast('✏️ 投稿の修正を保存しました！');
+  };
+
   const handleSaveMyMap = async () => {
     if (!exportRef.current) return;
     showToast('📸 マップ画像を生成中...');
@@ -2015,6 +2252,46 @@ export default function WorldSnapApp() {
     } catch (err) {
       console.error('Export error:', err);
       showToast('❌ 画像生成に失敗しました');
+    }
+  };
+
+  const toggleSaveSpot = async (spotId: string) => {
+    if (savedSpotIds.includes(spotId)) {
+      setSavedSpotIds((prev) => prev.filter((id) => id !== spotId));
+      setSpots((prev) => prev.map((s) => s.id === spotId ? { ...s, savedCount: Math.max(0, (s.savedCount || 1) - 1) } : s));
+      if (supabase) {
+        await supabase.from('saved_spots').delete().match({ user_id: 'me', spot_id: spotId });
+      }
+      showToast('保存を解除しました');
+    } else {
+      setSavedSpotIds((prev) => [...prev, spotId]);
+      setSpots((prev) => prev.map((s) => s.id === spotId ? { ...s, savedCount: (s.savedCount || 0) + 1 } : s));
+      if (supabase) {
+        await supabase.from('saved_spots').insert([{ user_id: 'me', spot_id: spotId }]);
+      }
+      showToast('💛 行きたいリストに保存しました！');
+    }
+  };
+
+  const handleBlockUser = async (userId: string) => {
+    if (confirm('このユーザーをブロックしますか？\n相手の投稿がすべて非表示になります。')) {
+      setBlockedUsers((prev) => [...prev, userId]);
+      if (supabase) {
+        await supabase.from('blocked_users').insert([{ blocker_id: 'me', blocked_id: userId }]);
+      }
+      setSelectedSpot(null);
+      showToast('🚫 ユーザーをブロックしました');
+    }
+  };
+
+  const handleDeleteSpot = async (spotId: string) => {
+    if (confirm('このピンを削除しますか？')) {
+      setSpots((prev) => prev.filter((s) => s.id !== spotId));
+      if (supabase) {
+        await supabase.from('spots').delete().eq('id', spotId);
+      }
+      setSelectedSpot(null);
+      showToast('🗑️ ピンを削除しました');
     }
   };
 
@@ -2370,7 +2647,7 @@ export default function WorldSnapApp() {
               onDoubleTap={handleMapDoubleTap}
             />
 
-            {/* 現在地ボタン（GPS位置情報パーミッション要求連携・Apple審査対応） */}
+            {/* 現在地・ズームアウト・保存 */}
             <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button
                 title="現在地へ移動"
@@ -2382,14 +2659,8 @@ export default function WorldSnapApp() {
                         setTargetZoom(15);
                         showToast('🎯 現在地に移動しました');
                       },
-                      (err) => {
-                        console.error(err);
-                        showWarning('⚠️ 位置情報のアクセスが拒否されたか、取得できませんでした。ブラウザの設定をご確認ください。');
-                      },
-                      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                      () => showToast('⚠️ 位置情報の取得に失敗しました')
                     );
-                  } else {
-                    showWarning('⚠️ お使いのブラウザは位置情報に対応していません。');
                   }
                 }}
                 style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
