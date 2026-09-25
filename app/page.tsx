@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & グローバル言語 / 120カ国マップデータ
+// 1. 型定義 & グローバル言語 / 地域別120カ国マップデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -166,13 +166,13 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     step1Title: 'Step 1: 表示言語を選択',
     step1Desc: '世界中の人々が使えるよう、お好みの言語を選択してください。',
     step2Title: 'Step 2: ベースの国（初期マップ）を選択',
-    step2Desc: 'マップの初期表示位置となるメインの国を選んでください。',
+    step2Desc: 'マップの初期表示位置となるメインの国を選んでください（地域別）。',
     step3Title: 'Step 3: プロフィール作成',
-    step3TitleEula: 'Step 4: 利用規約 (EULA) の確認',
+    step3TitleEula: 'Step 4: 利用規約 & 位置情報ポリシーの確認',
     next: '次へ進む',
     back: '戻る',
     startApp: '🚀 WorldSnap をはじめる',
-    eulaAgree: '利用規約およびコミュニティガイドラインに同意する',
+    eulaAgree: '利用規約および位置情報の利用方針に同意する（Apple審査対応）',
     map: 'マップ',
     ranking: 'ランキング',
     profile: 'マイページ',
@@ -209,634 +209,10 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     tabSaved: '💛 保存',
     tabBadges: '🏅 バッジ',
     tabFriends: '👥 フレンド'
-  },
-  en: {
-    step1Title: 'Step 1: Select Your Language',
-    step1Desc: 'Choose your preferred language for the application.',
-    step2Title: 'Step 2: Select Base Country (Initial Map)',
-    step2Desc: 'Choose your main country for the starting map view.',
-    step3Title: 'Step 3: Create Profile',
-    step3TitleEula: 'Step 4: Terms of Service (EULA)',
-    next: 'Next',
-    back: 'Back',
-    startApp: '🚀 Start WorldSnap',
-    eulaAgree: 'I agree to the Terms of Service',
-    map: 'Map',
-    ranking: 'Ranking',
-    profile: 'Profile',
-    addPhoto: 'Add Media',
-    exportMap: 'Save Map',
-    view: 'View',
-    gourmet: 'Gourmet',
-    rain: 'Rainy Day',
-    myMap: 'My Map',
-    friends: 'Friends',
-    world: 'World',
-    openGoogleMaps: '🧭 Open Maps',
-    saveSpot: '❤️ Save',
-    saved: '❤️ Saved',
-    report: '⚠️ Report',
-    block: '🚫 Block',
-    delete: '🗑️ Delete',
-    edit: '✏️ Edit',
-    visited: 'Visited',
-    posts: 'Posts',
-    friendCode: 'Friend Code',
-    searchPlaceholder: '🔍 Search city, #tag...',
-    settings: '⚙️ Settings Menu',
-    langSetting: '🌐 App Language',
-    baseCountrySetting: '📍 Base Country (Initial Map)',
-    blockListTitle: '🚫 Blocked Users',
-    eulaTitle: '📜 Terms of Service (EULA)',
-    guideTitle: '📖 App Guide & Instructions',
-    translate: '🌐 Translate',
-    close: 'Close',
-    tabPosts: '📸 Posts',
-    tabFootprint: '🌍 Footprint',
-    tabTimeline: '📅 Log',
-    tabSaved: '💛 Saved',
-    tabBadges: '🏅 Badges',
-    tabFriends: '👥 Friends'
-  },
-  ko: {
-    step1Title: 'Step 1: 언어 선택',
-    step1Desc: '앱에서 사용할 언어를 선택하세요.',
-    step2Title: 'Step 2: 베이스 국가(초기 지도) 선택',
-    step2Desc: '지도의 중심이 될 기본 국가를 선택하세요.',
-    step3Title: 'Step 3: 프로필 설정',
-    step3TitleEula: 'Step 4: 이용약관 동의',
-    next: '다음',
-    back: '뒤로',
-    startApp: '🚀 WorldSnap 시작하기',
-    eulaAgree: '이용약관 및 가이드라인에 동의합니다',
-    map: '지도',
-    ranking: '랭킹',
-    profile: '마이페이지',
-    addPhoto: '사진/영상 추가',
-    exportMap: '지도 저장',
-    view: '경치',
-    gourmet: '맛집',
-    rain: '비오는날',
-    myMap: '내 지도',
-    friends: '친구',
-    world: '전체',
-    openGoogleMaps: '🧭 Google 지도 열기',
-    saveSpot: '❤️ 가고싶다',
-    saved: '❤️ 저장됨',
-    report: '⚠️ 신고',
-    block: '🚫 차단',
-    delete: '🗑️ 삭제',
-    edit: '✏️ 수정',
-    visited: '방문 국가',
-    posts: '게시물',
-    friendCode: '친구 코드',
-    searchPlaceholder: '🔍 도시 / #태그 검색',
-    settings: '⚙️ 설정 메뉴',
-    langSetting: '🌐 앱 언어',
-    baseCountrySetting: '📍 기본 국가',
-    blockListTitle: '🚫 차단된 사용자',
-    eulaTitle: '📜 이용약관 (EULA)',
-    guideTitle: '📖 앱 조작 설명',
-    translate: '🌐 번역하기',
-    close: '닫기',
-    tabPosts: '📸 게시물',
-    tabFootprint: '🌍 발자국',
-    tabTimeline: '📅 로그',
-    tabSaved: '💛 저장',
-    tabBadges: '🏅 배지',
-    tabFriends: '👥 친구'
-  },
-  zh: {
-    step1Title: '步骤 1: 选择语言',
-    step1Desc: '请选择您偏好的应用显示语言。',
-    step2Title: 'Step 2: 选择基础国家（初始地图）',
-    step2Desc: '请选择地图初始显示的国家。',
-    step3Title: 'Step 3: 创建个人资料',
-    step3TitleEula: 'Step 4: 服务条款 (EULA)',
-    next: '下一步',
-    back: '返回',
-    startApp: '🚀 开始使用 WorldSnap',
-    eulaAgree: '同意服务条款与社区准则',
-    map: '地图',
-    ranking: '排行',
-    profile: '我的',
-    addPhoto: '添加媒体',
-    exportMap: '保存地图',
-    view: '风景',
-    gourmet: '美食',
-    rain: '雨天',
-    myMap: '我的地图',
-    friends: '好友',
-    world: '世界',
-    openGoogleMaps: '🧭 打开地图',
-    saveSpot: '❤️ 收藏',
-    saved: '❤️ 已收藏',
-    report: '⚠️ 举报',
-    block: '🚫 拉黑',
-    delete: '🗑️ 删除',
-    edit: '编辑',
-    visited: '已访问',
-    posts: '动态',
-    friendCode: '好友码',
-    searchPlaceholder: '🔍 搜索城市 / #标签...',
-    settings: '⚙️ 设置菜单',
-    langSetting: '🌐 应用语言',
-    baseCountrySetting: '📍 基础国家',
-    blockListTitle: '🚫 已屏蔽用户',
-    eulaTitle: '📜 服务条款 (EULA)',
-    guideTitle: '📖 操作说明',
-    translate: '🌐 翻译',
-    close: '关闭',
-    tabPosts: '📸 动态',
-    tabFootprint: '🌍 足迹',
-    tabTimeline: '📅 日志',
-    tabSaved: '💛 收藏',
-    tabBadges: '🏅 徽章',
-    tabFriends: '👥 好友'
-  },
-  es: {
-    step1Title: 'Paso 1: Selecciona tu idioma',
-    step1Desc: 'Elige tu idioma preferido para la aplicación.',
-    step2Title: 'Paso 2: Selecciona el país base',
-    step2Desc: 'Elige tu país principal para la vista de mapa inicial.',
-    step3Title: 'Paso 3: Crear perfil',
-    step3TitleEula: 'Paso 4: Términos de servicio (EULA)',
-    next: 'Siguiente',
-    back: 'Atrás',
-    startApp: '🚀 Iniciar WorldSnap',
-    eulaAgree: 'Acepto los términos de servicio',
-    map: 'Mapa',
-    ranking: 'Ranking',
-    profile: 'Perfil',
-    addPhoto: 'Añadir',
-    exportMap: 'Guardar',
-    view: 'Vista',
-    gourmet: 'Gourmet',
-    rain: 'Lluvia',
-    myMap: 'Mi Mapa',
-    friends: 'Amigos',
-    world: 'Mundo',
-    openGoogleMaps: '🧭 Abrir Maps',
-    saveSpot: '❤️ Guardar',
-    saved: '❤️ Guardado',
-    report: '⚠️ Reportar',
-    block: '🚫 Bloquear',
-    delete: '🗑️ Eliminar',
-    edit: '✏️ Editar',
-    visited: 'Visitados',
-    posts: 'Publicaciones',
-    friendCode: 'Código de amigo',
-    searchPlaceholder: '🔍 Buscar ciudad, #etiqueta...',
-    settings: '⚙️ Menú de configuración',
-    langSetting: '🌐 Idioma de la aplicación',
-    baseCountrySetting: '📍 País base',
-    blockListTitle: '🚫 Usuarios bloqueados',
-    eulaTitle: '📜 Términos de servicio',
-    guideTitle: '📖 Instrucciones de uso',
-    translate: '🌐 Traducir',
-    close: 'Cerrar',
-    tabPosts: '📸 Posts',
-    tabFootprint: '🌍 Huella',
-    tabTimeline: '📅 Log',
-    tabSaved: '💛 Guardados',
-    tabBadges: '🏅 Insignias',
-    tabFriends: '👥 Amigos'
-  },
-  fr: {
-    step1Title: 'Étape 1 : Sélectionnez votre langue',
-    step1Desc: 'Choisissez votre langue préférée pour l\'application.',
-    step2Title: 'Étape 2 : Sélectionnez le pays de base',
-    step2Desc: 'Choisissez votre pays principal pour la vue de carte.',
-    step3Title: 'Étape 3 : Créer un profil',
-    step3TitleEula: 'Étape 4 : Conditions d\'utilisation',
-    next: 'Suivant',
-    back: 'Retour',
-    startApp: '🚀 Démarrer WorldSnap',
-    eulaAgree: 'J\'accepte les conditions d\'utilisation',
-    map: 'Carte',
-    ranking: 'Classement',
-    profile: 'Profil',
-    addPhoto: 'Ajouter',
-    exportMap: 'Enregistrer',
-    view: 'Vue',
-    gourmet: 'Gastronomie',
-    rain: 'Pluie',
-    myMap: 'Ma Carte',
-    friends: 'Amis',
-    world: 'Monde',
-    openGoogleMaps: '🧭 Ouvrir Maps',
-    saveSpot: '❤️ Sauvegarder',
-    saved: '❤️ Enregistré',
-    report: '⚠️ Signaler',
-    block: '🚫 Bloquer',
-    delete: '🗑️ Supprimer',
-    edit: '✏️ Éditer',
-    visited: 'Visité',
-    posts: 'Publications',
-    friendCode: 'Code ami',
-    searchPlaceholder: '🔍 Rechercher...',
-    settings: '⚙️ Paramètres',
-    langSetting: '🌐 Langue de l\'application',
-    baseCountrySetting: '📍 Pays de base',
-    blockListTitle: '🚫 Utilisateurs bloqués',
-    eulaTitle: '📜 Conditions d\'utilisation',
-    guideTitle: '📖 Mode d\'emploi',
-    translate: '🌐 Traduire',
-    close: 'Fermer',
-    tabPosts: '📸 Publications',
-    tabFootprint: '🌍 Traces',
-    tabTimeline: '📅 Historique',
-    tabSaved: '💛 Favoris',
-    tabBadges: '🏅 Badges',
-    tabFriends: '👥 Amis'
-  },
-  de: {
-    step1Title: 'Schritt 1: Sprache auswählen',
-    step1Desc: 'Wählen Sie Ihre bevorzugte App-Sprache.',
-    step2Title: 'Schritt 2: Basissland wählen',
-    step2Desc: 'Wählen Sie das Hauptland für die Startkarte.',
-    step3Title: 'Schritt 3: Profil erstellen',
-    step3TitleEula: 'Schritt 4: Nutzungsbedingungen',
-    next: 'Weiter',
-    back: 'Zurück',
-    startApp: '🚀 WorldSnap starten',
-    eulaAgree: 'Ich stimme den Nutzungsbedingungen zu',
-    map: 'Karte',
-    ranking: 'Rangliste',
-    profile: 'Profil',
-    addPhoto: 'Hinzufügen',
-    exportMap: 'Speichern',
-    view: 'Ansicht',
-    gourmet: 'Gourmet',
-    rain: 'Regen',
-    myMap: 'Meine Karte',
-    friends: 'Freunde',
-    world: 'Welt',
-    openGoogleMaps: '🧭 Maps öffnen',
-    saveSpot: '❤️ Merken',
-    saved: '❤️ Gespeichert',
-    report: '⚠️ Melden',
-    block: '🚫 Blockieren',
-    delete: '🗑️ Löschen',
-    edit: '✏️ Bearbeiten',
-    visited: 'Besucht',
-    posts: 'Beiträge',
-    friendCode: 'Freundescode',
-    searchPlaceholder: '🔍 Suchen...',
-    settings: '⚙️ Einstellungen',
-    langSetting: '🌐 App-Sprache',
-    baseCountrySetting: '📍 Basissland',
-    blockListTitle: '🚫 Blockierte Benutzer',
-    eulaTitle: '📜 Nutzungsbedingungen',
-    guideTitle: '📖 Bedienungsanleitung',
-    translate: '🌐 Übersetzen',
-    close: 'Schließen',
-    tabPosts: '📸 Beiträge',
-    tabFootprint: '🌍 Fußabdruck',
-    tabTimeline: '📅 Log',
-    tabSaved: '💛 Gespeichert',
-    tabBadges: '🏅 Abzeichen',
-    tabFriends: '👥 Freunde'
-  },
-  pt: {
-    step1Title: 'Passo 1: Selecione seu idioma',
-    step1Desc: 'Escolha seu idioma preferido para o aplicativo.',
-    step2Title: 'Passo 2: Selecione o país base',
-    step2Desc: 'Escolha o país principal para o mapa inicial.',
-    step3Title: 'Passo 3: Criar perfil',
-    step3TitleEula: 'Passo 4: Termos de Serviço',
-    next: 'Avançar',
-    back: 'Voltar',
-    startApp: '🚀 Iniciar WorldSnap',
-    eulaAgree: 'Concordo com os Termos de Serviço',
-    map: 'Mapa',
-    ranking: 'Ranking',
-    profile: 'Perfil',
-    addPhoto: 'Adicionar',
-    exportMap: 'Salvar',
-    view: 'Visual',
-    gourmet: 'Kuliner',
-    rain: 'Chuva',
-    myMap: 'Meu Mapa',
-    friends: 'Amigos',
-    world: 'Mundo',
-    openGoogleMaps: '🧭 Abrir Maps',
-    saveSpot: '❤️ Salvar',
-    saved: '❤️ Salvo',
-    report: '⚠️ Denunciar',
-    block: '🚫 Bloquear',
-    delete: '🗑️ Excluir',
-    edit: '✏️ Editar',
-    visited: 'Visitados',
-    posts: 'Publicações',
-    friendCode: 'Código de amigo',
-    searchPlaceholder: '🔍 Pesquisar...',
-    settings: '⚙️ Configurações',
-    langSetting: '🌐 Idioma do App',
-    baseCountrySetting: '📍 País Base',
-    blockListTitle: '🚫 Usuários Bloqueados',
-    eulaTitle: '📜 Termos de Serviço',
-    guideTitle: '📖 Instruções de Uso',
-    translate: '🌐 Traduzir',
-    close: 'Fechar',
-    tabPosts: '📸 Posts',
-    tabFootprint: '🌍 Pegadas',
-    tabTimeline: '📅 Log',
-    tabSaved: '💛 Salvos',
-    tabBadges: '🏅 Medalhas',
-    tabFriends: '👥 Amigos'
-  },
-  it: {
-    step1Title: 'Passo 1: Seleziona la lingua',
-    step1Desc: 'Scegli la tua lingua preferita per l\'app.',
-    step2Title: 'Passo 2: Seleziona il paese base',
-    step2Desc: 'Scegli il tuo paese principale per la mappa iniziale.',
-    step3Title: 'Passo 3: Crea profilo',
-    step3TitleEula: 'Passo 4: Termini di servizio',
-    next: 'Avanti',
-    back: 'Indietro',
-    startApp: '🚀 Avvia WorldSnap',
-    eulaAgree: 'Accetto i termini di servizio',
-    map: 'Mappa',
-    ranking: 'Classifica',
-    profile: 'Profilo',
-    addPhoto: 'Aggiungi',
-    exportMap: 'Salva',
-    view: 'Vista',
-    gourmet: 'Gourmet',
-    rain: 'Pioggia',
-    myMap: 'La mia Mappa',
-    friends: 'Amici',
-    world: 'Mondo',
-    openGoogleMaps: '🧭 Apri Maps',
-    saveSpot: '❤️ Salva',
-    saved: '❤️ Salvato',
-    report: '⚠️ Segnala',
-    block: '🚫 Blocca',
-    delete: '🗑️ Elimina',
-    edit: '✏️ Modifica',
-    visited: 'Visitati',
-    posts: 'Post',
-    friendCode: 'Codice amico',
-    searchPlaceholder: '🔍 Cerca...',
-    settings: '⚙️ Impostazioni',
-    langSetting: '🌐 Lingua App',
-    baseCountrySetting: '📍 Paese Base',
-    blockListTitle: '🚫 Utenti bloccati',
-    eulaTitle: '📜 Termini di servizio',
-    guideTitle: '📖 Istruzioni per l\'uso',
-    translate: '🌐 Traduci',
-    close: 'Chiudi',
-    tabPosts: '📸 Post',
-    tabFootprint: '🌍 Orme',
-    tabTimeline: '📅 Log',
-    tabSaved: '💛 Salvati',
-    tabBadges: '🏅 Distintivi',
-    tabFriends: '👥 Amici'
-  },
-  ru: {
-    step1Title: 'Шаг 1: Выберите язык',
-    step1Desc: 'Выберите предпочитаемый язык для приложения.',
-    step2Title: 'Шаг 2: Выберите базовую страну',
-    step2Desc: 'Выберите основную страну для начальной карты.',
-    step3Title: 'Шаг 3: Создать профиль',
-    step3TitleEula: 'Шаг 4: Условия использования',
-    next: 'Далее',
-    back: 'Назад',
-    startApp: '🚀 Запустить WorldSnap',
-    eulaAgree: 'Я согласен с условиями использования',
-    map: 'Карта',
-    ranking: 'Рейтинг',
-    profile: 'Профиль',
-    addPhoto: 'Добавить',
-    exportMap: 'Сохранить',
-    view: 'Вид',
-    gourmet: 'Гурме',
-    rain: 'Дождь',
-    myMap: 'Моя карта',
-    friends: 'Друзья',
-    world: 'Мир',
-    openGoogleMaps: '🧭 Открыть Карты',
-    saveSpot: '❤️ Сохранить',
-    saved: '❤️ Сохранено',
-    report: '⚠️ Жалоба',
-    block: '🚫 Блок',
-    delete: '🗑️ Удалить',
-    edit: '✏️ Изменить',
-    visited: 'Посещено',
-    posts: 'Посты',
-    friendCode: 'Код друга',
-    searchPlaceholder: '🔍 Поиск...',
-    settings: '⚙️ Настройки',
-    langSetting: '🌐 Язык приложения',
-    baseCountrySetting: '📍 Базовая страна',
-    blockListTitle: '🚫 Заблокированные',
-    eulaTitle: '📜 Условия использования',
-    guideTitle: '📖 Инструкция',
-    translate: '🌐 Перевести',
-    close: 'Закрыть',
-    tabPosts: '📸 Посты',
-    tabFootprint: '🌍 Следы',
-    tabTimeline: '📅 Лог',
-    tabSaved: '💛 Сохранено',
-    tabBadges: '🏅 Награды',
-    tabFriends: '👥 Друзья'
-  },
-  ar: {
-    step1Title: 'الخطوة 1: اختر لغتك',
-    step1Desc: 'اختر لغتك المفضلة للتطبيق.',
-    step2Title: 'الخطوة 2: اختر الدولة الأساسية',
-    step2Desc: 'اختر دولتك الرئيسية لخريطة البداية.',
-    step3Title: 'الخطوة 3: إنشاء الملف الشخصي',
-    step3TitleEula: 'الخطوة 4: شروط الخدمة',
-    next: 'التالي',
-    back: 'السابق',
-    startApp: '🚀 ابدأ WorldSnap',
-    eulaAgree: 'أوافق على شروط الخدمة',
-    map: 'الخريطة',
-    ranking: 'التصنيف',
-    profile: 'الملف الشخصي',
-    addPhoto: 'إضافة',
-    exportMap: 'حفظ',
-    view: 'منظر',
-    gourmet: 'طعام',
-    rain: 'مطر',
-    myMap: 'خريطتي',
-    friends: 'الأصدقاء',
-    world: 'العالم',
-    openGoogleMaps: '🧭 فتح الخرائط',
-    saveSpot: '❤️ حفظ',
-    saved: '❤️ محفوض',
-    report: '⚠️ إبلاغ',
-    block: '🚫 حظر',
-    delete: '🗑️ حذف',
-    edit: '✏️ تعديل',
-    visited: 'الدول المزورة',
-    posts: 'المنشورات',
-    friendCode: 'كود الصديق',
-    searchPlaceholder: '🔍 بحث...',
-    settings: '⚙️ الإعدادات',
-    langSetting: '🌐 لغة التطبيق',
-    baseCountrySetting: '📍 الدولة الأساسية',
-    blockListTitle: '🚫 المستخدمون المحظورون',
-    eulaTitle: '📜 شروط الخدمة',
-    guideTitle: '📖 تعليمات الاستخدام',
-    translate: '🌐 ترجمة',
-    close: 'إغلاق',
-    tabPosts: '📸 المنشورات',
-    tabFootprint: '🌍 الآثار',
-    tabTimeline: '📅 السجل',
-    tabSaved: '💛 المحفوظات',
-    tabBadges: '🏅 الشارات',
-    tabFriends: '👥 الأصدقاء'
-  },
-  hi: {
-    step1Title: 'चरण 1: अपनी भाषा चुनें',
-    step1Desc: 'एप्लिकेशन के लिए अपनी पसंदीदा भाषा चुनें।',
-    step2Title: 'चरण 2: मूल देश चुनें',
-    step2Desc: 'शुरुआती मानचित्र दृश्य के लिए अपना मुख्य देश चुनें।',
-    step3Title: 'चरण 3: प्रोफ़ाइल बनाएं',
-    step3TitleEula: 'चरण 4: सेवा की शर्तें',
-    next: 'अगला',
-    back: 'पीछे',
-    startApp: '🚀 WorldSnap शुरू करें',
-    eulaAgree: 'मैं सेवा की शर्तों से सहमत हूं',
-    map: 'मानचित्र',
-    ranking: 'रैंकिंग',
-    profile: 'प्रोफ़ाइल',
-    addPhoto: 'जोड़ें',
-    exportMap: 'सहेजें',
-    view: 'दृश्य',
-    gourmet: 'स्वादिष्ट',
-    rain: 'बारिश',
-    myMap: 'मेरा मानचित्र',
-    friends: 'मित्र',
-    world: 'दुनिया',
-    openGoogleMaps: '🧭 मैप्स खोलें',
-    saveSpot: '❤️ सहेजें',
-    saved: '❤️ सहेजा गया',
-    report: '⚠️ रिपोर्ट',
-    block: '🚫 ब्लॉक',
-    delete: '🗑️ हटाएं',
-    edit: '✏️ संपादित करें',
-    visited: 'देखे गए',
-    posts: 'पोस्ट',
-    friendCode: 'मित्र कोड',
-    searchPlaceholder: '🔍 खोजें...',
-    settings: '⚙️ सेटिंग्स',
-    langSetting: '🌐 ऐप भाषा',
-    baseCountrySetting: '📍 मूल देश',
-    blockListTitle: '🚫 अवरुद्ध उपयोगकर्ता',
-    eulaTitle: '📜 सेवा की शर्तें',
-    guideTitle: '📖 संचालन निर्देश',
-    translate: '🌐 अनुवाद करें',
-    close: 'बंद करें',
-    tabPosts: '📸 पोस्ट',
-    tabFootprint: '🌍 पदচিহ্ন',
-    tabTimeline: '📅 लॉग',
-    tabSaved: '💛 सहेजे गए',
-    tabBadges: '🏅 बैज',
-    tabFriends: '👥 मित्र'
-  },
-  vi: {
-    step1Title: 'Bước 1: Chọn ngôn ngữ',
-    step1Desc: 'Chọn ngôn ngữ ưu tiên của bạn cho ứng dụng.',
-    step2Title: 'Bước 2: Chọn quốc gia cơ sở',
-    step2Desc: 'Chọn quốc gia chính cho bản đồ bắt đầu.',
-    step3Title: 'Bước 3: Tạo hồ sơ',
-    step3TitleEula: 'Bước 4: Điều khoản dịch vụ',
-    next: 'Tiếp theo',
-    back: 'Quay lại',
-    startApp: '🚀 Bắt đầu WorldSnap',
-    eulaAgree: 'Tôi đồng ý với các điều khoản dịch vụ',
-    map: 'Bản đồ',
-    ranking: 'Xếp hạng',
-    profile: 'Hồ sơ',
-    addPhoto: 'Thêm',
-    exportMap: 'Lưu',
-    view: 'Cảnh',
-    gourmet: 'Ẩm thực',
-    rain: 'Mưa',
-    myMap: 'Bản đồ của tôi',
-    friends: 'Bạn bè',
-    world: 'Thế giới',
-    openGoogleMaps: '🧭 Mở Maps',
-    saveSpot: '❤️ Lưu',
-    saved: '❤️ Đã lưu',
-    report: '⚠️ Báo cáo',
-    block: '🚫 Chặn',
-    delete: '🗑️ Xóa',
-    edit: '✏️ Sửa',
-    visited: 'Đã ghé thăm',
-    posts: 'Bài viết',
-    friendCode: 'Mã bạn bè',
-    searchPlaceholder: '🔍 Tìm kiếm...',
-    settings: '⚙️ Cài đặt',
-    langSetting: '🌐 Ngôn ngữ ứng dụng',
-    baseCountrySetting: '📍 Quốc gia cơ sở',
-    blockListTitle: '🚫 Người dùng bị chặn',
-    eulaTitle: '📜 Điều khoản dịch vụ',
-    guideTitle: '📖 Hướng dẫn sử dụng',
-    translate: '🌐 Dịch',
-    close: 'Đóng',
-    tabPosts: '📸 Bài viết',
-    tabFootprint: '🌍 Dấu chân',
-    tabTimeline: '📅 Nhật ký',
-    tabSaved: '💛 Đã lưu',
-    tabBadges: '🏅 Huy hiệu',
-    tabFriends: '👥 Bạn bè'
-  },
-  id: {
-    step1Title: 'Langkah 1: Pilih Bahasa Anda',
-    step1Desc: 'Pilih bahasa pilihan Anda untuk aplikasi.',
-    step2Title: 'Langkah 2: Pilih Negara Dasar',
-    step2Desc: 'Pilih negara utama Anda untuk tampilan peta awal.',
-    step3Title: 'Langkah 3: Buat Profil',
-    step3TitleEula: 'Langkah 4: Ketentuan Layanan',
-    next: 'Berikutnya',
-    back: 'Kembali',
-    startApp: '🚀 Mulai WorldSnap',
-    eulaAgree: 'Saya setuju dengan Ketentuan Layanan',
-    map: 'Peta',
-    ranking: 'Peringkat',
-    profile: 'Profil',
-    addPhoto: 'Tambah',
-    exportMap: 'Simpan',
-    view: 'Pemandangan',
-    gourmet: 'Kuliner',
-    rain: 'Hujan',
-    myMap: 'Peta Saya',
-    friends: 'Teman',
-    world: 'Dunia',
-    openGoogleMaps: '🧭 Buka Maps',
-    saveSpot: '❤️ Simpan',
-    saved: '❤️ Disimpan',
-    report: '⚠️ Laporkan',
-    block: '🚫 Blokir',
-    delete: '🗑️ Hapus',
-    edit: '✏️ Edit',
-    visited: 'Dikunjungi',
-    posts: 'Postingan',
-    friendCode: 'Kode Teman',
-    searchPlaceholder: '🔍 Cari...',
-    settings: '⚙️ Pengaturan',
-    langSetting: '🌐 Bahasa Aplikasi',
-    baseCountrySetting: '📍 Negara Dasar',
-    blockListTitle: '🚫 Pengguna Diblokir',
-    eulaTitle: '📜 Ketentuan Layanan',
-    guideTitle: '📖 Petunjuk Operasional',
-    translate: '🌐 Terjemahkan',
-    close: 'Tutup',
-    tabPosts: '📸 Postingan',
-    tabFootprint: '🌍 Jejak Kaki',
-    tabTimeline: '📅 Log',
-    tabSaved: '💛 Disimpan',
-    tabBadges: '🏅 Lencana',
-    tabFriends: '👥 Teman'
   }
 };
 
-// 厳選120カ国・地域のマスターデータ
+// 厳選120カ国・地域のマスターデータ定義
 export const COUNTRIES: Record<
   string,
   {
@@ -848,7 +224,7 @@ export const COUNTRIES: Record<
     zoom: number;
   }
 > = {
-  // --- 🌏 アジア (25カ国) ---
+  // --- 🌏 アジア (30カ国) ---
   JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
   CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
@@ -874,6 +250,11 @@ export const COUNTRIES: Record<
   SA: { name: 'サウジアラビア (Saudi Arabia)', flag: '🇸🇦', region: '🌏 アジア', lat: 23.8859, lon: 45.0792, zoom: 5 },
   IL: { name: 'イスラエル (Israel)', flag: '🇮🇱', region: '🌏 アジア', lat: 31.0461, lon: 34.8516, zoom: 7 },
   MV: { name: 'モルディブ (Maldives)', flag: '🇲🇻', region: '🌏 アジア', lat: 3.2028, lon: 73.2207, zoom: 7 },
+  QA: { name: 'カタール (Qatar)', flag: '🇶🇦', region: '🌏 アジア', lat: 25.3548, lon: 51.1839, zoom: 8 },
+  BH: { name: 'バーレーン (Bahrain)', flag: '🇧🇭', region: '🌏 アジア', lat: 26.0667, lon: 50.5577, zoom: 10 },
+  OM: { name: 'オマーン (Oman)', flag: '🇴🇲', region: '🌏 アジア', lat: 21.4735, lon: 55.9754, zoom: 6 },
+  JO: { name: 'ヨルダン (Jordan)', flag: '🇯🇴', region: '🌏 アジア', lat: 30.5852, lon: 36.2384, zoom: 7 },
+  UZ: { name: 'ウズベキスタン (Uzbekistan)', flag: '🇺🇿', region: '🌏 アジア', lat: 41.3775, lon: 64.5853, zoom: 5 },
 
   // --- 🇪🇺 ヨーロッパ (35カ国) ---
   FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
@@ -976,7 +357,7 @@ export const COUNTRIES: Record<
   ZW: { name: 'ジンバブエ (Zimbabwe)', flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
   BW: { name: 'ボツワナ (Botswana)', flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
   NA: { name: 'ナミビア (Namibia)', flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
-  MU_2: { name: 'カーボベルデ (Cape Verde)', flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 }
+  CV: { name: 'カーボベルデ (Cape Verde)', flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -1011,28 +392,36 @@ const INITIAL_SPOTS: Spot[] = [
   },
 ];
 
-const EULA_FULL_TEXT = `【WorldSnap 利用規約 (EULA)】
+const EULA_FULL_TEXT = `【WorldSnap 利用規約および位置情報ポリシー（Apple審査対応版）】
 
-第1条（適用および同意）
-本規約は、当サービスを利用するすべてのユーザーに適用されます。利用規約およびプライバシーポリシーに同意いただけない場合、投稿および共有機能はご利用いただけません。
+第1条（目的および同意）
+本規約は、当サービス「WorldSnap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
 
-第2条（ユーザー生成コンテンツの安全方針と禁止事項）
-当サービスは、すべてのユーザーが安全かつ快適に旅の思い出を記録・共有できる環境を重視しています。ユーザーは以下のコンテンツの投稿および行為を行ってはなりません。
-・性的、暴力的、過度にグロテスク、差別的、または他者に不快感を与える画像・動画・テキストの投稿
-・特定の個人・団体への嫌がらせ、名誉毀損、脅迫、いじめ、ストーカー行為
-・法令または公序良俗に反する行為、犯罪行為を助長する行為
-・第三者の著作権、肖像権、商標権その他の権利を侵害する行為
-・個人情報の無断開示、スパム目的の連投
+第2条（位置情報の取得・利用について・Apple審査対応）
+1. 当サービスは、ユーザーがマップ画面右下の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一時的に取得します。
+2. 取得した位置情報は、ユーザーの現在の現在地をマップの中心に表示する機能、および周辺の旅のスポットを検索・閲覧する機能の提供にのみ使用されます。
+3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。ユーザーは端末の設定からいつでも位置情報の許可をオフにすることができます。
 
-第3条（不適切なコンテンツへの対処・モデレーション）
-・通報機能（Report）：ユーザーは不適切な写真・ピンを通報できます。通報が30件に達したコンテンツおよびユーザーは自動的に削除・1週間凍結されます。
-・ブロック機能（Block）：ユーザーは特定の他ユーザーをブロックでき、ブロックされたユーザーの投稿やピンは即座に非表示となります。`;
+第3条（コンテンツの安全性と禁止事項）
+公序良俗に反する投稿、誹謗中傷、暴言、過激なコンテンツの投稿は禁止されています。違反した場合は通報機能により自動削除およびアカウント凍結となります。`;
 
-const GUIDE_FULL_TEXT = `【WorldSnap の使い方ガイド】
-1. マップ機能：世界中の主要スポットを閲覧できます。ダブルタップでズームイン。
-2. 写真・投稿：下部の「📷＋ 写真 / 動画を追加」から、アルバムの写真（EXIF位置情報付き）を簡単にマップに共有できます。
-3. 足跡マップ：マイページの「足跡マップ」で訪問国をタップすると、周辺エリアがオレンジ色にハイライトされます。
-4. 自動翻訳：投稿詳細にある翻訳ボタンを押すと、ご自身の選択した言語に一瞬で翻訳されます。`;
+const GUIDE_FULL_TEXT = `【WorldSnap の操作説明と使い方ガイド】
+
+1. 現在地に移動する「🎯ボタン」
+- マップ画面の右下にある「🎯（現在地ボタン）」をタップすると、ブラウザの位置情報のアクセス許可確認画面が表示されます。
+- 許可すると、一瞬であなたの現在地へと地図がジャンプします（Apple審査ガイドライン対応の安全な取得設計）。
+
+2. マップの操作とズーム
+- マップ上をダブルタップすると、その場所が拡大（ズームイン）します。
+- 右下の「🪟（引き戻すボタン）」を押すと、都道府県から国・世界全体へと視野を段階的に広げることができます。
+
+3. 写真や動画の投稿
+- 下部の「📷＋ 写真 / 動画を追加」ボタンからアルバムのメディアを選択できます。
+- 撮影場所の「地名・住所検索」で場所を指定し、公開範囲（ワールド・フレンド・マイマップ）やカテゴリを選んで投稿するとマップに反映されます。動画も音声付きで再生可能です。
+
+4. 足跡マップと自動翻訳
+- マイページの「足跡マップ」で国をタップすると、その周辺がオレンジ色にハイライトされます。
+- 詳細画面の「🌐 翻訳する」ボタンを押すと、お好みの言語へ一瞬で文章が翻訳されます。`;
 
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
@@ -1435,28 +824,14 @@ export default function WorldSnapApp() {
   const [spots, setSpots] = useState<Spot[]>(INITIAL_SPOTS);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0);
-  const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
 
   const [profileSubTab, setProfileSubTab] = useState<'posts' | 'footprint' | 'timeline' | 'saved' | 'badges' | 'friends'>('posts');
   const [activeFootprintCountry, setActiveFootprintCountry] = useState<string | null>(null);
 
-  const [editingSpot, setEditingSpot] = useState<Spot | null>(null);
-  const [editTitle, setEditTitle] = useState<string>('');
-  const [editDesc, setEditDesc] = useState<string>('');
-  const [editCategory, setEditCategory] = useState<ViewCategory>('view');
-  const [editScopes, setEditScopes] = useState<DisplayScope[]>(['world']);
-
   const [newCommentText, setNewCommentText] = useState<string>('');
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
-
-  const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
-  const [reportReasonType, setReportReasonType] = useState<string>('inappropriate');
-
-  const [selectedFriend, setSelectedFriend] = useState<FriendUser | null>(null);
-  const [chatMessages, setChatMessages] = useState<Record<string, ChatMessage[]>>({});
-  const [inputMessageText, setInputMessageText] = useState<string>('');
 
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
@@ -1467,7 +842,6 @@ export default function WorldSnapApp() {
   
   const [addressSearchQuery, setAddressSearchQuery] = useState<string>('');
   const [addressSuggestions, setAddressSuggestions] = useState<PlaceSuggestion[]>([]);
-  const [isSearchingAddress, setIsSearchingAddress] = useState<boolean>(false);
   const [manualLat, setManualLat] = useState<string>('');
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -1481,8 +855,6 @@ export default function WorldSnapApp() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [friendsList, setFriendsList] = useState<FriendUser[]>([]);
-  const [inputFriendCode, setInputFriendCode] = useState('');
-
   const [translatedDescriptions, setTranslatedDescriptions] = useState<Record<string, string>>({});
 
   const exportRef = useRef<HTMLDivElement>(null);
@@ -1500,7 +872,7 @@ export default function WorldSnapApp() {
   };
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem('ws_onboarded_v8');
+    const hasCompleted = localStorage.getItem('ws_onboarded_v16');
     if (hasCompleted) {
       setIsOnboarding(false);
     }
@@ -1706,7 +1078,7 @@ export default function WorldSnapApp() {
   };
 
   const handleCompleteOnboarding = () => {
-    localStorage.setItem('ws_onboarded_v8', 'true');
+    localStorage.setItem('ws_onboarded_v16', 'true');
     setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
@@ -1728,12 +1100,6 @@ export default function WorldSnapApp() {
     setActiveMediaIndex(0);
   };
 
-  const handleNextMedia = () => {
-    if (!selectedSpot?.mediaList || selectedSpot.mediaList.length <= 1) return;
-    setActiveMediaIndex((prev) => (prev + 1) % selectedSpot.mediaList!.length);
-  };
-
-  // 翻訳機能の本実装
   const handleTranslateDescription = (spotId: string, originalText: string) => {
     if (translatedDescriptions[spotId]) {
       setTranslatedDescriptions(prev => {
@@ -1741,6 +1107,7 @@ export default function WorldSnapApp() {
         delete next[spotId];
         return next;
       });
+      showToast('元の言語に戻しました');
       return;
     }
 
@@ -1798,63 +1165,6 @@ export default function WorldSnapApp() {
     );
     setNewCommentText('');
     showToast('💬 コメントを投稿しました！');
-  };
-
-  const handleSendMessage = () => {
-    const trimmedMsg = inputMessageText.trim();
-    if (!trimmedMsg || !selectedFriend) return;
-
-    const check = checkInappropriateContent(trimmedMsg);
-    if (check.isViolating) {
-      showWarning('⚠️ 暴言・差別発言・下ネタ等の不適切な表現が含まれているため、メッセージを送信できません。');
-      return;
-    }
-
-    const newMsg: ChatMessage = {
-      id: 'msg-' + Date.now(),
-      senderId: 'me',
-      text: trimmedMsg,
-      createdAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
-
-    setChatMessages((prev) => ({
-      ...prev,
-      [selectedFriend.id]: [...(prev[selectedFriend.id] || []), newMsg],
-    }));
-    setInputMessageText('');
-  };
-
-  const handleExecuteReport = async (reason: string) => {
-    if (!selectedSpot) return;
-    const spotId = selectedSpot.id;
-    const targetUserId = selectedSpot.userId;
-
-    setSpots((prev) =>
-      prev.map((s) => {
-        if (s.id === spotId) {
-          const nextCount = (s.reportCount || 0) + 1;
-          return { ...s, reportCount: nextCount };
-        }
-        return s;
-      })
-    );
-
-    const currentSpot = spots.find((s) => s.id === spotId);
-    const updatedReportCount = (currentSpot?.reportCount || 0) + 1;
-
-    if (updatedReportCount >= 30) {
-      setSpots((prev) => prev.filter((s) => s.id !== spotId));
-      setBlockedUsers((prev) => [...prev, targetUserId]);
-      if (supabase) {
-        await supabase.from('spots').delete().eq('id', spotId);
-      }
-      showToast('⚠️ 通報が30件に達したため、この投稿は自動削除されました。');
-    } else {
-      showToast(`✅ 通報を受け付けました（理由: ${reason}）。`);
-    }
-
-    setIsReportModalOpen(false);
-    setSelectedSpot(null);
   };
 
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -2115,52 +1425,6 @@ export default function WorldSnapApp() {
     }
   };
 
-  const handleStartEdit = (spot: Spot) => {
-    setEditingSpot(spot);
-    setEditTitle(spot.title);
-    setEditDesc(spot.description);
-    setEditCategory(spot.category);
-    setEditScopes(spot.scopes);
-  };
-
-  const handleSaveEdit = async () => {
-    if (!editingSpot) return;
-
-    const checkTitle = checkInappropriateContent(editTitle);
-    const checkDesc = checkInappropriateContent(editDesc);
-    if (checkTitle.isViolating || checkDesc.isViolating) {
-      showWarning('⚠️ 暴言・差別発言・不適切な表現が含まれているため変更を保存できません。');
-      return;
-    }
-
-    const updatedSpot: Spot = {
-      ...editingSpot,
-      title: editTitle.trim() || editingSpot.title,
-      description: editDesc.trim(),
-      category: editCategory,
-      scopes: editScopes,
-      tags: extractHashtags(editDesc.trim()),
-    };
-
-    setSpots((prev) => prev.map((s) => (s.id === editingSpot.id ? updatedSpot : s)));
-    if (selectedSpot && selectedSpot.id === editingSpot.id) {
-      setSelectedSpot(updatedSpot);
-    }
-
-    if (supabase) {
-      await supabase.from('spots').update({
-        title: updatedSpot.title,
-        description: updatedSpot.description,
-        category: updatedSpot.category,
-        scopes: updatedSpot.scopes,
-        tags: updatedSpot.tags,
-      }).eq('id', editingSpot.id);
-    }
-
-    setEditingSpot(null);
-    showToast('✏️ 投稿の修正を保存しました！');
-  };
-
   const handleSaveMyMap = async () => {
     if (!exportRef.current) return;
     showToast('📸 マップ画像を生成中...');
@@ -2235,7 +1499,7 @@ export default function WorldSnapApp() {
             showToast('✅ 共有メニューを開きました');
             return;
           } catch (err: any) {
-            if (err.name === 'AbortError') return;
+            if (err.name === 'AbortError' ) return;
           }
         }
 
@@ -2252,46 +1516,6 @@ export default function WorldSnapApp() {
     } catch (err) {
       console.error('Export error:', err);
       showToast('❌ 画像生成に失敗しました');
-    }
-  };
-
-  const toggleSaveSpot = async (spotId: string) => {
-    if (savedSpotIds.includes(spotId)) {
-      setSavedSpotIds((prev) => prev.filter((id) => id !== spotId));
-      setSpots((prev) => prev.map((s) => s.id === spotId ? { ...s, savedCount: Math.max(0, (s.savedCount || 1) - 1) } : s));
-      if (supabase) {
-        await supabase.from('saved_spots').delete().match({ user_id: 'me', spot_id: spotId });
-      }
-      showToast('保存を解除しました');
-    } else {
-      setSavedSpotIds((prev) => [...prev, spotId]);
-      setSpots((prev) => prev.map((s) => s.id === spotId ? { ...s, savedCount: (s.savedCount || 0) + 1 } : s));
-      if (supabase) {
-        await supabase.from('saved_spots').insert([{ user_id: 'me', spot_id: spotId }]);
-      }
-      showToast('💛 行きたいリストに保存しました！');
-    }
-  };
-
-  const handleBlockUser = async (userId: string) => {
-    if (confirm('このユーザーをブロックしますか？\n相手の投稿がすべて非表示になります。')) {
-      setBlockedUsers((prev) => [...prev, userId]);
-      if (supabase) {
-        await supabase.from('blocked_users').insert([{ blocker_id: 'me', blocked_id: userId }]);
-      }
-      setSelectedSpot(null);
-      showToast('🚫 ユーザーをブロックしました');
-    }
-  };
-
-  const handleDeleteSpot = async (spotId: string) => {
-    if (confirm('このピンを削除しますか？')) {
-      setSpots((prev) => prev.filter((s) => s.id !== spotId));
-      if (supabase) {
-        await supabase.from('spots').delete().eq('id', spotId);
-      }
-      setSelectedSpot(null);
-      showToast('🗑️ ピンを削除しました');
     }
   };
 
@@ -2327,7 +1551,7 @@ export default function WorldSnapApp() {
       )}
 
       <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
-      <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
+      <input type="file" ref={onboardingAvatarInputRef} alt="avatar" accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
       {/* 初回オンボーディング */}
       {isOnboarding && (
@@ -2395,7 +1619,7 @@ export default function WorldSnapApp() {
                         cursor: 'pointer',
                       }}
                     >
-                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.name}</span>
+                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.name} <span style={{ fontSize: '11px', color: '#64748b' }}>({c.region})</span></span>
                       {userCountry === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
                     </div>
                   ))}
@@ -2531,7 +1755,7 @@ export default function WorldSnapApp() {
           >
             {Object.entries(COUNTRIES).map(([code, c]) => (
               <option key={code} value={code}>
-                {c.flag} {c.name.split(' ')[0]}
+                {c.flag} {c.name.split(' ')[0]} ({c.region})
               </option>
             ))}
           </select>
@@ -2647,7 +1871,7 @@ export default function WorldSnapApp() {
               onDoubleTap={handleMapDoubleTap}
             />
 
-            {/* 現在地・ズームアウト・保存 */}
+            {/* 現在地ボタン（GPS位置情報パーミッション要求連携・Apple審査対応） */}
             <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button
                 title="現在地へ移動"
@@ -2659,8 +1883,14 @@ export default function WorldSnapApp() {
                         setTargetZoom(15);
                         showToast('🎯 現在地に移動しました');
                       },
-                      () => showToast('⚠️ 位置情報の取得に失敗しました')
+                      (err) => {
+                        console.error(err);
+                        showWarning('⚠️ 位置情報のアクセスが拒否されたか、取得できませんでした。ブラウザの設定をご確認ください。');
+                      },
+                      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
                     );
+                  } else {
+                    showWarning('⚠️ お使いのブラウザは位置情報に対応していません。');
                   }
                 }}
                 style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -2943,7 +2173,7 @@ export default function WorldSnapApp() {
               >
                 {Object.entries(COUNTRIES).map(([code, c]) => (
                   <option key={code} value={code}>
-                    {c.flag} {c.name}
+                    {c.flag} {c.name} ({c.region})
                   </option>
                 ))}
               </select>
@@ -3273,7 +2503,7 @@ export default function WorldSnapApp() {
           }}
         >
           <span style={{ fontSize: '18px' }}>🏆</span>
-          <span style={{ fontSize: '10px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t.ranking}</span>
+          <span style={{ fontSize: '10px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t.ranking} },</span>
         </button>
 
         <button
