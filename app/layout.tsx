@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'WorldSnap',
+  title: 'Wap',
   description: '世界中を旅して、思い出をつなごう',
   manifest: '/manifest.json',
   icons: {
