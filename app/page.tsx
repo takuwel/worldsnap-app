@@ -164,7 +164,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     step3TitleEula: 'Step 4: 利用規約 & 位置情報ポリシーの確認',
     next: '次へ進む',
     back: '戻る',
-    startApp: '🚀 WorldSnap をはじめる',
+    startApp: '🚀 wap をはじめる',
     eulaAgree: '利用規約および位置情報の利用方針に同意する（Apple審査対応）',
     map: 'マップ',
     ranking: 'ランキング',
@@ -211,7 +211,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     step3TitleEula: 'Step 4: Terms of Service & Location Policy',
     next: 'Next',
     back: 'Back',
-    startApp: '🚀 Start WorldSnap',
+    startApp: '🚀 Start wap',
     eulaAgree: 'I agree to the Terms of Service & Location Policy',
     map: 'Map',
     ranking: 'Ranking',
@@ -258,7 +258,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     step3TitleEula: 'Step 4: 이용약관 및 위치정보 정책',
     next: '다음',
     back: '뒤로',
-    startApp: '🚀 WorldSnap 시작하기',
+    startApp: '🚀 wap 시작하기',
     eulaAgree: '이용약관 및 위치정보 정책에 동의합니다',
     map: '지도',
     ranking: '랭킹',
@@ -305,7 +305,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     step3TitleEula: 'Step 4: 服务条款与位置政策',
     next: '下一步',
     back: '返回',
-    startApp: '🚀 开始使用 WorldSnap',
+    startApp: '🚀 开始使用 wap',
     eulaAgree: '同意服务条款与位置政策',
     map: '地图',
     ranking: '排行',
@@ -517,14 +517,14 @@ const INITIAL_SPOTS: Spot[] = [
   {
     id: 'spot-tokyo-1',
     userId: 'user-official',
-    userName: 'WorldSnap 公式',
+    userName: 'wap 公式',
     userAvatar: '',
     isOfficial: true,
     isFeatured: true,
     viewsCount: 1250,
     savedCount: 430,
     title: '渋谷スクランブル交差点＆SHIBUYA SKY',
-    description: 'WorldSnap公式がおすすめする東京の代表的スポット✨ #東京 #公式スポット',
+    description: 'wap公式がおすすめする東京の代表的スポット✨ #東京 #公式スポット',
     fileName: 'shibuya.jpg',
     fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop',
     thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop',
@@ -545,10 +545,10 @@ const INITIAL_SPOTS: Spot[] = [
   },
 ];
 
-const EULA_FULL_TEXT = `【WorldSnap 利用規約および位置情報ポリシー（Apple審査対応版）】
+const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
 
 第1条（目的および同意）
-本規約は、当サービス「WorldSnap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
+本規約は、当サービス「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
 
 第2条（位置情報の取得・利用について・Apple審査対応）
 1. 当サービスは、ユーザーがマップ画面右下の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一時的に取得します。
@@ -558,7 +558,7 @@ const EULA_FULL_TEXT = `【WorldSnap 利用規約および位置情報ポリシ�
 第3条（コンテンツの安全性と禁止事項）
 公序良俗に反する投稿、誹謗中傷、暴言、過激なコンテンツの投稿は禁止されています。違反した場合は通報機能により自動削除およびアカウント凍結となります。`;
 
-const GUIDE_FULL_TEXT = `【WorldSnap の操作説明と使い方ガイド】
+const GUIDE_FULL_TEXT = `【wap の操作説明と使い方ガイド】
 
 1. 現在地に移動する「🎯ボタン」
 - マップ画面の右下にある「🎯（現在地ボタン）」をタップすると、ブラウザが位置情報の許可を確認します。
@@ -911,7 +911,7 @@ const GoogleMapComponent = ({
 // ==========================================
 // 3. メインコンポーネント
 // ==========================================
-export default function WorldSnapApp() {
+export default function WapApp() {
   const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
   const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3 | 4>(1);
 
@@ -921,7 +921,7 @@ export default function WorldSnapApp() {
   const [userName, setUserName] = useState<string>('namesnap');
   const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
   const [userAvatar, setUserAvatar] = useState<string>('');
-  const [friendCode] = useState<string>('WS-8823-X9');
+  const [friendCode] = useState<string>('WAP-8823-X9');
 
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false);
@@ -1000,7 +1000,7 @@ export default function WorldSnapApp() {
   };
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem('ws_onboarded_v24');
+    const hasCompleted = localStorage.getItem('wap_onboarded_v1');
     if (hasCompleted) {
       setIsOnboarding(false);
     }
@@ -1206,7 +1206,7 @@ export default function WorldSnapApp() {
   };
 
   const handleCompleteOnboarding = () => {
-    localStorage.setItem('ws_onboarded_v24', 'true');
+    localStorage.setItem('wap_onboarded_v1', 'true');
     setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
@@ -1428,7 +1428,7 @@ export default function WorldSnapApp() {
         const filePath = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
         
         const { error: uploadError } = await supabase.storage
-          .from('worldsnap-media')
+          .from('wap-media')
           .upload(filePath, current.file, {
             cacheControl: '3600',
             upsert: false,
@@ -1438,7 +1438,7 @@ export default function WorldSnapApp() {
           console.error('Supabase storage upload error:', uploadError);
           showToast('⚠️ ストレージ制限のためオフライン・ローカルモードとして反映しました');
         } else {
-          const { data: publicData } = supabase.storage.from('worldsnap-media').getPublicUrl(filePath);
+          const { data: publicData } = supabase.storage.from('wap-media').getPublicUrl(filePath);
           if (publicData?.publicUrl) {
             uploadedUrl = publicData.publicUrl;
             if (current.fileType === 'image') {
@@ -1601,7 +1601,7 @@ export default function WorldSnapApp() {
 
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        const brandText = '🗺️ WorldSnap';
+        const brandText = '🗺️ wap';
         ctx.font = '700 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
         const paddingX = 18;
         const metrics = ctx.measureText(brandText);
@@ -1636,14 +1636,14 @@ export default function WorldSnapApp() {
           return;
         }
 
-        const fileName = `WorldSnap-${userCountry}-${Date.now()}.png`;
+        const fileName = `wap-${userCountry}-${Date.now()}.png`;
         const file = new File([blob], fileName, { type: 'image/png' });
 
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
             await navigator.share({
-              title: 'WorldSnap',
-              text: 'My WorldSnap Map',
+              title: 'wap',
+              text: 'My wap Map',
               files: [file],
             });
             showToast('✅ 共有メニューを開きました');
@@ -1670,7 +1670,7 @@ export default function WorldSnapApp() {
   };
 
   const handleShareSpot = (spot: Spot) => {
-    const shareText = `WorldSnapで発見したスポット「${spot.title}」をチェック！ 📍 (${spot.cityName})`;
+    const shareText = `wapで発見したスポット「${spot.title}」をチェック！ 📍 (${spot.cityName})`;
     if (navigator.share) {
       navigator.share({
         title: spot.title,
@@ -1785,7 +1785,7 @@ export default function WorldSnapApp() {
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
             <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
-            <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>WorldSnap</h1>
+            <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
             <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
@@ -1967,7 +1967,7 @@ export default function WorldSnapApp() {
           <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: mapTheme === 'dark' ? '#fff' : '#000' }}>
             ☰
           </button>
-          <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: themeAccent, letterSpacing: '-0.5px', flexShrink: 0 }}>WorldSnap</h1>
+          <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: themeAccent, letterSpacing: '-0.5px', flexShrink: 0 }}>wap</h1>
           <select
             value={userCountry}
             onChange={(e) => {
@@ -2144,7 +2144,7 @@ export default function WorldSnapApp() {
             <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '44px', zIndex: 440, touchAction: 'none' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '36px', background: mapTheme === 'dark' ? '#0f172a' : '#ffffff', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
                 <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 'bold' }}>
-                  📢 <span style={{ color: themeAccent }}>WorldSnap PR</span>: 写真や動画で世界をつなごう！
+                  📢 <span style={{ color: themeAccent }}>wap PR</span>: 写真や動画で世界をつなごう！
                 </span>
               </div>
               <button onClick={() => setIsAdVisible(false)} style={{ position: 'absolute', right: '12px', background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '14px', cursor: 'pointer', padding: '4px' }}>✕</button>
