@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & グローバル言語 / 厳選120カ国マップデータ
+// 1. 型定義 & グローバル言語 / 厳選140カ国マップデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -166,7 +166,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     step1Title: 'Step 1: 表示言語を選択',
     step1Desc: '世界中の人々が使えるよう、お好みの言語を選択してください。',
     step2Title: 'Step 2: ベースの国（初期マップ）を選択',
-    step2Desc: 'マップの初期表示位置となるメインの国を選んでください（地域別120カ国）。',
+    step2Desc: 'マップの初期表示位置となるメインの国を選んでください（厳選140カ国）。',
     step3Title: 'Step 3: プロフィール作成',
     step3TitleEula: 'Step 4: 利用規約 & 位置情報ポリシーの確認',
     next: '次へ進む',
@@ -212,7 +212,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
   }
 };
 
-// 厳選120カ国・地域のマスターデータ定義
+// 厳選140カ国・地域のマスターデータ定義
 export const COUNTRIES: Record<
   string,
   {
@@ -224,7 +224,7 @@ export const COUNTRIES: Record<
     zoom: number;
   }
 > = {
-  // --- 🌏 アジア (30カ国) ---
+  // --- 🌏 アジア (35カ国) ---
   JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
   CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
@@ -255,8 +255,13 @@ export const COUNTRIES: Record<
   OM: { name: 'オマーン (Oman)', flag: '🇴🇲', region: '🌏 アジア', lat: 21.4735, lon: 55.9754, zoom: 6 },
   JO: { name: 'ヨルダン (Jordan)', flag: '🇯🇴', region: '🌏 アジア', lat: 30.5852, lon: 36.2384, zoom: 7 },
   UZ: { name: 'ウズベキスタン (Uzbekistan)', flag: '🇺🇿', region: '🌏 アジア', lat: 41.3775, lon: 64.5853, zoom: 5 },
+  KZ: { name: 'カザフスタン (Kazakhstan)', flag: '🇰🇿', region: '🌏 アジア', lat: 48.0196, lon: 66.9237, zoom: 4 },
+  AZ: { name: 'アゼルバイジャン (Azerbaijan)', flag: '🇦🇿', region: '🌏 アジア', lat: 40.1431, lon: 47.5769, zoom: 6 },
+  GE: { name: 'ジョージア (Georgia)', flag: '🇬🇪', region: '🌏 アジア', lat: 42.3154, lon: 43.3569, zoom: 7 },
+  AM: { name: 'アルメニア (Armenia)', flag: '🇦🇲', region: '🌏 アジア', lat: 40.0691, lon: 45.0382, zoom: 8 },
+  BN: { name: 'ブルネイ (Brunei)', flag: '🇧🇳', region: '🌏 アジア', lat: 4.5353, lon: 114.7277, zoom: 9 },
 
-  // --- 🇪🇺 ヨーロッパ (35カ国) ---
+  // --- 🇪🇺 ヨーロッパ (40カ国) ---
   FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
   ES: { name: 'スペイン (Spain)', flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
   IT: { name: 'イタリア (Italy)', flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
@@ -292,8 +297,13 @@ export const COUNTRIES: Record<
   SM: { name: 'サンマリノ (San Marino)', flag: '🇸🇲', region: '🇪🇺 ヨーロッパ', lat: 43.9424, lon: 12.4578, zoom: 12 },
   AD: { name: 'アンドラ (Andorra)', flag: '🇦🇩', region: '🇪🇺 ヨーロッパ', lat: 42.5063, lon: 1.5218, zoom: 10 },
   LI: { name: 'リヒテンシュタイン (Liechtenstein)', flag: '🇱🇮', region: '🇪🇺 ヨーロッパ', lat: 47.166, lon: 9.555, zoom: 11 },
+  RS: { name: 'セルビア (Serbia)', flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
+  BG: { name: 'ブルガリア (Bulgaria)', flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
+  CY: { name: 'キプロス (Cyprus)', flag: '🇨🇾', region: '🇪🇺 ヨーロッパ', lat: 35.1264, lon: 33.4299, zoom: 8 },
+  MT: { name: 'マルタ (Malta)', flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
+  AL: { name: 'アルバニア (Albania)', flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
 
-  // --- 🗽 北米・中南米 (25カ国) ---
+  // --- 🗽 北米・中南米 (30カ国) ---
   US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米・中南米', lat: 37.0902, lon: -95.7129, zoom: 4 },
   CA: { name: 'カナダ (Canada)', flag: '🇨🇦', region: '🗽 北米・中南米', lat: 56.1304, lon: -106.3468, zoom: 3 },
   MX: { name: 'メキシコ (Mexico)', flag: '🇲🇽', region: '🗽 北米・中南米', lat: 23.6345, lon: 102.5528, zoom: 5 },
@@ -319,8 +329,13 @@ export const COUNTRIES: Record<
   BS: { name: 'バハマ (Bahamas)', flag: '🇧🇸', region: '🗽 北米・中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
   BB: { name: 'バルバドス (Barbados)', flag: '🇧🇧', region: '🗽 北米・中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
   BZ: { name: 'ベリーズ (Belize)', flag: '🇧🇿', region: '🗽 北米・中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
+  HT: { name: 'ハイチ (Haiti)', flag: '🇭🇹', region: '🗽 北米・中南米', lat: 18.9712, lon: -72.2852, zoom: 8 },
+  PR: { name: 'プエルトリコ (Puerto Rico)', flag: '🇵🇷', region: '🗽 北米・中南米', lat: 18.2208, lon: -66.5901, zoom: 9 },
+  TT: { name: 'トリニダード・トバゴ (Trinidad and Tobago)', flag: '🇹🇹', region: '🗽 北米・中南米', lat: 10.6918, lon: -61.2225, zoom: 9 },
+  SR: { name: 'スリナム (Suriname)', flag: '🇸🇷', region: '🗽 北米・中南米', lat: 3.9193, lon: -56.0278, zoom: 7 },
+  GY: { name: 'ガイアナ (Guyana)', flag: '🇬🇾', region: '🗽 北米・中南米', lat: 4.8604, lon: -58.9302, zoom: 6 },
 
-  // --- 🦘 オセアニア (15カ国) ---
+  // --- 🦘 オセアニア (18カ国) ---
   AU: { name: 'オーストラリア (Australia)', flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
   NZ: { name: 'ニュージーランド (New Zealand)', flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
   FJ: { name: 'フィジー (Fiji)', flag: '🇫🇯', region: '🦘 オセアニア', lat: -17.7134, lon: 178.0650, zoom: 8 },
@@ -336,8 +351,11 @@ export const COUNTRIES: Record<
   PW: { name: 'パラオ (Palau)', flag: '🇵🇼', region: '🦘 オセアニア', lat: 7.5150, lon: 134.5825, zoom: 9 },
   MH: { name: 'マーシャル諸島 (Marshall Islands)', flag: '🇲🇭', region: '🦘 オセアニア', lat: 7.1315, lon: 171.1845, zoom: 8 },
   TV: { name: 'ツバル (Tuvalu)', flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
+  NR: { name: 'ナウル (Nauru)', flag: '🇳🇷', region: '🦘 オセアニア', lat: -0.5228, lon: 166.9315, zoom: 13 },
+  GU: { name: 'グアム (Guam)', flag: '🇬🇺', region: '🦘 オセアニア', lat: 13.4443, lon: 144.7937, zoom: 10 },
+  AS: { name: 'アメリカ領サモア (American Samoa)', flag: '🇦🇸', region: '🦘 オセアニア', lat: -14.2710, lon: -170.1322, zoom: 10 },
 
-  // --- 🦁 アフリカ (20カ国) ---
+  // --- 🦁 アフリカ (22カ国) ---
   EG: { name: 'エジプト (Egypt)', flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
   ZA: { name: '南アフリカ (South Africa)', flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
   MA: { name: 'モロッコ (Morocco)', flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
@@ -357,7 +375,9 @@ export const COUNTRIES: Record<
   ZW: { name: 'ジンバブエ (Zimbabwe)', flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
   BW: { name: 'ボツワナ (Botswana)', flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
   NA: { name: 'ナミビア (Namibia)', flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
-  CV: { name: 'カーボベルデ (Cape Verde)', flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 }
+  CV: { name: 'カーボベルデ (Cape Verde)', flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 },
+  CM: { name: 'カメルーン (Cameroon)', flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
+  CI: { name: 'コートジボワール (Ivory Coast)', flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -408,8 +428,8 @@ const EULA_FULL_TEXT = `【WorldSnap 利用規約および位置情報ポリシ�
 const GUIDE_FULL_TEXT = `【WorldSnap の操作説明と使い方ガイド】
 
 1. 現在地に移動する「🎯ボタン」
-- マップ画面の右下にある「🎯（現在地ボタン）」をタップすると、ブラウザの位置情報のアクセス許可確認画面（許可・拒否・一度だけ許可）が表示されます。
-- そこで「許可」を選択すると、一瞬であなたの現在地へと地図がジャンプします（Apple審査ガイドライン対応の安全な取得設計）。
+- マップ画面の右下にある「🎯（現在地ボタン）」をタップすると、ブラウザが位置情報の許可を確認します。
+- もし位置情報がブロックされている場合は案内ガイドが表示されます。スマホやブラウザの設定から「位置情報の許可」を有効にすることで、一瞬で現在地へジャンプできます。
 
 2. マップの操作とズーム
 - マップ上をダブルタップすると、その場所が拡大（ズームイン）します。
@@ -812,6 +832,9 @@ export default function WorldSnapApp() {
 
   const [isAdVisible, setIsAdVisible] = useState<boolean>(true);
 
+  // 位置情報設定ガイド用モーダルのステート
+  const [isLocationGuideOpen, setIsLocationGuideOpen] = useState<boolean>(false);
+
   const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
   const t = DICTIONaries[userLangCode] || DICTIONaries.ja;
 
@@ -872,7 +895,7 @@ export default function WorldSnapApp() {
   };
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem('ws_onboarded_v20');
+    const hasCompleted = localStorage.getItem('ws_onboarded_v21');
     if (hasCompleted) {
       setIsOnboarding(false);
     }
@@ -1078,7 +1101,7 @@ export default function WorldSnapApp() {
   };
 
   const handleCompleteOnboarding = () => {
-    localStorage.setItem('ws_onboarded_v20', 'true');
+    localStorage.setItem('ws_onboarded_v21', 'true');
     setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
@@ -1553,6 +1576,27 @@ export default function WorldSnapApp() {
       <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
       <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
+      {/* 位置情報設定ガイドモーダル（位置情報がブロックされた際に案内用） */}
+      {isLocationGuideOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
+            <div style={{ fontSize: '32px', marginBottom: '8px' }}>📍</div>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>位置情報のアクセスがオフです</h3>
+            <p style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', margin: '0 0 16px 0', textAlign: 'left' }}>
+              現在地ボタンを使用するには、お使いのスマホまたはブラウザの設定から位置情報のアクセスを許可してください。<br/><br/>
+              ・<b>iPhone (Safari):</b> アドレスバー左側の「aA」または「🔒」アイコン ＞「Webサイトの設定」＞「位置情報」を「許可」に変更<br/>
+              ・<b>Android (Chrome):</b> アドレスバーの鍵マーク ＞「権限」＞「位置情報」を許可
+            </p>
+            <button
+              onClick={() => setIsLocationGuideOpen(false)}
+              style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+            >
+              閉じる
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* 初回オンボーディング */}
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
@@ -1871,7 +1915,7 @@ export default function WorldSnapApp() {
               onDoubleTap={handleMapDoubleTap}
             />
 
-            {/* 現在地ボタン（GPS位置情報パーミッション要求連携・Apple審査対応） */}
+            {/* 現在地ボタン（GPS位置情報パーミッション要求連携・ガイドモーダル連動） */}
             <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button
                 title="現在地へ移動"
@@ -1885,7 +1929,8 @@ export default function WorldSnapApp() {
                       },
                       (err) => {
                         console.error(err);
-                        showWarning('⚠️ 位置情報のアクセスが拒否されたか、取得できませんでした。スマホの設定から位置情報を「許可」に変更してください。');
+                        // 位置情報が拒否・失敗した場合は、親切な設定案内ガイドモーダルを表示する
+                        setIsLocationGuideOpen(true);
                       },
                       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
                     );
