@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & グローバル言語 / 厳選140カ国マップデータ
+// 1. 型定義 & グローバル多言語辞書 / 厳選140カ国マスターデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -24,13 +24,6 @@ export interface CommentItem {
   id: string;
   userName: string;
   userAvatar?: string;
-  text: string;
-  createdAt: string;
-}
-
-export interface ChatMessage {
-  id: string;
-  senderId: string;
   text: string;
   createdAt: string;
 }
@@ -58,8 +51,8 @@ export interface Spot {
   isOfficial?: boolean;
   isFeatured?: boolean;
   isFirstExplorer?: boolean;
-  viewsCount?: number;
-  savedCount?: number;
+  viewsCount: number;
+  savedCount: number;
   title: string;
   description: string;
   fileName: string;
@@ -144,8 +137,8 @@ function getUserTitle(count: number) {
 }
 
 export const LANGUAGES: Record<string, { name: string; nativeName: string; flag: string }> = {
-  en: { name: 'English', nativeName: 'English', flag: '🇬🇧' },
   ja: { name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
+  en: { name: 'English', nativeName: 'English', flag: '🇬🇧' },
   ko: { name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
   zh: { name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
   es: { name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
@@ -184,9 +177,9 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     myMap: 'マイマップ',
     friends: 'フレンド',
     world: 'ワールド',
-    openGoogleMaps: '🧭 Googleマップで開く',
-    saveSpot: '❤️ 行きたい',
-    saved: '❤️ 保存済み',
+    openGoogleMaps: '🧭 Googleマップで経路案内',
+    likeSpot: '❤️ いいね',
+    likedSpot: '❤️ いいね済み',
     report: '⚠️ 通報',
     block: '🚫 ブロック',
     delete: '🗑️ 削除',
@@ -204,11 +197,151 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     translate: '🌐 翻訳する',
     close: '閉じる',
     tabPosts: '📸 投稿',
-    tabFootprint: '🌍 足跡マップ',
     tabTimeline: '📅 ログ',
     tabSaved: '💛 保存',
     tabBadges: '🏅 バッジ',
     tabFriends: '👥 フレンド'
+  },
+  en: {
+    step1Title: 'Step 1: Select Language',
+    step1Desc: 'Choose your preferred language for the application.',
+    step2Title: 'Step 2: Select Base Country',
+    step2Desc: 'Choose your initial country for the map view.',
+    step3Title: 'Step 3: Create Profile',
+    step3TitleEula: 'Step 4: Terms of Service & Location Policy',
+    next: 'Next',
+    back: 'Back',
+    startApp: '🚀 Start WorldSnap',
+    eulaAgree: 'I agree to the Terms of Service & Location Policy',
+    map: 'Map',
+    ranking: 'Ranking',
+    profile: 'Profile',
+    addPhoto: 'Add Media',
+    exportMap: 'Save Map',
+    view: 'View',
+    gourmet: 'Gourmet',
+    rain: 'Rainy',
+    myMap: 'My Map',
+    friends: 'Friends',
+    world: 'World',
+    openGoogleMaps: '🧭 Navigate with Google Maps',
+    likeSpot: '❤️ Like',
+    likedSpot: '❤️ Liked',
+    report: '⚠️ Report',
+    block: '🚫 Block',
+    delete: '🗑️ Delete',
+    edit: '✏️ Edit',
+    visited: 'Visited',
+    posts: 'Posts',
+    friendCode: 'Friend Code',
+    searchPlaceholder: '🔍 Search city, #tag...',
+    settings: '⚙️ Settings',
+    langSetting: '🌐 Language',
+    baseCountrySetting: '📍 Base Country',
+    blockListTitle: '🚫 Blocked Users',
+    eulaTitle: '📜 Terms of Service',
+    guideTitle: '📖 App Guide',
+    translate: '🌐 Translate',
+    close: 'Close',
+    tabPosts: '📸 Posts',
+    tabTimeline: '📅 Log',
+    tabSaved: '💛 Saved',
+    tabBadges: '🏅 Badges',
+    tabFriends: '👥 Friends'
+  },
+  ko: {
+    step1Title: 'Step 1: 언어 선택',
+    step1Desc: '앱에서 사용할 언어를 선택하세요.',
+    step2Title: 'Step 2: 기본 국가 선택',
+    step2Desc: '지도의 중심이 될 기본 국가를 선택하세요.',
+    step3Title: 'Step 3: 프로필 설정',
+    step3TitleEula: 'Step 4: 이용약관 및 위치정보 정책',
+    next: '다음',
+    back: '뒤로',
+    startApp: '🚀 WorldSnap 시작하기',
+    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다',
+    map: '지도',
+    ranking: '랭킹',
+    profile: '프로필',
+    addPhoto: '사진/영상 추가',
+    exportMap: '지도 저장',
+    view: '경치',
+    gourmet: '맛집',
+    rain: '비',
+    myMap: '내 지도',
+    friends: '친구',
+    world: '전체',
+    openGoogleMaps: '🧭 Google 지도 길찾기',
+    likeSpot: '❤️ 좋아요',
+    likedSpot: '❤️ 좋아요 취소',
+    report: '⚠️ 신고',
+    block: '🚫 차단',
+    delete: '🗑️ 삭제',
+    edit: '✏️ 수정',
+    visited: '방문 국가',
+    posts: '게시물',
+    friendCode: '친구 코드',
+    searchPlaceholder: '🔍 도시 / #태그 검색',
+    settings: '⚙️ 설정',
+    langSetting: '🌐 앱 언어',
+    baseCountrySetting: '📍 기본 국가',
+    blockListTitle: '🚫 차단된 사용자',
+    eulaTitle: '📜 이용약관',
+    guideTitle: '📖 앱 가이드',
+    translate: '🌐 번역하기',
+    close: '닫기',
+    tabPosts: '📸 게시물',
+    tabTimeline: '📅 로그',
+    tabSaved: '💛 저장',
+    tabBadges: '🏅 배지',
+    tabFriends: '👥 친구'
+  },
+  zh: {
+    step1Title: '步骤 1: 选择语言',
+    step1Desc: '请选择您的首选应用语言。',
+    step2Title: 'Step 2: 选择基础国家',
+    step2Desc: '请选择地图初始显示的国家。',
+    step3Title: 'Step 3: 创建个人资料',
+    step3TitleEula: 'Step 4: 服务条款与位置政策',
+    next: '下一步',
+    back: '返回',
+    startApp: '🚀 开始使用 WorldSnap',
+    eulaAgree: '同意服务条款与位置政策',
+    map: '地图',
+    ranking: '排行',
+    profile: '我的',
+    addPhoto: '添加媒体',
+    exportMap: '保存地图',
+    view: '风景',
+    gourmet: '美食',
+    rain: '雨天',
+    myMap: '我的地图',
+    friends: '好友',
+    world: '世界',
+    openGoogleMaps: '🧭 谷歌地图导航',
+    likeSpot: '❤️ 赞',
+    likedSpot: '❤️ 已赞',
+    report: '⚠️ 举报',
+    block: '🚫 拉黑',
+    delete: '🗑️ 删除',
+    edit: '编辑',
+    visited: '已访问',
+    posts: '动态',
+    friendCode: '好友码',
+    searchPlaceholder: '🔍 搜索城市 / #标签...',
+    settings: '⚙️ 设置',
+    langSetting: '🌐 应用语言',
+    baseCountrySetting: '📍 基础国家',
+    blockListTitle: '🚫 已屏蔽用户',
+    eulaTitle: '📜 服务条款',
+    guideTitle: '📖 操作指南',
+    translate: '🌐 翻译',
+    close: '关闭',
+    tabPosts: '📸 动态',
+    tabTimeline: '📅 日志',
+    tabSaved: '💛 收藏',
+    tabBadges: '🏅 徽章',
+    tabFriends: '👥 好友'
   }
 };
 
@@ -224,7 +357,6 @@ export const COUNTRIES: Record<
     zoom: number;
   }
 > = {
-  // --- 🌏 アジア (35カ国) ---
   JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
   CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
@@ -261,7 +393,6 @@ export const COUNTRIES: Record<
   AM: { name: 'アルメニア (Armenia)', flag: '🇦🇲', region: '🌏 アジア', lat: 40.0691, lon: 45.0382, zoom: 8 },
   BN: { name: 'ブルネイ (Brunei)', flag: '🇧🇳', region: '🌏 アジア', lat: 4.5353, lon: 114.7277, zoom: 9 },
 
-  // --- 🇪🇺 ヨーロッパ (40カ国) ---
   FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
   ES: { name: 'スペイン (Spain)', flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
   IT: { name: 'イタリア (Italy)', flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
@@ -303,7 +434,6 @@ export const COUNTRIES: Record<
   MT: { name: 'マルタ (Malta)', flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { name: 'アルバニア (Albania)', flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
 
-  // --- 🗽 北米・中南米 (30カ国) ---
   US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米・中南米', lat: 37.0902, lon: -95.7129, zoom: 4 },
   CA: { name: 'カナダ (Canada)', flag: '🇨🇦', region: '🗽 北米・中南米', lat: 56.1304, lon: -106.3468, zoom: 3 },
   MX: { name: 'メキシコ (Mexico)', flag: '🇲🇽', region: '🗽 北米・中南米', lat: 23.6345, lon: 102.5528, zoom: 5 },
@@ -335,7 +465,6 @@ export const COUNTRIES: Record<
   SR: { name: 'スリナム (Suriname)', flag: '🇸🇷', region: '🗽 北米・中南米', lat: 3.9193, lon: -56.0278, zoom: 7 },
   GY: { name: 'ガイアナ (Guyana)', flag: '🇬🇾', region: '🗽 北米・中南米', lat: 4.8604, lon: -58.9302, zoom: 6 },
 
-  // --- 🦘 オセアニア (18カ国) ---
   AU: { name: 'オーストラリア (Australia)', flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
   NZ: { name: 'ニュージーランド (New Zealand)', flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
   FJ: { name: 'フィジー (Fiji)', flag: '🇫🇯', region: '🦘 オセアニア', lat: -17.7134, lon: 178.0650, zoom: 8 },
@@ -355,7 +484,6 @@ export const COUNTRIES: Record<
   GU: { name: 'グアム (Guam)', flag: '🇬🇺', region: '🦘 オセアニア', lat: 13.4443, lon: 144.7937, zoom: 10 },
   AS: { name: 'アメリカ領サモア (American Samoa)', flag: '🇦🇸', region: '🦘 オセアニア', lat: -14.2710, lon: -170.1322, zoom: 10 },
 
-  // --- 🦁 アフリカ (22カ国) ---
   EG: { name: 'エジプト (Egypt)', flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
   ZA: { name: '南アフリカ (South Africa)', flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
   MA: { name: 'モロッコ (Morocco)', flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
@@ -377,7 +505,12 @@ export const COUNTRIES: Record<
   NA: { name: 'ナミビア (Namibia)', flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
   CV: { name: 'カーボベルデ (Cape Verde)', flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 },
   CM: { name: 'カメルーン (Cameroon)', flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
-  CI: { name: 'コートジボワール (Ivory Coast)', flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 }
+  CI: { name: 'コートジボワール (Ivory Coast)', flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
+  ZM: { name: 'ザンビア (Zambia)', flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
+  MZ: { name: 'モザンビーク (Mozambique)', flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 6 },
+  AO: { name: 'アンゴラ (Angola)', flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 6 },
+  MU_2: { name: 'モーリタニア (Mauritania)', flag: '🇲🇷', region: '🦁 アフリカ', lat: 21.0079, lon: -10.9408, zoom: 6 },
+  ML: { name: 'マリ (Mali)', flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 6 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -429,7 +562,7 @@ const GUIDE_FULL_TEXT = `【WorldSnap の操作説明と使い方ガイド】
 
 1. 現在地に移動する「🎯ボタン」
 - マップ画面の右下にある「🎯（現在地ボタン）」をタップすると、ブラウザが位置情報の許可を確認します。
-- もし位置情報がブロックされている場合は案内ガイドが表示されます。スマホやブラウザの設定から「位置情報の許可」を有効にすることで、一瞬で現在地へジャンプできます。
+- 位置情報がオフの場合は設定変更ガイドが表示されます。お使いのスマホやブラウザの設定から「位置情報の許可」を有効にしてください。
 
 2. マップの操作とズーム
 - マップ上をダブルタップすると、その場所が拡大（ズームイン）します。
@@ -437,11 +570,10 @@ const GUIDE_FULL_TEXT = `【WorldSnap の操作説明と使い方ガイド】
 
 3. 写真や動画の投稿
 - 下部の「📷＋ 写真 / 動画を追加」ボタンからアルバムのメディアを選択できます。
-- 撮影場所の「地名・住所検索」で場所を指定し、公開範囲（ワールド・フレンド・マイマップ）やカテゴリを選んで投稿するとマップに反映されます。動画も音声付きで再生可能です。
+- モード（ワールド・フレンド・マイマップ）や撮影場所の「地名・住所検索」で場所を指定して投稿するとマップに反映されます。
 
-4. 足跡マップと自動翻訳
-- マイページの「足跡マップ」で国をタップすると、その周辺がオレンジ色にハイライトされます。
-- 詳細画面の上の「🌐 翻訳する」ボタンを押すと、お好みの言語へ一瞬で文章が翻訳されます。`;
+4. Googleマップでの経路案内
+- スポット詳細画面にある「🧭 Googleマップで経路案内」ボタンをタップすると、そのスポットへのルート案内をワンタッチで起動できます。`;
 
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
@@ -501,7 +633,6 @@ const GoogleMapComponent = ({
   targetZoom,
   theme,
   userLang,
-  footprintCountry,
   onMoveEnd,
   onSelectSpot,
   onDoubleTap,
@@ -513,7 +644,6 @@ const GoogleMapComponent = ({
   targetZoom: number | null;
   theme: MapThemeType;
   userLang: string;
-  footprintCountry: string | null;
   onMoveEnd: (center: [number, number], zoom: number) => void;
   onSelectSpot: (s: Spot) => void;
   onDoubleTap: (lat: number, lon: number) => void;
@@ -521,7 +651,6 @@ const GoogleMapComponent = ({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
-  const circlesRef = useRef<any[]>([]);
 
   const getMapStyles = (themeMode: MapThemeType) => {
     if (themeMode === 'dark') {
@@ -619,30 +748,6 @@ const GoogleMapComponent = ({
       mapInstanceRef.current.setZoom(targetZoom);
     }
   }, [targetCenter, targetZoom]);
-
-  useEffect(() => {
-    if (!mapInstanceRef.current || !window.google || !window.google.maps) return;
-
-    circlesRef.current.forEach((c) => c.setMap(null));
-    circlesRef.current = [];
-
-    if (footprintCountry) {
-      const targetSpots = spots.filter((s) => s.countryCode === footprintCountry && s.userId === 'me');
-      targetSpots.forEach((spot) => {
-        const circle = new window.google.maps.Circle({
-          strokeColor: '#ea580c',
-          strokeOpacity: 0.85,
-          strokeWeight: 2,
-          fillColor: '#ea580c',
-          fillOpacity: 0.4,
-          map: mapInstanceRef.current,
-          center: { lat: spot.lat, lng: spot.lon },
-          radius: 10000,
-        });
-        circlesRef.current.push(circle);
-      });
-    }
-  }, [footprintCountry, spots]);
 
   useEffect(() => {
     if (!mapInstanceRef.current || !window.google || !window.google.maps) return;
@@ -836,7 +941,8 @@ export default function WorldSnapApp() {
   const [isLocationGuideOpen, setIsLocationGuideOpen] = useState<boolean>(false);
 
   const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
-  const t = DICTIONaries[userLangCode] || DICTIONaries.ja;
+  const dict = DICTIONaries[userLangCode] || DICTIONaries.ja;
+  const t = (key: string) => dict[key] || DICTIONaries.ja[key] || key;
 
   const [currentMapCenter, setCurrentMapCenter] = useState<[number, number]>([currentConfig.lat, currentConfig.lon]);
   const [currentMapZoom, setCurrentMapZoom] = useState<number>(currentConfig.zoom);
@@ -848,10 +954,9 @@ export default function WorldSnapApp() {
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0);
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
-  const [savedSpotIds, setSavedSpotIds] = useState<string[]>([]);
+  const [likedSpotIds, setLikedSpotIds] = useState<string[]>([]);
 
-  const [profileSubTab, setProfileSubTab] = useState<'posts' | 'footprint' | 'timeline' | 'saved' | 'badges' | 'friends'>('posts');
-  const [activeFootprintCountry, setActiveFootprintCountry] = useState<string | null>(null);
+  const [profileSubTab, setProfileSubTab] = useState<'posts' | 'timeline' | 'saved' | 'badges' | 'friends'>('posts');
 
   const [newCommentText, setNewCommentText] = useState<string>('');
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
@@ -895,7 +1000,7 @@ export default function WorldSnapApp() {
   };
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem('ws_onboarded_v21');
+    const hasCompleted = localStorage.getItem('ws_onboarded_v23');
     if (hasCompleted) {
       setIsOnboarding(false);
     }
@@ -1101,7 +1206,7 @@ export default function WorldSnapApp() {
   };
 
   const handleCompleteOnboarding = () => {
-    localStorage.setItem('ws_onboarded_v21', 'true');
+    localStorage.setItem('ws_onboarded_v23', 'true');
     setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
@@ -1119,8 +1224,29 @@ export default function WorldSnapApp() {
   };
 
   const handleOpenSpot = (spot: Spot) => {
-    setSelectedSpot(spot);
+    // 閲覧数をインクリメント
+    setSpots(prev => prev.map(s => s.id === spot.id ? { ...s, viewsCount: s.viewsCount + 1 } : s));
+    setSelectedSpot({ ...spot, viewsCount: spot.viewsCount + 1 });
     setActiveMediaIndex(0);
+  };
+
+  const handleToggleLike = (spotId: string) => {
+    const isLiked = likedSpotIds.includes(spotId);
+    if (isLiked) {
+      setLikedSpotIds(prev => prev.filter(id => id !== spotId));
+      setSpots(prev => prev.map(s => s.id === spotId ? { ...s, savedCount: Math.max(0, s.savedCount - 1) } : s));
+      if (selectedSpot && selectedSpot.id === spotId) {
+        setSelectedSpot(prev => prev ? { ...prev, savedCount: Math.max(0, prev.savedCount - 1) } : null);
+      }
+      showToast('いいねを解除しました');
+    } else {
+      setLikedSpotIds(prev => [...prev, spotId]);
+      setSpots(prev => prev.map(s => s.id === spotId ? { ...s, savedCount: s.savedCount + 1 } : s));
+      if (selectedSpot && selectedSpot.id === spotId) {
+        setSelectedSpot(prev => prev ? { ...prev, savedCount: prev.savedCount + 1 } : null);
+      }
+      showToast('❤️ いいねしました！');
+    }
   };
 
   const handleTranslateDescription = (spotId: string, originalText: string) => {
@@ -1576,7 +1702,7 @@ export default function WorldSnapApp() {
       <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
       <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-      {/* 位置情報設定ガイドモーダル（位置情報がブロックされた際に案内用） */}
+      {/* 位置情報設定ガイドモーダル */}
       {isLocationGuideOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
@@ -1591,7 +1717,7 @@ export default function WorldSnapApp() {
               onClick={() => setIsLocationGuideOpen(false)}
               style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
             >
-              閉じる
+              {t('close')}
             </button>
           </div>
         </div>
@@ -1614,8 +1740,8 @@ export default function WorldSnapApp() {
 
             {onboardingStep === 1 && (
               <div style={{ textAlign: 'left' }}>
-                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step1Title}</h3>
-                <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t.step1Desc}</p>
+                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step1Title')}</h3>
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t('step1Desc')}</p>
                 <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
                   {Object.entries(LANGUAGES).map(([code, lang]) => (
                     <div
@@ -1638,15 +1764,15 @@ export default function WorldSnapApp() {
                   ))}
                 </div>
                 <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
-                  {t.next}
+                  {t('next')}
                 </button>
               </div>
             )}
 
             {onboardingStep === 2 && (
               <div style={{ textAlign: 'left' }}>
-                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step2Title}</h3>
-                <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t.step2Desc}</p>
+                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step2Title')}</h3>
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t('step2Desc')}</p>
                 <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
                   {Object.entries(COUNTRIES).map(([code, c]) => (
                     <div
@@ -1670,10 +1796,10 @@ export default function WorldSnapApp() {
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
-                    {t.back}
+                    {t('back')}
                   </button>
                   <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
-                    {t.next}
+                    {t('next')}
                   </button>
                 </div>
               </div>
@@ -1681,7 +1807,7 @@ export default function WorldSnapApp() {
 
             {onboardingStep === 3 && (
               <div style={{ textAlign: 'left' }}>
-                <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t.step3Title}</h3>
+                <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t('step3Title')}</h3>
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
                   <div
                     onClick={() => onboardingAvatarInputRef.current?.click()}
@@ -1716,10 +1842,10 @@ export default function WorldSnapApp() {
                 />
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
-                    {t.back}
+                    {t('back')}
                   </button>
                   <button onClick={() => setOnboardingStep(4)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
-                    {t.next}
+                    {t('next')}
                   </button>
                 </div>
               </div>
@@ -1727,7 +1853,7 @@ export default function WorldSnapApp() {
 
             {onboardingStep === 4 && (
               <div style={{ textAlign: 'left' }}>
-                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t.step3TitleEula}</h3>
+                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step3TitleEula')}</h3>
                 <div
                   onScroll={(e) => {
                     const target = e.currentTarget;
@@ -1749,11 +1875,11 @@ export default function WorldSnapApp() {
 
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#0284c7' : '#94a3b8', marginBottom: '16px' }}>
                   <input type="checkbox" disabled={!hasScrolledToBottom} checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
-                  <span>{t.eulaAgree}</span>
+                  <span>{t('eulaAgree')}</span>
                 </label>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button onClick={() => setOnboardingStep(3)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
-                    {t.back}
+                    {t('back')}
                   </button>
                   <button
                     disabled={!eulaChecked || !hasScrolledToBottom}
@@ -1769,7 +1895,7 @@ export default function WorldSnapApp() {
                       cursor: (eulaChecked && hasScrolledToBottom) ? 'pointer' : 'not-allowed',
                     }}
                   >
-                    {t.startApp}
+                    {t('startApp')}
                   </button>
                 </div>
               </div>
@@ -1828,7 +1954,7 @@ export default function WorldSnapApp() {
               <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: mapTheme === 'dark' ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.96)', color: mapTheme === 'dark' ? '#fff' : '#000', backdropFilter: 'blur(10px)', padding: '6px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)' }}>
                 <input
                   type="text"
-                  placeholder={t.searchPlaceholder}
+                  placeholder={t('searchPlaceholder')}
                   value={mapSearchKeyword}
                   onChange={(e) => setMapSearchKeyword(e.target.value)}
                   style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: mapTheme === 'dark' ? '#fff' : '#000', fontSize: '12px', fontWeight: '500', padding: '2px 6px' }}
@@ -1880,7 +2006,7 @@ export default function WorldSnapApp() {
                       }}
                     >
                       {isChecked ? '✓ ' : ''}
-                      {cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? `🍔 ${t.gourmet}` : `🌧️ ${t.rain}`}
+                      {cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? `🍔 ${t('gourmet')}` : `🌧️ ${t('rain')}`}
                     </button>
                   );
                 })}
@@ -1892,9 +2018,9 @@ export default function WorldSnapApp() {
                   onChange={(e) => setDisplayScope(e.target.value as DisplayScope)}
                   style={{ background: 'transparent', border: 'none', color: mapTheme === 'dark' ? '#fff' : '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '4px 6px' }}
                 >
-                  <option value="world" style={{ background: '#0f172a' }}>🌎 {t.world}</option>
-                  <option value="friends" style={{ background: '#0f172a' }}>👥 {t.friends}</option>
-                  <option value="my" style={{ background: '#0f172a' }}>📍 {t.myMap}</option>
+                  <option value="world" style={{ background: '#0f172a' }}>🌎 {t('world')}</option>
+                  <option value="friends" style={{ background: '#0f172a' }}>👥 {t('friends')}</option>
+                  <option value="my" style={{ background: '#0f172a' }}>📍 {t('myMap')}</option>
                 </select>
               </div>
             </div>
@@ -1903,19 +2029,18 @@ export default function WorldSnapApp() {
           <div ref={exportRef} style={{ flex: 1, width: '100%', height: '100%', position: 'relative' }}>
             <GoogleMapComponent
               spots={filteredSpots}
-              center={activeFootprintCountry ? (COUNTRIES[activeFootprintCountry] ? [COUNTRIES[activeFootprintCountry].lat, COUNTRIES[activeFootprintCountry].lon] : currentMapCenter) : currentMapCenter}
-              zoom={activeFootprintCountry ? 7 : currentMapZoom}
+              center={currentMapCenter}
+              zoom={currentMapZoom}
               targetCenter={targetCenter}
               targetZoom={targetZoom}
               theme={mapTheme}
               userLang={userLangCode}
-              footprintCountry={activeFootprintCountry}
               onMoveEnd={handleMapMoveEnd}
               onSelectSpot={handleOpenSpot}
               onDoubleTap={handleMapDoubleTap}
             />
 
-            {/* 現在地ボタン（GPS位置情報パーミッション要求連携・ガイドモーダル連動） */}
+            {/* 現在地ボタン */}
             <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <button
                 title="現在地へ移動"
@@ -1929,7 +2054,6 @@ export default function WorldSnapApp() {
                       },
                       (err) => {
                         console.error(err);
-                        // 位置情報が拒否・失敗した場合は、親切な設定案内ガイドモーダルを表示する
                         setIsLocationGuideOpen(true);
                       },
                       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -1970,7 +2094,7 @@ export default function WorldSnapApp() {
             </div>
           )}
 
-          {/* 写真追加ボタン（中央配置） */}
+          {/* 写真追加ボタン */}
           <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderTop: '1px solid #e2e8f0', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none' }}>
             <div>
               <div style={{ fontSize: '12px', fontWeight: 'bold' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
@@ -1997,7 +2121,7 @@ export default function WorldSnapApp() {
               }}
             >
               <span>📷＋</span>
-              <span>{t.addPhoto}</span>
+              <span>{t('addPhoto')}</span>
               <input type="file" accept="image/*,video/*" multiple onChange={handlePhotoSelect} style={{ display: 'none' }} />
             </label>
           </div>
@@ -2006,7 +2130,7 @@ export default function WorldSnapApp() {
         {/* ── トレンド・ランキング ── */}
         <div style={{ display: currentTab === 'ranking' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', gap: '10px', touchAction: 'pan-y' }}>
           <div style={{ padding: '6px 0', fontSize: '14px', fontWeight: '900', color: themeAccent }}>
-            🏆 {t.ranking}
+            🏆 {t('ranking')}
           </div>
           {rankingSpots.map((spot, idx) => (
             <div
@@ -2022,9 +2146,8 @@ export default function WorldSnapApp() {
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
-                <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>📍 {spot.cityName}</div>
+                <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>📍 {spot.cityName} | 👀 {spot.viewsCount}</div>
                 
-                {/* 翻訳ボタン */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '4px' }}>
                   <span style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold' }}>❤️ {spot.savedCount || 0}</span>
                   <button
@@ -2034,14 +2157,9 @@ export default function WorldSnapApp() {
                     }}
                     style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '6px', padding: '2px 8px', fontSize: '10px', fontWeight: 'bold', cursor: 'pointer' }}
                   >
-                    {t.translate}
+                    {t('translate')}
                   </button>
                 </div>
-                {translatedDescriptions[spot.id] && (
-                  <div style={{ fontSize: '10px', color: '#0369a1', marginTop: '2px', background: '#f0f9ff', padding: '4px', borderRadius: '4px' }}>
-                    {translatedDescriptions[spot.id]}
-                  </div>
-                )}
               </div>
             </div>
           ))}
@@ -2073,18 +2191,18 @@ export default function WorldSnapApp() {
                 </div>
               </div>
               <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '5px 12px', background: mapTheme === 'dark' ? '#334155' : '#f1f5f9', color: mapTheme === 'dark' ? '#fff' : '#0f172a', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
-                {t.edit}
+                {t('edit')}
               </button>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '6px', margin: '14px 0', textAlign: 'center' }}>
               <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{mySpots.length}</div>
-                <div style={{ fontSize: '9px', color: '#64748b' }}>📸 {t.posts}</div>
+                <div style={{ fontSize: '9px', color: '#64748b' }}>📸 {t('posts')}</div>
               </div>
               <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{visitedCountryCount}</div>
-                <div style={{ fontSize: '9px', color: '#64748b' }}>🗺️ {t.visited}</div>
+                <div style={{ fontSize: '9px', color: '#64748b' }}>🗺️ {t('visited')}</div>
               </div>
               <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
                 <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0284c7' }}>{totalMyViewsCount}</div>
@@ -2097,8 +2215,8 @@ export default function WorldSnapApp() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '10px' }}>
-            {(['posts', 'footprint', 'timeline', 'saved', 'badges', 'friends'] as const).map((tab) => (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', marginBottom: '10px' }}>
+            {(['posts', 'timeline', 'saved', 'badges', 'friends'] as const).slice(0, 4).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setProfileSubTab(tab)}
@@ -2114,7 +2232,7 @@ export default function WorldSnapApp() {
                   textAlign: 'center',
                 }}
               >
-                {tab === 'posts' ? t.tabPosts : tab === 'footprint' ? t.tabFootprint : tab === 'timeline' ? t.tabTimeline : tab === 'saved' ? t.tabSaved : tab === 'badges' ? t.tabBadges : t.tabFriends}
+                {tab === 'posts' ? t('tabPosts') : tab === 'timeline' ? t('tabTimeline') : tab === 'saved' ? t('tabSaved') : t('tabBadges')}
               </button>
             ))}
           </div>
@@ -2128,53 +2246,6 @@ export default function WorldSnapApp() {
               ))}
             </div>
           )}
-
-          {profileSubTab === 'footprint' && (
-            <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '16px', textAlign: 'center' }}>
-              <div style={{ fontSize: '15px', fontWeight: '900', marginBottom: '4px' }}>🌍 Footprint Map</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '10px' }}>
-                {Array.from(new Set(mySpots.map(s => s.countryCode))).map((code) => {
-                  const countryName = COUNTRIES[code]?.name || code;
-                  const count = mySpots.filter(s => s.countryCode === code).length;
-                  const firstSpot = mySpots.find(s => s.countryCode === code);
-                  const isSelected = activeFootprintCountry === code;
-
-                  return (
-                    <div
-                      key={code}
-                      onClick={() => {
-                        setActiveFootprintCountry(code);
-                        if (firstSpot) {
-                          setTargetCenter([firstSpot.lat, firstSpot.lon]);
-                          setTargetZoom(7);
-                          setDisplayScope('my');
-                          setCurrentTab('map');
-                          showToast(`🍊 ${countryName} ハイライト中`);
-                        }
-                      }}
-                      style={{
-                        padding: '12px',
-                        borderRadius: '10px',
-                        border: `2px solid ${isSelected ? '#ea580c' : '#bbf7d0'}`,
-                        background: isSelected ? '#ffedd5' : '#f0fdf4',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <span style={{ fontSize: '12px', fontWeight: 'bold', color: isSelected ? '#c2410c' : '#15803d' }}>
-                        {COUNTRIES[code]?.flag || '📍'} {countryName}
-                      </span>
-                      <span style={{ fontSize: '11px', background: isSelected ? '#ea580c' : '#22c55e', color: '#fff', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>
-                        {count} spots
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
@@ -2183,12 +2254,12 @@ export default function WorldSnapApp() {
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>{t.settings}</h3>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>{t('settings')}</h3>
               <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
             </div>
 
             <div style={{ marginBottom: '14px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t.langSetting}</label>
+              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t('langSetting')}</label>
               <select
                 value={userLangCode}
                 onChange={(e) => setUserLangCode(e.target.value)}
@@ -2203,7 +2274,7 @@ export default function WorldSnapApp() {
             </div>
 
             <div style={{ marginBottom: '20px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t.baseCountrySetting}</label>
+              <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t('baseCountrySetting')}</label>
               <select
                 value={userCountry}
                 onChange={(e) => {
@@ -2229,19 +2300,13 @@ export default function WorldSnapApp() {
                 onClick={() => setIsGuideModalOpen(true)}
                 style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
               >
-                📖 {t.guideTitle}
+                📖 {t('guideTitle')}
               </button>
               <button
                 onClick={() => setIsEulaModalOpen(true)}
                 style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
               >
-                📜 {t.eulaTitle}
-              </button>
-              <button
-                onClick={() => setIsBlockListModalOpen(true)}
-                style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left', color: '#dc2626' }}
-              >
-                🚫 {t.blockListTitle} ({blockedUsers.length})
+                📜 {t('eulaTitle')}
               </button>
             </div>
 
@@ -2252,7 +2317,7 @@ export default function WorldSnapApp() {
               }}
               style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
             >
-              保存して閉じる
+              {t('close')}
             </button>
           </div>
         </div>
@@ -2262,12 +2327,12 @@ export default function WorldSnapApp() {
       {isEulaModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
-            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t.eulaTitle}</h3>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('eulaTitle')}</h3>
             <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
               {EULA_FULL_TEXT}
             </div>
             <button onClick={() => setIsEulaModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
-              {t.close}
+              {t('close')}
             </button>
           </div>
         </div>
@@ -2277,44 +2342,12 @@ export default function WorldSnapApp() {
       {isGuideModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
-            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t.guideTitle}</h3>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('guideTitle')}</h3>
             <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
               {GUIDE_FULL_TEXT}
             </div>
             <button onClick={() => setIsGuideModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
-              {t.close}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ブロックリスト管理モーダル */}
-      {isBlockListModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-          <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%' }}>
-            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t.blockListTitle}</h3>
-            {blockedUsers.length === 0 ? (
-              <p style={{ fontSize: '12px', color: '#64748b' }}>現在ブロックしているユーザーはいません。</p>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
-                {blockedUsers.map((uid) => (
-                  <div key={uid} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '8px 12px', borderRadius: '8px' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 'bold' }}>ID: {uid}</span>
-                    <button
-                      onClick={() => {
-                        setBlockedUsers(prev => prev.filter(id => id !== uid));
-                        showToast('ブロックを解除しました');
-                      }}
-                      style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', padding: '4px 8px', fontSize: '11px', cursor: 'pointer' }}
-                    >
-                      解除
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-            <button onClick={() => setIsBlockListModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
-              {t.close}
+              {t('close')}
             </button>
           </div>
         </div>
@@ -2325,7 +2358,7 @@ export default function WorldSnapApp() {
         <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
           <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
             <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
-              ← {t.back}
+              ← {t('back')}
             </button>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <button onClick={() => handleShareSpot(selectedSpot)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -2335,12 +2368,61 @@ export default function WorldSnapApp() {
           </div>
 
           <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
-            <div style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
               {selectedSpot.fileType === 'image' ? (
                 <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
                 <video src={selectedSpot.fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
               )}
+            </div>
+
+            {/* ナビ & いいねボタン */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${selectedSpot.lat},${selectedSpot.lon}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  flex: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '12px',
+                  background: '#10b981',
+                  color: '#fff',
+                  borderRadius: '12px',
+                  fontWeight: 'bold',
+                  fontSize: '13px',
+                  textDecoration: 'none',
+                  boxShadow: '0 4px 14px rgba(16,185,129,0.3)'
+                }}
+              >
+                <span>🧭</span>
+                <span>{t('openGoogleMaps')}</span>
+              </a>
+
+              <button
+                onClick={() => handleToggleLike(selectedSpot.id)}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: likedSpotIds.includes(selectedSpot.id) ? '#f43f5e' : '#f1f5f9',
+                  color: likedSpotIds.includes(selectedSpot.id) ? '#fff' : '#0f172a',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontWeight: 'bold',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px'
+                }}
+              >
+                <span>{likedSpotIds.includes(selectedSpot.id) ? '❤️' : '🤍'}</span>
+                <span>{selectedSpot.savedCount}</span>
+              </button>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
@@ -2349,8 +2431,12 @@ export default function WorldSnapApp() {
                 onClick={() => handleTranslateDescription(selectedSpot.id, selectedSpot.description)}
                 style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '16px', padding: '6px 14px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
               >
-                <span>🌐</span> {t.translate}
+                <span>🌐</span> {t('translate')}
               </button>
+            </div>
+
+            <div style={{ fontSize: '11px', color: '#64748b', marginBottom: '8px' }}>
+              📍 {selectedSpot.cityName} | 👀 Views: {selectedSpot.viewsCount}
             </div>
 
             <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
@@ -2396,7 +2482,7 @@ export default function WorldSnapApp() {
             </div>
 
             <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
-              🌐 反映先（複数選択可能）
+              🌐 反映させるマップモードを選択
             </label>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
               {(['world', 'friends', 'my'] as const).map((scope) => {
@@ -2406,18 +2492,21 @@ export default function WorldSnapApp() {
                     key={scope}
                     onClick={() => toggleScopeSelection(scope)}
                     style={{
-                      padding: '8px 10px',
+                      padding: '10px 12px',
                       borderRadius: '10px',
                       border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
                       background: isSelected ? '#f0f9ff' : '#ffffff',
                       cursor: 'pointer',
                       fontSize: '12px',
                       fontWeight: 'bold',
-                      color: isSelected ? themeAccent : '#0f172a'
+                      color: isSelected ? themeAccent : '#0f172a',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
                     }}
                   >
-                    {isSelected ? '☑️ ' : '☐ '}
-                    {scope === 'world' ? '🌎 ワールド（全体マップ）' : scope === 'friends' ? '👥 フレンドマップ' : '📍 マイマップ'}
+                    <span>{scope === 'world' ? `🌎 ${t('world')}` : scope === 'friends' ? `👥 ${t('friends')}` : `📍 ${t('myMap')}`}</span>
+                    <span>{isSelected ? '☑️' : '☐'}</span>
                   </div>
                 );
               })}
@@ -2530,7 +2619,7 @@ export default function WorldSnapApp() {
           }}
         >
           <span style={{ fontSize: '18px' }}>🗺️</span>
-          <span style={{ fontSize: '10px', fontWeight: currentTab === 'map' ? 'bold' : 'normal' }}>{t.map}</span>
+          <span style={{ fontSize: '10px', fontWeight: currentTab === 'map' ? 'bold' : 'normal' }}>{t('map')}</span>
         </button>
 
         <button
@@ -2548,7 +2637,7 @@ export default function WorldSnapApp() {
           }}
         >
           <span style={{ fontSize: '18px' }}>🏆</span>
-          <span style={{ fontSize: '10px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t.ranking}</span>
+          <span style={{ fontSize: '10px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t('ranking')}</span>
         </button>
 
         <button
@@ -2566,7 +2655,7 @@ export default function WorldSnapApp() {
           }}
         >
           <span style={{ fontSize: '18px' }}>👤</span>
-          <span style={{ fontSize: '10px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal' }}>{t.profile}</span>
+          <span style={{ fontSize: '10px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal' }}>{t('profile')}</span>
         </button>
       </nav>
     </div>
