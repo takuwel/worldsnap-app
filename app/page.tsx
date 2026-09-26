@@ -1000,7 +1000,7 @@ export default function WorldSnapApp() {
   };
 
   useEffect(() => {
-    const hasCompleted = localStorage.getItem('ws_onboarded_v23');
+    const hasCompleted = localStorage.getItem('ws_onboarded_v24');
     if (hasCompleted) {
       setIsOnboarding(false);
     }
@@ -1206,7 +1206,7 @@ export default function WorldSnapApp() {
   };
 
   const handleCompleteOnboarding = () => {
-    localStorage.setItem('ws_onboarded_v23', 'true');
+    localStorage.setItem('ws_onboarded_v24', 'true');
     setIsOnboarding(false);
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
@@ -1224,7 +1224,6 @@ export default function WorldSnapApp() {
   };
 
   const handleOpenSpot = (spot: Spot) => {
-    // 閲覧数をインクリメント
     setSpots(prev => prev.map(s => s.id === spot.id ? { ...s, viewsCount: s.viewsCount + 1 } : s));
     setSelectedSpot({ ...spot, viewsCount: spot.viewsCount + 1 });
     setActiveMediaIndex(0);
@@ -1574,7 +1573,9 @@ export default function WorldSnapApp() {
     }
   };
 
-  const handleSaveMyMap = async () => {
+  const handleSaveMyMap = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (!exportRef.current) return;
     showToast('📸 マップ画像を生成中...');
 
@@ -1718,6 +1719,62 @@ export default function WorldSnapApp() {
               style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
             >
               {t('close')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* プロフィール編集モーダル */}
+      {isEditProfileOpen && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 8000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>✏️ プロフィール編集</h3>
+              <button onClick={() => setIsEditProfileOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <div
+                onClick={() => profileAvatarInputRef.current?.click()}
+                style={{
+                  width: '64px', height: '64px', borderRadius: '50%',
+                  background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
+                  color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', position: 'relative', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                }}
+              >
+                {!userAvatar && <span>👤</span>}
+                <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.5)', fontSize: '9px', color: '#fff', textAlign: 'center', padding: '2px 0' }}>
+                  変更
+                </div>
+              </div>
+            </div>
+
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>ユーザー名</label>
+            <input
+              type="text"
+              maxLength={20}
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              style={{ width: '100%', padding: '10px', marginTop: '4px', marginBottom: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold' }}
+            />
+
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>自己紹介</label>
+            <input
+              type="text"
+              value={userBio}
+              onChange={(e) => setUserBio(e.target.value)}
+              style={{ width: '100%', padding: '10px', marginTop: '4px', marginBottom: '20px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+            />
+
+            <button
+              onClick={() => {
+                setIsEditProfileOpen(false);
+                showToast('✨ プロフィールを更新しました！');
+              }}
+              style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+            >
+              保存する
             </button>
           </div>
         </div>
@@ -2190,7 +2247,7 @@ export default function WorldSnapApp() {
                   <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748b' }}>{userBio}</p>
                 </div>
               </div>
-              <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '5px 12px', background: mapTheme === 'dark' ? '#334155' : '#f1f5f9', color: mapTheme === 'dark' ? '#fff' : '#0f172a', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
+              <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '6px 14px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 2px 8px rgba(2,132,199,0.3)' }}>
                 {t('edit')}
               </button>
             </div>
