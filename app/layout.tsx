@@ -622,7 +622,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. 高速化された Google Maps API コンポーネント
+// 2. 超高速化 Google Maps API コンポーネント
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -691,8 +691,6 @@ const GoogleMapComponent = ({
       });
 
       mapInstanceRef.current = map;
-
-      // 即座にリサイズを発火させて初期表示を高速化
       window.google.maps.event.trigger(map, 'resize');
 
       map.addListener('idle', () => {
@@ -726,7 +724,7 @@ const GoogleMapComponent = ({
             clearInterval(checkInterval);
             initMap();
           }
-        }, 50);
+        }, 30);
       }
     } else {
       initMap();
@@ -1690,7 +1688,7 @@ export default function WapApp() {
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
 
-      <div style={{ background: mapTheme === 'dark' ? '#0f172a' : '#f8fafc', color: mapTheme === 'dark' ? '#f8fafc' : '#0f172a', height: '100dvh', maxHeight: '100dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none' }}>
+      <div style={{ background: mapTheme === 'dark' ? '#0f172a' : '#f8fafc', color: mapTheme === 'dark' ? '#f8fafc' : '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none' }}>
         
         {warningMessage && (
           <div style={{ position: 'fixed', top: 0, insetInline: 0, background: '#ef4444', color: '#fff', padding: '12px 16px', zIndex: 999999, fontSize: '13px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 4px 16px rgba(239,68,68,0.4)' }}>
@@ -1965,8 +1963,8 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー（固定） */}
-        <header style={{ height: '48px', minHeight: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
+        {/* ヘッダー（完全固定・高さ厳格管理） */}
+        <header style={{ height: '48px', minHeight: '48px', maxHeight: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
             <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: mapTheme === 'dark' ? '#fff' : '#000' }}>
               ☰
@@ -2004,11 +2002,11 @@ export default function WapApp() {
           </button>
         </header>
 
-        {/* ── メインコンテンツエリア（完全固定） ── */}
-        <div style={{ flex: 1, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+        {/* ── メインコンテンツエリア（比率崩れ防止の厳格な flex と overflow 控制） ── */}
+        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 54px)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           
           {/* マップタブ */}
-          <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', position: 'relative' }}>
+          <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative' }}>
             
             <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none' }}>
               
@@ -2147,8 +2145,8 @@ export default function WapApp() {
             </div>
 
             {isAdVisible && (
-              <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '44px', zIndex: 440, touchAction: 'none' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '36px', background: mapTheme === 'dark' ? '#0f172a' : '#ffffff', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
+              <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '40px', maxHeight: '40px', zIndex: 440, touchAction: 'none', flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '32px', background: mapTheme === 'dark' ? '#0f172a' : '#ffffff', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
                   <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 'bold' }}>
                     📢 <span style={{ color: themeAccent }}>wap PR</span>: 写真や動画で世界をつなごう！
                   </span>
@@ -2157,8 +2155,8 @@ export default function WapApp() {
               </div>
             )}
 
-            {/* 写真追加ボタン */}
-            <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderTop: '1px solid #e2e8f0', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none' }}>
+            {/* 写真追加ボタン（固定高さ管理） */}
+            <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '52px', minHeight: '52px', maxHeight: '52px', flexShrink: 0 }}>
               <div>
                 <div style={{ fontSize: '12px', fontWeight: 'bold' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
                 <div style={{ fontSize: '10px', color: '#64748b' }}>{filteredSpots.length} spots</div>
@@ -2168,13 +2166,13 @@ export default function WapApp() {
                 style={{
                   flex: 1,
                   maxWidth: '220px',
-                  padding: '12px 20px',
+                  padding: '10px 16px',
                   background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
                   color: '#fff',
                   borderRadius: '30px',
                   fontWeight: '900',
-                  fontSize: '14px',
-                  boxShadow: '0 6px 20px rgba(2,132,199,0.4)',
+                  fontSize: '13px',
+                  boxShadow: '0 4px 16px rgba(2,132,199,0.4)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -2586,7 +2584,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 投稿作成モーダル（マップモード選択付き） ── */}
+        {/* ── 投稿作成モーダル ── */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
@@ -2704,11 +2702,12 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── ボトムナビゲーション（固定） ── */}
+        {/* ── ボトムナビゲーション（完全固定・高さ厳格管理） ── */}
         <nav
           style={{
             height: 'calc(54px + env(safe-area-inset-bottom, 0px))',
             minHeight: 'calc(54px + env(safe-area-inset-bottom, 0px))',
+            maxHeight: 'calc(54px + env(safe-area-inset-bottom, 0px))',
             paddingBottom: 'env(safe-area-inset-bottom, 0px)',
             background: mapTheme === 'dark' ? '#1e293b' : '#ffffff',
             borderTop: '1px solid #e2e8f0',
