@@ -1710,7 +1710,7 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-        {/* 初回オンボーディング画面（ご要望通りかっこいい暗い色＆ラグ完全解消） */}
+        {/* 初回オンボーディング画面（ご要望通りの暗い背景＆スムーズな高速動作） */}
         {isOnboarding && (
           <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -2069,7 +2069,7 @@ export default function WapApp() {
           {/* マップタブ */}
           <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none' }}>
             
-            {/* マップ上のモード選択ボタン類（さらに上に配置し下がり防止） */}
+            {/* マップ上のモード選択ボタン類（一番上にピタッと固定） */}
             <div style={{ position: 'absolute', top: '1px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '3px', pointerEvents: 'none' }}>
               
               {/* 検索バー */}
