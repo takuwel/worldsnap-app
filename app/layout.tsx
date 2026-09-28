@@ -550,7 +550,7 @@ const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー（A
 本規約は、当サービス「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
 
 第2条（位置情報の取得・利用について・Apple審査対応）
-1. 当サービスは、ユーザーがマップ画面右下の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一時的に取得します。
+1. 当サービスは、ユーザーがマップ画面右下の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一度だけ取得します。
 2. 取得した位置情報は、ユーザーの現在の現在地をマップの中心に表示する機能、および周辺の旅のスポットを検索・閲覧する機能の提供にのみ使用されます。
 3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。ユーザーは端末の設定からいつでも位置情報の許可をオフにすることができます。
 
@@ -561,18 +561,15 @@ const GUIDE_FULL_TEXT = `【wap の操作説明と使い方ガイド】
 
 1. 現在地に移動する「🎯ボタン」
 - マップ画面の右下にある「🎯（現在地ボタン）」をタップすると、ブラウザが位置情報の許可を確認します。
-- 位置情報がオフの場合は設定変更ガイドが表示されます。お使いのスマホやブラウザの設定から「位置情報の許可」を有効にしてください。
+- 一度だけ許可を選択すると、現在地がマップの中心に表示されます。
 
 2. マップの操作とズーム
 - マップ上をダブルタップすると、その場所が拡大（ズームイン）します。
 - 右下の「🪟（引き戻すボタン）」を押すと、都道府県から国・世界全体へと視野を段階的に広げることができます。
 
 3. 写真や動画の投稿
-- 下部の「📷＋ 写真 / 動画を追加」ボタンからアルバムのメディアを選択できます。
-- モード（ワールド・フレンド・マイマップ）や撮影場所の「地名・住所検索」で場所を指定して投稿するとマップに反映されます。
-
-4. Googleマップでの経路案内
-- スポット詳細画面にある「🧭 Googleマップで経路案内」ボタンをタップすると, そのスポットへのルート案内をワンタッチで起動できます。`;
+- 下部のフレキシブルな「📷＋ 写真 / 動画を追加」ボタンからメディアを選択できます。
+- モードや撮影場所を指定してマップに投稿できます。`;
 
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
@@ -622,7 +619,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. 超高速化 Google Maps API コンポーネント (上下左右制限・標準カラー対応)
+// 2. Google Maps API コンポーネント
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -651,7 +648,6 @@ const GoogleMapComponent = ({
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
 
-  // 設定されたテーマごとのスタイル（標準時はGoogle標準のマップカラー）
   const getMapStyles = (themeMode: MapThemeType) => {
     if (themeMode === 'dark') {
       return [
@@ -670,7 +666,7 @@ const GoogleMapComponent = ({
         { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#d5e8d4' }] },
       ];
     }
-    return []; // 標準（ライト）時はGoogle標準の色彩
+    return [];
   };
 
   useEffect(() => {
@@ -689,14 +685,8 @@ const GoogleMapComponent = ({
         gestureHandling: 'greedy',
         styles: getMapStyles(theme),
         backgroundColor: '#ffffff',
-        // マップの上下左右スクロール制限（極端に離れて真っ白になるのを防ぐ）
         restriction: {
-          latLngBounds: {
-            north: 85,
-            south: -85,
-            west: -180,
-            east: 180,
-          },
+          latLngBounds: { north: 85, south: -85, west: -180, east: 180 },
           strictBounds: false,
         },
       });
@@ -911,7 +901,6 @@ const GoogleMapComponent = ({
     markersRef.current.push(marker);
   };
 
-  // マップの角丸を解除し、余白ゼロでフル画面表示
   return <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: '#ffffff' }} />;
 };
 
@@ -986,6 +975,7 @@ export default function WapApp() {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
   const [isEulaModalOpen, setIsEulaModalOpen] = useState<boolean>(false);
   const [isGuideModalOpen, setIsGuideModalOpen] = useState<boolean>(false);
+  const [isBlockListModalOpen, setIsBlockListModalOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [friendsList, setFriendsList] = useState<FriendUser[]>([]);
@@ -1700,7 +1690,7 @@ export default function WapApp() {
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
 
-      {/* 完全白背景のデザイン ＆ iPhone下部スライドボタンに被らないよう高さ・余白を最適化 */}
+      {/* 上部・背景の黒っぽさを完全に白く固定（2枚目のクリーンなホワイトデザインに統一） */}
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none' }}>
         
         {warningMessage && (
@@ -1899,20 +1889,40 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 位置情報設定ガイドモーダル */}
+        {/* 位置情報設定ガイドモーダル（一度だけ許可案内付き） */}
         {isLocationGuideOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
               <div style={{ fontSize: '32px', marginBottom: '8px' }}>📍</div>
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>位置情報のアクセスがオフです</h3>
+              <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>位置情報の許可（一度だけ許可）</h3>
               <p style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', margin: '0 0 16px 0', textAlign: 'left' }}>
-                現在地ボタンを使用するには、お使いのスマホまたはブラウザの設定から位置情報のアクセスを許可してください。<br/><br/>
-                ・<b>iPhone (Safari):</b> アドレスバー左側の「aA」または「🔒」アイコン ＞「Webサイトの設定」＞「位置情報」を「許可」に変更<br/>
-                ・<b>Android (Chrome):</b> アドレスバーの鍵マーク ＞「権限」＞「位置情報」を許可
+                現在地ボタンを使用するには、ブラウザの位置情報ポップアップで<b>「許可」または「一度だけ許可」</b>を選択してください。<br/><br/>
+                設定がオフの場合はスマホの設定から許可を変更してください。
               </p>
               <button
+                onClick={() => {
+                  setIsLocationGuideOpen(false);
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                      (pos) => {
+                        setTargetCenter([pos.coords.latitude, pos.coords.longitude]);
+                        setTargetZoom(15);
+                        showToast('🎯 現在地に移動しました');
+                      },
+                      () => {
+                        showWarning('⚠️ 位置情報のアクセスが拒否されました');
+                      },
+                      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                    );
+                  }
+                }}
+                style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', marginBottom: '8px' }}
+              >
+                位置情報を再度リクエストする
+              </button>
+              <button
                 onClick={() => setIsLocationGuideOpen(false)}
-                style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+                style={{ width: '100%', padding: '10px', background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
               >
                 {t('close')}
               </button>
@@ -1976,7 +1986,44 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー（完全白背景・上部隙間ゼロ） */}
+        {/* ブロックリスト管理モーダル */}
+        {isBlockListModalOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '380px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>🚫 {t('blockListTitle')}</h3>
+                <button onClick={() => setIsBlockListModalOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
+              </div>
+
+              {blockedUsers.length === 0 ? (
+                <p style={{ fontSize: '12px', color: '#64748b', textAlign: 'center', padding: '20px 0' }}>ブロックしているユーザーはいません。</p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
+                  {blockedUsers.map((uid) => (
+                    <div key={uid} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                      <span style={{ fontSize: '12px', fontWeight: 'bold' }}>ID: {uid}</span>
+                      <button
+                        onClick={() => {
+                          setBlockedUsers(prev => prev.filter(id => id !== uid));
+                          showToast('ブロックを解除しました');
+                        }}
+                        style={{ padding: '4px 10px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                      >
+                        解除
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <button onClick={() => setIsBlockListModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                {t('close')}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ヘッダー（完全白背景・上部余白一切なし） */}
         <header style={{ height: '48px', minHeight: '48px', maxHeight: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
             <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: '#000' }}>
@@ -2015,13 +2062,14 @@ export default function WapApp() {
           </button>
         </header>
 
-        {/* ── メインコンテンツエリア（完全白背景・余白ゼロでマップをフル表示） ── */}
+        {/* ── メインコンテンツエリア（完全白背景・余白ゼロ） ── */}
         <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 58px)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0 }}>
           
           {/* マップタブ */}
           <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none' }}>
             
-            <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none' }}>
+            {/* マップ上のモード選択ボタン類（ご要望通りさらに少し上へ引き上げ） */}
+            <div style={{ position: 'absolute', top: '6px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '6px', pointerEvents: 'none' }}>
               
               {/* 検索バー */}
               <div style={{ position: 'relative', pointerEvents: 'auto' }}>
@@ -2168,7 +2216,7 @@ export default function WapApp() {
               </div>
             )}
 
-            {/* 写真追加ボタン（完全白・iPhoneバー被り防止のため少し上に配置） */}
+            {/* 写真追加ボタン */}
             <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '6px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '46px', minHeight: '46px', maxHeight: '46px', flexShrink: '0' }}>
               <div>
                 <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
@@ -2341,7 +2389,7 @@ export default function WapApp() {
           </div>
         </div>
 
-        {/* ── 設定メニューモーダル ── */}
+        {/* ── 設定メニューモーダル（ブロックリスト管理付き） ── */}
         {isSettingsOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
@@ -2411,6 +2459,12 @@ export default function WapApp() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+                <button
+                  onClick={() => setIsBlockListModalOpen(true)}
+                  style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  🚫 {t('blockListTitle')} ({blockedUsers.length})
+                </button>
                 <button
                   onClick={() => setIsGuideModalOpen(true)}
                   style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
@@ -2613,7 +2667,7 @@ export default function WapApp() {
                 )}
               </div>
 
-              {/* 反映させるマップモード（スコープ）選択 */}
+              {/* 反映させるマップモード選択 */}
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
                 🌐 反映させるマップモードを選択
               </label>
@@ -2643,7 +2697,7 @@ export default function WapApp() {
                 })}
               </div>
 
-              {/* スポットカテゴリ（View / グルメ / 雨の日）選択 */}
+              {/* スポットカテゴリ選択 */}
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
                 🏷️ スポットの種類（モード）を選択
               </label>
@@ -2744,7 +2798,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── ボトムナビゲーション（iPhone下部スライドボタンに被らないよう少し上に配置＆完全固定） ── */}
+        {/* ── ボトムナビゲーション（完全固定） ── */}
         <nav
           style={{
             height: 'calc(48px + env(safe-area-inset-bottom, 0px))',
