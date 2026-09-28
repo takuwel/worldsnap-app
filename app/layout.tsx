@@ -572,7 +572,7 @@ const GUIDE_FULL_TEXT = `【wap の操作説明と使い方ガイド】
 - モード（ワールド・フレンド・マイマップ）や撮影場所の「地名・住所検索」で場所を指定して投稿するとマップに反映されます。
 
 4. Googleマップでの経路案内
-- スポット詳細画面にある「🧭 Googleマップで経路案内」ボタンをタップすると、そのスポットへのルート案内をワンタッチで起動できます。`;
+- スポット詳細画面にある「🧭 Googleマップで経路案内」ボタンをタップすると, そのスポットへのルート案内をワンタッチで起動できます。`;
 
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
@@ -622,7 +622,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. 超高速化 Google Maps API コンポーネント (2枚目の完全白カード型に完全一致)
+// 2. 超高速化 Google Maps API コンポーネント (上下左右制限・標準カラー対応)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -651,25 +651,26 @@ const GoogleMapComponent = ({
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
 
-  // 2枚目の画像のように、マップ部分もすべて美しいホワイト・クリーンカード型にカスタマイズ
+  // 設定されたテーマごとのスタイル（標準時はGoogle標準のマップカラー）
   const getMapStyles = (themeMode: MapThemeType) => {
     if (themeMode === 'dark') {
       return [
-        { elementType: 'geometry', stylers: [{ color: '#1e293b' }] },
-        { elementType: 'labels.text.stroke', stylers: [{ color: '#1e293b' }] },
-        { elementType: 'labels.text.fill', stylers: [{ color: '#94a3b8' }] },
-        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#334155' }] },
-        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f172a' }] },
+        { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+        { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
+        { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
+        { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
+        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#38414e' }] },
+        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#17263c' }] },
+      ];
+    } else if (themeMode === 'pastel') {
+      return [
+        { elementType: 'geometry', stylers: [{ color: '#f5f3ef' }] },
+        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#cbe2ed' }] },
+        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
+        { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#d5e8d4' }] },
       ];
     }
-    // デフォルト・パステル時は完全な白ベース（2枚目のデザイン）
-    return [
-      { elementType: 'geometry', stylers: [{ color: '#f8fafc' }] },
-      { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#e2e8f0' }] },
-      { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
-      { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#f1f5f9' }] },
-      { elementType: 'labels.text.fill', stylers: [{ color: '#64748b' }] },
-    ];
+    return []; // 標準（ライト）時はGoogle標準の色彩
   };
 
   useEffect(() => {
@@ -688,6 +689,16 @@ const GoogleMapComponent = ({
         gestureHandling: 'greedy',
         styles: getMapStyles(theme),
         backgroundColor: '#ffffff',
+        // マップの上下左右スクロール制限（極端に離れて真っ白になるのを防ぐ）
+        restriction: {
+          latLngBounds: {
+            north: 85,
+            south: -85,
+            west: -180,
+            east: 180,
+          },
+          strictBounds: false,
+        },
       });
 
       mapInstanceRef.current = map;
@@ -900,7 +911,8 @@ const GoogleMapComponent = ({
     markersRef.current.push(marker);
   };
 
-  return <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: '#ffffff', borderRadius: '16px' }} />;
+  // マップの角丸を解除し、余白ゼロでフル画面表示
+  return <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: '#ffffff' }} />;
 };
 
 // ==========================================
@@ -1688,7 +1700,7 @@ export default function WapApp() {
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
 
-      {/* 2枚目の画像のような完全白カード型ベースデザイン ＆ iPhone下部バーに被らないよう余白と高さを最適化 */}
+      {/* 完全白背景のデザイン ＆ iPhone下部スライドボタンに被らないよう高さ・余白を最適化 */}
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none' }}>
         
         {warningMessage && (
@@ -1964,7 +1976,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー（上部隙間ゼロ・2枚目のデザインに統一） */}
+        {/* ヘッダー（完全白背景・上部隙間ゼロ） */}
         <header style={{ height: '48px', minHeight: '48px', maxHeight: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
             <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: '#000' }}>
@@ -2003,11 +2015,11 @@ export default function WapApp() {
           </button>
         </header>
 
-        {/* ── メインコンテンツエリア（2枚目のようにカード型ホワイト背景にフィット） ── */}
-        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 62px)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#f8fafc', padding: '10px 12px 6px 12px', gap: '8px' }}>
+        {/* ── メインコンテンツエリア（完全白背景・余白ゼロでマップをフル表示） ── */}
+        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 58px)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0 }}>
           
           {/* マップタブ */}
-          <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', borderRadius: '16px', overflow: 'hidden', background: '#ffffff', boxShadow: '0 4px 20px rgba(0,0,0,0.06)', border: '1px solid #e2e8f0' }}>
+          <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none' }}>
             
             <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none' }}>
               
@@ -2146,8 +2158,8 @@ export default function WapApp() {
             </div>
 
             {isAdVisible && (
-              <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '34px', maxHeight: '34px', zIndex: 440, touchAction: 'none', flexShrink: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '26px', background: '#f8fafc', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
+              <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '32px', maxHeight: '32px', zIndex: 440, touchAction: 'none', flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '24px', background: '#f8fafc', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
                   <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 'bold' }}>
                     📢 <span style={{ color: themeAccent }}>wap PR</span>: 写真や動画で世界をつなごう！
                   </span>
@@ -2156,8 +2168,8 @@ export default function WapApp() {
               </div>
             )}
 
-            {/* 写真追加ボタン（2枚目のデザインに完全合致＆iPhone下部バー被り解消のため高さをすっきり調整） */}
-            <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '6px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '48px', minHeight: '48px', maxHeight: '48px', flexShrink: '0' }}>
+            {/* 写真追加ボタン（完全白・iPhoneバー被り防止のため少し上に配置） */}
+            <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '6px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '46px', minHeight: '46px', maxHeight: '46px', flexShrink: '0' }}>
               <div>
                 <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
                 <div style={{ fontSize: '9px', color: '#64748b' }}>{filteredSpots.length} spots</div>
@@ -2167,7 +2179,7 @@ export default function WapApp() {
                 style={{
                   flex: 1,
                   maxWidth: '220px',
-                  padding: '8px 16px',
+                  padding: '7px 16px',
                   background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
                   color: '#fff',
                   borderRadius: '30px',
@@ -2190,7 +2202,7 @@ export default function WapApp() {
           </div>
 
           {/* トレンド・ランキングタブ */}
-          <div style={{ display: currentTab === 'ranking' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px', gap: '10px', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+          <div style={{ display: currentTab === 'ranking' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px', gap: '10px', background: '#ffffff' }}>
             <div style={{ padding: '6px 0', fontSize: '14px', fontWeight: '900', color: themeAccent }}>
               🏆 {t('ranking')}
             </div>
@@ -2228,7 +2240,7 @@ export default function WapApp() {
           </div>
 
           {/* マイページタブ */}
-          <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+          <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px', background: '#ffffff' }}>
             <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.03)', marginBottom: '12px', border: '1px solid #e2e8f0' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -2732,13 +2744,13 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── ボトムナビゲーション（iPhone下部バー被りを防ぐため少し上に引き上げ＆完全固定） ── */}
+        {/* ── ボトムナビゲーション（iPhone下部スライドボタンに被らないよう少し上に配置＆完全固定） ── */}
         <nav
           style={{
-            height: 'calc(50px + env(safe-area-inset-bottom, 0px))',
-            minHeight: 'calc(50px + env(safe-area-inset-bottom, 0px))',
-            maxHeight: 'calc(50px + env(safe-area-inset-bottom, 0px))',
-            paddingBottom: 'calc(4px + env(safe-area-inset-bottom, 0px))',
+            height: 'calc(48px + env(safe-area-inset-bottom, 0px))',
+            minHeight: 'calc(48px + env(safe-area-inset-bottom, 0px))',
+            maxHeight: 'calc(48px + env(safe-area-inset-bottom, 0px))',
+            paddingBottom: 'calc(6px + env(safe-area-inset-bottom, 0px))',
             background: '#ffffff',
             borderTop: '1px solid #e2e8f0',
             display: 'flex',
@@ -2770,7 +2782,7 @@ export default function WapApp() {
               padding: '2px 16px',
             }}
           >
-            <span style={{ fontSize: '17px' }}>🗺️</span>
+            <span style={{ fontSize: '16px' }}>🗺️</span>
             <span style={{ fontSize: '9px', fontWeight: currentTab === 'map' ? 'bold' : 'normal' }}>{t('map')}</span>
           </button>
 
@@ -2788,7 +2800,7 @@ export default function WapApp() {
               padding: '2px 16px',
             }}
           >
-            <span style={{ fontSize: '17px' }}>🏆</span>
+            <span style={{ fontSize: '16px' }}>🏆</span>
             <span style={{ fontSize: '9px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t('ranking')}</span>
           </button>
 
@@ -2806,7 +2818,7 @@ export default function WapApp() {
               padding: '2px 16px',
             }}
           >
-            <span style={{ fontSize: '17px' }}>👤</span>
+            <span style={{ fontSize: '16px' }}>👤</span>
             <span style={{ fontSize: '9px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal' }}>{t('profile')}</span>
           </button>
         </nav>
