@@ -622,7 +622,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. 超高速化 Google Maps API コンポーネント
+// 2. 超高速化 Google Maps API コンポーネント (2枚目の完全白カード型に完全一致)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -651,25 +651,25 @@ const GoogleMapComponent = ({
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
 
+  // 2枚目の画像のように、マップ部分もすべて美しいホワイト・クリーンカード型にカスタマイズ
   const getMapStyles = (themeMode: MapThemeType) => {
     if (themeMode === 'dark') {
       return [
-        { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
-        { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
-        { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
-        { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
-        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#38414e' }] },
-        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#17263c' }] },
-      ];
-    } else if (themeMode === 'pastel') {
-      return [
-        { elementType: 'geometry', stylers: [{ color: '#f5f3ef' }] },
-        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#cbe2ed' }] },
-        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
-        { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#d5e8d4' }] },
+        { elementType: 'geometry', stylers: [{ color: '#1e293b' }] },
+        { elementType: 'labels.text.stroke', stylers: [{ color: '#1e293b' }] },
+        { elementType: 'labels.text.fill', stylers: [{ color: '#94a3b8' }] },
+        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#334155' }] },
+        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f172a' }] },
       ];
     }
-    return [];
+    // デフォルト・パステル時は完全な白ベース（2枚目のデザイン）
+    return [
+      { elementType: 'geometry', stylers: [{ color: '#f8fafc' }] },
+      { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#e2e8f0' }] },
+      { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
+      { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#f1f5f9' }] },
+      { elementType: 'labels.text.fill', stylers: [{ color: '#64748b' }] },
+    ];
   };
 
   useEffect(() => {
@@ -687,7 +687,7 @@ const GoogleMapComponent = ({
         zoomControl: false,
         gestureHandling: 'greedy',
         styles: getMapStyles(theme),
-        backgroundColor: theme === 'dark' ? '#0f172a' : '#f1f5f9',
+        backgroundColor: '#ffffff',
       });
 
       mapInstanceRef.current = map;
@@ -900,7 +900,7 @@ const GoogleMapComponent = ({
     markersRef.current.push(marker);
   };
 
-  return <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: '#f1f5f9' }} />;
+  return <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: '#ffffff', borderRadius: '16px' }} />;
 };
 
 // ==========================================
@@ -1688,7 +1688,8 @@ export default function WapApp() {
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
 
-      <div style={{ background: mapTheme === 'dark' ? '#0f172a' : '#f8fafc', color: mapTheme === 'dark' ? '#f8fafc' : '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none' }}>
+      {/* 2枚目の画像のような完全白カード型ベースデザイン ＆ iPhone下部バーに被らないよう余白と高さを最適化 */}
+      <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none' }}>
         
         {warningMessage && (
           <div style={{ position: 'fixed', top: 0, insetInline: 0, background: '#ef4444', color: '#fff', padding: '12px 16px', zIndex: 999999, fontSize: '13px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 4px 16px rgba(239,68,68,0.4)' }}>
@@ -1963,13 +1964,13 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー（上部隙間ゼロ・完全フィット） */}
-        <header style={{ height: '48px', minHeight: '48px', maxHeight: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
+        {/* ヘッダー（上部隙間ゼロ・2枚目のデザインに統一） */}
+        <header style={{ height: '48px', minHeight: '48px', maxHeight: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
-            <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: mapTheme === 'dark' ? '#fff' : '#000' }}>
+            <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: '#000' }}>
               ☰
             </button>
-            <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: themeAccent, letterSpacing: '-0.5px', flexShrink: 0 }}>wap</h1>
+            <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7', letterSpacing: '-0.5px', flexShrink: 0 }}>wap</h1>
             <select
               value={userCountry}
               onChange={(e) => {
@@ -1980,7 +1981,7 @@ export default function WapApp() {
                   setTargetZoom(conf.zoom);
                 }
               }}
-              style={{ background: mapTheme === 'dark' ? '#334155' : '#f1f5f9', color: mapTheme === 'dark' ? '#fff' : '#000', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
+              style={{ background: '#f1f5f9', color: '#000', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
             >
               {Object.entries(COUNTRIES).map(([code, c]) => (
                 <option key={code} value={code}>
@@ -1994,7 +1995,7 @@ export default function WapApp() {
             onClick={() => setCurrentTab('profile')}
             style={{
               width: '32px', height: '32px', minWidth: '32px', minHeight: '32px', borderRadius: '50%',
-              background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
+              background: userAvatar ? `url(${userAvatar}) center/cover` : '#0284c7',
               color: '#fff', border: 'none', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden'
             }}
           >
@@ -2002,35 +2003,35 @@ export default function WapApp() {
           </button>
         </header>
 
-        {/* ── メインコンテンツエリア ── */}
-        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 54px)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        {/* ── メインコンテンツエリア（2枚目のようにカード型ホワイト背景にフィット） ── */}
+        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 62px)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#f8fafc', padding: '10px 12px 6px 12px', gap: '8px' }}>
           
           {/* マップタブ */}
-          <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative' }}>
+          <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', borderRadius: '16px', overflow: 'hidden', background: '#ffffff', boxShadow: '0 4px 20px rgba(0,0,0,0.06)', border: '1px solid #e2e8f0' }}>
             
             <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none' }}>
               
               {/* 検索バー */}
               <div style={{ position: 'relative', pointerEvents: 'auto' }}>
-                <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: mapTheme === 'dark' ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.96)', color: mapTheme === 'dark' ? '#fff' : '#000', backdropFilter: 'blur(10px)', padding: '6px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)' }}>
+                <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.96)', color: '#000', backdropFilter: 'blur(10px)', padding: '6px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0' }}>
                   <input
                     type="text"
                     placeholder={t('searchPlaceholder')}
                     value={mapSearchKeyword}
                     onChange={(e) => setMapSearchKeyword(e.target.value)}
-                    style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: mapTheme === 'dark' ? '#fff' : '#000', fontSize: '12px', fontWeight: '500', padding: '2px 6px' }}
+                    style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: '#000', fontSize: '12px', fontWeight: '500', padding: '2px 6px' }}
                   />
                   <button
                     type="submit"
                     disabled={isSearchingLocation}
-                    style={{ background: themeAccent, color: '#fff', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                    style={{ background: '#0284c7', color: '#fff', border: 'none', borderRadius: '20px', padding: '4px 12px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
                   >
                     {isSearchingLocation ? '...' : '🔍'}
                   </button>
                 </form>
 
                 {mapSearchSuggestions.length > 0 && (
-                  <div style={{ position: 'absolute', top: '44px', insetInline: 0, background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', color: mapTheme === 'dark' ? '#fff' : '#000', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden', zIndex: 600, border: '1px solid #e2e8f0' }}>
+                  <div style={{ position: 'absolute', top: '44px', insetInline: 0, background: '#ffffff', color: '#000', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden', zIndex: 600, border: '1px solid #e2e8f0' }}>
                     {mapSearchSuggestions.map((item) => (
                       <div
                         key={item.place_id}
@@ -2047,7 +2048,7 @@ export default function WapApp() {
 
               {/* カテゴリ別フィルター */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px' }}>
-                <div style={{ display: 'flex', gap: '4px', background: mapTheme === 'dark' ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.96)', padding: '4px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
+                <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.96)', padding: '4px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0' }}>
                   {(['view', 'gourmet', 'rain'] as const).map((cat) => {
                     const isChecked = selectedCategories.includes(cat);
                     return (
@@ -2058,7 +2059,7 @@ export default function WapApp() {
                           padding: '5px 10px',
                           borderRadius: '20px',
                           border: 'none',
-                          background: isChecked ? themeAccent : 'transparent',
+                          background: isChecked ? '#0284c7' : 'transparent',
                           color: isChecked ? '#ffffff' : '#64748b',
                           fontWeight: 'bold',
                           fontSize: '11px',
@@ -2073,15 +2074,15 @@ export default function WapApp() {
                   })}
                 </div>
 
-                <div style={{ display: 'flex', background: mapTheme === 'dark' ? 'rgba(30,41,59,0.95)' : 'rgba(255,255,255,0.96)', padding: '3px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
+                <div style={{ display: 'flex', background: 'rgba(255,255,255,0.96)', padding: '3px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0' }}>
                   <select
                     value={displayScope}
                     onChange={(e) => setDisplayScope(e.target.value as DisplayScope)}
-                    style={{ background: 'transparent', border: 'none', color: mapTheme === 'dark' ? '#fff' : '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '4px 6px' }}
+                    style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '4px 6px' }}
                   >
-                    <option value="world" style={{ background: '#0f172a' }}>🌎 {t('world')}</option>
-                    <option value="friends" style={{ background: '#0f172a' }}>👥 {t('friends')}</option>
-                    <option value="my" style={{ background: '#0f172a' }}>📍 {t('myMap')}</option>
+                    <option value="world">🌎 {t('world')}</option>
+                    <option value="friends">👥 {t('friends')}</option>
+                    <option value="my">📍 {t('myMap')}</option>
                   </select>
                 </div>
               </div>
@@ -2123,14 +2124,14 @@ export default function WapApp() {
                       showWarning('⚠️ お使いのブラウザは位置情報に対応していません。');
                     }
                   }}
-                  style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.2)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   🎯
                 </button>
                 <button
                   title="引き戻す"
                   onClick={handleStepZoomOut}
-                  style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.25)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.2)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   🪟
                 </button>
@@ -2145,8 +2146,8 @@ export default function WapApp() {
             </div>
 
             {isAdVisible && (
-              <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '36px', maxHeight: '36px', zIndex: 440, touchAction: 'none', flexShrink: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '28px', background: mapTheme === 'dark' ? '#0f172a' : '#ffffff', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
+              <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '34px', maxHeight: '34px', zIndex: 440, touchAction: 'none', flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '26px', background: '#f8fafc', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
                   <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 'bold' }}>
                     📢 <span style={{ color: themeAccent }}>wap PR</span>: 写真や動画で世界をつなごう！
                   </span>
@@ -2155,10 +2156,10 @@ export default function WapApp() {
               </div>
             )}
 
-            {/* 写真追加ボタン（固定高さ管理・下部バナーの沈み防止） */}
-            <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderTop: '1px solid #e2e8f0', padding: '6px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '48px', minHeight: '48px', maxHeight: '48px', flexShrink: 0, margin: 0 }}>
+            {/* 写真追加ボタン（2枚目のデザインに完全合致＆iPhone下部バー被り解消のため高さをすっきり調整） */}
+            <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '6px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '48px', minHeight: '48px', maxHeight: '48px', flexShrink: '0' }}>
               <div>
-                <div style={{ fontSize: '11px', fontWeight: 'bold' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
+                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
                 <div style={{ fontSize: '9px', color: '#64748b' }}>{filteredSpots.length} spots</div>
               </div>
 
@@ -2172,7 +2173,7 @@ export default function WapApp() {
                   borderRadius: '30px',
                   fontWeight: '900',
                   fontSize: '12px',
-                  boxShadow: '0 4px 16px rgba(2,132,199,0.4)',
+                  boxShadow: '0 4px 16px rgba(2,132,199,0.3)',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
@@ -2189,7 +2190,7 @@ export default function WapApp() {
           </div>
 
           {/* トレンド・ランキングタブ */}
-          <div style={{ display: currentTab === 'ranking' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px', gap: '10px' }}>
+          <div style={{ display: currentTab === 'ranking' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px', gap: '10px', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
             <div style={{ padding: '6px 0', fontSize: '14px', fontWeight: '900', color: themeAccent }}>
               🏆 {t('ranking')}
             </div>
@@ -2197,7 +2198,7 @@ export default function WapApp() {
               <div
                 key={spot.id}
                 onClick={() => handleOpenSpot(spot)}
-                style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '14px', padding: '10px', display: 'flex', gap: '12px', alignItems: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.05)', cursor: 'pointer' }}
+                style={{ background: '#f8fafc', borderRadius: '14px', padding: '10px', display: 'flex', gap: '12px', alignItems: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.03)', cursor: 'pointer', border: '1px solid #e2e8f0' }}
               >
                 <div style={{ fontSize: '18px', fontWeight: '900', width: '28px', textAlign: 'center', color: idx === 0 ? '#eab308' : idx === 1 ? '#94a3b8' : idx === 2 ? '#b45309' : '#cbd5e1' }}>
                   {idx + 1}
@@ -2227,8 +2228,8 @@ export default function WapApp() {
           </div>
 
           {/* マイページタブ */}
-          <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px' }}>
-            <div style={{ background: mapTheme === 'dark' ? '#1e293b' : '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
+          <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px', background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+            <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.03)', marginBottom: '12px', border: '1px solid #e2e8f0' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                   <div
@@ -2257,19 +2258,19 @@ export default function WapApp() {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '6px', margin: '14px 0', textAlign: 'center' }}>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
+                <div style={{ background: '#ffffff', padding: '8px 4px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{mySpots.length}</div>
                   <div style={{ fontSize: '9px', color: '#64748b' }}>📸 {t('posts')}</div>
                 </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
+                <div style={{ background: '#ffffff', padding: '8px 4px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{visitedCountryCount}</div>
                   <div style={{ fontSize: '9px', color: '#64748b' }}>🗺️ {t('visited')}</div>
                 </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
+                <div style={{ background: '#ffffff', padding: '8px 4px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0284c7' }}>{totalMyViewsCount}</div>
                   <div style={{ fontSize: '9px', color: '#64748b' }}>👀 Views</div>
                 </div>
-                <div style={{ background: mapTheme === 'dark' ? '#334155' : '#f8fafc', padding: '8px 4px', borderRadius: '10px' }}>
+                <div style={{ background: '#ffffff', padding: '8px 4px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
                   <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#f43f5e' }}>{totalMySavedCount}</div>
                   <div style={{ fontSize: '9px', color: '#64748b' }}>💛 Saves</div>
                 </div>
@@ -2284,8 +2285,8 @@ export default function WapApp() {
                   style={{
                     padding: '8px 4px',
                     borderRadius: '10px',
-                    border: 'none',
-                    background: profileSubTab === tab ? themeAccent : mapTheme === 'dark' ? '#1e293b' : '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    background: profileSubTab === tab ? themeAccent : '#f8fafc',
                     color: profileSubTab === tab ? '#fff' : '#64748b',
                     fontWeight: 'bold',
                     fontSize: '11px',
@@ -2584,7 +2585,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 投稿作成モーダル（カテゴリ・モード選択付き） ── */}
+        {/* ── 投稿作成モーダル ── */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
@@ -2731,14 +2732,14 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── ボトムナビゲーション（完全固定・高さ厳格管理） ── */}
+        {/* ── ボトムナビゲーション（iPhone下部バー被りを防ぐため少し上に引き上げ＆完全固定） ── */}
         <nav
           style={{
-            height: 'calc(54px + env(safe-area-inset-bottom, 0px))',
-            minHeight: 'calc(54px + env(safe-area-inset-bottom, 0px))',
-            maxHeight: 'calc(54px + env(safe-area-inset-bottom, 0px))',
-            paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-            background: mapTheme === 'dark' ? '#1e293b' : '#ffffff',
+            height: 'calc(50px + env(safe-area-inset-bottom, 0px))',
+            minHeight: 'calc(50px + env(safe-area-inset-bottom, 0px))',
+            maxHeight: 'calc(50px + env(safe-area-inset-bottom, 0px))',
+            paddingBottom: 'calc(4px + env(safe-area-inset-bottom, 0px))',
+            background: '#ffffff',
             borderTop: '1px solid #e2e8f0',
             display: 'flex',
             justifyContent: 'space-around',
@@ -2766,11 +2767,11 @@ export default function WapApp() {
               gap: '2px',
               color: currentTab === 'map' ? themeAccent : '#94a3b8',
               cursor: 'pointer',
-              padding: '4px 16px',
+              padding: '2px 16px',
             }}
           >
-            <span style={{ fontSize: '18px' }}>🗺️</span>
-            <span style={{ fontSize: '10px', fontWeight: currentTab === 'map' ? 'bold' : 'normal' }}>{t('map')}</span>
+            <span style={{ fontSize: '17px' }}>🗺️</span>
+            <span style={{ fontSize: '9px', fontWeight: currentTab === 'map' ? 'bold' : 'normal' }}>{t('map')}</span>
           </button>
 
           <button
@@ -2784,11 +2785,11 @@ export default function WapApp() {
               gap: '2px',
               color: currentTab === 'ranking' ? themeAccent : '#94a3b8',
               cursor: 'pointer',
-              padding: '4px 16px',
+              padding: '2px 16px',
             }}
           >
-            <span style={{ fontSize: '18px' }}>🏆</span>
-            <span style={{ fontSize: '10px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t('ranking')}</span>
+            <span style={{ fontSize: '17px' }}>🏆</span>
+            <span style={{ fontSize: '9px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t('ranking')}</span>
           </button>
 
           <button
@@ -2802,11 +2803,11 @@ export default function WapApp() {
               gap: '2px',
               color: currentTab === 'profile' ? themeAccent : '#94a3b8',
               cursor: 'pointer',
-              padding: '4px 16px',
+              padding: '2px 16px',
             }}
           >
-            <span style={{ fontSize: '18px' }}>👤</span>
-            <span style={{ fontSize: '10px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal' }}>{t('profile')}</span>
+            <span style={{ fontSize: '17px' }}>👤</span>
+            <span style={{ fontSize: '9px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal' }}>{t('profile')}</span>
           </button>
         </nav>
       </div>
