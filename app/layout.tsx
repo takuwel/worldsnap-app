@@ -1712,7 +1712,7 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-        {/* 初回オンボーディング画面（暗い色・高速描画） */}
+        {/* 初回オンボーディング画面（ダークな色合い） */}
         {isOnboarding && (
           <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -2026,9 +2026,9 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー（上部ステータスバーを含む最上部まで完全に白ベースで統一） */}
+        {/* ヘッダー（safe-area-inset-top を適用し、iPhoneのステータスバー領域まで完全に白く埋める） */}
         <header style={{ height: 'calc(48px + env(safe-area-inset-top, 0px))', minHeight: 'calc(48px + env(safe-area-inset-top, 0px))', paddingTop: 'env(safe-area-inset-top, 0px)', paddingInline: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1, paddingTop: 'env(safe-area-inset-top, 0px)' }}>
             <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: navBarText }}>
               ☰
             </button>
@@ -2058,7 +2058,7 @@ export default function WapApp() {
             style={{
               width: '32px', height: '32px', minWidth: '32px', minHeight: '32px', borderRadius: '50%',
               background: userAvatar ? `url(${userAvatar}) center/cover` : '#0284c7',
-              color: '#fff', border: 'none', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden'
+              color: '#fff', border: 'none', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden', marginTop: 'env(safe-area-inset-top, 0px)'
             }}
           >
             {!userAvatar && '👤'}
@@ -2071,7 +2071,7 @@ export default function WapApp() {
           {/* マップタブ */}
           <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none' }}>
             
-            {/* マップ上のモード選択ボタン類（一番上にピタッと固定） */}
+            {/* マップ上のモード選択ボタン類 */}
             <div style={{ position: 'absolute', top: '1px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '3px', pointerEvents: 'none' }}>
               
               {/* 検索バー */}
