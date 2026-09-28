@@ -1691,6 +1691,8 @@ export default function WapApp() {
         <link rel="icon" href="/icon-192.png" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="theme-color" content="#ffffff" />
       </head>
 
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none' }}>
@@ -1710,7 +1712,7 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-        {/* 初回オンボーディング画面（かっこいい暗い色＆高速描画） */}
+        {/* 初回オンボーディング画面（暗い色・高速描画） */}
         {isOnboarding && (
           <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -2024,8 +2026,8 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー（ホーム画面移行後は完全に白ベースで統一） */}
-        <header style={{ height: '48px', minHeight: '48px', maxHeight: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
+        {/* ヘッダー（上部ステータスバーを含む最上部まで完全に白ベースで統一） */}
+        <header style={{ height: 'calc(48px + env(safe-area-inset-top, 0px))', minHeight: 'calc(48px + env(safe-area-inset-top, 0px))', paddingTop: 'env(safe-area-inset-top, 0px)', paddingInline: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
             <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: navBarText }}>
               ☰
@@ -2064,7 +2066,7 @@ export default function WapApp() {
         </header>
 
         {/* ── メインコンテンツエリア ── */}
-        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 58px)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0 }}>
+        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 58px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0 }}>
           
           {/* マップタブ */}
           <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none' }}>
@@ -2799,7 +2801,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── ボトムナビゲーション（完全白背景） ── */}
+        {/* ── ボトムナビゲーション（完全白ベース） ── */}
         <nav
           style={{
             height: 'calc(48px + env(safe-area-inset-bottom, 0px))',
