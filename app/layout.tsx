@@ -1681,8 +1681,9 @@ export default function WapApp() {
   };
 
   const themeAccent = mapTheme === 'dark' ? '#38bdf8' : mapTheme === 'pastel' ? '#d97706' : '#0284c7';
-  // 上下バナーの色を上品な紺っぽいカラー（#1e293b）に統一
-  const navBarBg = '#1e293b';
+  // 上下バナーの色を完全に「白（#ffffff）」に統一
+  const navBarBg = '#ffffff';
+  const navBarText = '#0f172a';
 
   return (
     <>
@@ -1693,6 +1694,7 @@ export default function WapApp() {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
       </head>
 
+      {/* 上部や外側の余白もすべて完全白に統一 */}
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none' }}>
         
         {warningMessage && (
@@ -1712,8 +1714,8 @@ export default function WapApp() {
 
         {/* 初回オンボーディング画面（ラグ完全解消・軽量化） */}
         {isOnboarding && (
-          <div style={{ position: 'fixed', inset: 0, background: '#0f172a', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
+          <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)', border: '1px solid #e2e8f0', textAlign: 'center' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
               <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
               <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
@@ -2024,13 +2026,13 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー（上部紺色バナーに統一：#1e293b） */}
-        <header style={{ height: '48px', minHeight: '48px', maxHeight: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: '#ffffff', borderBottom: '1px solid rgba(255,255,255,0.1)', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
+        {/* ヘッダー（上下完全白に統一） */}
+        <header style={{ height: '48px', minHeight: '48px', maxHeight: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
-            <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: '#ffffff' }}>
+            <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: navBarText }}>
               ☰
             </button>
-            <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#38bdf8', letterSpacing: '-0.5px', flexShrink: 0 }}>wap</h1>
+            <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7', letterSpacing: '-0.5px', flexShrink: 0 }}>wap</h1>
             <select
               value={userCountry}
               onChange={(e) => {
@@ -2041,10 +2043,10 @@ export default function WapApp() {
                   setTargetZoom(conf.zoom);
                 }
               }}
-              style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
+              style={{ background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
             >
               {Object.entries(COUNTRIES).map(([code, c]) => (
-                <option key={code} value={code} style={{ background: '#1e293b', color: '#fff' }}>
+                <option key={code} value={code}>
                   {c.flag} {c.name.split(' ')[0]} ({c.region})
                 </option>
               ))}
@@ -2055,7 +2057,7 @@ export default function WapApp() {
             onClick={() => setCurrentTab('profile')}
             style={{
               width: '32px', height: '32px', minWidth: '32px', minHeight: '32px', borderRadius: '50%',
-              background: userAvatar ? `url(${userAvatar}) center/cover` : '#38bdf8',
+              background: userAvatar ? `url(${userAvatar}) center/cover` : '#0284c7',
               color: '#fff', border: 'none', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden'
             }}
           >
@@ -2799,7 +2801,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── ボトムナビゲーション（下部紺色バナーに統一：#1e293b） ── */}
+        {/* ── ボトムナビゲーション（完全白背景） ── */}
         <nav
           style={{
             height: 'calc(48px + env(safe-area-inset-bottom, 0px))',
@@ -2807,7 +2809,7 @@ export default function WapApp() {
             maxHeight: 'calc(48px + env(safe-area-inset-bottom, 0px))',
             paddingBottom: 'calc(6px + env(safe-area-inset-bottom, 0px))',
             background: navBarBg,
-            borderTop: '1px solid rgba(255,255,255,0.1)',
+            borderTop: '1px solid #e2e8f0',
             display: 'flex',
             justifyContent: 'space-around',
             alignItems: 'center',
@@ -2832,7 +2834,7 @@ export default function WapApp() {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: currentTab === 'map' ? '#38bdf8' : '#94a3b8',
+              color: currentTab === 'map' ? themeAccent : '#94a3b8',
               cursor: 'pointer',
               padding: '2px 16px',
             }}
@@ -2850,7 +2852,7 @@ export default function WapApp() {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: currentTab === 'ranking' ? '#38bdf8' : '#94a3b8',
+              color: currentTab === 'ranking' ? themeAccent : '#94a3b8',
               cursor: 'pointer',
               padding: '2px 16px',
             }}
@@ -2868,7 +2870,7 @@ export default function WapApp() {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: currentTab === 'profile' ? '#38bdf8' : '#94a3b8',
+              color: currentTab === 'profile' ? themeAccent : '#94a3b8',
               cursor: 'pointer',
               padding: '2px 16px',
             }}
