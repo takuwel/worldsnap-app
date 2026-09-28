@@ -1681,6 +1681,8 @@ export default function WapApp() {
   };
 
   const themeAccent = mapTheme === 'dark' ? '#38bdf8' : mapTheme === 'pastel' ? '#d97706' : '#0284c7';
+  // 上下バナーの色を上品な紺っぽいカラー（#1e293b）に統一
+  const navBarBg = '#1e293b';
 
   return (
     <>
@@ -1691,7 +1693,6 @@ export default function WapApp() {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
       </head>
 
-      {/* html/bodyおよびアプリ全体を真っ白に統一（上部の黒っぽさを完全に排除） */}
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none' }}>
         
         {warningMessage && (
@@ -1709,19 +1710,19 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-        {/* 初回オンボーディング画面（ラグ防止の最適化） */}
+        {/* 初回オンボーディング画面（ラグ完全解消・軽量化） */}
         {isOnboarding && (
-          <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+          <div style={{ position: 'fixed', inset: 0, background: '#0f172a', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
               <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
               <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
 
               <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
-                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 1 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
-                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 2 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
-                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 3 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
-                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 4 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
+                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 1 ? '#0284c7' : '#e2e8f0' }}></span>
+                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 2 ? '#0284c7' : '#e2e8f0' }}></span>
+                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 3 ? '#0284c7' : '#e2e8f0' }}></span>
+                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 4 ? '#0284c7' : '#e2e8f0' }}></span>
               </div>
 
               {onboardingStep === 1 && (
@@ -1890,15 +1891,14 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 位置情報ガイドモーダル（「一度だけ許可」対応） */}
+        {/* 位置情報設定ガイドモーダル */}
         {isLocationGuideOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
               <div style={{ fontSize: '32px', marginBottom: '8px' }}>📍</div>
               <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>位置情報の許可（一度だけ許可）</h3>
               <p style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', margin: '0 0 16px 0', textAlign: 'left' }}>
-                現在地ボタンを使用するには、ブラウザの位置情報ポップアップで<b>「許可」または「一度だけ許可」</b>を選択してください。<br/><br/>
-                拒否されている場合はデバイスの設定から位置情報を有効にしてください。
+                現在地ボタンを使用するには、ブラウザの位置情報ポップアップで<b>「一度だけ許可」</b>または「許可」を選択してください。
               </p>
               <button
                 onClick={() => {
@@ -2024,13 +2024,13 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー（完全白背景） */}
-        <header style={{ height: '48px', minHeight: '48px', maxHeight: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
+        {/* ヘッダー（上部紺色バナーに統一：#1e293b） */}
+        <header style={{ height: '48px', minHeight: '48px', maxHeight: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: '#ffffff', borderBottom: '1px solid rgba(255,255,255,0.1)', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
-            <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: '#000' }}>
+            <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: '#ffffff' }}>
               ☰
             </button>
-            <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7', letterSpacing: '-0.5px', flexShrink: 0 }}>wap</h1>
+            <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#38bdf8', letterSpacing: '-0.5px', flexShrink: 0 }}>wap</h1>
             <select
               value={userCountry}
               onChange={(e) => {
@@ -2041,10 +2041,10 @@ export default function WapApp() {
                   setTargetZoom(conf.zoom);
                 }
               }}
-              style={{ background: '#f1f5f9', color: '#000', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
+              style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
             >
               {Object.entries(COUNTRIES).map(([code, c]) => (
-                <option key={code} value={code}>
+                <option key={code} value={code} style={{ background: '#1e293b', color: '#fff' }}>
                   {c.flag} {c.name.split(' ')[0]} ({c.region})
                 </option>
               ))}
@@ -2055,7 +2055,7 @@ export default function WapApp() {
             onClick={() => setCurrentTab('profile')}
             style={{
               width: '32px', height: '32px', minWidth: '32px', minHeight: '32px', borderRadius: '50%',
-              background: userAvatar ? `url(${userAvatar}) center/cover` : '#0284c7',
+              background: userAvatar ? `url(${userAvatar}) center/cover` : '#38bdf8',
               color: '#fff', border: 'none', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden'
             }}
           >
@@ -2063,18 +2063,18 @@ export default function WapApp() {
           </button>
         </header>
 
-        {/* ── メインコンテンツエリア（完全白背景） ── */}
+        {/* ── メインコンテンツエリア ── */}
         <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 58px)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0 }}>
           
           {/* マップタブ */}
           <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none' }}>
             
-            {/* マップ上のモード選択ボタン類（ご要望通りさらに少し上へ引き上げ） */}
-            <div style={{ position: 'absolute', top: '4px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '5px', pointerEvents: 'none' }}>
+            {/* マップ上のモード選択ボタン類（さらに上へ引き上げ） */}
+            <div style={{ position: 'absolute', top: '2px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '4px', pointerEvents: 'none' }}>
               
               {/* 検索バー */}
               <div style={{ position: 'relative', pointerEvents: 'auto' }}>
-                <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.96)', color: '#000', backdropFilter: 'blur(10px)', padding: '6px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0' }}>
+                <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.96)', color: '#000', backdropFilter: 'blur(10px)', padding: '5px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0' }}>
                   <input
                     type="text"
                     placeholder={t('searchPlaceholder')}
@@ -2092,7 +2092,7 @@ export default function WapApp() {
                 </form>
 
                 {mapSearchSuggestions.length > 0 && (
-                  <div style={{ position: 'absolute', top: '44px', insetInline: 0, background: '#ffffff', color: '#000', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden', zIndex: 600, border: '1px solid #e2e8f0' }}>
+                  <div style={{ position: 'absolute', top: '40px', insetInline: 0, background: '#ffffff', color: '#000', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden', zIndex: 600, border: '1px solid #e2e8f0' }}>
                     {mapSearchSuggestions.map((item) => (
                       <div
                         key={item.place_id}
@@ -2109,7 +2109,7 @@ export default function WapApp() {
 
               {/* カテゴリ別フィルター */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px' }}>
-                <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.96)', padding: '4px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.96)', padding: '3px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0' }}>
                   {(['view', 'gourmet', 'rain'] as const).map((cat) => {
                     const isChecked = selectedCategories.includes(cat);
                     return (
@@ -2117,7 +2117,7 @@ export default function WapApp() {
                         key={cat}
                         onClick={() => toggleCategoryFilter(cat)}
                         style={{
-                          padding: '5px 10px',
+                          padding: '4px 8px',
                           borderRadius: '20px',
                           border: 'none',
                           background: isChecked ? '#0284c7' : 'transparent',
@@ -2135,11 +2135,11 @@ export default function WapApp() {
                   })}
                 </div>
 
-                <div style={{ display: 'flex', background: 'rgba(255,255,255,0.96)', padding: '3px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', background: 'rgba(255,255,255,0.96)', padding: '2px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0' }}>
                   <select
                     value={displayScope}
                     onChange={(e) => setDisplayScope(e.target.value as DisplayScope)}
-                    style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '4px 6px' }}
+                    style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '3px 6px' }}
                   >
                     <option value="world">🌎 {t('world')}</option>
                     <option value="friends">👥 {t('friends')}</option>
@@ -2799,15 +2799,15 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── ボトムナビゲーション（完全固定） ── */}
+        {/* ── ボトムナビゲーション（下部紺色バナーに統一：#1e293b） ── */}
         <nav
           style={{
             height: 'calc(48px + env(safe-area-inset-bottom, 0px))',
             minHeight: 'calc(48px + env(safe-area-inset-bottom, 0px))',
             maxHeight: 'calc(48px + env(safe-area-inset-bottom, 0px))',
             paddingBottom: 'calc(6px + env(safe-area-inset-bottom, 0px))',
-            background: '#ffffff',
-            borderTop: '1px solid #e2e8f0',
+            background: navBarBg,
+            borderTop: '1px solid rgba(255,255,255,0.1)',
             display: 'flex',
             justifyContent: 'space-around',
             alignItems: 'center',
@@ -2832,7 +2832,7 @@ export default function WapApp() {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: currentTab === 'map' ? themeAccent : '#94a3b8',
+              color: currentTab === 'map' ? '#38bdf8' : '#94a3b8',
               cursor: 'pointer',
               padding: '2px 16px',
             }}
@@ -2850,7 +2850,7 @@ export default function WapApp() {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: currentTab === 'ranking' ? themeAccent : '#94a3b8',
+              color: currentTab === 'ranking' ? '#38bdf8' : '#94a3b8',
               cursor: 'pointer',
               padding: '2px 16px',
             }}
@@ -2868,7 +2868,7 @@ export default function WapApp() {
               flexDirection: 'column',
               alignItems: 'center',
               gap: '2px',
-              color: currentTab === 'profile' ? themeAccent : '#94a3b8',
+              color: currentTab === 'profile' ? '#38bdf8' : '#94a3b8',
               cursor: 'pointer',
               padding: '2px 16px',
             }}
