@@ -555,7 +555,7 @@ const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー（A
 3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。ユーザーは端末の設定からいつでも位置情報の許可をオフにすることができます。
 
 第3条（コンテンツの安全性と禁止事項）
-公序良俗に反する投稿, 誹謗中傷, 暴言, 過激なコンテンツの投稿は禁止されています。違反した場合は通報機能により自動削除およびアカウント凍結となります。`;
+公序良俗に反する投稿、誹謗中傷、暴言、過激なコンテンツの投稿は禁止されています。違反した場合は通報機能により自動削除およびアカウント凍結となります。`;
 
 const GUIDE_FULL_TEXT = `【wap の操作説明と使い方ガイド】
 
@@ -1695,7 +1695,7 @@ export default function WapApp() {
         <meta name="theme-color" content="#ffffff" />
       </head>
 
-      {/* 画面全体を固定（縦画面固定 ＆ 最上部ステータスバー領域まで完全に白で満たす） */}
+      {/* 画面全体を固定（縦画面固定 ＆ 上下ステータスバー・インジケーター領域まで完全に白で満たす） */}
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none', WebkitTouchCallout: 'none', WebkitUserSelect: 'none' }}>
         
         {warningMessage && (
@@ -2027,7 +2027,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー（ステータスバーを含む最上部まで完全に白ベース ＆ 縦画面固定対応） */}
+        {/* ヘッダー（safe-area-inset-top でスマホのステータスバーを含めて完全に白ベース） */}
         <header style={{ height: 'calc(48px + env(safe-area-inset-top, 0px))', minHeight: 'calc(48px + env(safe-area-inset-top, 0px))', paddingTop: 'env(safe-area-inset-top, 0px)', paddingInline: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1, paddingTop: 'env(safe-area-inset-top, 0px)' }}>
             <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: navBarText }}>
