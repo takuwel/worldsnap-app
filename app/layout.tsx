@@ -568,7 +568,7 @@ const GUIDE_FULL_TEXT = `【wap の操作説明と使い方ガイド】
 - 右下の「🪟（引き戻すボタン）」を押すと、都道府県から国・世界全体へと視野を段階的に広げることができます。
 
 3. 写真や動画の投稿
-- 下部のフレキシブルな「📷＋ 写真 / 動画を追加」ボタンからメディアを選択できます。
+- 下部の「📷＋ 写真 / 動画を追加」ボタンからアルバムのメディアを選択できます。
 - モードや撮影場所を指定してマップに投稿できます。`;
 
 function extractHashtags(text: string): string[] {
@@ -619,7 +619,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント
+// 2. 超高速化 Google Maps API コンポーネント
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -725,7 +725,7 @@ const GoogleMapComponent = ({
             clearInterval(checkInterval);
             initMap();
           }
-        }, 30);
+        }, 15);
       }
     } else {
       initMap();
@@ -1688,9 +1688,10 @@ export default function WapApp() {
         <title>wap</title>
         <link rel="icon" href="/icon-192.png" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
       </head>
 
-      {/* 上部・背景の黒っぽさを完全に白く固定（2枚目のクリーンなホワイトデザインに統一） */}
+      {/* html/bodyおよびアプリ全体を真っ白に統一（上部の黒っぽさを完全に排除） */}
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none' }}>
         
         {warningMessage && (
@@ -1708,7 +1709,7 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-        {/* 初回オンボーディング画面 */}
+        {/* 初回オンボーディング画面（ラグ防止の最適化） */}
         {isOnboarding && (
           <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
@@ -1889,7 +1890,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 位置情報設定ガイドモーダル（一度だけ許可案内付き） */}
+        {/* 位置情報ガイドモーダル（「一度だけ許可」対応） */}
         {isLocationGuideOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
@@ -1897,7 +1898,7 @@ export default function WapApp() {
               <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>位置情報の許可（一度だけ許可）</h3>
               <p style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', margin: '0 0 16px 0', textAlign: 'left' }}>
                 現在地ボタンを使用するには、ブラウザの位置情報ポップアップで<b>「許可」または「一度だけ許可」</b>を選択してください。<br/><br/>
-                設定がオフの場合はスマホの設定から許可を変更してください。
+                拒否されている場合はデバイスの設定から位置情報を有効にしてください。
               </p>
               <button
                 onClick={() => {
@@ -1912,13 +1913,13 @@ export default function WapApp() {
                       () => {
                         showWarning('⚠️ 位置情報のアクセスが拒否されました');
                       },
-                      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+                      { enableHighAccuracy: false, timeout: 6000, maximumAge: 60000 }
                     );
                   }
                 }}
                 style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', marginBottom: '8px' }}
               >
-                位置情報を再度リクエストする
+                位置情報を取得する (一度だけ許可)
               </button>
               <button
                 onClick={() => setIsLocationGuideOpen(false)}
@@ -2023,7 +2024,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー（完全白背景・上部余白一切なし） */}
+        {/* ヘッダー（完全白背景） */}
         <header style={{ height: '48px', minHeight: '48px', maxHeight: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
             <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: '#000' }}>
@@ -2062,14 +2063,14 @@ export default function WapApp() {
           </button>
         </header>
 
-        {/* ── メインコンテンツエリア（完全白背景・余白ゼロ） ── */}
+        {/* ── メインコンテンツエリア（完全白背景） ── */}
         <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 58px)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0 }}>
           
           {/* マップタブ */}
           <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none' }}>
             
             {/* マップ上のモード選択ボタン類（ご要望通りさらに少し上へ引き上げ） */}
-            <div style={{ position: 'absolute', top: '6px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '6px', pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', top: '4px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '5px', pointerEvents: 'none' }}>
               
               {/* 検索バー */}
               <div style={{ position: 'relative', pointerEvents: 'auto' }}>
@@ -2178,7 +2179,7 @@ export default function WapApp() {
                           console.error(err);
                           setIsLocationGuideOpen(true);
                         },
-                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                        { enableHighAccuracy: false, timeout: 6000, maximumAge: 60000 }
                       );
                     } else {
                       showWarning('⚠️ お使いのブラウザは位置情報に対応していません。');
@@ -2389,7 +2390,7 @@ export default function WapApp() {
           </div>
         </div>
 
-        {/* ── 設定メニューモーダル（ブロックリスト管理付き） ── */}
+        {/* ── 設定メニューモーダル ── */}
         {isSettingsOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
