@@ -1166,7 +1166,7 @@ export default function WapApp() {
   }, [spots, blockedUsers, selectedCategories, displayScope, friendsList, mapSearchKeyword]);
 
   const rankingSpots = useMemo(() => {
-    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
+    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (b.viewsCount || 0)));
   }, [spots]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
@@ -2014,7 +2014,7 @@ export default function WapApp() {
                           setBlockedUsers(prev => prev.filter(id => id !== uid));
                           showToast('ブロックを解除しました');
                         }}
-                        style={{ padding: '4px 10px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', boxSizing: 'border-box' }}
+                        style={{ padding: '4px 10px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
                       >
                         解除
                       </button>
@@ -2742,23 +2742,23 @@ export default function WapApp() {
                 })}
               </div>
 
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', width: '100%' }}>スポット名</label>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
               <input
                 type="text"
                 value={postTitle}
                 onChange={(e) => setPostTitle(e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
               />
 
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', width: '100%' }}>思い出・メモ (#タグ)</label>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグ)</label>
               <textarea
                 rows={2}
                 value={postDesc}
                 onChange={(e) => setPostDesc(e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
               />
 
-              <div style={{ background: '#f0fdf4', padding: '8px 10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '10px', position: 'relative', boxSizing: 'border-box' }}>
+              <div style={{ background: '#f0fdf4', padding: '8px 10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '10px', position: 'relative' }}>
                 <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '4px' }}>
                   📍 撮影場所を検索して選択してください（必須）
                 </div>
@@ -2767,16 +2767,16 @@ export default function WapApp() {
                   placeholder="地名・住所・場所名を入力"
                   value={addressSearchQuery}
                   onChange={(e) => setAddressSearchQuery(e.target.value)}
-                  style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff', marginBottom: '4px', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff', marginBottom: '4px' }}
                 />
 
                 {addressSuggestions.length > 0 && (
-                  <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700, boxSizing: 'border-box' }}>
+                  <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
                     {addressSuggestions.map((item) => (
                       <div
                         key={item.place_id}
                         onClick={() => handleSelectAddressSuggestion(item)}
-                        style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', boxSizing: 'border-box' }}
+                        style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                       >
                         <span>📍</span>
                         <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
@@ -2785,18 +2785,18 @@ export default function WapApp() {
                   </div>
                 )}
 
-                <div style={{ display: 'flex', gap: '6px', boxSizing: 'border-box' }}>
-                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, padding: '4px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff', boxSizing: 'border-box' }} />
-                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, padding: '4px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff', boxSizing: 'border-box' }} />
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, padding: '4px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
+                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, padding: '4px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', boxSizing: 'border-box' }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
                 <button
                   type="button"
                   disabled={isSubmitting}
                   onClick={() => setPendingUploads([])}
-                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', boxSizing: 'border-box' }}
+                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
                 >
                   キャンセル
                 </button>
@@ -2804,7 +2804,7 @@ export default function WapApp() {
                   type="button"
                   disabled={isSubmitting}
                   onClick={handleConfirmPost}
-                  style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer', boxSizing: 'border-box' }}
+                  style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                 >
                   {isSubmitting ? '保存中...' : 'マップに反映する 🚀'}
                 </button>
