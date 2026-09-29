@@ -506,7 +506,7 @@ export const COUNTRIES: Record<
   CD: { name: 'カメルーン (Cameroon)', flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
   CI: { name: 'コートジボワール (Ivory Coast)', flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
   ZM: { name: 'ザンビア (Zambia)', flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
-  MZ: { name: 'モザンビーク (Mozambique)', flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 6 },
+  MZ: { name: 'モザンビーク (Mozambique)', flag: 'MZ', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 6 },
   AO: { name: 'アンゴラ (Angola)', flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 6 },
   MU_2: { name: 'モーリタニア (Mauritania)', flag: '🇲🇷', region: '🦁 アフリカ', lat: 21.0079, lon: -10.9408, zoom: 6 },
   ML: { name: 'マリ (Mali)', flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 6 }
@@ -1166,7 +1166,7 @@ export default function WapApp() {
   }, [spots, blockedUsers, selectedCategories, displayScope, friendsList, mapSearchKeyword]);
 
   const rankingSpots = useMemo(() => {
-    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (b.viewsCount || 0)));
+    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
   }, [spots]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
@@ -1831,7 +1831,6 @@ export default function WapApp() {
                     onChange={(e) => setUserBio(e.target.value)}
                     style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px', boxSizing: 'border-box' }}
                   />
-                  {/* ご要望対応：3番目のボタンの右寄り・ずれを完全に解消し中央・全幅で美しく配置 */}
                   <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
                     <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                       {t('back')}
