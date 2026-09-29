@@ -20,6 +20,9 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="theme-color" content="#ffffff" />
         <style dangerouslySetInnerHTML={{ __html: `
+          *, *::before, *::after {
+            box-sizing: border-box;
+          }
           html, body {
             background-color: #ffffff !important;
             margin: 0;
@@ -28,6 +31,7 @@ export default function RootLayout({
             height: 100dvh;
             overflow: hidden;
             position: fixed;
+            -webkit-text-size-adjust: 100%;
           }
         ` }} />
       </head>
