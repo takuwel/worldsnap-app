@@ -430,7 +430,7 @@ export const COUNTRIES: Record<
   RS: { name: 'セルビア (Serbia)', flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   BG: { name: 'ブルガリア (Bulgaria)', flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   CY: { name: 'キプロス (Cyprus)', flag: '🇨🇾', region: '🇪🇺 ヨーロッパ', lat: 35.1264, lon: 33.4299, zoom: 8 },
-  MT: { name: 'マルタ (Malta)', flag: 'MT', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
+  MT: { name: 'マルタ (Malta)', flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { name: 'アルバニア (Albania)', flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
 
   US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米・中南米', lat: 37.0902, lon: -95.7129, zoom: 4 },
@@ -445,7 +445,7 @@ export const COUNTRIES: Record<
   JM: { name: 'ジャマイカ (Jamaica)', flag: '🇯🇲', region: '🗽 北米・中南米', lat: 18.1096, lon: -77.2975, zoom: 9 },
   CR: { name: 'コスタリカ (Costa Rica)', flag: '🇨🇷', region: '🗽 北米・中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
   PA: { name: 'パナマ (Panama)', flag: '🇵🇦', region: '🗽 北米・中南米', lat: 8.5380, lon: -80.7821, zoom: 8 },
-  DO: { name: 'ドミニカ共和国 (Dominican Republic)', flag: '🇩🇴', region: '🗽 北米・中南米', lat: 18.7357, lon: 70.1627, zoom: 8 },
+  DO: { name: 'ドミニカ共和国 (Dominican Republic)', flag: '🇩🇴', region: '🗽 北米・中南米', lat: 18.7357, lon: -70.1627, zoom: 8 },
   GT: { name: 'グアテマラ (Guatemala)', flag: '🇬🇹', region: '🗽 北米・中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
   UY: { name: 'ウルグアイ (Uruguay)', flag: '🇺🇾', region: '🗽 北米・中南米', lat: -32.5228, lon: -55.7658, zoom: 7 },
   EC: { name: 'エクアドル (Ecuador)', flag: '🇪🇨', region: '🗽 北米・中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
@@ -500,12 +500,12 @@ export const COUNTRIES: Record<
   UG: { name: 'ウガンダ (Uganda)', flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
   RW: { name: 'ルワンダ (Rwanda)', flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
   ZW: { name: 'ジンバブエ (Zimbabwe)', flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
-  JSON: { name: 'ボツワナ (Botswana)', flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
+  BW: { name: 'ボツワナ (Botswana)', flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
   NA: { name: 'ナミビア (Namibia)', flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
   CV: { name: 'カーボベルデ (Cape Verde)', flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 },
   CD: { name: 'カメルーン (Cameroon)', flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
   CI: { name: 'コートジボワール (Ivory Coast)', flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
-  ZM: { name: 'ザンビア (Zansi)', flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
+  ZM: { name: 'ザンビア (Zambia)', flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
   MZ: { name: 'モザンビーク (Mozambique)', flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 6 },
   AO: { name: 'アンゴラ (Angola)', flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 6 },
   MU_2: { name: 'モーリタニア (Mauritania)', flag: '🇲🇷', region: '🦁 アフリカ', lat: 21.0079, lon: -10.9408, zoom: 6 },
@@ -536,6 +536,7 @@ INITIAL_SPOTS: Spot[] = [
     countryCode: 'JP',
     cityName: '東京',
     category: 'view',
+    styles: 'fixed',
     scopes: ['world', 'friends', 'my'],
     tags: ['東京', '公式スポット'],
     comments: [],
@@ -863,7 +864,7 @@ const GoogleMapComponent = ({
         canvas.height = 56;
         const ctx = canvas.getContext('2d');
         if (ctx) {
-          css: ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
           ctx.shadowBlur = 8;
           ctx.shadowOffsetX = 0;
           ctx.shadowOffsetY = 3;
@@ -943,7 +944,7 @@ export default function WapApp() {
   const [currentMapCenter, setCurrentMapCenter] = useState<[number, number]>([currentConfig.lat, currentConfig.lon]);
   const [currentMapZoom, setCurrentMapZoom] = useState<number>(currentConfig.zoom);
 
-  const [targetCenter, setTargetCenter] = useState<[number, number] | null5> | null>(null);
+  const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
   const [targetZoom, setTargetZoom] = useState<number | null>(null);
 
   const [spots, setSpots] = useState<Spot[]>(INITIAL_SPOTS);
@@ -957,7 +958,7 @@ export default function WapApp() {
   const [newCommentText, setNewCommentText] = useState<string>('');
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
-  const [pendingUploads, setTrendingUploads] = useState<PendingUpload[]>([]);
+  const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
   const [postTitle, setPostTitle] = useState<string>('');
   const [postDesc, setPostDesc] = useState<string>('');
@@ -1166,7 +1167,7 @@ export default function WapApp() {
   }, [spots, blockedUsers, selectedCategories, displayScope, friendsList, mapSearchKeyword]);
 
   const rankingSpots = useMemo(() => {
-    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (b.viewsCount || 0)));
+    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
   }, [spots]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
@@ -1469,7 +1470,7 @@ export default function WapApp() {
       const updatedSpot: Spot = {
         ...existingSameSpot,
         mediaList: updatedMediaList,
-        title: postTitle ? `${existingSameSpot.title} &${postTitle}` : existingSameSpot.title,
+        title: postTitle ? `${existingSameSpot.title} & ${postTitle}` : existingSameSpot.title,
         description: postDesc ? `${existingSameSpot.description}\n${postDesc}` : existingSameSpot.description,
       };
 
@@ -1870,7 +1871,7 @@ export default function WapApp() {
                   </label>
                   <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
                     <button onClick={() => setOnboardingStep(3)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
-                      {t('backÞ' as any)}
+                      {t('back')}
                     </button>
                     <button
                       disabled={!eulaChecked || !hasScrolledToBottom}
@@ -2817,7 +2818,7 @@ export default function WapApp() {
           style={{
             height: 'calc(48px + env(safe-area-inset-bottom, 0px))',
             minHeight: 'calc(48px + env(safe-area-inset-bottom, 0px))',
-            maxHeight: 'calc(48px + env(safe-area-inset-bottom, 0px))`,
+            maxHeight: 'calc(48px + env(safe-area-inset-bottom, 0px))',
             paddingBottom: 'calc(6px + env(safe-area-inset-bottom, 0px))',
             background: navBarBg,
             borderTop: '1px solid #e2e8f0',
@@ -2852,7 +2853,7 @@ export default function WapApp() {
               boxSizing: 'border-box',
             }}
           >
-            <span style={{ fontSize: '16px' %>🗺️</span>
+            <span style={{ fontSize: '16px' }}>🗺️</span>
             <span style={{ fontSize: '9px', fontWeight: currentTab === 'map' ? 'bold' : 'normal' }}>{t('map')}</span>
           </button>
 
