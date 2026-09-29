@@ -1695,7 +1695,6 @@ export default function WapApp() {
         <meta name="theme-color" content="#ffffff" />
       </head>
 
-      {/* 画面全体を固定（縦画面固定 ＆ 上下ステータスバー・インジケーター領域まで完全に白で満たす） */}
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none', WebkitTouchCallout: 'none', WebkitUserSelect: 'none' }}>
         
         {warningMessage && (
@@ -1830,7 +1829,8 @@ export default function WapApp() {
                     onChange={(e) => setUserBio(e.target.value)}
                     style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px' }}
                   />
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  {/* ご要望対応：3番目のボタンがずれないように flex 構造を完全修正 */}
+                  <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
                     <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                       {t('back')}
                     </button>
@@ -2027,7 +2027,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー（safe-area-inset-top でスマホのステータスバーを含めて完全に白ベース） */}
+        {/* ヘッダー（上部ステータスバー領域を含めて真っ白に固定） */}
         <header style={{ height: 'calc(48px + env(safe-area-inset-top, 0px))', minHeight: 'calc(48px + env(safe-area-inset-top, 0px))', paddingTop: 'env(safe-area-inset-top, 0px)', paddingInline: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1, paddingTop: 'env(safe-area-inset-top, 0px)' }}>
             <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: navBarText }}>
