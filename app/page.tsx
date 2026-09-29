@@ -2014,7 +2014,7 @@ export default function WapApp() {
                           setBlockedUsers(prev => prev.filter(id => id !== uid));
                           showToast('ブロックを解除しました');
                         }}
-                        style={{ padding: '4px 10px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                        style={{ padding: '4px 10px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', boxSizing: 'border-box' }}
                       >
                         解除
                       </button>
