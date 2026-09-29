@@ -478,7 +478,7 @@ export const COUNTRIES: Record<
   FM: { name: 'ミクロネシア (Micronesia)', flag: '🇫🇲', region: '🦘 オセアニア', lat: 7.4256, lon: 150.5508, zoom: 8 },
   PW: { name: 'パラオ (Palau)', flag: '🇵🇼', region: '🦘 オセアニア', lat: 7.5150, lon: 134.5825, zoom: 9 },
   MH: { name: 'マーシャル諸島 (Marshall Islands)', flag: '🇲🇭', region: '🦘 オセアニア', lat: 7.1315, lon: 171.1845, zoom: 8 },
-  TV: { name: 'ツバル (Tutorial)', flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
+  TV: { name: 'ツバル (Tuvalu)', flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
   NR: { name: 'ナウル (Nauru)', flag: '🇳🇷', region: '🦘 オセアニア', lat: -0.5228, lon: 166.9315, zoom: 13 },
   GU: { name: 'グアム (Guam)', flag: '🇬🇺', region: '🦘 オセアニア', lat: 13.4443, lon: 144.7937, zoom: 10 },
   AS: { name: 'アメリカ領サモア (American Samoa)', flag: '🇦🇸', region: '🦘 オセアニア', lat: -14.2710, lon: -170.1322, zoom: 10 },
@@ -551,7 +551,7 @@ const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー（A
 
 第2条（位置情報の取得・利用について・Apple審査対応）
 1. 当サービスは、ユーザーがマップ画面右下の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一度だけ取得します。
-2. 取得した位置情報は、ユーザーの現在の現在地をマップの中心に表示する機能、および周辺の旅のスポットを検索・閲覧する機能の提供にのみ使用されます。
+2. 取得したの位置情報は、ユーザーの現在の現在地をマップの中心に表示する機能、および周辺の旅のスポットを検索・閲覧する機能の提供にのみ使用されます。
 3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。ユーザーは端末の設定からいつでも位置情報の許可をオフにすることができます。
 
 第3条（コンテンツの安全性と禁止事項）
@@ -1166,7 +1166,7 @@ export default function WapApp() {
   }, [spots, blockedUsers, selectedCategories, displayScope, friendsList, mapSearchKeyword]);
 
   const rankingSpots = useMemo(() => {
-    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
+    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (b.viewsCount || 0)));
   }, [spots]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
