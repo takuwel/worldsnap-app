@@ -1714,8 +1714,8 @@ export default function WapApp() {
 
         {/* 初回オンボーディング画面（ダークな色合い） */}
         {isOnboarding && (
-          <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', boxSizing: 'border-box' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center', boxSizing: 'border-box', margin: '0 auto' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
               <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
               <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
@@ -1728,10 +1728,10 @@ export default function WapApp() {
               </div>
 
               {onboardingStep === 1 && (
-                <div style={{ textAlign: 'left' }}>
+                <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step1Title')}</h3>
                   <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t('step1Desc')}</p>
-                  <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+                  <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px', boxSizing: 'border-box' }}>
                     {Object.entries(LANGUAGES).map(([code, lang]) => (
                       <div
                         key={code}
@@ -1745,6 +1745,7 @@ export default function WapApp() {
                           alignItems: 'center',
                           justifyContent: 'space-between',
                           cursor: 'pointer',
+                          boxSizing: 'border-box',
                         }}
                       >
                         <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{lang.flag} {lang.nativeName} ({lang.name})</span>
@@ -1752,17 +1753,17 @@ export default function WapApp() {
                       </div>
                     ))}
                   </div>
-                  <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                  <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                     {t('next')}
                   </button>
                 </div>
               )}
 
               {onboardingStep === 2 && (
-                <div style={{ textAlign: 'left' }}>
+                <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step2Title')}</h3>
                   <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t('step2Desc')}</p>
-                  <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+                  <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px', boxSizing: 'border-box' }}>
                     {Object.entries(COUNTRIES).map(([code, c]) => (
                       <div
                         key={code}
@@ -1776,6 +1777,7 @@ export default function WapApp() {
                           alignItems: 'center',
                           justifyContent: 'space-between',
                           cursor: 'pointer',
+                          boxSizing: 'border-box',
                         }}
                       >
                         <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.name} <span style={{ fontSize: '11px', color: '#64748b' }}>({c.region})</span></span>
@@ -1783,11 +1785,11 @@ export default function WapApp() {
                       </div>
                     ))}
                   </div>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                  <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
+                    <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                       {t('back')}
                     </button>
-                    <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                       {t('next')}
                     </button>
                   </div>
@@ -1795,46 +1797,46 @@ export default function WapApp() {
               )}
 
               {onboardingStep === 3 && (
-                <div style={{ textAlign: 'left' }}>
+                <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t('step3Title')}</h3>
-                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', boxSizing: 'border-box' }}>
                     <div
                       onClick={() => onboardingAvatarInputRef.current?.click()}
                       style={{
                         width: '76px', height: '76px', borderRadius: '50%',
                         background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
                         color: '#fff', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: '0 6px 16px rgba(2,132,199,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden'
+                        boxShadow: '0 6px 16px rgba(2,132,199,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden', boxSizing: 'border-box'
                       }}
                     >
                       {!userAvatar && <span>👤</span>}
-                      <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '10px', color: '#fff', textAlign: 'center', padding: '2px 0' }}>
+                      <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '10px', color: '#fff', textAlign: 'center', padding: '2px 0', boxSizing: 'border-box' }}>
                         📷 変更
                       </div>
                     </div>
                   </div>
 
-                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>ユーザー名</label>
+                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', width: '100%', boxSizing: 'border-box' }}>ユーザー名</label>
                   <input
                     type="text"
                     maxLength={20}
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
-                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '14px', fontWeight: 'bold' }}
+                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '14px', fontWeight: 'bold', boxSizing: 'border-box' }}
                   />
-                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>自己紹介</label>
+                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', width: '100%', boxSizing: 'border-box' }}>自己紹介</label>
                   <input
                     type="text"
                     value={userBio}
                     onChange={(e) => setUserBio(e.target.value)}
-                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px' }}
+                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px', boxSizing: 'border-box' }}
                   />
-                  {/* ご要望対応：3番目のボタンがずれないように flex 構造を完全修正 */}
+                  {/* ご要望対応：3番目のボタンの右寄り・ずれを完全に解消し中央・全幅で美しく配置 */}
                   <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
-                    <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                       {t('back')}
                     </button>
-                    <button onClick={() => setOnboardingStep(4)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(4)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                       {t('next')}
                     </button>
                   </div>
@@ -1842,7 +1844,7 @@ export default function WapApp() {
               )}
 
               {onboardingStep === 4 && (
-                <div style={{ textAlign: 'left' }}>
+                <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step3TitleEula')}</h3>
                   <div
                     onScroll={(e) => {
@@ -1851,7 +1853,7 @@ export default function WapApp() {
                         setHasScrolledToBottom(true);
                       }
                     }}
-                    style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px' }}
+                    style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', boxSizing: 'border-box' }}
                   >
                     {EULA_FULL_TEXT}
                     <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ ここまでお読みください</div>
@@ -1863,12 +1865,12 @@ export default function WapApp() {
                     </div>
                   )}
 
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#0284c7' : '#94a3b8', marginBottom: '16px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#0284c7' : '#94a3b8', marginBottom: '16px', boxSizing: 'border-box' }}>
                     <input type="checkbox" disabled={!hasScrolledToBottom} checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
                     <span>{t('eulaAgree')}</span>
                   </label>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => setOnboardingStep(3)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                  <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
+                    <button onClick={() => setOnboardingStep(3)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                       {t('back')}
                     </button>
                     <button
@@ -1883,6 +1885,7 @@ export default function WapApp() {
                         border: 'none',
                         borderRadius: '12px',
                         cursor: (eulaChecked && hasScrolledToBottom) ? 'pointer' : 'not-allowed',
+                        boxSizing: 'border-box',
                       }}
                     >
                       {t('startApp')}
@@ -1896,8 +1899,8 @@ export default function WapApp() {
 
         {/* 位置情報設定ガイドモーダル */}
         {isLocationGuideOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', boxSizing: 'border-box' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center', boxSizing: 'border-box' }}>
               <div style={{ fontSize: '32px', marginBottom: '8px' }}>📍</div>
               <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>位置情報の許可（一度だけ許可）</h3>
               <p style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', margin: '0 0 16px 0', textAlign: 'left' }}>
@@ -1920,13 +1923,13 @@ export default function WapApp() {
                     );
                   }
                 }}
-                style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', marginBottom: '8px' }}
+                style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', marginBottom: '8px', boxSizing: 'border-box' }}
               >
                 位置情報を取得する (一度だけ許可)
               </button>
               <button
                 onClick={() => setIsLocationGuideOpen(false)}
-                style={{ width: '100%', padding: '10px', background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+                style={{ width: '100%', padding: '10px', background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', boxSizing: 'border-box' }}
               >
                 {t('close')}
               </button>
@@ -1936,45 +1939,45 @@ export default function WapApp() {
 
         {/* プロフィール編集モーダル */}
         {isEditProfileOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 8000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 8000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', boxSizing: 'border-box' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', boxSizing: 'border-box' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>✏️ プロフィール編集</h3>
                 <button onClick={() => setIsEditProfileOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', boxSizing: 'border-box' }}>
                 <div
                   onClick={() => profileAvatarInputRef.current?.click()}
                   style={{
                     width: '64px', height: '64px', borderRadius: '50%',
                     background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
                     color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'pointer', position: 'relative', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                    cursor: 'pointer', position: 'relative', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', boxSizing: 'border-box'
                   }}
                 >
                   {!userAvatar && <span>👤</span>}
-                  <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.5)', fontSize: '9px', color: '#fff', textAlign: 'center', padding: '2px 0' }}>
+                  <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.5)', fontSize: '9px', color: '#fff', textAlign: 'center', padding: '2px 0', boxSizing: 'border-box' }}>
                     変更
                   </div>
                 </div>
               </div>
 
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>ユーザー名</label>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', width: '100%', boxSizing: 'border-box' }}>ユーザー名</label>
               <input
                 type="text"
                 maxLength={20}
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
-                style={{ width: '100%', padding: '10px', marginTop: '4px', marginBottom: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold' }}
+                style={{ width: '100%', padding: '10px', marginTop: '4px', marginBottom: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold', boxSizing: 'border-box' }}
               />
 
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>自己紹介</label>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', width: '100%', boxSizing: 'border-box' }}>自己紹介</label>
               <input
                 type="text"
                 value={userBio}
                 onChange={(e) => setUserBio(e.target.value)}
-                style={{ width: '100%', padding: '10px', marginTop: '4px', marginBottom: '20px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+                style={{ width: '100%', padding: '10px', marginTop: '4px', marginBottom: '20px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px', boxSizing: 'border-box' }}
               />
 
               <button
@@ -1982,7 +1985,7 @@ export default function WapApp() {
                   setIsEditProfileOpen(false);
                   showToast('✨ プロフィールを更新しました！');
                 }}
-                style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+                style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', boxSizing: 'border-box' }}
               >
                 保存する
               </button>
@@ -1992,8 +1995,8 @@ export default function WapApp() {
 
         {/* ブロックリスト管理モーダル */}
         {isBlockListModalOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '380px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', boxSizing: 'border-box' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '380px', width: '100%', maxHeight: '80vh', overflowY: 'auto', boxSizing: 'border-box' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>🚫 {t('blockListTitle')}</h3>
                 <button onClick={() => setIsBlockListModalOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
@@ -2002,16 +2005,16 @@ export default function WapApp() {
               {blockedUsers.length === 0 ? (
                 <p style={{ fontSize: '12px', color: '#64748b', textAlign: 'center', padding: '20px 0' }}>ブロックしているユーザーはいません。</p>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px', boxSizing: 'border-box' }}>
                   {blockedUsers.map((uid) => (
-                    <div key={uid} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    <div key={uid} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
                       <span style={{ fontSize: '12px', fontWeight: 'bold' }}>ID: {uid}</span>
                       <button
                         onClick={() => {
                           setBlockedUsers(prev => prev.filter(id => id !== uid));
                           showToast('ブロックを解除しました');
                         }}
-                        style={{ padding: '4px 10px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                        style={{ padding: '4px 10px', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', boxSizing: 'border-box' }}
                       >
                         解除
                       </button>
@@ -2020,16 +2023,16 @@ export default function WapApp() {
                 </div>
               )}
 
-              <button onClick={() => setIsBlockListModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+              <button onClick={() => setIsBlockListModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', boxSizing: 'border-box' }}>
                 {t('close')}
               </button>
             </div>
           </div>
         )}
 
-        {/* ヘッダー（上部ステータスバー領域を含めて真っ白に固定） */}
-        <header style={{ height: 'calc(48px + env(safe-area-inset-top, 0px))', minHeight: 'calc(48px + env(safe-area-inset-top, 0px))', paddingTop: 'env(safe-area-inset-top, 0px)', paddingInline: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1, paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+        {/* ヘッダー（ステータスバーを含めて完全に白ベース） */}
+        <header style={{ height: 'calc(48px + env(safe-area-inset-top, 0px))', minHeight: 'calc(48px + env(safe-area-inset-top, 0px))', paddingTop: 'env(safe-area-inset-top, 0px)', paddingInline: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0, boxSizing: 'border-box' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1, paddingTop: 'env(safe-area-inset-top, 0px)', boxSizing: 'border-box' }}>
             <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: navBarText }}>
               ☰
             </button>
@@ -2059,7 +2062,7 @@ export default function WapApp() {
             style={{
               width: '32px', height: '32px', minWidth: '32px', minHeight: '32px', borderRadius: '50%',
               background: userAvatar ? `url(${userAvatar}) center/cover` : '#0284c7',
-              color: '#fff', border: 'none', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden', marginTop: 'env(safe-area-inset-top, 0px)'
+              color: '#fff', border: 'none', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden', marginTop: 'env(safe-area-inset-top, 0px)', boxSizing: 'border-box'
             }}
           >
             {!userAvatar && '👤'}
@@ -2067,40 +2070,40 @@ export default function WapApp() {
         </header>
 
         {/* ── メインコンテンツエリア ── */}
-        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 58px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0 }}>
+        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 58px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
           
           {/* マップタブ */}
-          <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none' }}>
+          <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none', boxSizing: 'border-box' }}>
             
             {/* マップ上のモード選択ボタン類 */}
-            <div style={{ position: 'absolute', top: '1px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '3px', pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', top: '1px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '3px', pointerEvents: 'none', boxSizing: 'border-box' }}>
               
               {/* 検索バー */}
-              <div style={{ position: 'relative', pointerEvents: 'auto' }}>
-                <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.98)', color: '#000', backdropFilter: 'blur(10px)', padding: '4px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0' }}>
+              <div style={{ position: 'relative', pointerEvents: 'auto', boxSizing: 'border-box' }}>
+                <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.98)', color: '#000', backdropFilter: 'blur(10px)', padding: '4px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
                   <input
                     type="text"
                     placeholder={t('searchPlaceholder')}
                     value={mapSearchKeyword}
                     onChange={(e) => setMapSearchKeyword(e.target.value)}
-                    style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: '#000', fontSize: '12px', fontWeight: '500', padding: '2px 6px' }}
+                    style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: '#000', fontSize: '12px', fontWeight: '500', padding: '2px 6px', boxSizing: 'border-box' }}
                   />
                   <button
                     type="submit"
                     disabled={isSearchingLocation}
-                    style={{ background: '#0284c7', color: '#fff', border: 'none', borderRadius: '20px', padding: '3px 10px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                    style={{ background: '#0284c7', color: '#fff', border: 'none', borderRadius: '20px', padding: '3px 10px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', boxSizing: 'border-box' }}
                   >
                     {isSearchingLocation ? '...' : '🔍'}
                   </button>
                 </form>
 
                 {mapSearchSuggestions.length > 0 && (
-                  <div style={{ position: 'absolute', top: '38px', insetInline: 0, background: '#ffffff', color: '#000', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden', zIndex: 600, border: '1px solid #e2e8f0' }}>
+                  <div style={{ position: 'absolute', top: '38px', insetInline: 0, background: '#ffffff', color: '#000', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden', zIndex: 600, border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
                     {mapSearchSuggestions.map((item) => (
                       <div
                         key={item.place_id}
                         onClick={() => handleSelectMapSuggestion(item)}
-                        style={{ padding: '8px 12px', fontSize: '12px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                        style={{ padding: '8px 12px', fontSize: '12px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxSizing: 'border-box' }}
                       >
                         <span>📍</span>
                         <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
@@ -2111,8 +2114,8 @@ export default function WapApp() {
               </div>
 
               {/* カテゴリ別フィルター */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px' }}>
-                <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.98)', padding: '3px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px', boxSizing: 'border-box' }}>
+                <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.98)', padding: '3px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
                   {(['view', 'gourmet', 'rain'] as const).map((cat) => {
                     const isChecked = selectedCategories.includes(cat);
                     return (
@@ -2129,6 +2132,7 @@ export default function WapApp() {
                           fontSize: '11px',
                           cursor: 'pointer',
                           transition: 'all 0.2s ease',
+                          boxSizing: 'border-box',
                         }}
                       >
                         {isChecked ? '✓ ' : ''}
@@ -2138,11 +2142,11 @@ export default function WapApp() {
                   })}
                 </div>
 
-                <div style={{ display: 'flex', background: 'rgba(255,255,255,0.98)', padding: '2px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', background: 'rgba(255,255,255,0.98)', padding: '2px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
                   <select
                     value={displayScope}
                     onChange={(e) => setDisplayScope(e.target.value as DisplayScope)}
-                    style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '3px 6px' }}
+                    style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '3px 6px', boxSizing: 'border-box' }}
                   >
                     <option value="world">🌎 {t('world')}</option>
                     <option value="friends">👥 {t('friends')}</option>
@@ -2152,7 +2156,7 @@ export default function WapApp() {
               </div>
             </div>
 
-            <div ref={exportRef} style={{ flex: 1, width: '100%', height: '100%', position: 'relative' }}>
+            <div ref={exportRef} style={{ flex: 1, width: '100%', height: '100%', position: 'relative', boxSizing: 'border-box' }}>
               <GoogleMapComponent
                 spots={filteredSpots}
                 center={currentMapCenter}
@@ -2167,7 +2171,7 @@ export default function WapApp() {
               />
 
               {/* 現在地ボタン */}
-              <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
                 <button
                   title="現在地へ移動"
                   onClick={() => {
@@ -2188,21 +2192,21 @@ export default function WapApp() {
                       showWarning('⚠️ お使いのブラウザは位置情報に対応していません。');
                     }
                   }}
-                  style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.2)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.2)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}
                 >
                   🎯
                 </button>
                 <button
                   title="引き戻す"
                   onClick={handleStepZoomOut}
-                  style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.2)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.2)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}
                 >
                   🪟
                 </button>
                 <button
                   title="マップを保存"
                   onClick={handleSaveMyMap}
-                  style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#0f172a', color: '#fff', border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.3)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#0f172a', color: '#fff', border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.3)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}
                 >
                   💾
                 </button>
@@ -2210,18 +2214,18 @@ export default function WapApp() {
             </div>
 
             {isAdVisible && (
-              <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '32px', maxHeight: '32px', zIndex: 440, touchAction: 'none', flexShrink: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '24px', background: '#f8fafc', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer' }}>
+              <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '4px 10px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', minHeight: '32px', maxHeight: '32px', zIndex: 440, touchAction: 'none', flexShrink: 0, boxSizing: 'border-box' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', maxWidth: '360px', height: '24px', background: '#f8fafc', borderRadius: '8px', border: '1px dashed #cbd5e1', cursor: 'pointer', boxSizing: 'border-box' }}>
                   <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 'bold' }}>
                     📢 <span style={{ color: themeAccent }}>wap PR</span>: 写真や動画で世界をつなごう！
                   </span>
                 </div>
-                <button onClick={() => setIsAdVisible(false)} style={{ position: 'absolute', right: '12px', background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '12px', cursor: 'pointer', padding: '2px' }}>✕</button>
+                <button onClick={() => setIsAdVisible(false)} style={{ position: 'absolute', right: '12px', background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '12px', cursor: 'pointer', padding: '2px', boxSizing: 'border-box' }}>✕</button>
               </div>
             )}
 
             {/* 写真追加ボタン */}
-            <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '6px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '46px', minHeight: '46px', maxHeight: '46px', flexShrink: '0' }}>
+            <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '6px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '46px', minHeight: '46px', maxHeight: '46px', flexShrink: '0', boxSizing: 'border-box' }}>
               <div>
                 <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
                 <div style={{ fontSize: '9px', color: '#64748b' }}>{filteredSpots.length} spots</div>
@@ -2244,6 +2248,7 @@ export default function WapApp() {
                   justifyContent: 'center',
                   gap: '6px',
                   textAlign: 'center',
+                  boxSizing: 'border-box',
                 }}
               >
                 <span>📷＋</span>
@@ -2254,7 +2259,7 @@ export default function WapApp() {
           </div>
 
           {/* トレンド・ランキングタブ */}
-          <div style={{ display: currentTab === 'ranking' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px', gap: '10px', background: '#ffffff' }}>
+          <div style={{ display: currentTab === 'ranking' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px', gap: '10px', background: '#ffffff', boxSizing: 'border-box' }}>
             <div style={{ padding: '6px 0', fontSize: '14px', fontWeight: '900', color: themeAccent }}>
               🏆 {t('ranking')}
             </div>
@@ -2262,7 +2267,7 @@ export default function WapApp() {
               <div
                 key={spot.id}
                 onClick={() => handleOpenSpot(spot)}
-                style={{ background: '#f8fafc', borderRadius: '14px', padding: '10px', display: 'flex', gap: '12px', alignItems: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.03)', cursor: 'pointer', border: '1px solid #e2e8f0' }}
+                style={{ background: '#f8fafc', borderRadius: '14px', padding: '10px', display: 'flex', gap: '12px', alignItems: 'center', boxShadow: '0 2px 10px rgba(0,0,0,0.03)', cursor: 'pointer', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}
               >
                 <div style={{ fontSize: '18px', fontWeight: '900', width: '28px', textAlign: 'center', color: idx === 0 ? '#eab308' : idx === 1 ? '#94a3b8' : idx === 2 ? '#b45309' : '#cbd5e1' }}>
                   {idx + 1}
@@ -2281,7 +2286,7 @@ export default function WapApp() {
                         e.stopPropagation();
                         handleTranslateDescription(spot.id, spot.description);
                       }}
-                      style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '6px', padding: '2px 8px', fontSize: '10px', fontWeight: 'bold', cursor: 'pointer' }}
+                      style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '6px', padding: '2px 8px', fontSize: '10px', fontWeight: 'bold', cursor: 'pointer', boxSizing: 'border-box' }}
                     >
                       {t('translate')}
                     </button>
@@ -2292,10 +2297,10 @@ export default function WapApp() {
           </div>
 
           {/* マイページタブ */}
-          <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px', background: '#ffffff' }}>
-            <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.03)', marginBottom: '12px', border: '1px solid #e2e8f0' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px', background: '#ffffff', boxSizing: 'border-box' }}>
+            <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.03)', marginBottom: '12px', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', boxSizing: 'border-box' }}>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center', boxSizing: 'border-box' }}>
                   <div
                     onClick={() => profileAvatarInputRef.current?.click()}
                     style={{
@@ -2303,7 +2308,7 @@ export default function WapApp() {
                       background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
                       border: `3px solid ${userRank.color}`,
                       color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', position: 'relative', overflow: 'hidden'
+                      cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', position: 'relative', overflow: 'hidden', boxSizing: 'border-box'
                     }}
                   >
                     {!userAvatar && <span>👤</span>}
@@ -2316,32 +2321,32 @@ export default function WapApp() {
                     <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: '#64748b' }}>{userBio}</p>
                   </div>
                 </div>
-                <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '6px 14px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 2px 8px rgba(2,132,199,0.3)' }}>
+                <button onClick={() => setIsEditProfileOpen(true)} style={{ padding: '6px 14px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 2px 8px rgba(2,132,199,0.3)', boxSizing: 'border-box' }}>
                   {t('edit')}
                 </button>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '6px', margin: '14px 0', textAlign: 'center' }}>
-                <div style={{ background: '#ffffff', padding: '8px 4px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '6px', margin: '14px 0', textAlign: 'center', boxSizing: 'border-box' }}>
+                <div style={{ background: '#ffffff', padding: '8px 4px', borderRadius: '10px', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
                   <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{mySpots.length}</div>
                   <div style={{ fontSize: '9px', color: '#64748b' }}>📸 {t('posts')}</div>
                 </div>
-                <div style={{ background: '#ffffff', padding: '8px 4px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                <div style={{ background: '#ffffff', padding: '8px 4px', borderRadius: '10px', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
                   <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{visitedCountryCount}</div>
                   <div style={{ fontSize: '9px', color: '#64748b' }}>🗺️ {t('visited')}</div>
                 </div>
-                <div style={{ background: '#ffffff', padding: '8px 4px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                <div style={{ background: '#ffffff', padding: '8px 4px', borderRadius: '10px', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
                   <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0284c7' }}>{totalMyViewsCount}</div>
                   <div style={{ fontSize: '9px', color: '#64748b' }}>👀 Views</div>
                 </div>
-                <div style={{ background: '#ffffff', padding: '8px 4px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                <div style={{ background: '#ffffff', padding: '8px 4px', borderRadius: '10px', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
                   <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#f43f5e' }}>{totalMySavedCount}</div>
                   <div style={{ fontSize: '9px', color: '#64748b' }}>💛 Saves</div>
                 </div>
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', marginBottom: '10px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', marginBottom: '10px', boxSizing: 'border-box' }}>
               {(['posts', 'timeline', 'saved', 'badges'] as const).map((tab) => (
                 <button
                   key={tab}
@@ -2356,6 +2361,7 @@ export default function WapApp() {
                     fontSize: '11px',
                     cursor: 'pointer',
                     textAlign: 'center',
+                    boxSizing: 'border-box',
                   }}
                 >
                   {tab === 'posts' ? t('tabPosts') : tab === 'timeline' ? t('tabTimeline') : tab === 'saved' ? t('tabSaved') : t('tabBadges')}
@@ -2364,9 +2370,9 @@ export default function WapApp() {
             </div>
 
             {profileSubTab === 'posts' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px', boxSizing: 'border-box' }}>
                 {mySpots.map((s) => (
-                  <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
+                  <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative', boxSizing: 'border-box' }}>
                     <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                   </div>
                 ))}
@@ -2374,9 +2380,9 @@ export default function WapApp() {
             )}
 
             {profileSubTab === 'saved' && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px', boxSizing: 'border-box' }}>
                 {savedSpots.map((s) => (
-                  <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
+                  <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative', boxSizing: 'border-box' }}>
                     <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                     <div style={{ position: 'absolute', bottom: 4, right: 4, background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '9px', padding: '2px 4px', borderRadius: '4px' }}>
                       ❤️ {s.savedCount}
@@ -2395,8 +2401,8 @@ export default function WapApp() {
 
         {/* ── 設定メニューモーダル ── */}
         {isSettingsOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', boxSizing: 'border-box' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto', boxSizing: 'border-box' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>{t('settings')}</h3>
                 <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
@@ -2404,7 +2410,7 @@ export default function WapApp() {
 
               <div style={{ marginBottom: '14px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>🎨 マップのテーマ (Map Theme)</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', boxSizing: 'border-box' }}>
                   {(['light', 'dark', 'pastel'] as const).map((thm) => (
                     <button
                       key={thm}
@@ -2417,6 +2423,7 @@ export default function WapApp() {
                         fontWeight: 'bold',
                         fontSize: '11px',
                         cursor: 'pointer',
+                        boxSizing: 'border-box',
                       }}
                     >
                       {thm === 'light' ? '☀️ 標準' : thm === 'dark' ? '🌙 ダーク' : '🌸 パステル'}
@@ -2430,7 +2437,7 @@ export default function WapApp() {
                 <select
                   value={userLangCode}
                   onChange={(e) => setUserLangCode(e.target.value)}
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold' }}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold', boxSizing: 'border-box' }}
                 >
                   {Object.entries(LANGUAGES).map(([code, lang]) => (
                     <option key={code} value={code}>
@@ -2452,7 +2459,7 @@ export default function WapApp() {
                       setTargetZoom(conf.zoom);
                     }
                   }}
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold' }}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold', boxSizing: 'border-box' }}
                 >
                   {Object.entries(COUNTRIES).map(([code, c]) => (
                     <option key={code} value={code}>
@@ -2462,22 +2469,22 @@ export default function WapApp() {
                 </select>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px', boxSizing: 'border-box' }}>
                 <button
                   onClick={() => setIsBlockListModalOpen(true)}
-                  style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
+                  style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left', boxSizing: 'border-box' }}
                 >
                   🚫 {t('blockListTitle')} ({blockedUsers.length})
                 </button>
                 <button
                   onClick={() => setIsGuideModalOpen(true)}
-                  style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
+                  style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left', boxSizing: 'border-box' }}
                 >
                   📖 {t('guideTitle')}
                 </button>
                 <button
                   onClick={() => setIsEulaModalOpen(true)}
-                  style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
+                  style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left', boxSizing: 'border-box' }}
                 >
                   📜 {t('eulaTitle')}
                 </button>
@@ -2488,7 +2495,7 @@ export default function WapApp() {
                   setIsSettingsOpen(false);
                   showToast('⚙️ 設定を保存しました！');
                 }}
-                style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
+                style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', boxSizing: 'border-box' }}
               >
                 {t('close')}
               </button>
@@ -2498,13 +2505,13 @@ export default function WapApp() {
 
         {/* 利用規約モーダル */}
         {isEulaModalOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', boxSizing: 'border-box' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto', boxSizing: 'border-box' }}>
               <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('eulaTitle')}</h3>
-              <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
+              <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px', boxSizing: 'border-box' }}>
                 {EULA_FULL_TEXT}
               </div>
-              <button onClick={() => setIsEulaModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+              <button onClick={() => setIsEulaModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', boxSizing: 'border-box' }}>
                 {t('close')}
               </button>
             </div>
@@ -2513,13 +2520,13 @@ export default function WapApp() {
 
         {/* 使い方ガイドモーダル */}
         {isGuideModalOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', boxSizing: 'border-box' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto', boxSizing: 'border-box' }}>
               <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('guideTitle')}</h3>
-              <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
+              <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px', boxSizing: 'border-box' }}>
                 {GUIDE_FULL_TEXT}
               </div>
-              <button onClick={() => setIsGuideModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+              <button onClick={() => setIsGuideModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', boxSizing: 'border-box' }}>
                 {t('close')}
               </button>
             </div>
@@ -2528,19 +2535,19 @@ export default function WapApp() {
 
         {/* ── 詳細モーダル ── */}
         {selectedSpot && (
-          <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
-            <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
+          <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box' }}>
+            <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
               <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
                 ← {t('back')}
               </button>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <button onClick={() => handleShareSpot(selectedSpot)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', boxSizing: 'border-box' }}>
+                <button onClick={() => handleShareSpot(selectedSpot)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
                   🔗
                 </button>
               </div>
             </div>
 
-            <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
+            <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
               <div
                 onClick={() => {
                   const list = selectedSpot.mediaList && selectedSpot.mediaList.length > 0 ? selectedSpot.mediaList : [{ fileUrl: selectedSpot.fileUrl, fileType: selectedSpot.fileType }];
@@ -2548,7 +2555,7 @@ export default function WapApp() {
                     setActiveMediaIndex((prev) => (prev + 1) % list.length);
                   }
                 }}
-                style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', cursor: selectedSpot.mediaList && selectedSpot.mediaList.length > 1 ? 'pointer' : 'default' }}
+                style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', cursor: selectedSpot.mediaList && selectedSpot.mediaList.length > 1 ? 'pointer' : 'default', boxSizing: 'border-box' }}
               >
                 {(() => {
                   const list = selectedSpot.mediaList && selectedSpot.mediaList.length > 0 ? selectedSpot.mediaList : [{ fileUrl: selectedSpot.fileUrl, fileType: selectedSpot.fileType }];
@@ -2561,13 +2568,13 @@ export default function WapApp() {
                 })()}
 
                 {selectedSpot.mediaList && selectedSpot.mediaList.length > 1 && (
-                  <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 'bold' }}>
+                  <div style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 'bold', boxSizing: 'border-box' }}>
                     📷 {activeMediaIndex + 1} / {selectedSpot.mediaList.length} (タップで次へ)
                   </div>
                 )}
               </div>
 
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', boxSizing: 'border-box' }}>
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${selectedSpot.lat},${selectedSpot.lon}`}
                   target="_blank"
@@ -2585,7 +2592,8 @@ export default function WapApp() {
                     fontWeight: 'bold',
                     fontSize: '13px',
                     textDecoration: 'none',
-                    boxShadow: '0 4px 14px rgba(16,185,129,0.3)'
+                    boxShadow: '0 4px 14px rgba(16,185,129,0.3)',
+                    boxSizing: 'border-box'
                   }}
                 >
                   <span>🧭</span>
@@ -2607,7 +2615,8 @@ export default function WapApp() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: '4px'
+                    gap: '4px',
+                    boxSizing: 'border-box'
                   }}
                 >
                   <span>{likedSpotIds.includes(selectedSpot.id) ? '❤️' : '🤍'}</span>
@@ -2615,11 +2624,11 @@ export default function WapApp() {
                 </button>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px', boxSizing: 'border-box' }}>
                 <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
                 <button
                   onClick={() => handleTranslateDescription(selectedSpot.id, selectedSpot.description)}
-                  style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '16px', padding: '6px 14px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '16px', padding: '6px 14px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', boxSizing: 'border-box' }}
                 >
                   <span>🌐</span> {t('translate')}
                 </button>
@@ -2633,19 +2642,19 @@ export default function WapApp() {
                 {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
               </p>
 
-              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginTop: '16px' }}>
+              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginTop: '16px', boxSizing: 'border-box' }}>
                 <h3 style={{ fontSize: '14px', fontWeight: 'bold', margin: '0 0 10px 0' }}>💬 Comments</h3>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px', boxSizing: 'border-box' }}>
                   <input
                     type="text"
                     placeholder="Comment..."
                     value={newCommentText}
                     onChange={(e) => setNewCommentText(e.target.value)}
-                    style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+                    style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px', boxSizing: 'border-box' }}
                   />
                   <button
                     onClick={() => handleAddComment(selectedSpot.id)}
-                    style={{ padding: '8px 16px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+                    style={{ padding: '8px 16px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', boxSizing: 'border-box' }}
                   >
                     Send
                   </button>
@@ -2657,13 +2666,13 @@ export default function WapApp() {
 
         {/* ── 投稿作成モーダル ── */}
         {pendingUploads.length > 0 && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', boxSizing: 'border-box' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto', boxSizing: 'border-box' }}>
               <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 'bold' }}>
                 📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
               </h3>
 
-              <div style={{ width: '100%', height: '140px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '10px' }}>
+              <div style={{ width: '100%', height: '140px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '10px', boxSizing: 'border-box' }}>
                 {pendingUploads[currentUploadIndex].fileType === 'image' ? (
                   <img src={pendingUploads[currentUploadIndex].fileUrl} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
@@ -2672,10 +2681,10 @@ export default function WapApp() {
               </div>
 
               {/* 反映させるマップモード選択 */}
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px', width: '100%', boxSizing: 'border-box' }}>
                 🌐 反映させるマップモードを選択
               </label>
-              <div style={{ display: 'flex', gap: '6px', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', gap: '6px', marginBottom: '10px', boxSizing: 'border-box' }}>
                 {(['world', 'friends', 'my'] as const).map((scope) => {
                   const isSelected = selectedScopes.includes(scope);
                   return (
@@ -2693,6 +2702,7 @@ export default function WapApp() {
                         fontWeight: 'bold',
                         color: isSelected ? themeAccent : '#0f172a',
                         textAlign: 'center',
+                        boxSizing: 'border-box',
                       }}
                     >
                       {scope === 'world' ? `🌎 ${t('world')}` : scope === 'friends' ? `👥 ${t('friends')}` : `📍 ${t('myMap')}`}
@@ -2702,10 +2712,10 @@ export default function WapApp() {
               </div>
 
               {/* スポットカテゴリ選択 */}
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px', width: '100%', boxSizing: 'border-box' }}>
                 🏷️ スポットの種類（モード）を選択
               </label>
-              <div style={{ display: 'flex', gap: '6px', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', gap: '6px', marginBottom: '10px', boxSizing: 'border-box' }}>
                 {(['view', 'gourmet', 'rain'] as const).map((cat) => {
                   const isSelected = postCategory === cat;
                   return (
@@ -2723,6 +2733,7 @@ export default function WapApp() {
                         fontWeight: 'bold',
                         color: isSelected ? themeAccent : '#0f172a',
                         textAlign: 'center',
+                        boxSizing: 'border-box',
                       }}
                     >
                       {cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? `🍔 ${t('gourmet')}` : `🌧️ ${t('rain')}`}
@@ -2731,23 +2742,23 @@ export default function WapApp() {
                 })}
               </div>
 
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', width: '100%' }}>スポット名</label>
               <input
                 type="text"
                 value={postTitle}
                 onChange={(e) => setPostTitle(e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px', boxSizing: 'border-box' }}
               />
 
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグ)</label>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', width: '100%' }}>思い出・メモ (#タグ)</label>
               <textarea
                 rows={2}
                 value={postDesc}
                 onChange={(e) => setPostDesc(e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px', boxSizing: 'border-box' }}
               />
 
-              <div style={{ background: '#f0fdf4', padding: '8px 10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '10px', position: 'relative' }}>
+              <div style={{ background: '#f0fdf4', padding: '8px 10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '10px', position: 'relative', boxSizing: 'border-box' }}>
                 <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '4px' }}>
                   📍 撮影場所を検索して選択してください（必須）
                 </div>
@@ -2756,16 +2767,16 @@ export default function WapApp() {
                   placeholder="地名・住所・場所名を入力"
                   value={addressSearchQuery}
                   onChange={(e) => setAddressSearchQuery(e.target.value)}
-                  style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff', marginBottom: '4px' }}
+                  style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff', marginBottom: '4px', boxSizing: 'border-box' }}
                 />
 
                 {addressSuggestions.length > 0 && (
-                  <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
+                  <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700, boxSizing: 'border-box' }}>
                     {addressSuggestions.map((item) => (
                       <div
                         key={item.place_id}
                         onClick={() => handleSelectAddressSuggestion(item)}
-                        style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                        style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', boxSizing: 'border-box' }}
                       >
                         <span>📍</span>
                         <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
@@ -2774,18 +2785,18 @@ export default function WapApp() {
                   </div>
                 )}
 
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, padding: '4px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
-                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, padding: '4px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
+                <div style={{ display: 'flex', gap: '6px', boxSizing: 'border-box' }}>
+                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, padding: '4px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff', boxSizing: 'border-box' }} />
+                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, padding: '4px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff', boxSizing: 'border-box' }} />
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '8px', boxSizing: 'border-box' }}>
                 <button
                   type="button"
                   disabled={isSubmitting}
                   onClick={() => setPendingUploads([])}
-                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', boxSizing: 'border-box' }}
                 >
                   キャンセル
                 </button>
@@ -2793,7 +2804,7 @@ export default function WapApp() {
                   type="button"
                   disabled={isSubmitting}
                   onClick={handleConfirmPost}
-                  style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                  style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer', boxSizing: 'border-box' }}
                 >
                   {isSubmitting ? '保存中...' : 'マップに反映する 🚀'}
                 </button>
@@ -2818,6 +2829,7 @@ export default function WapApp() {
             zIndex: 1000,
             touchAction: 'none',
             margin: 0,
+            boxSizing: 'border-box',
           }}
         >
           <button
@@ -2838,6 +2850,7 @@ export default function WapApp() {
               color: currentTab === 'map' ? themeAccent : '#94a3b8',
               cursor: 'pointer',
               padding: '2px 16px',
+              boxSizing: 'border-box',
             }}
           >
             <span style={{ fontSize: '16px' }}>🗺️</span>
@@ -2856,6 +2869,7 @@ export default function WapApp() {
               color: currentTab === 'ranking' ? themeAccent : '#94a3b8',
               cursor: 'pointer',
               padding: '2px 16px',
+              boxSizing: 'border-box',
             }}
           >
             <span style={{ fontSize: '16px' }}>🏆</span>
@@ -2874,6 +2888,7 @@ export default function WapApp() {
               color: currentTab === 'profile' ? themeAccent : '#94a3b8',
               cursor: 'pointer',
               padding: '2px 16px',
+              boxSizing: 'border-box',
             }}
           >
             <span style={{ fontSize: '16px' }}>👤</span>
