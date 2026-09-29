@@ -19,8 +19,19 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="theme-color" content="#ffffff" />
+        <style dangerouslySetInnerHTML={{ __html: `
+          html, body {
+            background-color: #ffffff !important;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100dvh;
+            overflow: hidden;
+            position: fixed;
+          }
+        ` }} />
       </head>
-      <body style={{ margin: 0, padding: 0, backgroundColor: '#ffffff', color: '#0f172a', height: '100%', width: '100%', overflow: 'hidden' }}>
+      <body style={{ margin: 0, padding: 0, backgroundColor: '#ffffff', color: '#0f172a' }}>
         {children}
       </body>
     </html>
