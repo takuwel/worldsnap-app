@@ -31,6 +31,7 @@ export default function RootLayout({
             height: 100dvh;
             overflow: hidden;
             position: fixed;
+            -webkit-text-size-adjust: 100%;
           }
         ` }} />
       </head>
