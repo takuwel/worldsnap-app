@@ -1,6 +1,10 @@
 export const metadata = {
   title: 'wap',
   description: '世界中を旅して、思い出をつなごう',
+  icons: {
+    icon: '/icon-192.png',
+    apple: '/icon-192.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
