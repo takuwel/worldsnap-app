@@ -7,7 +7,7 @@ export const metadata = {
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default', // ここを 'default'（白背景に黒文字）にすることでインカメラ周辺が白くなります
+    statusBarStyle: 'default',
     title: 'wap',
   },
 };
@@ -23,12 +23,17 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="theme-color" content="#ffffff" />
+        <meta name="color-scheme" content="light" />
         <style dangerouslySetInnerHTML={{ __html: `
+          :root {
+            color-scheme: light !important;
+          }
           *, *::before, *::after {
             box-sizing: border-box;
           }
           html, body {
             background-color: #ffffff !important;
+            color: #0f172a !important;
             margin: 0;
             padding: 0;
             width: 100vw;
