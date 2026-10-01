@@ -94,7 +94,19 @@ export interface PlaceSuggestion {
 const NG_PATTERNS = [
   '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
   'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
-  'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid'
+  'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'きもちわるい', 'ブサイク', 'うざい',
+  'レイプ', 'れいぷ', '強姦', '売春', 'ばいしゅん', '買春', '援交', 'パパ活', '児童ポルノ',
+  'ドラッグ', 'どらっぐ', '覚醒剤', '大麻', 'たいま', 'コカイン', 'ヘロイン', '違法薬物',
+  '暴力', '暴行', '殴る', '蹴る', 'いじめ', 'いじめる', '自殺', 'じさつ', '死にたい',
+  'ホモ', 'ほも', 'オカマ', 'おかま', '差別', 'さべつ', '中国人差別', '韓国人差別', '外国人差別',
+  'セックス', 'せっくす', 'エロ', 'えろ', 'ちんこ', 'まんこ', 'おっぱい', 'オナニー', 'おなにー',
+  'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy', 'whore', 'slut',
+  'nigger', 'faggot', 'retard', 'suicide', 'kill', 'rape', 'cocaine', 'heroin', 'nazi', 'hitler',
+  '去死', '混蛋', '白痴', '傻逼', '贱人', '垃圾', '强奸', '卖淫', '吸毒', '自杀', '支那', '翻墙',
+  '죽어', '꺼져', '바보', '쓰레기', '병신', '개새끼', '창녀', '강간', '자살', '마약',
+  'merde', 'connard', 'salope', 'pute', 'enculé', 'suicide', 'viole', 'drogue',
+  'puta', 'mierda', 'cabrón', 'estúpido', 'idiota', 'suicidio', 'violación', 'droga',
+  'scheiße', 'arschloch', 'hure', 'schlampe', 'selbstmord', 'vergewaltigung', 'droge'
 ];
 
 function checkInappropriateContent(text: string): { isViolating: boolean; matchedWord: string } {
@@ -110,8 +122,16 @@ function checkInappropriateContent(text: string): { isViolating: boolean; matche
 
 function getUserTitle(count: number) {
   if (count >= 100) return { title: '👑 百景の覇者', color: '#eab308' };
+  if (count >= 90) return { title: '🏆 九十景の巨匠', color: '#f97316' };
+  if (count >= 80) return { title: '🌟 八十景の探求者', color: '#f59e0b' };
+  if (count >= 70) return { title: '⭐ 七十景の旅人', color: '#f43f5e' };
+  if (count >= 60) return { title: '💎 六十景の語り部', color: '#06b6d4' };
   if (count >= 50) return { title: '🏔️ 五十景の開拓者', color: '#8b5cf6' };
+  if (count >= 40) return { title: '🧭 四十景のナビゲーター', color: '#6366f1' };
+  if (count >= 30) return { title: '✈️ 三十景のボイジャー', color: '#3b82f6' };
+  if (count >= 20) return { title: '🗺️ 二十景のエキスパート', color: '#0284c7' };
   if (count >= 10) return { title: '🎒 十景のトラベラー', color: '#38bdf8' };
+  if (count >= 5) return { title: '📷 五景のハンター', color: '#0ea5e9' };
   if (count >= 1) return { title: '🌱 見習い探検家', color: '#22c55e' };
   return { title: '🐣 旅のビギナー', color: '#94a3b8' };
 }
@@ -120,25 +140,37 @@ export const LANGUAGES: Record<string, { name: string; nativeName: string; flag:
   ja: { name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
   en: { name: 'English', nativeName: 'English', flag: '🇬🇧' },
   ko: { name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
-  zh: { name: 'Chinese', nativeName: '中文', flag: '🇨🇳' }
+  zh: { name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
+  es: { name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
+  fr: { name: 'French', nativeName: 'Français', flag: '🇫🇷' },
+  de: { name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
+  pt: { name: 'Portuguese', nativeName: 'Português', flag: '🇧🇷' },
+  it: { name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹' },
+  ru: { name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
+  ar: { name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
+  hi: { name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' },
+  th: { name: 'Thai', nativeName: 'ไทย', flag: '🇹🇭' },
+  vi: { name: 'Vietnamese', nativeName: 'Tiếng Việt', flag: '🇻🇳' },
+  id: { name: 'Indonesian', nativeName: 'Bahasa Indonesia', flag: '🇮🇩' }
 };
 
-export const DICTIONaries: Record<string, Record<string, string>> = {
+const DICTIONaries: Record<string, Record<string, string>> = {
   ja: {
     step1Title: 'Step 1: 表示言語を選択',
-    step1Desc: 'お好みの言語を選択してください。',
+    step1Desc: '世界中の人々が使えるよう、お好みの言語を選択してください。',
     step2Title: 'Step 2: ベースの国（初期マップ）を選択',
-    step2Desc: '初期表示位置となるメインの国を選んでください。',
+    step2Desc: 'マップの初期表示位置となるメインの国を選んでください（厳選140カ国）。',
     step3Title: 'Step 3: プロフィール作成',
     step3TitleEula: 'Step 4: 利用規約 & 位置情報ポリシーの確認',
     next: '次へ進む',
     back: '戻る',
     startApp: '🚀 wap をはじめる',
-    eulaAgree: '利用規約および位置情報の利用方針に同意する',
+    eulaAgree: '利用規約および位置情報の利用方針に同意する（Apple審査対応）',
     map: 'マップ',
     ranking: 'ランキング',
     profile: 'マイページ',
     addPhoto: '写真 / 動画を追加',
+    exportMap: 'マップ保存',
     view: 'View',
     gourmet: 'グルメ',
     rain: '雨の日',
@@ -146,26 +178,46 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     friends: 'フレンド',
     world: 'ワールド',
     openGoogleMaps: '🧭 Googleマップで経路案内',
+    likeSpot: '❤️ いいね',
+    likedSpot: '❤️ いいね済み',
+    report: '⚠️ 通報',
+    block: '🚫 ブロック',
+    delete: '🗑️ 削除',
+    edit: '✏️ 編集',
+    visited: '訪問国',
+    posts: '投稿',
+    friendCode: 'フレンドコード',
+    searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
+    settings: '⚙️ 設定メニュー',
+    langSetting: '🌐 表示言語 (Language)',
+    baseCountrySetting: '📍 ベースの国 (初期マップ)',
+    blockListTitle: '🚫 ブロック中ユーザー管理',
+    eulaTitle: '📜 利用規約 (EULA)',
+    guideTitle: '📖 アプリの操作説明',
     translate: '🌐 翻訳する',
     close: '閉じる',
-    posts: '投稿',
-    visited: '訪問国'
+    tabPosts: '📸 投稿',
+    tabTimeline: '📅 ログ',
+    tabSaved: '💛 保存',
+    tabBadges: '🏅 バッジ',
+    tabFriends: '👥 フレンド'
   },
   en: {
     step1Title: 'Step 1: Select Language',
-    step1Desc: 'Choose your preferred language.',
+    step1Desc: 'Choose your preferred language for the application.',
     step2Title: 'Step 2: Select Base Country',
-    step2Desc: 'Choose your initial country.',
+    step2Desc: 'Choose your initial country for the map view.',
     step3Title: 'Step 3: Create Profile',
     step3TitleEula: 'Step 4: Terms of Service & Location Policy',
     next: 'Next',
     back: 'Back',
     startApp: '🚀 Start wap',
-    eulaAgree: 'I agree to the Terms & Policy',
+    eulaAgree: 'I agree to the Terms of Service & Location Policy',
     map: 'Map',
     ranking: 'Ranking',
     profile: 'Profile',
     addPhoto: 'Add Media',
+    exportMap: 'Save Map',
     view: 'View',
     gourmet: 'Gourmet',
     rain: 'Rainy',
@@ -173,14 +225,137 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     friends: 'Friends',
     world: 'World',
     openGoogleMaps: '🧭 Navigate with Google Maps',
+    likeSpot: '❤️ Like',
+    likedSpot: '❤️️ Liked',
+    report: '⚠️ Report',
+    block: '🚫 Block',
+    delete: '🗑️ Delete',
+    edit: '✏️ Edit',
+    visited: 'Visited',
+    posts: 'Posts',
+    friendCode: 'Friend Code',
+    searchPlaceholder: '🔍 Search city, #tag...',
+    settings: '⚙️ Settings',
+    langSetting: '🌐 Language',
+    baseCountrySetting: '📍 Base Country',
+    blockListTitle: '🚫 Blocked Users',
+    eulaTitle: '📜 Terms of Service',
+    guideTitle: '📖 App Guide',
     translate: '🌐 Translate',
     close: 'Close',
-    posts: 'Posts',
-    visited: 'Visited'
+    tabPosts: '📸 Posts',
+    tabTimeline: '📅 Log',
+    tabSaved: '💛 Saved',
+    tabBadges: '🏅 Badges',
+    tabFriends: '👥 Friends'
+  },
+  ko: {
+    step1Title: 'Step 1: 언어 선택',
+    step1Desc: '앱에서 사용할 언어를 선택하세요.',
+    step2Title: 'Step 2: 기본 국가 선택',
+    step2Desc: '지도의 중심이 될 기본 국가를 선택하세요.',
+    step3Title: 'Step 3: 프로필 설정',
+    step3TitleEula: 'Step 4: 이용약관 및 위치정보 정책',
+    next: '다음',
+    back: '뒤로',
+    startApp: '🚀 wap 시작하기',
+    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다',
+    map: '지도',
+    ranking: '랭킹',
+    profile: '프로필',
+    addPhoto: '사진/영상 추가',
+    exportMap: '지도 저장',
+    view: '경치',
+    gourmet: '맛집',
+    rain: '비',
+    myMap: '내 지도',
+    friends: '친구',
+    world: '전체',
+    openGoogleMaps: '🧭 Google 지도 길찾기',
+    likeSpot: '❤️ 좋아요',
+    likedSpot: '❤️ 좋아요 취소',
+    report: '⚠️ 신고',
+    block: '🚫 차단',
+    delete: '🗑️ 삭제',
+    edit: '✏️ 수정',
+    visited: '방문 국가',
+    posts: '게시물',
+    friendCode: '친구 코드',
+    searchPlaceholder: '🔍 도시 / #태그 검색',
+    settings: '⚙️ 설정',
+    langSetting: '🌐 앱 언어',
+    baseCountrySetting: '📍 기본 국가',
+    blockListTitle: '🚫 차단된 사용자',
+    eulaTitle: '📜 이용약관',
+    guideTitle: '📖 앱 가이드',
+    translate: '🌐 번역하기',
+    close: '닫기',
+    tabPosts: '📸 게시물',
+    tabTimeline: '📅 로그',
+    tabSaved: '💛 저장',
+    tabBadges: '🏅 배지',
+    tabFriends: '👥 친구'
+  },
+  zh: {
+    step1Title: '步骤 1: 选择语言',
+    step1Desc: '请选择您的首选应用语言。',
+    step2Title: 'Step 2: 选择基础国家',
+    step2Desc: '请选择地图初始显示的国家。',
+    step3Title: 'Step 3: 创建个人资料',
+    step3TitleEula: 'Step 4: 服务条款与位置政策',
+    next: '下一步',
+    back: '返回',
+    startApp: '🚀 开始使用 wap',
+    eulaAgree: '同意服务条款与位置政策',
+    map: '地图',
+    ranking: '排行',
+    profile: '我的',
+    addPhoto: '添加媒体',
+    exportMap: '保存地图',
+    view: '风景',
+    gourmet: '美食',
+    rain: '雨天',
+    myMap: '我的地图',
+    friends: '好友',
+    world: '世界',
+    openGoogleMaps: '🧭 谷歌地图导航',
+    likeSpot: '❤️ 赞',
+    likedSpot: '❤️ 已赞',
+    report: '⚠️ 举报',
+    block: '🚫 拉黑',
+    delete: '🗑️ 删除',
+    edit: '编辑',
+    visited: '已访问',
+    posts: '动态',
+    friendCode: '好友码',
+    searchPlaceholder: '🔍 搜索城市 / #标签...',
+    settings: '⚙️ 设置',
+    langSetting: '🌐 应用语言',
+    baseCountrySetting: '📍 基础国家',
+    blockListTitle: '🚫 已屏蔽用户',
+    eulaTitle: '📜 服务条款',
+    guideTitle: '📖 操作指南',
+    translate: '🌐 翻译',
+    close: '关闭',
+    tabPosts: '📸 动态',
+    tabTimeline: '📅 日志',
+    tabSaved: '💛 收藏',
+    tabBadges: '🏅 徽章',
+    tabFriends: '👥 好友'
   }
 };
 
-export const COUNTRIES: Record<string, { name: string; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
+export const COUNTRIES: Record<
+  string,
+  {
+    name: string;
+    flag: string;
+    region: string;
+    lat: number;
+    lon: number;
+    zoom: number;
+  }
+> = {
   JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
   CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
@@ -303,7 +478,7 @@ export const COUNTRIES: Record<string, { name: string; flag: string; region: str
   FM: { name: 'ミクロネシア (Micronesia)', flag: '🇫🇲', region: '🦘 オセアニア', lat: 7.4256, lon: 150.5508, zoom: 8 },
   PW: { name: 'パラオ (Palau)', flag: '🇵🇼', region: '🦘 オセアニア', lat: 7.5150, lon: 134.5825, zoom: 9 },
   MH: { name: 'マーシャル諸島 (Marshall Islands)', flag: '🇲🇭', region: '🦘 オセアニア', lat: 7.1315, lon: 171.1845, zoom: 8 },
-  TV: { name: 'ツバル (Tutorial)', flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
+  TV: { name: 'ツバル (Tuvalu)', flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
   NR: { name: 'ナウル (Nauru)', flag: '🇳🇷', region: '🦘 オセアニア', lat: -0.5228, lon: 166.9315, zoom: 13 },
   GU: { name: 'グアム (Guam)', flag: '🇬🇺', region: '🦘 オセアニア', lat: 13.4443, lon: 144.7937, zoom: 10 },
   AS: { name: 'アメリカ領サモア (American Samoa)', flag: '🇦🇸', region: '🦘 オセアニア', lat: -14.2710, lon: -170.1322, zoom: 10 },
@@ -336,7 +511,7 @@ export const COUNTRIES: Record<string, { name: string; flag: string; region: str
   MU_2: { name: 'モーリタニア (Mauritania)', flag: '🇲🇷', region: '🦁 アフリカ', lat: 21.0079, lon: -10.9408, zoom: 6 }
 };
 
-INITIAL_SPOTS: Spot[] = [
+const INITIAL_SPOTS: Spot[] = [
   {
     id: 'spot-tokyo-1',
     userId: 'user-official',
@@ -1040,7 +1215,7 @@ export default function WapApp() {
       const file = e.target.files[0];
       const objectUrl = URL.createObjectURL(file);
       setUserAvatar(objectUrl);
-      showToast('🖼️ プロフィール写真を変更しました！');
+      showToast('🖼️️ プロフィール写真を変更しました！');
     }
   };
 
@@ -1674,7 +1849,7 @@ export default function WapApp() {
 
                 {!hasScrolledToBottom && (
                   <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', textAlign: 'center', marginBottom: '10px' }}>
-                    ⚠️ 利用規約を最後までスクロールしてください
+                    ⚠️️ 利用規約を最後までスクロールしてください
                   </div>
                 )}
 
@@ -2106,7 +2281,7 @@ export default function WapApp() {
                       boxSizing: 'border-box',
                     }}
                   >
-                    {thm === 'light' ? '☀️️ 標準' : thm === 'dark' ? '🌙 ダーク' : '🌸 パステル'}
+                    {thm === 'light' ? '☀️ 標準' : thm === 'dark' ? '🌙 ダーク' : '🌸 パステル'}
                   </button>
                 ))}
               </div>
@@ -2540,6 +2715,7 @@ export default function WapApp() {
         <button
           onClick={() => setCurrentTab('ranking')}
           style={{
+            style: 'transparent',
             background: 'transparent',
             border: 'none',
             display: 'flex',
@@ -2550,7 +2726,7 @@ export default function WapApp() {
             cursor: 'pointer',
             padding: '2px 16px',
             boxSizing: 'border-box',
-          }}
+          } as any}
         >
           <span style={{ fontSize: '16px' }}>🏆</span>
           <span style={{ fontSize: '9px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t('ranking')}</span>
