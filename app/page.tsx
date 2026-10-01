@@ -286,11 +286,6 @@ const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー】
 第3条 禁止事項
 不適切な投稿や誹謗中傷を禁止します。`;
 
-const GUIDE_FULL_TEXT = `【wap 操作ガイド】
-1. 現在地ボタン
-2. マップ操作
-3. 投稿機能`;
-
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
   return matches ? matches.map((tag) => tag.replace('#', '')) : [];
@@ -304,7 +299,7 @@ function convertDMSToDD(dms: number[], ref: string): number {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント
+// 2. Google Maps API コンポーネント (非同期警告対策版)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -373,7 +368,7 @@ const GoogleMapComponent = ({
       if (!existingScript) {
         const script = document.createElement('script');
         script.id = 'google-maps-script';
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}&loading=async`;
         script.async = true;
         script.defer = true;
         script.onload = () => initMap();
@@ -439,7 +434,7 @@ export default function WapApp() {
   const [userAvatar, setUserAvatar] = useState<string>('');
 
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
-  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(true); // 最初からtrueにしてスムーズに進行可能に
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(true);
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
   const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
@@ -776,26 +771,13 @@ export default function WapApp() {
               <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step3TitleEula')}</h3>
                 <div
-                  onScroll={(e) => {
-                    const target = e.currentTarget;
-                    if (target.scrollHeight - target.scrollTop <= target.clientHeight + 15) {
-                      setHasScrolledToBottom(true);
-                    }
-                  }}
-                  style={{ maxHeight: '160px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', boxSizing: 'border-box' }}
+                  style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', boxSizing: 'border-box' }}
                 >
                   {EULA_FULL_TEXT}
-                  <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ ここまでお読みください</div>
                 </div>
 
-                {!hasScrolledToBottom && (
-                  <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', textAlign: 'center', marginBottom: '10px' }}>
-                    ⚠️ 利用規約を最後までスクロールしてください
-                  </div>
-                )}
-
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#0284c7' : '#94a3b8', marginBottom: '16px', boxSizing: 'border-box' }}>
-                  <input type="checkbox" disabled={!hasScrolledToBottom} checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', color: '#0284c7', marginBottom: '16px', boxSizing: 'border-box' }}>
+                  <input type="checkbox" checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
                   <span>{t('eulaAgree')}</span>
                 </label>
                 <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
@@ -803,17 +785,21 @@ export default function WapApp() {
                     {t('back')}
                   </button>
                   <button
-                    disabled={!eulaChecked || !hasScrolledToBottom}
-                    onClick={handleCompleteOnboarding}
+                    disabled={!eulaChecked}
+                    onClick={() => {
+                      localStorage.setItem('wap_onboarded_v1', 'true');
+                      setIsOnboarding(false);
+                      showToast('🌍 アプリを始めます！');
+                    }}
                     style={{
                       flex: 2,
                       padding: '12px',
-                      background: (eulaChecked && hasScrolledToBottom) ? '#0284c7' : '#94a3b8',
+                      background: eulaChecked ? '#0284c7' : '#94a3b8',
                       color: '#fff',
                       fontWeight: 'bold',
                       border: 'none',
                       borderRadius: '12px',
-                      cursor: (eulaChecked && hasScrolledToBottom) ? 'pointer' : 'not-allowed',
+                      cursor: eulaChecked ? 'pointer' : 'not-allowed',
                       boxSizing: 'border-box',
                     }}
                   >
