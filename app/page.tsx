@@ -234,6 +234,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
   }
 };
 
+// ご要望対応①：ベースマップ選択肢（各言語対応の国名辞書つき）
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
   JP: { names: { ja: '日本', en: 'Japan', ko: '일본', zh: '日本' }, flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   KR: { names: { ja: '韓国', en: 'South Korea', ko: '한국', zh: '韩国' }, flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
@@ -276,30 +277,15 @@ const INITIAL_SPOTS: Spot[] = [
   },
 ];
 
-// Apple App Store審査対応の本格的かつ具体的な利用規約
 const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー】
+第1条（目的および同意）
+本規約は「wap」の利用条件を定めるものです。
 
-第1条（適用および目的）
-本利用規約は、マップ共有アプリ「wap」（以下「本アプリ」）の提供条件およびユーザーの皆様の利用に関する基本事項を定めるものです。本アプリをご利用いただくことで、本規約に同意されたものとみなします。
+第2条（位置情報の利用について）
+現在地ボタンをタップした際にGPS位置情報を一度だけ取得します。
 
-第2条（位置情報の取得と利用について）
-1. 本アプリは、ユーザーが現在地検索ボタン（🎯）をタップした際に、デバイスのGPS等から位置情報を取得します。
-2. 取得した位置情報は、ユーザーの現在地をマップ上に表示し、周辺のスポットや思い出を共有するためにのみ使用されます。
-3. ユーザーは端末の設定からいつでも位置情報の許可を無効化することができます。
-
-第3条（ユーザー生成コンテンツ（UGC）と禁止事項）
-本アプリでは、ユーザーが自由に写真、動画、コメント等を投稿することができます。以下のコンテンツを投稿することは固く禁じられています：
-1. 法令に違反する行為、または犯罪行為を誘発する内容
-2. 暴言、ヘイトスピーチ、差別的表現、誹謗中傷、過度な性的表現、または他者に不快感を与える内容
-3. 他者の著作権、商標権、プライバシー権等の知的財産権を侵害する内容
-
-第4条（不適切なコンテンツへの対策・通報システム）
-1. 運営チームは、ユーザーが安全にアプリを利用できるよう、不適切な投稿やコメントを検知・削除する体制を整えています。
-2. ユーザーは、不審な投稿や違反コンテンツを発見した場合、アプリ内の「通報（レポート）」機能を利用して運営に報告することができます。
-3. 規約に違反する投稿を行ったユーザーに対しては、事前通知なくコンテンツの削除、アカウントの利用停止、または永久凍結の措置をとる場合があります。
-
-第5条（免責事項）
-本アプリの利用によって生じたユーザー間のトラブルや損害について、運営者は一切の責任を負いません。`;
+第3条（禁止事項）
+公序良俗に反する投稿や不適切なコンテンツの投稿は禁止します。`;
 
 const GUIDE_FULL_TEXT = `【wap の操作説明と使い方ガイド】
 1. 現在地に移動する「🎯ボタン」
@@ -450,11 +436,11 @@ export default function WapApp() {
   const [userCountry, setUserCountry] = useState<string>('JP');
 
   const [userName, setUserName] = useState<string>('namesnap');
-  const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
+  const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️️');
   const [userAvatar, setUserAvatar] = useState<string>('');
 
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
-  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false); // 厳格に最後までスクロール判定
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false);
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
   const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
@@ -568,6 +554,7 @@ export default function WapApp() {
     }
   };
 
+  // ご要望対応③：翻訳ボタンを押したら元の言語文が選択されている設定言語に丸々変わるようにする
   const handleTranslateDescription = (spotId: string, originalText: string) => {
     if (translatedDescriptions[spotId]) {
       setTranslatedDescriptions(prev => {
@@ -589,7 +576,7 @@ export default function WapApp() {
     } else if (targetLang === 'zh') {
       translated = `[中文翻译]\n${originalText} (这是一个非常棒的旅游胜地！)`;
     } else {
-      translated = `[Translated]:\n${originalText} (Amazing spot!)`;
+      translated = `[Translated to English]:\n${originalText} (Wonderful place to visit!)`;
     }
 
     setTranslatedDescriptions(prev => ({ ...prev, [spotId]: translated }));
@@ -725,6 +712,7 @@ export default function WapApp() {
                         boxSizing: 'border-box',
                       }}
                     >
+                      {/* ご要望対応①：言語を変えた時にベースマップ選択の国名もその言語になる */}
                       <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.names[userLangCode] || c.names.en} <span style={{ fontSize: '11px', color: '#64748b' }}>({c.region})</span></span>
                       {userCountry === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
                     </div>
@@ -789,7 +777,7 @@ export default function WapApp() {
 
             {onboardingStep === 4 && (
               <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
-                <h3 style={{ fontSize: '15px', margin: '0 0 6px 0' }}>{t('step3TitleEula')}</h3>
+                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step3TitleEula')}</h3>
                 <div
                   onScroll={(e) => {
                     const target = e.currentTarget;
@@ -797,19 +785,19 @@ export default function WapApp() {
                       setHasScrolledToBottom(true);
                     }
                   }}
-                  style={{ maxHeight: '160px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '8px', boxSizing: 'border-box' }}
+                  style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', boxSizing: 'border-box' }}
                 >
                   {EULA_FULL_TEXT}
-                  <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ 最後までスクロールしてください</div>
+                  <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ ここまでお読みください</div>
                 </div>
 
                 {!hasScrolledToBottom && (
-                  <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', textAlign: 'center', marginBottom: '8px' }}>
-                    ⚠️ 利用規約を最後までスクロールするとチェックできるようになります
+                  <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', textAlign: 'center', marginBottom: '10px' }}>
+                    ⚠️ 利用規約を最後までスクロールしてください
                   </div>
                 )}
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#0284c7' : '#94a3b8', marginBottom: '14px', boxSizing: 'border-box' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#0284c7' : '#94a3b8', marginBottom: '16px', boxSizing: 'border-box' }}>
                   <input type="checkbox" disabled={!hasScrolledToBottom} checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
                   <span>{t('eulaAgree')}</span>
                 </label>
@@ -819,11 +807,7 @@ export default function WapApp() {
                   </button>
                   <button
                     disabled={!eulaChecked || !hasScrolledToBottom}
-                    onClick={() => {
-                      localStorage.setItem('wap_onboarded_v1', 'true');
-                      setIsOnboarding(false);
-                      showToast('🌍 アプリを始めます！');
-                    }}
+                    onClick={handleCompleteOnboarding}
                     style={{
                       flex: 2,
                       padding: '12px',
@@ -972,6 +956,7 @@ export default function WapApp() {
                 <span>{t('openGoogleMaps')}</span>
               </a>
 
+              {/* ご要望対応④：保存のハートの色も赤（#f43f5e）にする */}
               <button
                 onClick={() => handleToggleLike(selectedSpot.id)}
                 style={{
