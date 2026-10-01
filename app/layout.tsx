@@ -1,15 +1,27 @@
-export const metadata = {
+import type { Metadata, Viewport } from 'next';
+
+export const metadata: Metadata = {
   title: 'wap',
   description: '世界中を旅して、思い出をつなごう',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'wap',
+  },
   icons: {
     icon: '/icon-192.png',
     apple: '/icon-192.png',
   },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default', // ここを 'default'（白背景に黒文字）にすることでインカメラ周辺が白くなります
-    title: 'wap',
-  },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
+  themeColor: '#ffffff',
+  colorScheme: 'light',
 };
 
 export default function RootLayout({
@@ -20,15 +32,16 @@ export default function RootLayout({
   return (
     <html lang="ja" style={{ backgroundColor: '#ffffff', colorScheme: 'light', height: '100%', width: '100%', margin: 0, padding: 0 }}>
       <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="theme-color" content="#ffffff" />
         <style dangerouslySetInnerHTML={{ __html: `
+          :root {
+            color-scheme: light !important;
+          }
           *, *::before, *::after {
             box-sizing: border-box;
           }
           html, body {
             background-color: #ffffff !important;
+            color: #0f172a !important;
             margin: 0;
             padding: 0;
             width: 100vw;
