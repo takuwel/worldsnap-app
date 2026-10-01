@@ -256,7 +256,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     settings: '⚙️ 设置',
     langSetting: '🌐 应用语言',
     baseCountrySetting: '📍 基础国家',
-    guideTitle: '📖 操作指南',
+    guideTitle: '📜 服务条款',
     eulaTitle: '📜 服务条款',
     blockListTitle: '🚫 已屏蔽用户'
   }
@@ -304,11 +304,10 @@ const INITIAL_SPOTS: Spot[] = [
   },
 ];
 
-// Apple審査対応の本格的利用規約
-const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー】
+const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
 
 第1条（目的および同意）
-本規約は、マップ共有アプリ「wap」（以下「本アプリ」）の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本アプリを利用するものとします。
+本規約は、当サービス「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
 
 第2条（位置情報の取得・利用について）
 1. 本アプリは、ユーザーがマップ画面右下の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一度だけ取得します。
@@ -317,17 +316,6 @@ const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー】
 
 第3条（コンテンツの安全性と禁止事項）
 公序良俗に反する投稿、誹謗中傷、暴言、過激なコンテンツの投稿は禁止されています。違反した場合は通報機能により自動削除およびアカウント凍結となります。`;
-
-const GUIDE_FULL_TEXT = `【wap の操作説明と使い方ガイド】
-
-1. 現在地に移動する「🎯ボタン」
-- マップ画面の右下にある「🎯（現在地ボタン）」をタップすると、現在地がマップの中心に表示されます。
-
-2. マップの操作とズーム
-- マップ上をダブルタップすると拡大します。
-
-3. 写真や動画の投稿
-- 下部の「📷＋ 写真 / 動画を追加」ボタンからメディアを投稿できます。`;
 
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
@@ -371,27 +359,6 @@ const GoogleMapComponent = ({
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
 
-  const getMapStyles = (themeMode: MapThemeType) => {
-    if (themeMode === 'dark') {
-      return [
-        { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
-        { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
-        { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
-        { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
-        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#38414e' }] },
-        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#17263c' }] },
-      ];
-    } else if (themeMode === 'pastel') {
-      return [
-        { elementType: 'geometry', stylers: [{ color: '#f5f3ef' }] },
-        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#cbe2ed' }] },
-        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
-        { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#d5e8d4' }] },
-      ];
-    }
-    return [];
-  };
-
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -406,7 +373,6 @@ const GoogleMapComponent = ({
         disableDefaultUI: true,
         zoomControl: false,
         gestureHandling: 'greedy',
-        styles: getMapStyles(theme),
         backgroundColor: '#ffffff',
       });
 
@@ -452,12 +418,6 @@ const GoogleMapComponent = ({
   }, [userLang]);
 
   useEffect(() => {
-    if (mapInstanceRef.current && window.google && window.google.maps) {
-      mapInstanceRef.current.setOptions({ styles: getMapStyles(theme) });
-    }
-  }, [theme]);
-
-  useEffect(() => {
     if (mapInstanceRef.current && targetCenter && targetZoom) {
       mapInstanceRef.current.panTo({ lat: targetCenter[0], lng: targetCenter[1] });
       mapInstanceRef.current.setZoom(targetZoom);
@@ -501,11 +461,11 @@ export default function WapApp() {
   const [userCountry, setUserCountry] = useState<string>('JP');
 
   const [userName, setUserName] = useState<string>('namesnap');
-  const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️️');
+  const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
   const [userAvatar, setUserAvatar] = useState<string>('');
 
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
-  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false); // スコロール必須に戻す
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false);
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
   const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
@@ -619,6 +579,16 @@ export default function WapApp() {
     }
   };
 
+  // ご要望対応：オンボーディング完了関数を正しく定義
+  const handleCompleteOnboarding = () => {
+    localStorage.setItem('wap_onboarded_v1', 'true');
+    setIsOnboarding(false);
+    const target = COUNTRIES[userCountry] || COUNTRIES.JP;
+    setTargetCenter([target.lat, target.lon]);
+    setTargetZoom(target.zoom);
+    showToast(`🌍 ${target.names[userLangCode] || target.names.en} へようこそ！`);
+  };
+
   const handleTranslateDescription = (spotId: string, originalText: string) => {
     if (translatedDescriptions[spotId]) {
       setTranslatedDescriptions(prev => {
@@ -653,7 +623,7 @@ export default function WapApp() {
 
     const check = checkInappropriateContent(trimmedText);
     if (check.isViolating) {
-      showWarning('⚠️️ 不適切な表現が含まれているため送信できません。');
+      showWarning('⚠️ 不適切な表現が含まれているため送信できません。');
       return;
     }
 
@@ -856,7 +826,7 @@ export default function WapApp() {
 
                 {!hasScrolledToBottom && (
                   <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', textAlign: 'center', marginBottom: '10px' }}>
-                    ⚠️ 利用規約を最後までスクロールしてください
+                    ⚠️️ 利用規約を最後までスクロールしてください
                   </div>
                 )}
 
