@@ -7,7 +7,7 @@ export const metadata = {
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'default', // 'default'にすることでステータスバーが白背景＋黒文字になります
     title: 'wap',
   },
 };
@@ -20,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="ja" style={{ backgroundColor: '#ffffff', colorScheme: 'light', height: '100%', width: '100%', margin: 0, padding: 0 }}>
       <head>
+        {/* viewport-fit=cover と statusBarStyle の組み合わせで上部まで白く塗りつぶします */}
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="theme-color" content="#ffffff" />
