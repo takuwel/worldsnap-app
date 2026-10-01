@@ -134,7 +134,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: '次へ進む',
     back: '戻る',
     startApp: '🚀 wap をはじめる',
-    eulaAgree: '利用規約および位置情報の利用方針に同意する',
+    eulaAgree: '利用規約および位置情報の利用方針に同意する（必須）',
     map: 'マップ',
     ranking: 'ランキング',
     profile: 'マイページ',
@@ -161,7 +161,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: 'Next',
     back: 'Back',
     startApp: '🚀 Start wap',
-    eulaAgree: 'I agree to the Terms & Policy',
+    eulaAgree: 'I agree to the Terms & Policy (Required)',
     map: 'Map',
     ranking: 'Ranking',
     profile: 'Profile',
@@ -188,7 +188,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: '다음',
     back: '뒤로',
     startApp: '🚀 wap 시작하기',
-    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다',
+    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다 (필수)',
     map: '지도',
     ranking: '랭킹',
     profile: '프로필',
@@ -215,7 +215,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: '下一步',
     back: '返回',
     startApp: '🚀 开始使用 wap',
-    eulaAgree: '同意服务条款与位置政策',
+    eulaAgree: '同意服务条款与位置政策（必填）',
     map: '地图',
     ranking: '排行',
     profile: '我的',
@@ -276,15 +276,30 @@ const INITIAL_SPOTS: Spot[] = [
   },
 ];
 
+// Apple App Store審査対応の本格的かつ具体的な利用規約
 const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー】
-第1条（目的および同意）
-本規約は「wap」の利用条件を定めるものです。
 
-第2条（位置情報の利用について）
-現在地ボタンをタップした際にGPS位置情報を一度だけ取得します。
+第1条（適用および目的）
+本利用規約は、マップ共有アプリ「wap」（以下「本アプリ」）の提供条件およびユーザーの皆様の利用に関する基本事項を定めるものです。本アプリをご利用いただくことで、本規約に同意されたものとみなします。
 
-第3条（禁止事項）
-公序良俗に反する投稿や不適切なコンテンツの投稿は禁止します。`;
+第2条（位置情報の取得と利用について）
+1. 本アプリは、ユーザーが現在地検索ボタン（🎯）をタップした際に、デバイスのGPS等から位置情報を取得します。
+2. 取得した位置情報は、ユーザーの現在地をマップ上に表示し、周辺のスポットや思い出を共有するためにのみ使用されます。
+3. ユーザーは端末の設定からいつでも位置情報の許可を無効化することができます。
+
+第3条（ユーザー生成コンテンツ（UGC）と禁止事項）
+本アプリでは、ユーザーが自由に写真、動画、コメント等を投稿することができます。以下のコンテンツを投稿することは固く禁じられています：
+1. 法令に違反する行為、または犯罪行為を誘発する内容
+2. 暴言、ヘイトスピーチ、差別的表現、誹謗中傷、過度な性的表現、または他者に不快感を与える内容
+3. 他者の著作権、商標権、プライバシー権等の知的財産権を侵害する内容
+
+第4条（不適切なコンテンツへの対策・通報システム）
+1. 運営チームは、ユーザーが安全にアプリを利用できるよう、不適切な投稿やコメントを検知・削除する体制を整えています。
+2. ユーザーは、不審な投稿や違反コンテンツを発見した場合、アプリ内の「通報（レポート）」機能を利用して運営に報告することができます。
+3. 規約に違反する投稿を行ったユーザーに対しては、事前通知なくコンテンツの削除、アカウントの利用停止、または永久凍結の措置をとる場合があります。
+
+第5条（免責事項）
+本アプリの利用によって生じたユーザー間のトラブルや損害について、運営者は一切の責任を負いません。`;
 
 const GUIDE_FULL_TEXT = `【wap の操作説明と使い方ガイド】
 1. 現在地に移動する「🎯ボタン」
@@ -439,7 +454,7 @@ export default function WapApp() {
   const [userAvatar, setUserAvatar] = useState<string>('');
 
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
-  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(true); // 最初からtrueにしてスクロール必須で詰まるのを防止
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false); // 厳格に最後までスクロール判定
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
   const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
@@ -644,31 +659,31 @@ export default function WapApp() {
 
       {/* 初回オンボーディング画面 */}
       {isOnboarding && (
-        <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', boxSizing: 'border-box', overflowY: 'auto' }}>
-          <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '24px 20px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center', boxSizing: 'border-box', margin: 'auto' }}>
-            <div style={{ fontSize: '32px', marginBottom: '2px' }}>🗺️</div>
-            <h1 style={{ margin: 0, fontSize: '22px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
-            <p style={{ margin: '2px 0 12px 0', fontSize: '12px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
+        <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', boxSizing: 'border-box' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center', boxSizing: 'border-box', margin: '0 auto' }}>
+            <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
+            <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
+            <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
 
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginBottom: '16px' }}>
-              <span style={{ width: '22px', height: '5px', borderRadius: '3px', background: onboardingStep >= 1 ? '#0284c7' : '#e2e8f0' }}></span>
-              <span style={{ width: '22px', height: '5px', borderRadius: '3px', background: onboardingStep >= 2 ? '#0284c7' : '#e2e8f0' }}></span>
-              <span style={{ width: '22px', height: '5px', borderRadius: '3px', background: onboardingStep >= 3 ? '#0284c7' : '#e2e8f0' }}></span>
-              <span style={{ width: '22px', height: '5px', borderRadius: '3px', background: onboardingStep === 4 ? '#0284c7' : '#e2e8f0' }}></span>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 1 ? '#0284c7' : '#e2e8f0' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 2 ? '#0284c7' : '#e2e8f0' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 3 ? '#0284c7' : '#e2e8f0' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 4 ? '#0284c7' : '#e2e8f0' }}></span>
             </div>
 
             {onboardingStep === 1 && (
               <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
-                <h3 style={{ fontSize: '14px', margin: '0 0 6px 0' }}>{t('step1Title')}</h3>
-                <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 10px 0' }}>{t('step1Desc')}</p>
-                <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '16px', boxSizing: 'border-box' }}>
+                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step1Title')}</h3>
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t('step1Desc')}</p>
+                <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px', boxSizing: 'border-box' }}>
                   {Object.entries(LANGUAGES).map(([code, lang]) => (
                     <div
                       key={code}
                       onClick={() => setUserLangCode(code)}
                       style={{
-                        padding: '8px 12px',
-                        borderRadius: '8px',
+                        padding: '10px 14px',
+                        borderRadius: '10px',
                         border: `2px solid ${userLangCode === code ? '#0284c7' : '#e2e8f0'}`,
                         background: userLangCode === code ? '#f0f9ff' : '#ffffff',
                         display: 'flex',
@@ -678,12 +693,12 @@ export default function WapApp() {
                         boxSizing: 'border-box',
                       }}
                     >
-                      <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{lang.flag} {lang.nativeName} ({lang.name})</span>
+                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{lang.flag} {lang.nativeName} ({lang.name})</span>
                       {userLangCode === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
                     </div>
                   ))}
                 </div>
-                <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '10px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '10px', cursor: 'pointer', boxSizing: 'border-box' }}>
+                <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                   {t('next')}
                 </button>
               </div>
@@ -691,16 +706,16 @@ export default function WapApp() {
 
             {onboardingStep === 2 && (
               <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
-                <h3 style={{ fontSize: '14px', margin: '0 0 6px 0' }}>{t('step2Title')}</h3>
-                <p style={{ fontSize: '11px', color: '#64748b', margin: '0 0 10px 0' }}>{t('step2Desc')}</p>
-                <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '16px', boxSizing: 'border-box' }}>
+                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step2Title')}</h3>
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t('step2Desc')}</p>
+                <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px', boxSizing: 'border-box' }}>
                   {Object.entries(COUNTRIES).map(([code, c]) => (
                     <div
                       key={code}
                       onClick={() => setUserCountry(code)}
                       style={{
-                        padding: '8px 12px',
-                        borderRadius: '8px',
+                        padding: '10px 14px',
+                        borderRadius: '10px',
                         border: `2px solid ${userCountry === code ? '#0284c7' : '#e2e8f0'}`,
                         background: userCountry === code ? '#f0f9ff' : '#ffffff',
                         display: 'flex',
@@ -710,16 +725,16 @@ export default function WapApp() {
                         boxSizing: 'border-box',
                       }}
                     >
-                      <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{c.flag} {c.names[userLangCode] || c.names.en} <span style={{ fontSize: '10px', color: '#64748b' }}>({c.region})</span></span>
+                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.names[userLangCode] || c.names.en} <span style={{ fontSize: '11px', color: '#64748b' }}>({c.region})</span></span>
                       {userCountry === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
                     </div>
                   ))}
                 </div>
                 <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
-                  <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '10px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '10px', cursor: 'pointer', boxSizing: 'border-box' }}>
+                  <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                     {t('back')}
                   </button>
-                  <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '10px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '10px', cursor: 'pointer', boxSizing: 'border-box' }}>
+                  <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                     {t('next')}
                   </button>
                 </div>
@@ -728,19 +743,19 @@ export default function WapApp() {
 
             {onboardingStep === 3 && (
               <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
-                <h3 style={{ fontSize: '14px', margin: '0 0 10px 0' }}>{t('step3Title')}</h3>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px', boxSizing: 'border-box' }}>
+                <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t('step3Title')}</h3>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', boxSizing: 'border-box' }}>
                   <div
                     onClick={() => onboardingAvatarInputRef.current?.click()}
                     style={{
-                      width: '64px', height: '64px', borderRadius: '50%',
+                      width: '76px', height: '76px', borderRadius: '50%',
                       background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
-                      color: '#fff', fontSize: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      boxShadow: '0 4px 12px rgba(2,132,199,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden', boxSizing: 'border-box'
+                      color: '#fff', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      boxShadow: '0 6px 16px rgba(2,132,199,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden', boxSizing: 'border-box'
                     }}
                   >
                     {!userAvatar && <span>👤</span>}
-                    <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '9px', color: '#fff', textAlign: 'center', padding: '2px 0', boxSizing: 'border-box' }}>
+                    <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '10px', color: '#fff', textAlign: 'center', padding: '2px 0', boxSizing: 'border-box' }}>
                       📷 変更
                     </div>
                   </div>
@@ -752,20 +767,20 @@ export default function WapApp() {
                   maxLength={20}
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
-                  style={{ width: '100%', padding: '8px 10px', marginTop: '2px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '14px', fontWeight: 'bold', boxSizing: 'border-box' }}
                 />
                 <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', width: '100%', boxSizing: 'border-box' }}>自己紹介</label>
                 <input
                   type="text"
                   value={userBio}
                   onChange={(e) => setUserBio(e.target.value)}
-                  style={{ width: '100%', padding: '8px 10px', marginTop: '2px', marginBottom: '16px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px', boxSizing: 'border-box' }}
                 />
                 <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
-                  <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '10px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '10px', cursor: 'pointer', boxSizing: 'border-box' }}>
+                  <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                     {t('back')}
                   </button>
-                  <button onClick={() => setOnboardingStep(4)} style={{ flex: 2, padding: '10px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '10px', cursor: 'pointer', boxSizing: 'border-box' }}>
+                  <button onClick={() => setOnboardingStep(4)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                     {t('next')}
                   </button>
                 </div>
@@ -774,24 +789,36 @@ export default function WapApp() {
 
             {onboardingStep === 4 && (
               <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
-                <h3 style={{ fontSize: '14px', margin: '0 0 6px 0' }}>{t('step3TitleEula')}</h3>
-                {/* 改善：高さを少しコンパクトにして、スマホ画面でも確実に全体が見えてスクロールできるように調整 */}
+                <h3 style={{ fontSize: '15px', margin: '0 0 6px 0' }}>{t('step3TitleEula')}</h3>
                 <div
-                  style={{ maxHeight: '140px', overflowY: 'auto', background: '#f8fafc', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.5', whiteSpace: 'pre-line', marginBottom: '10px', boxSizing: 'border-box' }}
+                  onScroll={(e) => {
+                    const target = e.currentTarget;
+                    if (target.scrollHeight - target.scrollTop <= target.clientHeight + 15) {
+                      setHasScrolledToBottom(true);
+                    }
+                  }}
+                  style={{ maxHeight: '160px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '8px', boxSizing: 'border-box' }}
                 >
                   {EULA_FULL_TEXT}
+                  <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ 最後までスクロールしてください</div>
                 </div>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', color: '#0284c7', marginBottom: '14px', boxSizing: 'border-box' }}>
-                  <input type="checkbox" checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
+                {!hasScrolledToBottom && (
+                  <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', textAlign: 'center', marginBottom: '8px' }}>
+                    ⚠️ 利用規約を最後までスクロールするとチェックできるようになります
+                  </div>
+                )}
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#0284c7' : '#94a3b8', marginBottom: '14px', boxSizing: 'border-box' }}>
+                  <input type="checkbox" disabled={!hasScrolledToBottom} checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
                   <span>{t('eulaAgree')}</span>
                 </label>
                 <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
-                  <button onClick={() => setOnboardingStep(3)} style={{ flex: 1, padding: '10px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '10px', cursor: 'pointer', boxSizing: 'border-box' }}>
+                  <button onClick={() => setOnboardingStep(3)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
                     {t('back')}
                   </button>
                   <button
-                    disabled={!eulaChecked}
+                    disabled={!eulaChecked || !hasScrolledToBottom}
                     onClick={() => {
                       localStorage.setItem('wap_onboarded_v1', 'true');
                       setIsOnboarding(false);
@@ -799,13 +826,13 @@ export default function WapApp() {
                     }}
                     style={{
                       flex: 2,
-                      padding: '10px',
-                      background: eulaChecked ? '#0284c7' : '#94a3b8',
+                      padding: '12px',
+                      background: (eulaChecked && hasScrolledToBottom) ? '#0284c7' : '#94a3b8',
                       color: '#fff',
                       fontWeight: 'bold',
                       border: 'none',
-                      borderRadius: '10px',
-                      cursor: eulaChecked ? 'pointer' : 'not-allowed',
+                      borderRadius: '12px',
+                      cursor: (eulaChecked && hasScrolledToBottom) ? 'pointer' : 'not-allowed',
                       boxSizing: 'border-box',
                     }}
                   >
