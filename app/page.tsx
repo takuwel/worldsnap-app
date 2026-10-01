@@ -134,7 +134,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: '次へ進む',
     back: '戻る',
     startApp: '🚀 wap をはじめる',
-    eulaAgree: '利用規約および位置情報の利用方針に同意する',
+    eulaAgree: '利用規約および位置情報の利用方針に同意する（必須）',
     map: 'マップ',
     ranking: 'ランキング',
     profile: 'マイページ',
@@ -149,7 +149,14 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     translate: '🌐 翻訳する',
     close: '閉じる',
     posts: '投稿',
-    visited: '訪問国'
+    visited: '訪問国',
+    searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
+    settings: '⚙️ 設定メニュー',
+    langSetting: '🌐 表示言語',
+    baseCountrySetting: '📍 ベースの国',
+    guideTitle: '📖 アプリの操作説明',
+    eulaTitle: '📜 利用規約',
+    blockListTitle: '🚫 ブロック中ユーザー管理'
   },
   en: {
     step1Title: 'Step 1: Select Language',
@@ -161,7 +168,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: 'Next',
     back: 'Back',
     startApp: '🚀 Start wap',
-    eulaAgree: 'I agree to the Terms & Policy',
+    eulaAgree: 'I agree to the Terms & Policy (Required)',
     map: 'Map',
     ranking: 'Ranking',
     profile: 'Profile',
@@ -176,7 +183,14 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     translate: '🌐 Translate',
     close: 'Close',
     posts: 'Posts',
-    visited: 'Visited'
+    visited: 'Visited',
+    searchPlaceholder: '🔍 Search city, #tag...',
+    settings: '⚙️ Settings',
+    langSetting: '🌐 Language',
+    baseCountrySetting: '📍 Base Country',
+    guideTitle: '📖 App Guide',
+    eulaTitle: '📜 Terms of Service',
+    blockListTitle: '🚫 Blocked Users'
   },
   ko: {
     step1Title: 'Step 1: 언어 선택',
@@ -188,7 +202,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: '다음',
     back: '뒤로',
     startApp: '🚀 wap 시작하기',
-    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다',
+    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다 (필수)',
     map: '지도',
     ranking: '랭킹',
     profile: '프로필',
@@ -203,7 +217,14 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     translate: '🌐 번역하기',
     close: '닫기',
     posts: '게시물',
-    visited: '방문 국가'
+    visited: '방문 국가',
+    searchPlaceholder: '🔍 도시 / #태그 검색',
+    settings: '⚙️ 설정',
+    langSetting: '🌐 앱 언어',
+    baseCountrySetting: '📍 기본 국가',
+    guideTitle: '📖 앱 가이드',
+    eulaTitle: '📜 이용약관',
+    blockListTitle: '🚫 차단된 사용자'
   },
   zh: {
     step1Title: '步骤 1: 选择语言',
@@ -215,7 +236,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: '下一步',
     back: '返回',
     startApp: '🚀 开始使用 wap',
-    eulaAgree: '同意服务条款与位置政策',
+    eulaAgree: '同意服务条款与位置政策（必填）',
     map: '地图',
     ranking: '排行',
     profile: '我的',
@@ -230,7 +251,14 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     translate: '🌐 翻译',
     close: '关闭',
     posts: '动态',
-    visited: '已访问'
+    visited: '已访问',
+    searchPlaceholder: '🔍 搜索城市 / #标签...',
+    settings: '⚙️ 设置',
+    langSetting: '🌐 应用语言',
+    baseCountrySetting: '📍 基础国家',
+    guideTitle: '📖 操作指南',
+    eulaTitle: '📜 服务条款',
+    blockListTitle: '🚫 已屏蔽用户'
   }
 };
 
@@ -276,15 +304,30 @@ const INITIAL_SPOTS: Spot[] = [
   },
 ];
 
+// Apple審査対応の本格的利用規約
 const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー】
-第1条 目的
-本規約はwapの利用条件を定めるものです。
 
-第2条 位置情報
-現在地取得時にGPSを利用します。
+第1条（目的および同意）
+本規約は、マップ共有アプリ「wap」（以下「本アプリ」）の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本アプリを利用するものとします。
 
-第3条 禁止事項
-不適切な投稿や誹謗中傷を禁止します。`;
+第2条（位置情報の取得・利用について）
+1. 本アプリは、ユーザーがマップ画面右下の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一度だけ取得します。
+2. 取得した位置情報は、ユーザーの現在の現在地をマップの中心に表示する機能、および周辺の旅のスポットを検索・閲覧する機能の提供にのみ使用されます。
+3. ユーザーは端末の設定からいつでも位置情報の許可をオフにすることができます。
+
+第3条（コンテンツの安全性と禁止事項）
+公序良俗に反する投稿、誹謗中傷、暴言、過激なコンテンツの投稿は禁止されています。違反した場合は通報機能により自動削除およびアカウント凍結となります。`;
+
+const GUIDE_FULL_TEXT = `【wap の操作説明と使い方ガイド】
+
+1. 現在地に移動する「🎯ボタン」
+- マップ画面の右下にある「🎯（現在地ボタン）」をタップすると、現在地がマップの中心に表示されます。
+
+2. マップの操作とズーム
+- マップ上をダブルタップすると拡大します。
+
+3. 写真や動画の投稿
+- 下部の「📷＋ 写真 / 動画を追加」ボタンからメディアを投稿できます。`;
 
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
@@ -328,6 +371,27 @@ const GoogleMapComponent = ({
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
 
+  const getMapStyles = (themeMode: MapThemeType) => {
+    if (themeMode === 'dark') {
+      return [
+        { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+        { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
+        { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
+        { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
+        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#38414e' }] },
+        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#17263c' }] },
+      ];
+    } else if (themeMode === 'pastel') {
+      return [
+        { elementType: 'geometry', stylers: [{ color: '#f5f3ef' }] },
+        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#cbe2ed' }] },
+        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
+        { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#d5e8d4' }] },
+      ];
+    }
+    return [];
+  };
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -342,6 +406,7 @@ const GoogleMapComponent = ({
         disableDefaultUI: true,
         zoomControl: false,
         gestureHandling: 'greedy',
+        styles: getMapStyles(theme),
         backgroundColor: '#ffffff',
       });
 
@@ -387,6 +452,12 @@ const GoogleMapComponent = ({
   }, [userLang]);
 
   useEffect(() => {
+    if (mapInstanceRef.current && window.google && window.google.maps) {
+      mapInstanceRef.current.setOptions({ styles: getMapStyles(theme) });
+    }
+  }, [theme]);
+
+  useEffect(() => {
     if (mapInstanceRef.current && targetCenter && targetZoom) {
       mapInstanceRef.current.panTo({ lat: targetCenter[0], lng: targetCenter[1] });
       mapInstanceRef.current.setZoom(targetZoom);
@@ -430,11 +501,11 @@ export default function WapApp() {
   const [userCountry, setUserCountry] = useState<string>('JP');
 
   const [userName, setUserName] = useState<string>('namesnap');
-  const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
+  const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️️');
   const [userAvatar, setUserAvatar] = useState<string>('');
 
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
-  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(true);
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false); // スコロール必須に戻す
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
   const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
@@ -582,7 +653,7 @@ export default function WapApp() {
 
     const check = checkInappropriateContent(trimmedText);
     if (check.isViolating) {
-      showWarning('⚠️ 不適切な表現が含まれているため送信できません。');
+      showWarning('⚠️️ 不適切な表現が含まれているため送信できません。');
       return;
     }
 
@@ -771,13 +842,26 @@ export default function WapApp() {
               <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step3TitleEula')}</h3>
                 <div
+                  onScroll={(e) => {
+                    const target = e.currentTarget;
+                    if (target.scrollHeight - target.scrollTop <= target.clientHeight + 15) {
+                      setHasScrolledToBottom(true);
+                    }
+                  }}
                   style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', boxSizing: 'border-box' }}
                 >
                   {EULA_FULL_TEXT}
+                  <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ ここまでお読みください</div>
                 </div>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', color: '#0284c7', marginBottom: '16px', boxSizing: 'border-box' }}>
-                  <input type="checkbox" checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
+                {!hasScrolledToBottom && (
+                  <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', textAlign: 'center', marginBottom: '10px' }}>
+                    ⚠️ 利用規約を最後までスクロールしてください
+                  </div>
+                )}
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#0284c7' : '#94a3b8', marginBottom: '16px', boxSizing: 'border-box' }}>
+                  <input type="checkbox" disabled={!hasScrolledToBottom} checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
                   <span>{t('eulaAgree')}</span>
                 </label>
                 <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
@@ -785,21 +869,17 @@ export default function WapApp() {
                     {t('back')}
                   </button>
                   <button
-                    disabled={!eulaChecked}
-                    onClick={() => {
-                      localStorage.setItem('wap_onboarded_v1', 'true');
-                      setIsOnboarding(false);
-                      showToast('🌍 アプリを始めます！');
-                    }}
+                    disabled={!eulaChecked || !hasScrolledToBottom}
+                    onClick={handleCompleteOnboarding}
                     style={{
                       flex: 2,
                       padding: '12px',
-                      background: eulaChecked ? '#0284c7' : '#94a3b8',
+                      background: (eulaChecked && hasScrolledToBottom) ? '#0284c7' : '#94a3b8',
                       color: '#fff',
                       fontWeight: 'bold',
                       border: 'none',
                       borderRadius: '12px',
-                      cursor: eulaChecked ? 'pointer' : 'not-allowed',
+                      cursor: (eulaChecked && hasScrolledToBottom) ? 'pointer' : 'not-allowed',
                       boxSizing: 'border-box',
                     }}
                   >
