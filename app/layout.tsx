@@ -7,7 +7,7 @@ export const metadata = {
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'default', // ここを 'default'（白背景に黒文字）にすることでインカメラ周辺が白くなります
     title: 'wap',
   },
 };
