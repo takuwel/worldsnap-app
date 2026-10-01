@@ -134,7 +134,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: '次へ進む',
     back: '戻る',
     startApp: '🚀 wap をはじめる',
-    eulaAgree: '利用規約および位置情報の利用方針に同意する（必須）',
+    eulaAgree: '利用規約および位置情報の利用方針に同意する',
     map: 'マップ',
     ranking: 'ランキング',
     profile: 'マイページ',
@@ -161,7 +161,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: 'Next',
     back: 'Back',
     startApp: '🚀 Start wap',
-    eulaAgree: 'I agree to the Terms & Policy (Required)',
+    eulaAgree: 'I agree to the Terms & Policy',
     map: 'Map',
     ranking: 'Ranking',
     profile: 'Profile',
@@ -188,7 +188,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: '다음',
     back: '뒤로',
     startApp: '🚀 wap 시작하기',
-    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다 (필수)',
+    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다',
     map: '지도',
     ranking: '랭킹',
     profile: '프로필',
@@ -215,7 +215,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: '下一步',
     back: '返回',
     startApp: '🚀 开始使用 wap',
-    eulaAgree: '同意服务条款与位置政策（必填）',
+    eulaAgree: '同意服务条款与位置政策',
     map: '地图',
     ranking: '排行',
     profile: '我的',
@@ -234,7 +234,6 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
   }
 };
 
-// ご要望対応①：ベースマップ選択肢（各言語対応の国名辞書つき）
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
   JP: { names: { ja: '日本', en: 'Japan', ko: '일본', zh: '日本' }, flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   KR: { names: { ja: '韓国', en: 'South Korea', ko: '한국', zh: '韩国' }, flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
@@ -278,19 +277,19 @@ const INITIAL_SPOTS: Spot[] = [
 ];
 
 const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー】
-第1条（目的および同意）
-本規約は「wap」の利用条件を定めるものです。
+第1条 目的
+本規約はwapの利用条件を定めるものです。
 
-第2条（位置情報の利用について）
-現在地ボタンをタップした際にGPS位置情報を一度だけ取得します。
+第2条 位置情報
+現在地取得時にGPSを利用します。
 
-第3条（禁止事項）
-公序良俗に反する投稿や不適切なコンテンツの投稿は禁止します。`;
+第3条 禁止事項
+不適切な投稿や誹謗中傷を禁止します。`;
 
-const GUIDE_FULL_TEXT = `【wap の操作説明と使い方ガイド】
-1. 現在地に移動する「🎯ボタン」
-2. マップの操作とズーム
-3. 写真や動画の投稿`;
+const GUIDE_FULL_TEXT = `【wap 操作ガイド】
+1. 現在地ボタン
+2. マップ操作
+3. 投稿機能`;
 
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
@@ -436,11 +435,11 @@ export default function WapApp() {
   const [userCountry, setUserCountry] = useState<string>('JP');
 
   const [userName, setUserName] = useState<string>('namesnap');
-  const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️️');
+  const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
   const [userAvatar, setUserAvatar] = useState<string>('');
 
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
-  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false);
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(true); // 最初からtrueにしてスムーズに進行可能に
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
   const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
@@ -554,7 +553,6 @@ export default function WapApp() {
     }
   };
 
-  // ご要望対応③：翻訳ボタンを押したら元の言語文が選択されている設定言語に丸々変わるようにする
   const handleTranslateDescription = (spotId: string, originalText: string) => {
     if (translatedDescriptions[spotId]) {
       setTranslatedDescriptions(prev => {
@@ -576,7 +574,7 @@ export default function WapApp() {
     } else if (targetLang === 'zh') {
       translated = `[中文翻译]\n${originalText} (这是一个非常棒的旅游胜地！)`;
     } else {
-      translated = `[Translated to English]:\n${originalText} (Wonderful place to visit!)`;
+      translated = `[Translated]:\n${originalText} (Amazing spot!)`;
     }
 
     setTranslatedDescriptions(prev => ({ ...prev, [spotId]: translated }));
@@ -712,7 +710,6 @@ export default function WapApp() {
                         boxSizing: 'border-box',
                       }}
                     >
-                      {/* ご要望対応①：言語を変えた時にベースマップ選択の国名もその言語になる */}
                       <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.names[userLangCode] || c.names.en} <span style={{ fontSize: '11px', color: '#64748b' }}>({c.region})</span></span>
                       {userCountry === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
                     </div>
@@ -785,7 +782,7 @@ export default function WapApp() {
                       setHasScrolledToBottom(true);
                     }
                   }}
-                  style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', boxSizing: 'border-box' }}
+                  style={{ maxHeight: '160px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', boxSizing: 'border-box' }}
                 >
                   {EULA_FULL_TEXT}
                   <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ ここまでお読みください</div>
@@ -956,7 +953,6 @@ export default function WapApp() {
                 <span>{t('openGoogleMaps')}</span>
               </a>
 
-              {/* ご要望対応④：保存のハートの色も赤（#f43f5e）にする */}
               <button
                 onClick={() => handleToggleLike(selectedSpot.id)}
                 style={{
