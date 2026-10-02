@@ -35,7 +35,7 @@ export default function RootLayout({
           }
         ` }} />
       </head>
-      <body style={{ margin: 0, padding: 0, backgroundColor: '#ffffff', color: '#0f172a' }}>
+      <body style={{ margin: 0, padding: 0, backgroundColor: '#ffffff', color: '#0f172a', height: '100%', width: '100%', overflow: 'hidden' }}>
         {children}
       </body>
     </html>
