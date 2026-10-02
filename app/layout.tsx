@@ -1,6 +1,4 @@
-import type { Metadata, Viewport } from 'next';
-
-export const metadata: Metadata = {
+export const metadata = {
   title: 'wap',
   description: '世界中を旅して、思い出をつなごう',
   appleWebApp: {
@@ -8,20 +6,6 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'wap',
   },
-  icons: {
-    icon: '/icon-192.png',
-    apple: '/icon-192.png',
-  },
-};
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  viewportFit: 'cover',
-  themeColor: '#ffffff',
-  colorScheme: 'light',
 };
 
 export default function RootLayout({
@@ -32,16 +16,15 @@ export default function RootLayout({
   return (
     <html lang="ja" style={{ backgroundColor: '#ffffff', colorScheme: 'light', height: '100%', width: '100%', margin: 0, padding: 0 }}>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="theme-color" content="#ffffff" />
         <style dangerouslySetInnerHTML={{ __html: `
-          :root {
-            color-scheme: light !important;
-          }
           *, *::before, *::after {
             box-sizing: border-box;
           }
           html, body {
             background-color: #ffffff !important;
-            color: #0f172a !important;
             margin: 0;
             padding: 0;
             width: 100vw;
@@ -52,7 +35,7 @@ export default function RootLayout({
           }
         ` }} />
       </head>
-      <body style={{ margin: 0, padding: 0, backgroundColor: '#ffffff', color: '#0f172a', height: '100%', width: '100%', overflow: 'hidden' }}>
+      <body style={{ margin: 0, padding: 0, backgroundColor: '#ffffff', color: '#0f172a' }}>
         {children}
       </body>
     </html>
