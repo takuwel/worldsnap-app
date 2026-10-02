@@ -133,7 +133,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     step3TitleEula: 'Step 4: 利用規約 & 位置情報ポリシーの確認',
     next: '次へ進む',
     back: '戻る',
-    startApp: '🚀 wap をはじめる',
+    startApp: '🚀 WorldSnap をはじめる',
     eulaAgree: '利用規約および位置情報の利用方針に同意する',
     map: 'Map',
     ranking: 'Ranking',
@@ -167,7 +167,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     step3TitleEula: 'Step 4: Terms of Service & Location Policy',
     next: 'Next',
     back: 'Back',
-    startApp: '🚀 Start wap',
+    startApp: '🚀 Start WorldSnap',
     eulaAgree: 'I agree to the Terms & Policy',
     map: 'Map',
     ranking: 'Ranking',
@@ -201,7 +201,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     step3TitleEula: 'Step 4: 이용약관 및 위치정보 정책',
     next: '다음',
     back: '뒤로',
-    startApp: '🚀 wap 시작하기',
+    startApp: '🚀 WorldSnap 시작하기',
     eulaAgree: '이용약관 및 위치정보 정책에 동의합니다',
     map: 'Map',
     ranking: 'Ranking',
@@ -235,7 +235,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     step3TitleEula: 'Step 4: 服务条款与位置政策',
     next: '下一步',
     back: '返回',
-    startApp: '🚀 开始使用 wap',
+    startApp: '🚀 开始使用 WorldSnap',
     eulaAgree: '同意服务条款与位置政策',
     map: 'Map',
     ranking: 'Ranking',
@@ -557,6 +557,33 @@ export default function WapApp() {
     }
   };
 
+  // 検索バーからの移動ハンドラーを復元・定義
+  const handleJumpLocationSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!mapSearchKeyword.trim()) return;
+
+    if (mapSearchKeyword.startsWith('#')) {
+      showToast(`🏷️ タグ「${mapSearchKeyword}」で絞り込みました`);
+      setMapSearchSuggestions([]);
+      return;
+    }
+
+    if (mapSearchSuggestions.length > 0) {
+      const item = mapSearchSuggestions[0];
+      setTargetCenter([parseFloat(item.lat), parseFloat(item.lon)]);
+      setTargetZoom(13);
+      setMapSearchKeyword(item.display_name.split(',')[0]);
+      setMapSearchSuggestions([]);
+    }
+  };
+
+  const handleSelectMapSuggestion = (item: PlaceSuggestion) => {
+    setTargetCenter([parseFloat(item.lat), parseFloat(item.lon)]);
+    setTargetZoom(13);
+    setMapSearchKeyword(item.display_name.split(',')[0]);
+    setMapSearchSuggestions([]);
+  };
+
   const handleOpenSpot = (spot: Spot) => {
     setSpots(prev => prev.map(s => s.id === spot.id ? { ...s, viewsCount: s.viewsCount + 1 } : s));
     setSelectedSpot({ ...spot, viewsCount: spot.viewsCount + 1 });
@@ -583,6 +610,40 @@ export default function WapApp() {
     setTargetCenter([target.lat, target.lon]);
     setTargetZoom(target.zoom);
     showToast(`🌍 ${target.names[userLangCode] || target.names.en} へようこそ！`);
+  };
+
+  const filteredSpots = useMemo(() => {
+    return spots.filter((s) => {
+      if (!selectedCategories.includes(s.category)) return false;
+      return true;
+    });
+  }, [spots, selectedCategories]);
+
+  const rankingSpots = useMemo(() => {
+    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
+  }, [spots]);
+
+  const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
+  const visitedCountryCount = useMemo(() => new Set(mySpots.map((s) => s.countryCode)).size, [mySpots]);
+  const totalMySavedCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.savedCount || 0), 0), [mySpots]);
+  const totalMyViewsCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.viewsCount || 0), 0), [mySpots]);
+  const userRank = useMemo(() => getUserTitle(mySpots.length), [mySpots.length]);
+
+  const handleStepZoomOut = () => {
+    const conf = COUNTRIES[userCountry] || COUNTRIES.JP;
+    setTargetCenter([conf.lat, conf.lon]);
+    setTargetZoom(conf.zoom);
+    showToast(`🇯🇵 ${conf.names[userLangCode] || conf.names.en} 全体へ戻しました`);
+  };
+
+  const handleSaveMyMap = () => {
+    showToast('💾 マップを保存しました！');
+  };
+
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      showToast('📷 写真が選択されました');
+    }
   };
 
   const themeAccent = mapTheme === 'dark' ? '#38bdf8' : mapTheme === 'pastel' ? '#d97706' : '#0284c7';
@@ -820,7 +881,7 @@ export default function WapApp() {
         {/* マップタブ */}
         <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none', boxSizing: 'border-box' }}>
           
-          {/* 写真の写真撮影位置・検索バーとカテゴリー・スコープボタン配置（写真の通りの配置） */}
+          {/* 写真の通りのボタン配置（検索バー、View/Gourmet/Rain、ワールド選択） */}
           <div style={{ position: 'absolute', top: '10px', left: '12px', right: '12px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none', boxSizing: 'border-box' }}>
             
             {/* 1段目: 検索バー */}
@@ -841,9 +902,24 @@ export default function WapApp() {
                   {isSearchingLocation ? '...' : '🔍'}
                 </button>
               </form>
+
+              {mapSearchSuggestions.length > 0 && (
+                <div style={{ position: 'absolute', top: '44px', insetInline: 0, background: '#ffffff', color: '#000', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden', zIndex: 600, border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
+                  {mapSearchSuggestions.map((item) => (
+                    <div
+                      key={item.place_id}
+                      onClick={() => handleSelectMapSuggestion(item)}
+                      style={{ padding: '8px 12px', fontSize: '12px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxSizing: 'border-box' }}
+                    >
+                      <span>📍</span>
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* 2段目: カテゴリーボタン（View, Gourmet, Rainy）とワールド選択 */}
+            {/* 2段目: カテゴリフィルター（View, Gourmet, Rainy）とワールド選択 */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '8px', boxSizing: 'border-box' }}>
               <div style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.95)', padding: '4px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
                 {(['view', 'gourmet', 'rain'] as const).map((cat) => {
@@ -866,7 +942,7 @@ export default function WapApp() {
                       }}
                     >
                       {isChecked ? '✓ ' : ''}
-                      {cat === 'view' ? '🏔️️ View' : cat === 'gourmet' ? `🍔 Gourmet` : `🌧️ Rainy`}
+                      {cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? `🍔 Gourmet` : `🌧️ Rainy`}
                     </button>
                   );
                 })}
