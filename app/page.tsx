@@ -135,22 +135,22 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     back: '戻る',
     startApp: '🚀 WorldSnap をはじめる',
     eulaAgree: '利用規約および位置情報の利用方針に同意する',
-    map: 'Map',
-    ranking: 'Ranking',
-    profile: 'Profile',
-    addPhoto: 'Add Media',
+    map: 'マップ',
+    ranking: 'ランキング',
+    profile: 'マイページ',
+    addPhoto: '写真 / 動画を追加',
     view: 'View',
-    gourmet: 'Gourmet',
-    rain: 'Rainy',
-    myMap: 'My Map',
-    friends: 'Friends',
-    world: 'World',
+    gourmet: 'グルメ',
+    rain: '雨の日',
+    myMap: 'マイマップ',
+    friends: 'フレンド',
+    world: 'ワールド',
     openGoogleMaps: 'Googleマップで経路案内',
     translate: '🌐 翻訳する',
     close: '閉じる',
-    posts: 'Posts',
-    visited: 'Visited',
-    searchPlaceholder: 'Search city, #tag...',
+    posts: '投稿',
+    visited: '訪問国',
+    searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
     settings: '⚙️ 設定メニュー',
     langSetting: '🌐 表示言語',
     baseCountrySetting: '📍 ベースの国',
@@ -184,7 +184,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     close: 'Close',
     posts: 'Posts',
     visited: 'Visited',
-    searchPlaceholder: 'Search city, #tag...',
+    searchPlaceholder: '🔍 Search city, #tag...',
     settings: '⚙️ Settings',
     langSetting: '🌐 Language',
     baseCountrySetting: '📍 Base Country',
@@ -203,22 +203,22 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     back: '뒤로',
     startApp: '🚀 WorldSnap 시작하기',
     eulaAgree: '이용약관 및 위치정보 정책에 동의합니다',
-    map: 'Map',
-    ranking: 'Ranking',
-    profile: 'Profile',
-    addPhoto: 'Add Media',
-    view: 'View',
-    gourmet: 'Gourmet',
-    rain: 'Rainy',
+    map: '지도',
+    ranking: '랭킹',
+    profile: '프로필',
+    addPhoto: '사진/영상 추가',
+    view: '경치',
+    gourmet: '맛집',
+    rain: '비',
     myMap: '내 지도',
     friends: '친구',
-    world: 'World',
+    world: '전체',
     openGoogleMaps: 'Google 지도 길찾기',
     translate: '🌐 번역하기',
     close: '닫기',
     posts: '게시물',
     visited: '방문 국가',
-    searchPlaceholder: 'Search city, #tag...',
+    searchPlaceholder: '🔍 도시 / #태그 검색',
     settings: '⚙️ 설정',
     langSetting: '🌐 앱 언어',
     baseCountrySetting: '📍 기본 국가',
@@ -237,22 +237,22 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     back: '返回',
     startApp: '🚀 开始使用 WorldSnap',
     eulaAgree: '同意服务条款与位置政策',
-    map: 'Map',
-    ranking: 'Ranking',
-    profile: 'Profile',
-    addPhoto: 'Add Media',
-    view: 'View',
-    gourmet: 'Gourmet',
-    rain: 'Rainy',
+    map: '地图',
+    ranking: '排行',
+    profile: '我的',
+    addPhoto: '添加媒体',
+    view: '风景',
+    gourmet: '美食',
+    rain: '雨天',
     myMap: '我的地图',
     friends: '好友',
-    world: 'World',
+    world: '世界',
     openGoogleMaps: '谷歌地图导航',
     translate: '🌐 翻译',
     close: '关闭',
     posts: '动态',
     visited: '已访问',
-    searchPlaceholder: 'Search city, #tag...',
+    searchPlaceholder: '🔍 搜索城市 / #标签...',
     settings: '⚙️ 设置',
     langSetting: '🌐 应用语言',
     baseCountrySetting: '📍 基础国家',
@@ -462,7 +462,7 @@ export default function WapApp() {
   const [userAvatar, setUserAvatar] = useState<string>('');
 
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
-  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(true);
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false);
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
   const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
@@ -583,7 +583,6 @@ export default function WapApp() {
     setMapSearchSuggestions([]);
   };
 
-  // ご要望対応：ダブルタップ関数の定義を追加してエラーを解消
   const handleMapDoubleTap = (lat: number, lon: number) => {
     setTargetCenter([lat, lon]);
     setTargetZoom(Math.min(currentMapZoom + 2.5, 17));
@@ -802,15 +801,28 @@ export default function WapApp() {
 
             {onboardingStep === 4 && (
               <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
-                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step3TitleEula')}</h3>
+                <h3 style={{ fontSize: '15px', margin: '0 0 6px 0' }}>{t('step3TitleEula')}</h3>
                 <div
-                  style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', boxSizing: 'border-box' }}
+                  onScroll={(e) => {
+                    const target = e.currentTarget;
+                    if (target.scrollHeight - target.scrollTop <= target.clientHeight + 15) {
+                      setHasScrolledToBottom(true);
+                    }
+                  }}
+                  style={{ maxHeight: '160px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '8px', boxSizing: 'border-box' }}
                 >
                   {EULA_FULL_TEXT}
+                  <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ ここまでお読みください</div>
                 </div>
 
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', color: '#0284c7', marginBottom: '16px', boxSizing: 'border-box' }}>
-                  <input type="checkbox" checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
+                {!hasScrolledToBottom && (
+                  <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', textAlign: 'center', marginBottom: '8px' }}>
+                    ⚠️ 利用規約を最後までスクロールするとチェックできるようになります
+                  </div>
+                )}
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#0284c7' : '#94a3b8', marginBottom: '14px', boxSizing: 'border-box' }}>
+                  <input type="checkbox" disabled={!hasScrolledToBottom} checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
                   <span>{t('eulaAgree')}</span>
                 </label>
                 <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
@@ -818,17 +830,17 @@ export default function WapApp() {
                     {t('back')}
                   </button>
                   <button
-                    disabled={!eulaChecked}
+                    disabled={!eulaChecked || !hasScrolledToBottom}
                     onClick={handleCompleteOnboarding}
                     style={{
                       flex: 2,
                       padding: '12px',
-                      background: eulaChecked ? '#0284c7' : '#94a3b8',
+                      background: (eulaChecked && hasScrolledToBottom) ? '#0284c7' : '#94a3b8',
                       color: '#fff',
                       fontWeight: 'bold',
                       border: 'none',
                       borderRadius: '12px',
-                      cursor: eulaChecked ? 'pointer' : 'not-allowed',
+                      cursor: (eulaChecked && hasScrolledToBottom) ? 'pointer' : 'not-allowed',
                       boxSizing: 'border-box',
                     }}
                   >
@@ -886,7 +898,7 @@ export default function WapApp() {
         {/* マップタブ */}
         <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none', boxSizing: 'border-box' }}>
           
-          {/* 写真の通りのボタン配置（検索バー、View/Gourmet/Rain、ワールド選択） */}
+          {/* 写真通りのボタン配置（検索バー、View/Gourmet/Rain、ワールド選択） */}
           <div style={{ position: 'absolute', top: '10px', left: '12px', right: '12px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none', boxSizing: 'border-box' }}>
             
             {/* 1段目: 検索バー */}
@@ -981,7 +993,7 @@ export default function WapApp() {
               onDoubleTap={handleMapDoubleTap}
             />
 
-            {/* 右下の丸いボタン群（写真の配置通り） */}
+            {/* 右下の丸いボタン群 */}
             <div style={{ position: 'absolute', bottom: '75px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '10px', boxSizing: 'border-box' }}>
               <button
                 title="現在地へ移動"
@@ -1035,7 +1047,7 @@ export default function WapApp() {
             </div>
           )}
 
-          {/* 下部「Add Media」ボタンと国名表示（写真の配置通り） */}
+          {/* 下部「Add Media」ボタン */}
           <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '56px', minHeight: '56px', maxHeight: '56px', flexShrink: '0', boxSizing: 'border-box' }}>
             <div>
               <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a' }}>📍 {currentConfig.flag} {currentConfig.names[userLangCode] || currentConfig.names.en}</div>
