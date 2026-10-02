@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & グローバル多言語辞書 / 厳選140カ国マスターデータ
+// 1. 型定義 & 多言語辞書 (日本語完全対応版)
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -135,22 +135,22 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     back: '戻る',
     startApp: '🚀 WorldSnap をはじめる',
     eulaAgree: '利用規約および位置情報の利用方針に同意する',
-    map: 'Map',
-    ranking: 'Ranking',
-    profile: 'Profile',
-    addPhoto: 'Add Media',
+    map: 'マップ',
+    ranking: 'ランキング',
+    profile: 'マイページ',
+    addPhoto: '写真 / 動画を追加',
     view: 'View',
-    gourmet: 'Gourmet',
-    rain: 'Rainy',
-    myMap: 'My Map',
-    friends: 'Friends',
-    world: 'World',
+    gourmet: 'グルメ',
+    rain: '雨の日',
+    myMap: 'マイマップ',
+    friends: 'フレンド',
+    world: 'ワールド',
     openGoogleMaps: 'Googleマップで経路案内',
     translate: '🌐 翻訳する',
     close: '閉じる',
-    posts: 'Posts',
-    visited: 'Visited',
-    searchPlaceholder: 'Search city, #tag...',
+    posts: '投稿',
+    visited: '訪問国',
+    searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
     settings: '⚙️ 設定メニュー',
     langSetting: '🌐 表示言語',
     baseCountrySetting: '📍 ベースの国',
@@ -184,7 +184,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     close: 'Close',
     posts: 'Posts',
     visited: 'Visited',
-    searchPlaceholder: 'Search city, #tag...',
+    searchPlaceholder: '🔍 Search city, #tag...',
     settings: '⚙️ Settings',
     langSetting: '🌐 Language',
     baseCountrySetting: '📍 Base Country',
@@ -203,23 +203,23 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     back: '뒤로',
     startApp: '🚀 WorldSnap 시작하기',
     eulaAgree: '이용약관 및 위치정보 정책에 동의합니다',
-    map: 'Map',
-    ranking: 'Ranking',
-    profile: 'Profile',
-    addPhoto: 'Add Media',
-    view: 'View',
-    gourmet: 'Gourmet',
-    rain: 'Rainy',
+    map: '지도',
+    ranking: '랭킹',
+    profile: '프로필',
+    addPhoto: '사진/영상 추가',
+    view: '경치',
+    gourmet: '맛집',
+    rain: '비',
     myMap: '내 지도',
     friends: '친구',
-    world: 'World',
+    world: '전체',
     openGoogleMaps: 'Google 지도 길찾기',
     translate: '🌐 번역하기',
     close: '닫기',
     posts: '게시물',
     visited: '방문 국가',
-    searchPlaceholder: 'Search city, #tag...',
-    settings: '⚙️ 설정',
+    searchPlaceholder: '🔍 도시 / #태그 검색',
+    settings: '⚙️️ 설정',
     langSetting: '🌐 앱 언어',
     baseCountrySetting: '📍 기본 국가',
     guideTitle: '📖 앱 가이드',
@@ -237,22 +237,22 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     back: '返回',
     startApp: '🚀 开始使用 WorldSnap',
     eulaAgree: '同意服务条款与位置政策',
-    map: 'Map',
-    ranking: 'Ranking',
-    profile: 'Profile',
-    addPhoto: 'Add Media',
-    view: 'View',
-    gourmet: 'Gourmet',
-    rain: 'Rainy',
+    map: '地图',
+    ranking: '排行',
+    profile: '我的',
+    addPhoto: '添加媒体',
+    view: '风景',
+    gourmet: '美食',
+    rain: '雨天',
     myMap: '我的地图',
     friends: '好友',
-    world: 'World',
+    world: '世界',
     openGoogleMaps: '谷歌地图导航',
     translate: '🌐 翻译',
     close: '关闭',
     posts: '动态',
     visited: '已访问',
-    searchPlaceholder: 'Search city, #tag...',
+    searchPlaceholder: '🔍 搜索城市 / #标签...',
     settings: '⚙️ 设置',
     langSetting: '🌐 应用语言',
     baseCountrySetting: '📍 基础国家',
@@ -327,7 +327,7 @@ function convertDMSToDD(dms: number[], ref: string): number {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント
+// 2. Google Maps API コンポーネント (言語連動対応版)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -391,8 +391,9 @@ const GoogleMapComponent = ({
       });
     };
 
+    // Google Maps API script の動的ロード（言語連動）
+    const existingScript = document.getElementById('google-maps-script');
     if (!window.google || !window.google.maps) {
-      const existingScript = document.getElementById('google-maps-script');
       if (!existingScript) {
         const script = document.createElement('script');
         script.id = 'google-maps-script';
@@ -562,7 +563,7 @@ export default function WapApp() {
     if (!mapSearchKeyword.trim()) return;
 
     if (mapSearchKeyword.startsWith('#')) {
-      showToast(`🏷️ タグ「${mapSearchKeyword}」で絞り込みました`);
+      showToast(`🏷️️ タグ「${mapSearchKeyword}」で絞り込みました`);
       setMapSearchSuggestions([]);
       return;
     }
@@ -668,7 +669,7 @@ export default function WapApp() {
       {isOnboarding && (
         <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', boxSizing: 'border-box' }}>
           <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center', boxSizing: 'border-box', margin: '0 auto' }}>
-            <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
+            <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️️</div>
             <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>WorldSnap</h1>
             <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
 
@@ -972,10 +973,7 @@ export default function WapApp() {
               userLang={userLangCode}
               onMoveEnd={handleMapMoveEnd}
               onSelectSpot={handleOpenSpot}
-              onDoubleTap={(lat, lon) => {
-                setTargetCenter([lat, lon]);
-                setTargetZoom(Math.min(currentMapZoom + 2, 17));
-              }}
+              onDoubleTap={handleMapDoubleTap}
             />
 
             {/* 右下の丸いボタン群（写真の配置通り） */}
@@ -1145,7 +1143,7 @@ export default function WapApp() {
           style={{ background: 'transparent', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', color: currentTab === 'map' ? themeAccent : '#94a3b8', cursor: 'pointer', padding: '4px 16px', boxSizing: 'border-box' }}
         >
           <span style={{ fontSize: '18px' }}>🗺️</span>
-          <span style={{ fontSize: '11px', fontWeight: currentTab === 'map' ? 'bold' : 'normal' }}>Map</span>
+          <span style={{ fontSize: '11px', fontWeight: currentTab === 'map' ? 'bold' : 'normal' }}>{t('map')}</span>
         </button>
 
         <button
@@ -1153,7 +1151,7 @@ export default function WapApp() {
           style={{ background: 'transparent', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', color: currentTab === 'ranking' ? themeAccent : '#94a3b8', cursor: 'pointer', padding: '4px 16px', boxSizing: 'border-box' }}
         >
           <span style={{ fontSize: '18px' }}>🏆</span>
-          <span style={{ fontSize: '11px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>Ranking</span>
+          <span style={{ fontSize: '11px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t('ranking')}</span>
         </button>
 
         <button
@@ -1161,7 +1159,7 @@ export default function WapApp() {
           style={{ background: 'transparent', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', color: currentTab === 'profile' ? themeAccent : '#94a3b8', cursor: 'pointer', padding: '4px 16px', boxSizing: 'border-box' }}
         >
           <span style={{ fontSize: '18px' }}>👤</span>
-          <span style={{ fontSize: '11px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal' }}>Profile</span>
+          <span style={{ fontSize: '11px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal' }}>{t('profile')}</span>
         </button>
       </nav>
     </div>
