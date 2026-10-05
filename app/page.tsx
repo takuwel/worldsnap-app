@@ -134,7 +134,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: '次へ進む',
     back: '戻る',
     startApp: '🚀 wap をはじめる',
-    eulaAgree: '利用規約および位置情報の利用方針に同意する（必須）',
+    eulaAgree: '利用規約および位置情報の利用方針に同意する',
     map: 'マップ',
     ranking: 'ランキング',
     profile: 'マイページ',
@@ -168,7 +168,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: 'Next',
     back: 'Back',
     startApp: '🚀 Start wap',
-    eulaAgree: 'I agree to the Terms & Policy (Required)',
+    eulaAgree: 'I agree to the Terms & Policy',
     map: 'Map',
     ranking: 'Ranking',
     profile: 'Profile',
@@ -202,7 +202,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: '다음',
     back: '뒤로',
     startApp: '🚀 wap 시작하기',
-    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다 (필수)',
+    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다',
     map: '지도',
     ranking: '랭킹',
     profile: '프로필',
@@ -236,7 +236,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     next: '下一步',
     back: '返回',
     startApp: '🚀 开始使用 wap',
-    eulaAgree: '同意服务条款与位置政策（必填）',
+    eulaAgree: '同意服务条款与位置政策',
     map: '地图',
     ranking: '排行',
     profile: '我的',
@@ -262,14 +262,14 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
   }
 };
 
-export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
-  JP: { names: { ja: '日本', en: 'Japan', ko: '일본', zh: '日本' }, flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
-  KR: { names: { ja: '韓国', en: 'South Korea', ko: '한국', zh: '韩国' }, flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
-  CN: { names: { ja: '中国', en: 'China', ko: '중국', zh: '中国' }, flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
-  TW: { names: { ja: '台湾', en: 'Taiwan', ko: '대만', zh: '台湾' }, flag: '🇹🇼', region: '🌏 アジア', lat: 23.6978, lon: 120.9605, zoom: 7 },
-  US: { names: { ja: 'アメリカ', en: 'USA', ko: '미국', zh: '美国' }, flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
-  FR: { names: { ja: 'フランス', en: 'France', ko: '프랑스', zh: '法国' }, flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
-  GB: { names: { ja: 'イギリス', en: 'UK', ko: '영국', zh: '英国' }, flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 }
+export const COUNTRIES: Record<string, { name: string; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
+  JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
+  KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
+  CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
+  TW: { name: '台湾 (Taiwan)', flag: '🇹🇼', region: '🌏 アジア', lat: 23.6978, lon: 120.9605, zoom: 7 },
+  US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
+  FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
+  GB: { name: 'イギリス (UK)', flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -470,7 +470,7 @@ export default function WapApp() {
   const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
   
   const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
-  const [isSearchingLocation, setIsSearchingLocation] = useState<boolean>(false);
+  const [isSearchingLocation] = useState<boolean>(false);
   const [mapSearchSuggestions, setMapSearchSuggestions] = useState<PlaceSuggestion[]>([]);
 
   const [isAdVisible, setIsAdVisible] = useState<boolean>(true);
@@ -489,6 +489,7 @@ export default function WapApp() {
   const [spots, setSpots] = useState<Spot[]>(INITIAL_SPOTS);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0);
+  const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [likedSpotIds, setLikedSpotIds] = useState<string[]>([]);
 
   const [profileSubTab, setProfileSubTab] = useState<'posts' | 'timeline' | 'saved' | 'badges' | 'friends'>('posts');
@@ -648,7 +649,6 @@ export default function WapApp() {
   }, [spots]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
-  const savedSpots = useMemo(() => spots.filter((s) => likedSpotIds.includes(s.id)), [spots, likedSpotIds]);
   const visitedCountryCount = useMemo(() => new Set(mySpots.map((s) => s.countryCode)).size, [mySpots]);
   const totalMySavedCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.savedCount || 0), 0), [mySpots]);
   const totalMyViewsCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.viewsCount || 0), 0), [mySpots]);
