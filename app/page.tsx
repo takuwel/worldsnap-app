@@ -110,7 +110,7 @@ function checkInappropriateContent(text: string): { isViolating: boolean; matche
 
 function getUserTitle(count: number) {
   if (count >= 100) return { title: '👑 百景の覇者', color: '#eab308' };
-  if (count >= 50) return { title: '🏔️️ 五十景の開拓者', color: '#8b5cf6' };
+  if (count >= 50) return { title: '🏔️ 五十景の開拓者', color: '#8b5cf6' };
   if (count >= 10) return { title: '🎒 十景のトラベラー', color: '#38bdf8' };
   if (count >= 1) return { title: '🌱 見習い探検家', color: '#22c55e' };
   return { title: '🐣 旅のビギナー', color: '#94a3b8' };
@@ -470,7 +470,7 @@ export default function WapApp() {
   const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
   
   const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
-  const [isSearchingLocation] = useState<boolean>(false);
+  const [isSearchingLocation, setIsSearchingLocation] = useState<boolean>(false);
   const [mapSearchSuggestions, setMapSearchSuggestions] = useState<PlaceSuggestion[]>([]);
 
   const [isAdVisible, setIsAdVisible] = useState<boolean>(true);
@@ -613,10 +613,9 @@ export default function WapApp() {
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
     setTargetZoom(target.zoom);
-    showToast(`🌍 ${target.names[userLangCode] || target.names.en} へようこそ！`);
+    showToast(`🌍 ${target.name} へようこそ！`);
   };
 
-  // 足りていなかった handlePhotoSelect 関数を追加
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -649,6 +648,7 @@ export default function WapApp() {
   }, [spots]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
+  const savedSpots = useMemo(() => spots.filter((s) => likedSpotIds.includes(s.id)), [spots, likedSpotIds]);
   const visitedCountryCount = useMemo(() => new Set(mySpots.map((s) => s.countryCode)).size, [mySpots]);
   const totalMySavedCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.savedCount || 0), 0), [mySpots]);
   const totalMyViewsCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.viewsCount || 0), 0), [mySpots]);
@@ -658,7 +658,7 @@ export default function WapApp() {
     const conf = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([conf.lat, conf.lon]);
     setTargetZoom(conf.zoom);
-    showToast(`🇯🇵 ${conf.names[userLangCode] || conf.names.en} 全体へ戻しました`);
+    showToast(`🇯🇵 ${conf.name} 全体へ戻しました`);
   };
 
   const handleSaveMyMap = () => {
@@ -683,13 +683,6 @@ export default function WapApp() {
           {toastMessage}
         </div>
       )}
-
-      <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={(e) => {
-        if (e.target.files?.[0]) setUserAvatar(URL.createObjectURL(e.target.files[0]));
-      }} style={{ display: 'none' }} />
-      <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={(e) => {
-        if (e.target.files?.[0]) setUserAvatar(URL.createObjectURL(e.target.files[0]));
-      }} style={{ display: 'none' }} />
 
       {/* 初回オンボーディング画面 */}
       {isOnboarding && (
@@ -759,7 +752,7 @@ export default function WapApp() {
                         boxSizing: 'border-box',
                       }}
                     >
-                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.names[userLangCode] || c.names.en} <span style={{ fontSize: '11px', color: '#64748b' }}>({c.region})</span></span>
+                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.name} <span style={{ fontSize: '11px', color: '#64748b' }}>({c.region})</span></span>
                       {userCountry === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
                     </div>
                   ))}
@@ -1252,7 +1245,7 @@ export default function WapApp() {
             boxSizing: 'border-box',
           }}
         >
-          <span style={{ fontSize: '16px' --> 🏆</span>
+          <span style={{ fontSize: '16px' }}>🏆</span>
           <span style={{ fontSize: '9px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t('ranking')}</span>
         </button>
 
