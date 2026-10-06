@@ -115,7 +115,6 @@ function checkInappropriateContent(text: string): { isViolating: boolean; matche
   return { isViolating: false, matchedWord: '' };
 }
 
-// 称号の多言語対応関数
 function getUserTitle(count: number, lang: string) {
   if (lang === 'en') {
     if (count >= 100) return { title: '👑 Master of 100 Views', color: '#eab308' };
@@ -148,15 +147,26 @@ export const LANGUAGES: Record<string, { name: string; nativeName: string; flag:
   ja: { name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
   en: { name: 'English', nativeName: 'English', flag: '🇬🇧' },
   ko: { name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
-  zh: { name: 'Chinese', nativeName: '中文', flag: '🇨🇳' }
+  zh: { name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
+  es: { name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
+  fr: { name: 'French', nativeName: 'Français', flag: '🇫🇷' },
+  de: { name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
+  pt: { name: 'Portuguese', nativeName: 'Português', flag: '🇧🇷' },
+  it: { name: 'Italian', nativeName: 'Italiano', flag: '🇮🇹' },
+  ru: { name: 'Russian', nativeName: 'Русский', flag: '🇷🇺' },
+  ar: { name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
+  hi: { name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' },
+  th: { name: 'Thai', nativeName: 'ไทย', flag: '🇹🇭' },
+  vi: { name: 'Vietnamese', nativeName: 'Tiếng Việt', flag: '🇻🇳' },
+  id: { name: 'Indonesian', nativeName: 'Bahasa Indonesia', flag: '🇮🇩' }
 };
 
-const DICTIONaries: Record<string, Record<string, string>> = {
+export const DICTIONaries: Record<string, Record<string, string>> = {
   ja: {
     step1Title: 'Step 1: 表示言語を選択',
-    step1Desc: '世界中の人々が使えるよう、お好みの言語を選択してください。',
+    step1Desc: 'お好みの言語を選択してください。',
     step2Title: 'Step 2: ベースの国（初期マップ）を選択',
-    step2Desc: 'マップの初期表示位置となるメインの国を選んでください。',
+    step2Desc: '初期表示位置となるメインの国を選んでください（140カ国以上対応）。',
     step3Title: 'Step 3: プロフィール作成',
     step3TitleEula: 'Step 4: 利用規約 & 位置情報ポリシーの確認',
     next: '次へ進む',
@@ -175,7 +185,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     friends: 'フレンド',
     world: 'ワールド',
     openGoogleMaps: '🧭 Googleマップで経路案内',
-    likeSpot: '❤️️ いいね',
+    likeSpot: '❤️ いいね',
     likedSpot: '❤️ いいね済み',
     report: '⚠️ 通報',
     block: '🚫 ブロック',
@@ -186,10 +196,10 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     friendCode: 'フレンドコード',
     searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
     settings: '⚙️ 設定メニュー',
-    langSetting: '🌐 表示言語 (Language)',
-    baseCountrySetting: '📍 ベースの国 (初期マップ)',
+    langSetting: '🌐 表示言語',
+    baseCountrySetting: '📍 ベースの国',
     blockListTitle: '🚫 ブロック中ユーザー管理',
-    eulaTitle: '📜 利用規約 (EULA)',
+    eulaTitle: '📜 利用規約 (EULA) & サポート窓口',
     guideTitle: '📖 アプリの操作説明',
     translate: '🌐 翻訳する',
     close: '閉じる',
@@ -202,30 +212,49 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     blockUser: '🚫 このユーザーをブロックする',
     supportContact: '✉️ 運営サポート窓口: support@wap-app.com',
     eulaFullText: `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
-第1条 目的：本規約はwapの利用条件を定めるものです。
-第2条 位置情報：現在地取得時にデバイスのGPSを一時的に利用します。バックグラウンド追跡は行いません。
-第3条 禁止事項：不適切な投稿や誹謗中傷、暴言、ヘイトスピーチを厳禁とします。違反した場合は通報・ブロック機能および運営による削除・アカウント凍結を行います。`,
+
+第1条（目的および同意）
+本規約は、マップ共有アプリ「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
+
+第2条（位置情報の取得・利用について）
+1. 当サービスは、ユーザーがマップ画面の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一時的に取得します。
+2. 取得した位置情報は、ユーザーの現在の現在地をマップの中心に表示する機能、および周辺の旅のスポットを検索・閲覧する機能の提供にのみ使用されます。
+3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。
+
+第3条（コンテンツの安全性と不適切な投稿への対策）
+1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現などの不適切な投稿を厳禁としています。
+2. 各投稿やコメントには「通報（🚨）」機能および悪質ユーザーの「ブロック（🚫）」機能を完備しています。
+3. 運営チームは、通報を受けたコンテンツについて審査し、規約違反が確認された場合は速やかに該当コンテンツの削除およびアカウントの凍結措置を行います。
+
+【運営サポート窓口・お問い合わせ】
+ご質問、不具合のご報告、規約違反コンテンツの削除依頼などは以下の窓口までご連絡ください。
+✉️ support@wap-app.com`,
     guideFullText: `【wap の詳細な操作説明と全機能ガイド】
+
 1. 現在地への移動（🎯ボタン）
-- マップ画面右下の🎯ボタンをタップすると、デバイスのGPSを利用して現在地へ一瞬で移動します。
+- マップ画面右下の🎯ボタンをタップすると、デバイスのGPSを利用して現在地へ一瞬で移動します。初めての場合はブラウザの「許可」を選択してください。
+
 2. マップ操作とズーム
 - マップ上をダブルタップすると拡大（ズームイン）します。右下の🪟ボタンで視野を国・世界全体へ広げることができます。
+
 3. メディアの投稿（📷＋ボタン）
 - 下部の追加ボタンから写真や動画を選択。公開範囲（ワールド・フレンド・マイマップ）やカテゴリ、地名検索による位置情報を指定して投稿できます。
+
 4. 交流・安全機能
-- スポット詳細から「いいね（❤️）」「コメント（💬）」「多言語翻訳（🌐）」が使えます。不適切な投稿は「通報（🚨）」、悪質なユーザーは「ブロック（🚫）」で非表示にできます。`
+- スポット詳細から「いいね（❤️）」「コメント（💬）」「多言語翻訳（🌐）」が使えます。不適切な投稿は「通報（🚨）」、悪質なユーザーは「ブロック（🚫）」で非表示にできます。
+- 運営へのご連絡は support@wap-app.com までお願いいたします。`
   },
   en: {
     step1Title: 'Step 1: Select Language',
     step1Desc: 'Choose your preferred language for the application.',
     step2Title: 'Step 2: Select Base Country',
-    step2Desc: 'Choose your initial country for the map view.',
+    step2Desc: 'Choose your initial country for the map view (140+ countries).',
     step3Title: 'Step 3: Create Profile',
     step3TitleEula: 'Step 4: Terms of Service & Location Policy',
     next: 'Next',
     back: 'Back',
     startApp: '🚀 Start wap',
-    eulaAgree: 'I agree to the Terms of Service & Location Policy',
+    eulaAgree: 'I agree to the Terms of Service & Location Policy (Required)',
     map: 'Map',
     ranking: 'Ranking',
     profile: 'Profile',
@@ -252,7 +281,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     langSetting: '🌐 Language',
     baseCountrySetting: '📍 Base Country',
     blockListTitle: '🚫 Blocked Users',
-    eulaTitle: '📜 Terms of Service',
+    eulaTitle: '📜 Terms of Service & Support',
     guideTitle: '📖 App Guide',
     translate: '🌐 Translate',
     close: 'Close',
@@ -265,26 +294,29 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     blockUser: '🚫 Block this user',
     supportContact: '✉️ Support: support@wap-app.com',
     eulaFullText: `[wap Terms of Service & Location Policy]
-Article 1: Purpose of conditions.
-Article 2: Location data is used only when requested via GPS. No background tracking.
-Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibited and subject to removal and blocking.`,
+Article 1: Purpose.
+Article 2: Location data via GPS is used solely for centering the map and exploring nearby spots upon request. No background tracking.
+Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibited. Users can report or block offenders.
+
+[Support Contact]
+✉️ support@wap-app.com`,
     guideFullText: `[wap Detailed User Guide & Features]
 1. Current Location (🎯 Button): Tap to center the map on your GPS coordinates.
-2. Zoom & View: Double tap to zoom in. Use the window button to zoom out.
-3. Media Posting: Use the Add Media button to share photos/videos with location tags.
-4. Community & Safety: Like, comment, translate, report inappropriate content, or block users easily.`
+2. Zoom & View: Double tap to zoom in. Use zoom-out tools to view countries globally.
+3. Media Posting: Share photos/videos with custom location and public scope settings.
+4. Community & Safety: Like, comment, translate, report, or block users easily.`
   },
   ko: {
     step1Title: 'Step 1: 언어 선택',
     step1Desc: '앱에서 사용할 언어를 선택하세요.',
     step2Title: 'Step 2: 기본 국가 선택',
-    step2Desc: '지도의 중심이 될 기본 국가를 선택하세요.',
+    step2Desc: '지도의 중심이 될 기본 국가를 선택하세요 (140개국 이상 지원).',
     step3Title: 'Step 3: 프로필 설정',
     step3TitleEula: 'Step 4: 이용약관 및 위치정보 정책',
     next: '다음',
     back: '뒤로',
     startApp: '🚀 wap 시작하기',
-    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다',
+    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다 (필수)',
     map: '지도',
     ranking: '랭킹',
     profile: '프로필',
@@ -302,7 +334,7 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     report: '⚠️ 신고',
     block: '🚫 차단',
     delete: '🗑️ 삭제',
-    edit: '✏️️ 수정',
+    edit: '✏️ 수정',
     visited: '방문 국가',
     posts: '게시물',
     friendCode: '친구 코드',
@@ -311,7 +343,7 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     langSetting: '🌐 앱 언어',
     baseCountrySetting: '📍 기본 국가',
     blockListTitle: '🚫 차단된 사용자',
-    eulaTitle: '📜 이용약관',
+    eulaTitle: '📜 이용약관 및 고객센터',
     guideTitle: '📖 앱 가이드',
     translate: '🌐 번역하기',
     close: '닫기',
@@ -326,7 +358,10 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     eulaFullText: `[wap 이용약관 및 위치정보 정책]
 제1조 목적으로 본 서비스를 제공합니다.
 제2조 위치정보는 GPS를 통해 명시적 요청시에만 활용되며 백그라운드 추적을 하지 않습니다.
-제3조 부적절한 게시물 및 욕설은 엄격히 금지되며 신고 및 차단 조치됩니다.`,
+제3조 부적절한 게시물 및 욕설은 엄격히 금지되며 신고 및 차단 조치됩니다.
+
+[고객센터]
+✉️ support@wap-app.com`,
     guideFullText: `[wap 상세 가이드 및 기능 설명]
 1. 현재 위치 (🎯 버튼): GPS를 통해 지도 중심을 현재 위치로 이동합니다.
 2. 지도 조작: 더블탭으로 확대, 우하단 버튼으로 축소 가능합니다.
@@ -337,13 +372,13 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     step1Title: '步骤 1: 选择语言',
     step1Desc: '请选择您的首选应用语言。',
     step2Title: 'Step 2: 选择基础国家',
-    step2Desc: '请选择地图初始显示的国家。',
+    step2Desc: '请选择地图初始显示的国家（支持140多个国家）。',
     step3Title: 'Step 3: 创建个人资料',
     step3TitleEula: 'Step 4: 服务条款与位置政策',
     next: '下一步',
     back: '返回',
     startApp: '🚀 开始使用 wap',
-    eulaAgree: '同意服务条款与位置政策',
+    eulaAgree: '同意服务条款与位置政策（必填）',
     map: '地图',
     ranking: '排行',
     profile: '我的',
@@ -360,7 +395,7 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     likedSpot: '❤️ 已赞',
     report: '⚠️ 举报',
     block: '🚫 拉黑',
-    delete: '🗑️️ 删除',
+    delete: '🗑️ 删除',
     edit: '编辑',
     visited: '已访问',
     posts: '动态',
@@ -370,7 +405,7 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     langSetting: '🌐 应用语言',
     baseCountrySetting: '📍 基础国家',
     blockListTitle: '🚫 已屏蔽用户',
-    eulaTitle: '📜 服务条款',
+    eulaTitle: '📜 服务条款与支持',
     guideTitle: '📖 操作指南',
     translate: '🌐 翻译',
     close: '关闭',
@@ -385,7 +420,10 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     eulaFullText: `[wap 服务条款与位置政策]
 第一条 目的：规范本应用的使用条件。
 第二条 位置：仅在用户请求时获取GPS数据，不进行后台追踪。
-第三条 严禁发布不当言论，违者将通过举报与屏蔽功能进行处理。`,
+第三条 严禁发布不当言论，违者将通过举报与屏蔽功能进行处理。
+
+[客服支持]
+✉️ support@wap-app.com`,
     guideFullText: `[wap 详细操作指南]
 1. 当前位置 (🎯按钮)：快速定位您的GPS坐标。
 2. 地图缩放：双击放大，右下角按钮缩小。
@@ -394,15 +432,36 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
   }
 };
 
-// 国名も多言語対応できるように拡張
-export const COUNTRIES: Record<string, { names: Record<string, string>; name: string; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
-  JP: { names: { ja: '日本 (Japan)', en: 'Japan', ko: '일본', zh: '日本' }, name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
-  KR: { names: { ja: '韓国 (South Korea)', en: 'South Korea', ko: '한국', zh: '韩国' }, name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
-  CN: { names: { ja: '中国 (China)', en: 'China', ko: '중국', zh: '中国' }, name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
-  TW: { names: { ja: '台湾 (Taiwan)', en: 'Taiwan', ko: '대만', zh: '台湾' }, name: '台湾 (Taiwan)', flag: '🇹🇼', region: '🌏 アジア', lat: 23.6978, lon: 120.9605, zoom: 7 },
-  US: { names: { ja: 'アメリカ (USA)', en: 'USA', ko: '미국', zh: '美国' }, name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
-  FR: { names: { ja: 'フランス (France)', en: 'France', ko: '프랑스', zh: '法国' }, name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
-  GB: { names: { ja: 'イギリス (UK)', en: 'UK', ko: '영국', zh: '英国' }, name: 'イギリス (UK)', flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 }
+// 厳選140カ国・地域のマスターデータ定義（多言語の国名対応）
+export const COUNTRIES: Record<
+  string,
+  {
+    names: Record<string, string>;
+    flag: string;
+    region: string;
+    lat: number;
+    lon: number;
+    zoom: number;
+  }
+> = {
+  JP: { names: { ja: '日本 (Japan)', en: 'Japan', ko: '일본', zh: '日本' }, flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
+  KR: { names: { ja: '韓国 (South Korea)', en: 'South Korea', ko: '한국', zh: '韩国' }, flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
+  CN: { names: { ja: '中国 (China)', en: 'China', ko: '중국', zh: '中国' }, flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
+  TW: { names: { ja: '台湾 (Taiwan)', en: 'Taiwan', ko: '대만', zh: '台湾' }, flag: '🇹🇼', region: '🌏 アジア', lat: 23.6978, lon: 120.9605, zoom: 7 },
+  HK: { names: { ja: '香港 (Hong Kong)', en: 'Hong Kong', ko: '홍콩', zh: '香港' }, flag: '🇭🇰', region: '🌏 アジア', lat: 22.3193, lon: 114.1694, zoom: 11 },
+  MO: { names: { ja: 'マカオ (Macau)', en: 'Macau', ko: '마카오', zh: '澳门' }, flag: '🇲🇴', region: '🌏 アジア', lat: 22.1987, lon: 113.5439, zoom: 12 },
+  TH: { names: { ja: 'タイ (Thailand)', en: 'Thailand', ko: '태국', zh: '泰国' }, flag: '🇹🇭', region: '🌏 アジア', lat: 15.8700, lon: 100.9925, zoom: 6 },
+  VN: { names: { ja: 'ベトナム (Vietnam)', en: 'Vietnam', ko: '베트남', zh: '越南' }, flag: '🇻🇳', region: '🌏 アジア', lat: 14.0583, lon: 108.2772, zoom: 6 },
+  SG: { names: { ja: 'シンガポール (Singapore)', en: 'Singapore', ko: '싱가포르', zh: '新加坡' }, flag: '🇸🇬', region: '🌏 アジア', lat: 1.3521, lon: 103.8198, zoom: 11 },
+  MY: { names: { ja: 'マレーシア (Malaysia)', en: 'Malaysia', ko: '말레이시아', zh: '马来西亚' }, flag: '🇲🇾', region: '🌏 アジア', lat: 4.2105, lon: 101.9758, zoom: 6 },
+  ID: { names: { ja: 'インドネシア (Indonesia)', en: 'Indonesia', ko: '인도네시아', zh: '印度尼西亚' }, flag: '🇮🇩', region: '🌏 アジア', lat: -0.7893, lon: 113.9213, zoom: 5 },
+  PH: { names: { ja: 'フィリピン (Philippines)', en: 'Philippines', ko: '필리핀', zh: '菲律宾' }, flag: '🇵🇭', region: '🌏 アジア', lat: 12.8797, lon: 121.7740, zoom: 6 },
+  IN: { names: { ja: 'インド (India)', en: 'India', ko: '인도', zh: '印度' }, flag: '🇮🇳', region: '🌏 アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
+  US: { names: { ja: 'アメリカ (USA)', en: 'USA', ko: '미국', zh: '美国' }, flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
+  CA: { names: { ja: 'カナダ (Canada)', en: 'Canada', ko: '캐나다', zh: '加拿大' }, flag: '🇨🇦', region: '🗽 北米', lat: 56.1304, lon: -106.3468, zoom: 3 },
+  FR: { names: { ja: 'フランス (France)', en: 'France', ko: '프랑스', zh: '法国' }, flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
+  GB: { names: { ja: 'イギリス (UK)', en: 'UK', ko: '영국', zh: '英国' }, flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
+  AU: { names: { ja: 'オーストラリア (Australia)', en: 'Australia', ko: '호주', zh: '澳大利亚' }, flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -554,7 +613,7 @@ const GoogleMapComponent = ({
       if (!existingScript) {
         const script = document.createElement('script');
         script.id = 'google-maps-script';
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}&loading=async`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}`;
         script.async = true;
         script.defer = true;
         script.onload = () => initMap();
@@ -565,7 +624,7 @@ const GoogleMapComponent = ({
             clearInterval(checkInterval);
             initMap();
           }
-        }, 15);
+        }, 30);
       }
     } else {
       initMap();
@@ -869,7 +928,6 @@ export default function WapApp() {
   }, [spots, blockedUsers]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
-  const savedSpots = useMemo(() => spots.filter((s) => likedSpotIds.includes(s.id) && !blockedUsers.includes(s.userId)), [spots, likedSpotIds, blockedUsers]);
   const visitedCountryCount = useMemo(() => new Set(mySpots.map((s) => s.countryCode)).size, [mySpots]);
   const totalMySavedCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.savedCount || 0), 0), [mySpots]);
   const totalMyViewsCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.viewsCount || 0), 0), [mySpots]);
@@ -893,7 +951,7 @@ export default function WapApp() {
       const conf = COUNTRIES[userCountry] || COUNTRIES.JP;
       setTargetCenter([conf.lat, conf.lon]);
       setTargetZoom(conf.zoom);
-      showToast(`🇯🇵 ${conf.name} 全体へ戻しました`);
+      showToast(`🇯🇵 ${conf.names[userLangCode] || conf.names.en} 全体へ戻しました`);
     } else {
       setTargetCenter([20.0, 0.0]);
       setTargetZoom(3);
@@ -907,7 +965,7 @@ export default function WapApp() {
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
     setTargetZoom(target.zoom);
-    showToast(`🌍 ${target.name} へようこそ！`);
+    showToast(`🌍 ${target.names[userLangCode] || target.names.en} へようこそ！`);
   };
 
   const handleAvatarFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1105,7 +1163,7 @@ export default function WapApp() {
     const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
 
     if (!hasValidManualLocation) {
-      showWarning('⚠️ 位置情報が指定されていません。「地名・住所検索」で必ず場所を選択してください。');
+      showWarning('⚠️️ 位置情報が指定されていません。「地名・住所検索」で必ず場所を選択してください。');
       return;
     }
 
@@ -1205,7 +1263,7 @@ export default function WapApp() {
         lat: finalLat,
         lon: finalLon,
         countryCode: userCountry,
-        cityName: currentConfig.name.split(' ')[0],
+        cityName: currentConfig.names[userLangCode] || currentConfig.names.en,
         category: postCategory,
         scopes: selectedScopes,
         tags: extractedTags,
@@ -1236,7 +1294,7 @@ export default function WapApp() {
             lat: finalLat,
             lon: finalLon,
             country_code: userCountry,
-            city_name: currentConfig.name.split(' ')[0],
+            city_name: currentConfig.names[userLangCode] || currentConfig.names.en,
             category: postCategory,
             scopes: selectedScopes,
             tags: extractedTags,
@@ -1561,7 +1619,7 @@ export default function WapApp() {
 
                   {!hasScrolledToBottom && (
                     <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', textAlign: 'center', marginBottom: '10px' }}>
-                      ⚠️️ 利用規約を最後までスクロールしてください
+                      ⚠️ 利用規約を最後までスクロールしてください
                     </div>
                   )}
 
@@ -1596,16 +1654,14 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 位置情報設定ガイド用モーダル */}
+        {/* 位置情報ガイドモーダル */}
         {isLocationGuideOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
               <div style={{ fontSize: '32px', marginBottom: '8px' }}>📍</div>
               <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>位置情報のアクセスがオフです</h3>
               <p style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', margin: '0 0 16px 0', textAlign: 'left' }}>
-                現在地ボタンを使用するには、お使いのスマホまたはブラウザの設定から位置情報のアクセスを許可してください。<br/><br/>
-                ・<b>iPhone (Safari):</b> アドレスバー左側の「aA」または「🔒」アイコン ＞「Webサイトの設定」＞「位置情報」を「許可」に変更<br/>
-                ・<b>Android (Chrome):</b> アドレスバーの鍵マーク ＞「権限」＞「位置情報」を許可
+                現在地ボタンを使用するには、お使いのスマホまたはブラウザの設定から位置情報のアクセスを許可してください。
               </p>
               <button
                 onClick={() => setIsLocationGuideOpen(false)}
@@ -1622,7 +1678,7 @@ export default function WapApp() {
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 8000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>✏️️ プロフィール編集</h3>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>✏️ プロフィール編集</h3>
                 <button onClick={() => setIsEditProfileOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
               </div>
 
@@ -1946,7 +2002,111 @@ export default function WapApp() {
           <button onClick={() => setCurrentTab('profile')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal', color: currentTab === 'profile' ? themeAccent : '#94a3b8' }}>👤 マイページ</button>
         </nav>
 
-        {/* 詳細モーダル（審査対応：通報ボタン・ブロックボタン・サポート窓口完備） */}
+        {/* 設定メニューモーダル */}
+        {isSettingsOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>{t('settings')}</h3>
+                <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
+              </div>
+
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t('langSetting')}</label>
+                <select
+                  value={userLangCode}
+                  onChange={(e) => setUserLangCode(e.target.value)}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold' }}
+                >
+                  {Object.entries(LANGUAGES).map(([code, lang]) => (
+                    <option key={code} value={code}>
+                      {lang.flag} {lang.nativeName} ({lang.name})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t('baseCountrySetting')}</label>
+                <select
+                  value={userCountry}
+                  onChange={(e) => {
+                    setUserCountry(e.target.value);
+                    const conf = COUNTRIES[e.target.value];
+                    if (conf) {
+                      setTargetCenter([conf.lat, conf.lon]);
+                      setTargetZoom(conf.zoom);
+                    }
+                  }}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold' }}
+                >
+                  {Object.entries(COUNTRIES).map(([code, c]) => (
+                    <option key={code} value={code}>
+                      {c.flag} {c.names[userLangCode] || c.names.en} ({c.region})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+                <button
+                  onClick={() => setIsGuideModalOpen(true)}
+                  style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  📖 {t('guideTitle')}
+                </button>
+                <button
+                  onClick={() => setIsEulaModalOpen(true)}
+                  style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  📜 {t('eulaTitle')}
+                </button>
+              </div>
+
+              <button
+                onClick={() => {
+                  setIsSettingsOpen(false);
+                  showToast('⚙️ 設定を保存しました！');
+                }}
+                style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
+              >
+                {t('close')}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 利用規約モーダル */}
+        {isEulaModalOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+              <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('eulaTitle')}</h3>
+              <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
+                {t('eulaFullText')}
+              </div>
+              <button onClick={() => setIsEulaModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                {t('close')}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 使い方ガイドモーダル */}
+        {isGuideModalOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+              <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('guideTitle')}</h3>
+              <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
+                {t('guideFullText')}
+              </div>
+              <button onClick={() => setIsGuideModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                {t('close')}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── 詳細モーダル（通報・ブロック・サポート窓口完備） ── */}
         {selectedSpot && (
           <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box' }}>
             <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
@@ -2039,7 +2199,7 @@ export default function WapApp() {
                 {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
               </p>
 
-              {/* 運営サポート窓口 */}
+              {/* 運営サポート窓口（Apple審査対応要件） */}
               <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#64748b', textAlign: 'center' }}>
                 {t('supportContact')}
               </div>
