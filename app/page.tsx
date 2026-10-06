@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & 多言語辞書 (多言語完全対応版)
+// 1. 型定義 & 多言語辞書 (完全多言語対応版)
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -130,7 +130,7 @@ function getUserTitle(count: number, lang: string) {
     return { title: '🐣 여행 비기너', color: '#94a3b8' };
   } else if (lang === 'zh') {
     if (count >= 100) return { title: '👑 百景霸者', color: '#eab308' };
-    if (count >= 50) return { title: '🏔️️ 五十景开拓者', color: '#8b5cf6' };
+    if (count >= 50) return { title: '🏔️ 五十景开拓者', color: '#8b5cf6' };
     if (count >= 10) return { title: '🎒 十景旅行者', color: '#38bdf8' };
     if (count >= 1) return { title: '🌱 见习探险家', color: '#22c55e' };
     return { title: '🐣 旅游新手', color: '#94a3b8' };
@@ -166,31 +166,40 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     ranking: 'ランキング',
     profile: 'マイページ',
     addPhoto: '写真 / 動画を追加',
+    exportMap: 'マップ保存',
     view: 'View',
     gourmet: 'グルメ',
     rain: '雨の日',
     myMap: 'マイマップ',
     friends: 'フレンド',
     world: 'ワールド',
-    openGoogleMaps: 'Googleマップで経路案内',
-    translate: '🌐 翻訳する',
-    close: '閉じる',
-    posts: '投稿',
+    openGoogleMaps: '🧭 Googleマップで経路案内',
+    likeSpot: '❤️️ いいね',
+    likedSpot: '❤️ いいね済み',
+    report: '⚠️ 通報',
+    block: '🚫 ブロック',
+    delete: '🗑️ 削除',
+    edit: '✏️ 編集',
     visited: '訪問国',
+    posts: '投稿',
+    friendCode: 'フレンドコード',
     searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
     settings: '⚙️ 設定メニュー',
-    langSetting: '🌐 表示言語',
-    baseCountrySetting: '📍 ベースの国',
-    guideTitle: '📖 アプリの操作説明',
-    eulaTitle: '📜 利用規約',
+    langSetting: '🌐 表示言語 (Language)',
+    baseCountrySetting: '📍 ベースの国 (初期マップ)',
     blockListTitle: '🚫 ブロック中ユーザー管理',
-    reportSpot: '🚨 この投稿を通報する',
-    blockUser: '🚫 このユーザーをブロックする',
-    supportContact: '✉️ 運営サポート窓口: support@wap-app.com',
+    eulaTitle: '📜 利用規約 (EULA)',
+    guideTitle: '📖 アプリの操作説明',
+    translate: '🌐 翻訳する',
+    close: '閉じる',
     tabPosts: '📸 投稿',
     tabTimeline: '📅 ログ',
     tabSaved: '💛 保存',
     tabBadges: '🏅 バッジ',
+    tabFriends: '👥 フレンド',
+    reportSpot: '🚨 この投稿を通報する',
+    blockUser: '🚫 このユーザーをブロックする',
+    supportContact: '✉️ 運営サポート窓口: support@wap-app.com',
     eulaFullText: `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
 第1条 目的：本規約はwapの利用条件を定めるものです。
 第2条 位置情報：現在地取得時にデバイスのGPSを利用します。バックグラウンドでの追跡は行いません。
@@ -220,31 +229,40 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     ranking: 'Ranking',
     profile: 'Profile',
     addPhoto: 'Add Media',
+    exportMap: 'Save Map',
     view: 'View',
     gourmet: 'Gourmet',
     rain: 'Rainy',
     myMap: 'My Map',
     friends: 'Friends',
     world: 'World',
-    openGoogleMaps: 'Navigate with Google Maps',
-    translate: '🌐 Translate',
-    close: 'Close',
-    posts: 'Posts',
+    openGoogleMaps: '🧭 Navigate with Google Maps',
+    likeSpot: '❤️ Like',
+    likedSpot: '❤️ Liked',
+    report: '⚠️ Report',
+    block: '🚫 Block',
+    delete: '🗑️ Delete',
+    edit: '✏️ Edit',
     visited: 'Visited',
+    posts: 'Posts',
+    friendCode: 'Friend Code',
     searchPlaceholder: '🔍 Search city, #tag...',
     settings: '⚙️ Settings',
     langSetting: '🌐 Language',
     baseCountrySetting: '📍 Base Country',
-    guideTitle: '📖 App Guide',
-    eulaTitle: '📜 Terms of Service',
     blockListTitle: '🚫 Blocked Users',
-    reportSpot: '🚨 Report this post',
-    blockUser: '🚫 Block this user',
-    supportContact: '✉️ Support: support@wap-app.com',
+    eulaTitle: '📜 Terms of Service',
+    guideTitle: '📖 App Guide',
+    translate: '🌐 Translate',
+    close: 'Close',
     tabPosts: '📸 Posts',
     tabTimeline: '📅 Log',
     tabSaved: '💛 Saved',
     tabBadges: '🏅 Badges',
+    tabFriends: '👥 Friends',
+    reportSpot: '🚨 Report this post',
+    blockUser: '🚫 Block this user',
+    supportContact: '✉️ Support: support@wap-app.com',
     eulaFullText: `[wap Terms of Service & Location Policy]
 Article 1: Purpose of conditions.
 Article 2: Location data is used only when requested via GPS.
@@ -295,6 +313,7 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     tabTimeline: '📅 로그',
     tabSaved: '💛 저장',
     tabBadges: '🏅 배지',
+    tabFriends: '👥 친구',
     eulaFullText: `[wap 이용약관 및 위치정보 정책]
 제1조 목적으로 본 서비스를 제공합니다.
 제2조 위치정보는 GPS를 통해 명시적 요청시에만 활용됩니다.
@@ -340,11 +359,12 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     blockListTitle: '🚫 已屏蔽用户',
     reportSpot: '🚨 举报此内容',
     blockUser: '🚫 屏蔽此用户',
-    supportContact: '✉️️ 客服邮箱: support@wap-app.com',
+    supportContact: '✉️ 客服邮箱: support@wap-app.com',
     tabPosts: '📸 动态',
     tabTimeline: '📅 日志',
     tabSaved: '💛 收藏',
     tabBadges: '🏅 徽章',
+    tabFriends: '👥 好友',
     eulaFullText: `[wap 服务条款与位置政策]
 第一条 目的：规范本应用的使用条件。
 第二条 位置：仅在用户请求时获取GPS数据。
@@ -516,7 +536,7 @@ const GoogleMapComponent = ({
       if (!existingScript) {
         const script = document.createElement('script');
         script.id = 'google-maps-script';
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}&loading=async`;
         script.async = true;
         script.defer = true;
         script.onload = () => initMap();
@@ -527,7 +547,7 @@ const GoogleMapComponent = ({
             clearInterval(checkInterval);
             initMap();
           }
-        }, 30);
+        }, 15);
       }
     } else {
       initMap();
@@ -873,6 +893,7 @@ export default function WapApp() {
   };
 
   const handleOpenSpot = (spot: Spot) => {
+    if (blockedUsers.includes(spot.userId)) return;
     setSpots(prev => prev.map(s => s.id === spot.id ? { ...s, viewsCount: s.viewsCount + 1 } : s));
     setSelectedSpot({ ...spot, viewsCount: spot.viewsCount + 1 });
     setActiveMediaIndex(0);
@@ -970,7 +991,7 @@ export default function WapApp() {
     showToast('💬 コメントを投稿しました！');
   };
 
-  // ✅ 追加：handlePhotoSelect関数
+  // 100%確実に定義された handlePhotoSelect 関数
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -1340,6 +1361,8 @@ export default function WapApp() {
   };
 
   const themeAccent = mapTheme === 'dark' ? '#38bdf8' : mapTheme === 'pastel' ? '#d97706' : '#0284c7';
+  const navBarBg = '#ffffff';
+  const navBarText = '#0f172a';
 
   return (
     <>
@@ -1370,7 +1393,7 @@ export default function WapApp() {
         {isOnboarding && (
           <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
-              <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
+              <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️️</div>
               <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
               <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
 
@@ -1547,14 +1570,16 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 位置情報ガイドモーダル */}
+        {/* 位置情報設定ガイド用モーダル */}
         {isLocationGuideOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
               <div style={{ fontSize: '32px', marginBottom: '8px' }}>📍</div>
               <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>位置情報のアクセスがオフです</h3>
               <p style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', margin: '0 0 16px 0', textAlign: 'left' }}>
-                現在地ボタンを使用するには、お使いのスマホまたはブラウザの設定から位置情報のアクセスを許可してください。
+                現在地ボタンを使用するには、お使いのスマホまたはブラウザの設定から位置情報のアクセスを許可してください。<br/><br/>
+                ・<b>iPhone (Safari):</b> アドレスバー左側の「aA」または「🔒」アイコン ＞「Webサイトの設定」＞「位置情報」を「許可」に変更<br/>
+                ・<b>Android (Chrome):</b> アドレスバーの鍵マーク ＞「権限」＞「位置情報」を許可
               </p>
               <button
                 onClick={() => setIsLocationGuideOpen(false)}
@@ -1623,9 +1648,9 @@ export default function WapApp() {
         )}
 
         {/* ヘッダー */}
-        <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
+        <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
-            <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: '#000' }}>
+            <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: navBarText }}>
               ☰
             </button>
             <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7', letterSpacing: '-0.5px', flexShrink: 0 }}>wap</h1>
@@ -1639,7 +1664,7 @@ export default function WapApp() {
                   setTargetZoom(conf.zoom);
                 }
               }}
-              style={{ background: '#f1f5f9', color: '#000', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
+              style={{ background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
             >
               {Object.entries(COUNTRIES).map(([code, c]) => (
                 <option key={code} value={code}>
@@ -2080,14 +2105,14 @@ export default function WapApp() {
                   onClick={() => handleReportSpot(selectedSpot.id)}
                   style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fee2e2', borderRadius: '8px', padding: '4px 8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
                 >
-                  {t('reportSpot')}
+                  🚨 通報
                 </button>
                 {selectedSpot.userId !== 'me' && selectedSpot.userId !== 'user-official' && (
                   <button
                     onClick={() => handleBlockUser(selectedSpot.userId)}
                     style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '4px 8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
                   >
-                    {t('blockUser')}
+                    🚫 ブロック
                   </button>
                 )}
                 <button onClick={() => handleShareSpot(selectedSpot)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -2330,6 +2355,8 @@ export default function WapApp() {
             flexShrink: 0,
             zIndex: 1000,
             touchAction: 'none',
+            margin: 0,
+            boxSizing: 'border-box',
           }}
         >
           <button
@@ -2349,11 +2376,11 @@ export default function WapApp() {
               gap: '2px',
               color: currentTab === 'map' ? themeAccent : '#94a3b8',
               cursor: 'pointer',
-              padding: '4px 16px',
+              padding: '2px 16px',
             }}
           >
-            <span style={{ fontSize: '18px' }}>🗺️</span>
-            <span style={{ fontSize: '10px', fontWeight: currentTab === 'map' ? 'bold' : 'normal' }}>{t('map')}</span>
+            <span style={{ fontSize: '16px' }}>🗺️</span>
+            <span style={{ fontSize: '9px', fontWeight: currentTab === 'map' ? 'bold' : 'normal' }}>{t('map')}</span>
           </button>
 
           <button
@@ -2367,11 +2394,11 @@ export default function WapApp() {
               gap: '2px',
               color: currentTab === 'ranking' ? themeAccent : '#94a3b8',
               cursor: 'pointer',
-              padding: '4px 16px',
+              padding: '2px 16px',
             }}
           >
-            <span style={{ fontSize: '18px' }}>🏆</span>
-            <span style={{ fontSize: '10px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t('ranking')}</span>
+            <span style={{ fontSize: '16px' }}>🏆</span>
+            <span style={{ fontSize: '9px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal' }}>{t('ranking')}</span>
           </button>
 
           <button
@@ -2385,11 +2412,11 @@ export default function WapApp() {
               gap: '2px',
               color: currentTab === 'profile' ? themeAccent : '#94a3b8',
               cursor: 'pointer',
-              padding: '4px 16px',
+              padding: '2px 16px',
             }}
           >
-            <span style={{ fontSize: '18px' }}>👤</span>
-            <span style={{ fontSize: '10px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal' }}>{t('profile')}</span>
+            <span style={{ fontSize: '16px' }}>👤</span>
+            <span style={{ fontSize: '9px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal' }}>{t('profile')}</span>
           </button>
         </nav>
       </div>
