@@ -280,7 +280,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     openGoogleMaps: '🧭 Google 지도 길찾기',
     likeSpot: '❤️ 좋아요',
     likedSpot: '❤️ 좋아요 취소',
-    report: '⚠️️ 신고',
+    report: '⚠️ 신고',
     block: '🚫 차단',
     delete: '🗑️ 삭제',
     edit: '✏️ 수정',
@@ -288,7 +288,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     posts: '게시물',
     friendCode: '친구 코드',
     searchPlaceholder: '🔍 도시 / #태그 검색',
-    settings: '⚙️️ 설정',
+    settings: '⚙️ 설정',
     langSetting: '🌐 앱 언어',
     baseCountrySetting: '📍 기본 국가',
     blockListTitle: '🚫 차단된 사용자',
@@ -332,13 +332,13 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     likedSpot: '❤️ 已赞',
     report: '⚠️ 举报',
     block: '🚫 拉黑',
-    delete: '🗑️️ 删除',
+    delete: '🗑️ 删除',
     edit: '编辑',
     visited: '已访问',
     posts: '动态',
     friendCode: '好友码',
     searchPlaceholder: '🔍 搜索城市 / #标签...',
-    settings: '⚙️ 设置',
+    settings: '⚙️️ 设置',
     langSetting: '🌐 应用语言',
     baseCountrySetting: '📍 基础国家',
     blockListTitle: '🚫 已屏蔽用户',
@@ -594,41 +594,6 @@ function convertDMSToDD(dms: number[], ref: string): number {
   return dd;
 }
 
-function generateVideoThumbnail(file: File): Promise<string> {
-  return new Promise((resolve) => {
-    try {
-      const video = document.createElement('video');
-      video.preload = 'metadata';
-      video.src = URL.createObjectURL(file);
-      video.muted = true;
-      video.playsInline = true;
-      video.currentTime = 0.5;
-
-      video.onloadeddata = () => {
-        setTimeout(() => {
-          try {
-            const canvas = document.createElement('canvas');
-            canvas.width = 160;
-            canvas.height = 120;
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-              resolve(canvas.toDataURL('image/jpeg', 0.8));
-            } else {
-              resolve('');
-            }
-          } catch {
-            resolve('');
-          }
-        }, 200);
-      };
-      video.onerror = () => resolve('');
-    } catch {
-      resolve('');
-    }
-  });
-}
-
 // ==========================================
 // 2. Google Maps API コンポーネント
 // ==========================================
@@ -751,7 +716,7 @@ const GoogleMapComponent = ({
 };
 
 // ==========================================
-// 3. メインコンポーネント
+// 3. メインコンポーネント（完全完全版）
 // ==========================================
 export default function WapApp() {
   const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
@@ -793,7 +758,9 @@ export default function WapApp() {
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0);
   const [likedSpotIds, setLikedSpotIds] = useState<string[]>([]);
-  const [blockedUsers, setBlockedUsers] = useState<string[]>([]); // 審査対応2：ブロックユーザー管理
+  const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
+
+  const [profileSubTab, setProfileSubTab] = useState<'posts' | 'timeline' | 'saved' | 'badges' | 'friends'>('posts');
 
   const [newCommentText, setNewCommentText] = useState<string>('');
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
@@ -1006,11 +973,13 @@ export default function WapApp() {
   }, [spots, blockedUsers, selectedCategories, displayScope, friendsList, mapSearchKeyword]);
 
   const rankingSpots = useMemo(() => {
-    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
-  }, [spots]);
+    return [...spots]
+      .filter(s => !blockedUsers.includes(s.userId))
+      .sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
+  }, [spots, blockedUsers]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
-  const savedSpots = useMemo(() => spots.filter((s) => likedSpotIds.includes(s.id)), [spots, likedSpotIds]);
+  const savedSpots = useMemo(() => spots.filter((s) => likedSpotIds.includes(s.id) && !blockedUsers.includes(s.userId)), [spots, likedSpotIds, blockedUsers]);
   const visitedCountryCount = useMemo(() => new Set(mySpots.map((s) => s.countryCode)).size, [mySpots]);
   const totalMySavedCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.savedCount || 0), 0), [mySpots]);
   const totalMyViewsCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.viewsCount || 0), 0), [mySpots]);
@@ -1061,6 +1030,7 @@ export default function WapApp() {
   };
 
   const handleOpenSpot = (spot: Spot) => {
+    if (blockedUsers.includes(spot.userId)) return;
     setSpots(prev => prev.map(s => s.id === spot.id ? { ...s, viewsCount: s.viewsCount + 1 } : s));
     setSelectedSpot({ ...spot, viewsCount: spot.viewsCount + 1 });
     setActiveMediaIndex(0);
@@ -1071,16 +1041,10 @@ export default function WapApp() {
     if (isLiked) {
       setLikedSpotIds(prev => prev.filter(id => id !== spotId));
       setSpots(prev => prev.map(s => s.id === spotId ? { ...s, savedCount: Math.max(0, s.savedCount - 1) } : s));
-      if (selectedSpot && selectedSpot.id === spotId) {
-        setSelectedSpot(prev => prev ? { ...prev, savedCount: Math.max(0, prev.savedCount - 1) } : null);
-      }
       showToast('いいねを解除しました');
     } else {
       setLikedSpotIds(prev => [...prev, spotId]);
       setSpots(prev => prev.map(s => s.id === spotId ? { ...s, savedCount: s.savedCount + 1 } : s));
-      if (selectedSpot && selectedSpot.id === spotId) {
-        setSelectedSpot(prev => prev ? { ...prev, savedCount: prev.savedCount + 1 } : null);
-      }
       showToast('❤️ いいねしました！');
     }
   };
@@ -1291,7 +1255,7 @@ export default function WapApp() {
         
         if (uploadError) {
           console.error('Supabase storage upload error:', uploadError);
-          showToast('⚠️ ストレージ制限のためオフライン・ローカルモードとして反映しました');
+          showToast('⚠️️ ストレージ制限のためオフライン・ローカルモードとして反映しました');
         } else {
           const { data: publicData } = supabase.storage.from('wap-media').getPublicUrl(filePath);
           if (publicData?.publicUrl) {
@@ -1569,7 +1533,7 @@ export default function WapApp() {
         {isOnboarding && (
           <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
-              <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
+              <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️️</div>
               <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
               <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
 
@@ -2083,7 +2047,7 @@ export default function WapApp() {
             </div>
           </div>
 
-          {/* ── トレンド・ランキング ── */}
+          {/* ── トレンド・ランキングタブ ── */}
           <div style={{ display: currentTab === 'ranking' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', gap: '10px', touchAction: 'pan-y' }}>
             <div style={{ padding: '6px 0', fontSize: '14px', fontWeight: '900', color: themeAccent }}>
               🏆 {t('ranking')}
@@ -2309,7 +2273,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 詳細モーダル ── */}
+        {/* ── 詳細モーダル（通報・ブロック・サポート窓口完備） ── */}
         {selectedSpot && (
           <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
             <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10 }}>
@@ -2390,7 +2354,7 @@ export default function WapApp() {
                     gap: '4px'
                   }}
                 >
-                  <span>{likedSpotIds.includes(selectedSpot.id) ? '❤️️' : '🤍'}</span>
+                  <span>{likedSpotIds.includes(selectedSpot.id) ? '❤️' : '🤍'}</span>
                   <span>{selectedSpot.savedCount}</span>
                 </button>
               </div>
@@ -2409,12 +2373,12 @@ export default function WapApp() {
                 📍 {selectedSpot.cityName} | 👀 Views: {selectedSpot.viewsCount}
               </div>
 
-              <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap', marginBottom: '16px' }}>
+              <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
                 {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
               </p>
 
-              {/* サポート窓口 */}
-              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#64748b', textAlign: 'center', marginBottom: '16px' }}>
+              {/* サポート窓口（Apple審査対応） */}
+              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#64748b', textAlign: 'center', marginTop: '16px', marginBottom: '16px' }}>
                 ✉️ 運営サポート・通報窓口: support@wap-app.com
               </div>
 
