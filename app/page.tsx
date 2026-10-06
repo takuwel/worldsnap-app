@@ -130,7 +130,7 @@ function getUserTitle(count: number, lang: string) {
     return { title: '🐣 여행 비기너', color: '#94a3b8' };
   } else if (lang === 'zh') {
     if (count >= 100) return { title: '👑 百景霸者', color: '#eab308' };
-    if (count >= 50) return { title: '🏔️ 五十景开拓者', color: '#8b5cf6' };
+    if (count >= 50) return { title: '🏔️️ 五十景开拓者', color: '#8b5cf6' };
     if (count >= 10) return { title: '🎒 十景旅行者', color: '#38bdf8' };
     if (count >= 1) return { title: '🌱 见习探险家', color: '#22c55e' };
     return { title: '🐣 旅游新手', color: '#94a3b8' };
@@ -187,6 +187,10 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     reportSpot: '🚨 この投稿を通報する',
     blockUser: '🚫 このユーザーをブロックする',
     supportContact: '✉️ 運営サポート窓口: support@wap-app.com',
+    tabPosts: '📸 投稿',
+    tabTimeline: '📅 ログ',
+    tabSaved: '💛 保存',
+    tabBadges: '🏅 バッジ',
     eulaFullText: `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
 第1条 目的：本規約はwapの利用条件を定めるものです。
 第2条 位置情報：現在地取得時にデバイスのGPSを利用します。バックグラウンドでの追跡は行いません。
@@ -237,6 +241,10 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     reportSpot: '🚨 Report this post',
     blockUser: '🚫 Block this user',
     supportContact: '✉️ Support: support@wap-app.com',
+    tabPosts: '📸 Posts',
+    tabTimeline: '📅 Log',
+    tabSaved: '💛 Saved',
+    tabBadges: '🏅 Badges',
     eulaFullText: `[wap Terms of Service & Location Policy]
 Article 1: Purpose of conditions.
 Article 2: Location data is used only when requested via GPS.
@@ -283,6 +291,10 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     reportSpot: '🚨 게시물 신고',
     blockUser: '🚫 사용자 차단',
     supportContact: '✉️ 고객센터: support@wap-app.com',
+    tabPosts: '📸 게시물',
+    tabTimeline: '📅 로그',
+    tabSaved: '💛 저장',
+    tabBadges: '🏅 배지',
     eulaFullText: `[wap 이용약관 및 위치정보 정책]
 제1조 목적으로 본 서비스를 제공합니다.
 제2조 위치정보는 GPS를 통해 명시적 요청시에만 활용됩니다.
@@ -328,7 +340,11 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     blockListTitle: '🚫 已屏蔽用户',
     reportSpot: '🚨 举报此内容',
     blockUser: '🚫 屏蔽此用户',
-    supportContact: '✉️ 客服邮箱: support@wap-app.com',
+    supportContact: '✉️️ 客服邮箱: support@wap-app.com',
+    tabPosts: '📸 动态',
+    tabTimeline: '📅 日志',
+    tabSaved: '💛 收藏',
+    tabBadges: '🏅 徽章',
     eulaFullText: `[wap 服务条款与位置政策]
 第一条 目的：规范本应用的使用条件。
 第二条 位置：仅在用户请求时获取GPS数据。
@@ -500,7 +516,7 @@ const GoogleMapComponent = ({
       if (!existingScript) {
         const script = document.createElement('script');
         script.id = 'google-maps-script';
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}&loading=async`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}`;
         script.async = true;
         script.defer = true;
         script.onload = () => initMap();
@@ -511,7 +527,7 @@ const GoogleMapComponent = ({
             clearInterval(checkInterval);
             initMap();
           }
-        }, 15);
+        }, 30);
       }
     } else {
       initMap();
@@ -595,6 +611,8 @@ export default function WapApp() {
   const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0);
   const [likedSpotIds, setLikedSpotIds] = useState<string[]>([]);
   const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
+
+  const [profileSubTab, setProfileSubTab] = useState<'posts' | 'timeline' | 'saved' | 'badges' | 'friends'>('posts');
 
   const [newCommentText, setNewCommentText] = useState<string>('');
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
@@ -801,10 +819,8 @@ export default function WapApp() {
   }, [spots, blockedUsers, selectedCategories, displayScope, friendsList, mapSearchKeyword]);
 
   const rankingSpots = useMemo(() => {
-    return [...spots]
-      .filter(s => !blockedUsers.includes(s.userId))
-      .sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
-  }, [spots, blockedUsers]);
+    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
+  }, [spots]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
   const visitedCountryCount = useMemo(() => new Set(mySpots.map((s) => s.countryCode)).size, [mySpots]);
@@ -852,12 +868,11 @@ export default function WapApp() {
       const file = e.target.files[0];
       const objectUrl = URL.createObjectURL(file);
       setUserAvatar(objectUrl);
-      showToast('🖼️️ プロフィール写真を変更しました！');
+      showToast('🖼️ プロフィール写真を変更しました！');
     }
   };
 
   const handleOpenSpot = (spot: Spot) => {
-    if (blockedUsers.includes(spot.userId)) return;
     setSpots(prev => prev.map(s => s.id === spot.id ? { ...s, viewsCount: s.viewsCount + 1 } : s));
     setSelectedSpot({ ...spot, viewsCount: spot.viewsCount + 1 });
     setActiveMediaIndex(0);
@@ -872,7 +887,7 @@ export default function WapApp() {
     } else {
       setLikedSpotIds(prev => [...prev, spotId]);
       setSpots(prev => prev.map(s => s.id === spotId ? { ...s, savedCount: s.savedCount + 1 } : s));
-      showToast('❤️️ いいねしました！');
+      showToast('❤️ いいねしました！');
     }
   };
 
@@ -955,7 +970,7 @@ export default function WapApp() {
     showToast('💬 コメントを投稿しました！');
   };
 
-  // ✅ 追加：handlePhotoSelect関数の完全実装
+  // ✅ 追加：handlePhotoSelect関数
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -1043,7 +1058,7 @@ export default function WapApp() {
     const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
 
     if (!hasValidManualLocation) {
-      showWarning('⚠️️ 位置情報が指定されていません。「地名・住所検索」で必ず場所を選択してください。');
+      showWarning('⚠️ 位置情報が指定されていません。「地名・住所検索」で必ず場所を選択してください。');
       return;
     }
 
@@ -1532,16 +1547,14 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 位置情報設定ガイドモーダル */}
+        {/* 位置情報ガイドモーダル */}
         {isLocationGuideOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
               <div style={{ fontSize: '32px', marginBottom: '8px' }}>📍</div>
               <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>位置情報のアクセスがオフです</h3>
               <p style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', margin: '0 0 16px 0', textAlign: 'left' }}>
-                現在地ボタンを使用するには、お使いのスマホまたはブラウザの設定から位置情報のアクセスを許可してください。<br/><br/>
-                ・<b>iPhone (Safari):</b> アドレスバー左側の「aA」または「🔒」アイコン ＞「Webサイトの設定」＞「位置情報」を「許可」に変更<br/>
-                ・<b>Android (Chrome):</b> アドレスバーの鍵マーク ＞「権限」＞「位置情報」を許可
+                現在地ボタンを使用するには、お使いのスマホまたはブラウザの設定から位置情報のアクセスを許可してください。
               </p>
               <button
                 onClick={() => setIsLocationGuideOpen(false)}
@@ -1654,7 +1667,6 @@ export default function WapApp() {
             
             <div style={{ position: 'absolute', top: '10px', left: '10px', right: '10px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none' }}>
               
-              {/* 検索バー */}
               <div style={{ position: 'relative', pointerEvents: 'auto' }}>
                 <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.96)', color: '#000', backdropFilter: 'blur(10px)', padding: '6px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)' }}>
                   <input
@@ -1689,7 +1701,6 @@ export default function WapApp() {
                 )}
               </div>
 
-              {/* カテゴリ別フィルター */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px' }}>
                 <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.96)', padding: '4px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.15)', pointerEvents: 'auto' }}>
                   {(['view', 'gourmet', 'rain'] as const).map((cat) => {
@@ -1745,7 +1756,6 @@ export default function WapApp() {
                 onDoubleTap={handleMapDoubleTap}
               />
 
-              {/* 現在地ボタン */}
               <div style={{ position: 'absolute', bottom: '65px', right: '14px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <button
                   title="現在地へ移動"
@@ -1870,7 +1880,7 @@ export default function WapApp() {
             ))}
           </div>
 
-          {/* ── マイページ ── */}
+          {/* ── マイページタブ ── */}
           <div style={{ display: currentTab === 'profile' ? 'flex' : 'none', flexDirection: 'column', height: '100%', overflowY: 'auto', padding: '12px 12px 70px 12px', touchAction: 'pan-y' }}>
             <div style={{ background: '#ffffff', borderRadius: '20px', padding: '18px', boxShadow: '0 4px 16px rgba(0,0,0,0.04)', marginBottom: '12px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -2349,7 +2359,6 @@ export default function WapApp() {
           <button
             onClick={() => setCurrentTab('ranking')}
             style={{
-              style: 'transparent',
               background: 'transparent',
               border: 'none',
               display: 'flex',
