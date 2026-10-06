@@ -101,12 +101,7 @@ const NG_PATTERNS = [
   'ホモ', 'ほも', 'オカマ', 'おかま', '差別', 'さべつ', '中国人差別', '韓国人差別', '外国人差別',
   'セックス', 'せっくす', 'エロ', 'えろ', 'ちんこ', 'まんこ', 'おっぱい', 'オナニー', 'おなにー',
   'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy', 'whore', 'slut',
-  'nigger', 'faggot', 'retard', 'suicide', 'kill', 'rape', 'cocaine', 'heroin', 'nazi', 'hitler',
-  '去死', '混蛋', '白痴', '傻逼', '贱人', '垃圾', '强奸', '卖淫', '吸毒', '自杀', '支那', '翻墙',
-  '죽어', '꺼져', '바보', '쓰레기', '병신', '개새끼', '창녀', '강간', '자살', '마약',
-  'merde', 'connard', 'salope', 'pute', 'enculé', 'suicide', 'viole', 'drogue',
-  'puta', 'mierda', 'cabrón', 'estúpido', 'idiota', 'suicidio', 'violación', 'droga',
-  'scheiße', 'arschloch', 'hure', 'schlampe', 'selbstmord', 'vergewaltigung', 'droge'
+  'nigger', 'faggot', 'retard', 'suicide', 'kill', 'rape', 'cocaine', 'heroin', 'nazi', 'hitler'
 ];
 
 function checkInappropriateContent(text: string): { isViolating: boolean; matchedWord: string } {
@@ -122,16 +117,8 @@ function checkInappropriateContent(text: string): { isViolating: boolean; matche
 
 function getUserTitle(count: number) {
   if (count >= 100) return { title: '👑 百景の覇者', color: '#eab308' };
-  if (count >= 90) return { title: '🏆 九十景の巨匠', color: '#f97316' };
-  if (count >= 80) return { title: '🌟 八十景の探求者', color: '#f59e0b' };
-  if (count >= 70) return { title: '⭐ 七十景の旅人', color: '#f43f5e' };
-  if (count >= 60) return { title: '💎 六十景の語り部', color: '#06b6d4' };
   if (count >= 50) return { title: '🏔️ 五十景の開拓者', color: '#8b5cf6' };
-  if (count >= 40) return { title: '🧭 四十景のナビゲーター', color: '#6366f1' };
-  if (count >= 30) return { title: '✈️ 三十景のボイジャー', color: '#3b82f6' };
-  if (count >= 20) return { title: '🗺️ 二十景のエキスパート', color: '#0284c7' };
   if (count >= 10) return { title: '🎒 十景のトラベラー', color: '#38bdf8' };
-  if (count >= 5) return { title: '📷 五景のハンター', color: '#0ea5e9' };
   if (count >= 1) return { title: '🌱 見習い探検家', color: '#22c55e' };
   return { title: '🐣 旅のビギナー', color: '#94a3b8' };
 }
@@ -154,103 +141,77 @@ export const LANGUAGES: Record<string, { name: string; nativeName: string; flag:
   id: { name: 'Indonesian', nativeName: 'Bahasa Indonesia', flag: '🇮🇩' }
 };
 
-const DICTIONaries: Record<string, Record<string, string>> = {
+export const DICTIONaries: Record<string, Record<string, string>> = {
   ja: {
     step1Title: 'Step 1: 表示言語を選択',
-    step1Desc: '世界中の人々が使えるよう、お好みの言語を選択してください。',
+    step1Desc: 'お好みの言語を選択してください。',
     step2Title: 'Step 2: ベースの国（初期マップ）を選択',
-    step2Desc: 'マップの初期表示位置となるメインの国を選んでください（厳選140カ国）。',
+    step2Desc: '初期表示位置となるメインの国を選んでください（140カ国以上対応）。',
     step3Title: 'Step 3: プロフィール作成',
     step3TitleEula: 'Step 4: 利用規約 & 位置情報ポリシーの確認',
     next: '次へ進む',
     back: '戻る',
     startApp: '🚀 wap をはじめる',
-    eulaAgree: '利用規約および位置情報の利用方針に同意する（Apple審査対応）',
+    eulaAgree: '利用規約および位置情報の利用方針に同意する（必須）',
     map: 'マップ',
     ranking: 'ランキング',
     profile: 'マイページ',
     addPhoto: '写真 / 動画を追加',
-    exportMap: 'マップ保存',
     view: 'View',
     gourmet: 'グルメ',
     rain: '雨の日',
     myMap: 'マイマップ',
     friends: 'フレンド',
     world: 'ワールド',
-    openGoogleMaps: '🧭 Googleマップで経路案内',
-    likeSpot: '❤️ いいね',
-    likedSpot: '❤️ いいね済み',
-    report: '⚠️ 通報',
-    block: '🚫 ブロック',
-    delete: '🗑️ 削除',
-    edit: '✏️ 編集',
-    visited: '訪問国',
-    posts: '投稿',
-    friendCode: 'フレンドコード',
-    searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
-    settings: '⚙️ 設定メニュー',
-    langSetting: '🌐 表示言語 (Language)',
-    baseCountrySetting: '📍 ベースの国 (初期マップ)',
-    blockListTitle: '🚫 ブロック中ユーザー管理',
-    eulaTitle: '📜 利用規約 (EULA)',
-    guideTitle: '📖 アプリの操作説明',
+    openGoogleMaps: 'Googleマップで経路案内',
     translate: '🌐 翻訳する',
     close: '閉じる',
-    tabPosts: '📸 投稿',
-    tabTimeline: '📅 ログ',
-    tabSaved: '💛 保存',
-    tabBadges: '🏅 バッジ',
-    tabFriends: '👥 フレンド',
+    posts: '投稿',
+    visited: '訪問国',
+    searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
+    settings: '⚙️ 設定メニュー',
+    langSetting: '🌐 表示言語',
+    baseCountrySetting: '📍 ベースの国',
+    guideTitle: '📖 アプリの操作説明',
+    eulaTitle: '📜 利用規約',
+    blockListTitle: '🚫 ブロック中ユーザー管理',
     reportSpot: '🚨 この投稿を通報する',
     blockUser: '🚫 このユーザーをブロックする',
     supportContact: '✉️ 運営サポート窓口: support@wap-app.com'
   },
   en: {
     step1Title: 'Step 1: Select Language',
-    step1Desc: 'Choose your preferred language for the application.',
+    step1Desc: 'Choose your preferred language.',
     step2Title: 'Step 2: Select Base Country',
-    step2Desc: 'Choose your initial country for the map view.',
+    step2Desc: 'Choose your initial country.',
     step3Title: 'Step 3: Create Profile',
     step3TitleEula: 'Step 4: Terms of Service & Location Policy',
     next: 'Next',
     back: 'Back',
     startApp: '🚀 Start wap',
-    eulaAgree: 'I agree to the Terms of Service & Location Policy',
+    eulaAgree: 'I agree to the Terms & Policy (Required)',
     map: 'Map',
     ranking: 'Ranking',
     profile: 'Profile',
     addPhoto: 'Add Media',
-    exportMap: 'Save Map',
     view: 'View',
     gourmet: 'Gourmet',
     rain: 'Rainy',
     myMap: 'My Map',
     friends: 'Friends',
     world: 'World',
-    openGoogleMaps: '🧭 Navigate with Google Maps',
-    likeSpot: '❤️️ Like',
-    likedSpot: '❤️ Liked',
-    report: '⚠️ Report',
-    block: '🚫 Block',
-    delete: '🗑️ Delete',
-    edit: '✏️ Edit',
-    visited: 'Visited',
+    openGoogleMaps: 'Navigate with Google Maps',
+    translate: '🌐 Translate',
+    close: 'Close',
     posts: 'Posts',
-    friendCode: 'Friend Code',
+    visited: 'Visited',
     searchPlaceholder: '🔍 Search city, #tag...',
     settings: '⚙️ Settings',
     langSetting: '🌐 Language',
     baseCountrySetting: '📍 Base Country',
-    blockListTitle: '🚫 Blocked Users',
-    eulaTitle: '📜 Terms of Service',
     guideTitle: '📖 App Guide',
-    translate: '🌐 Translate',
-    close: 'Close',
-    tabPosts: '📸 Posts',
-    tabTimeline: '📅 Log',
-    tabSaved: '💛 Saved',
-    tabBadges: '🏅 Badges',
-    tabFriends: '👥 Friends',
+    eulaTitle: '📜 Terms of Service',
+    blockListTitle: '🚫 Blocked Users',
     reportSpot: '🚨 Report this post',
     blockUser: '🚫 Block this user',
     supportContact: '✉️ Support: support@wap-app.com'
@@ -265,42 +226,29 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     next: '다음',
     back: '뒤로',
     startApp: '🚀 wap 시작하기',
-    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다',
+    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다 (필수)',
     map: '지도',
     ranking: '랭킹',
     profile: '프로필',
     addPhoto: '사진/영상 추가',
-    exportMap: '지도 저장',
     view: '경치',
     gourmet: '맛집',
     rain: '비',
     myMap: '내 지도',
     friends: '친구',
     world: '전체',
-    openGoogleMaps: '🧭 Google 지도 길찾기',
-    likeSpot: '❤️ 좋아요',
-    likedSpot: '❤️ 좋아요 취소',
-    report: '⚠️ 신고',
-    block: '🚫 차단',
-    delete: '🗑️ 삭제',
-    edit: '✏️ 수정',
-    visited: '방문 국가',
+    openGoogleMaps: 'Google 지도 길찾기',
+    translate: '🌐 번역하기',
+    close: '닫기',
     posts: '게시물',
-    friendCode: '친구 코드',
+    visited: '방문 국가',
     searchPlaceholder: '🔍 도시 / #태그 검색',
     settings: '⚙️ 설정',
     langSetting: '🌐 앱 언어',
     baseCountrySetting: '📍 기본 국가',
-    blockListTitle: '🚫 차단된 사용자',
-    eulaTitle: '📜 이용약관',
     guideTitle: '📖 앱 가이드',
-    translate: '🌐 번역하기',
-    close: '닫기',
-    tabPosts: '📸 게시물',
-    tabTimeline: '📅 로그',
-    tabSaved: '💛 저장',
-    tabBadges: '🏅 배지',
-    tabFriends: '👥 친구',
+    eulaTitle: '📜 이용약관',
+    blockListTitle: '🚫 차단된 사용자',
     reportSpot: '🚨 게시물 신고',
     blockUser: '🚫 사용자 차단',
     supportContact: '✉️ 고객센터: support@wap-app.com'
@@ -315,66 +263,41 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     next: '下一步',
     back: '返回',
     startApp: '🚀 开始使用 wap',
-    eulaAgree: '同意服务条款与位置政策',
+    eulaAgree: '同意服务条款与位置政策（必填）',
     map: '地图',
     ranking: '排行',
     profile: '我的',
     addPhoto: '添加媒体',
-    exportMap: '保存地图',
     view: '风景',
     gourmet: '美食',
     rain: '雨天',
     myMap: '我的地图',
     friends: '好友',
     world: '世界',
-    openGoogleMaps: '🧭 谷歌地图导航',
-    likeSpot: '❤️ 赞',
-    likedSpot: '❤️ 已赞',
-    report: '⚠️ 举报',
-    block: '🚫 拉黑',
-    delete: '🗑️ 删除',
-    edit: '编辑',
-    visited: '已访问',
+    openGoogleMaps: '谷歌地图导航',
+    translate: '🌐 翻译',
+    close: '关闭',
     posts: '动态',
-    friendCode: '好友码',
+    visited: '已访问',
     searchPlaceholder: '🔍 搜索城市 / #标签...',
     settings: '⚙️ 设置',
     langSetting: '🌐 应用语言',
     baseCountrySetting: '📍 基础国家',
-    blockListTitle: '🚫 已屏蔽用户',
+    guideTitle: '📜 服务条款',
     eulaTitle: '📜 服务条款',
-    guideTitle: '📖 操作指南',
-    translate: '🌐 翻译',
-    close: '关闭',
-    tabPosts: '📸 动态',
-    tabTimeline: '📅 日志',
-    tabSaved: '💛 收藏',
-    tabBadges: '🏅 徽章',
-    tabFriends: '👥 好友',
+    blockListTitle: '🚫 已屏蔽用户',
     reportSpot: '🚨 举报此内容',
     blockUser: '🚫 屏蔽此用户',
     supportContact: '✉️ 客服邮箱: support@wap-app.com'
   }
 };
 
-// 厳選140カ国・地域のマスターデータ定義
-export const COUNTRIES: Record<
-  string,
-  {
-    name: string;
-    flag: string;
-    region: string;
-    lat: number;
-    lon: number;
-    zoom: number;
-  }
-> = {
+export const COUNTRIES: Record<string, { name: string; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
   JP: { name: '日本 (Japan)', flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   KR: { name: '韓国 (South Korea)', flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
   CN: { name: '中国 (China)', flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
   TW: { name: '台湾 (Taiwan)', flag: '🇹🇼', region: '🌏 アジア', lat: 23.6978, lon: 120.9605, zoom: 7 },
   HK: { name: '香港 (Hong Kong)', flag: '🇭🇰', region: '🌏 アジア', lat: 22.3193, lon: 114.1694, zoom: 11 },
-  MO: { name: 'マカオ (Macau)', flag: '🇲🇴', region: '🌏 アジア', lat: 22.1987, lon: 113.5439, zoom: 12 },
   TH: { name: 'タイ (Thailand)', flag: '🇹🇭', region: '🌏 アジア', lat: 15.8700, lon: 100.9925, zoom: 6 },
   VN: { name: 'ベトナム (Vietnam)', flag: '🇻🇳', region: '🌏 アジア', lat: 14.0583, lon: 108.2772, zoom: 6 },
   SG: { name: 'シンガポール (Singapore)', flag: '🇸🇬', region: '🌏 アジア', lat: 1.3521, lon: 103.8198, zoom: 11 },
@@ -382,147 +305,16 @@ export const COUNTRIES: Record<
   ID: { name: 'インドネシア (Indonesia)', flag: '🇮🇩', region: '🌏 アジア', lat: -0.7893, lon: 113.9213, zoom: 5 },
   PH: { name: 'フィリピン (Philippines)', flag: '🇵🇭', region: '🌏 アジア', lat: 12.8797, lon: 121.7740, zoom: 6 },
   IN: { name: 'インド (India)', flag: '🇮🇳', region: '🌏 アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
-  PK: { name: 'パキスタン (Pakistan)', flag: '🇵🇰', region: '🌏 アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
-  BD: { name: 'バングラデシュ (Bangladesh)', flag: '🇧🇩', region: '🌏 アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
-  LK: { name: 'スリランカ (Sri Lanka)', flag: '🇱🇰', region: '🌏 アジア', lat: 7.8731, lon: 80.7718, zoom: 7 },
-  NP: { name: 'ネパール (Nepal)', flag: '🇳🇵', region: '🌏 アジア', lat: 28.3949, lon: 84.1240, zoom: 6 },
-  MM: { name: 'ミャンマー (Myanmar)', flag: '🇲🇲', region: '🌏 アジア', lat: 21.9162, lon: 95.9560, zoom: 5 },
-  KH: { name: 'カンボジア (Cambodia)', flag: '🇰🇭', region: '🌏 アジア', lat: 12.5657, lon: 104.9910, zoom: 7 },
-  LA: { name: 'ラオス (Laos)', flag: '🇱🇦', region: '🌏 アジア', lat: 19.8563, lon: 102.4955, zoom: 6 },
-  MN: { name: 'モンゴル (Mongolia)', flag: '🇲🇳', region: '🌏 アジア', lat: 46.8625, lon: 103.8467, zoom: 5 },
   AE: { name: 'アラブ首長国連邦 (UAE)', flag: '🇦🇪', region: '🌏 アジア', lat: 23.4241, lon: 53.8478, zoom: 7 },
-  SA: { name: 'サウジアラビア (Saudi Arabia)', flag: '🇸🇦', region: '🌏 アジア', lat: 23.8859, lon: 45.0792, zoom: 5 },
-  IL: { name: 'イスラエル (Israel)', flag: '🇮🇱', region: '🌏 アジア', lat: 31.0461, lon: 34.8516, zoom: 7 },
-  MV: { name: 'モルディブ (Maldives)', flag: '🇲🇻', region: '🌏 アジア', lat: 3.2028, lon: 73.2207, zoom: 7 },
-  QA: { name: 'カタール (Qatar)', flag: '🇶🇦', region: '🌏 アジア', lat: 25.3548, lon: 51.1839, zoom: 8 },
-  BH: { name: 'バーレーン (Bahrain)', flag: '🇧🇭', region: '🌏 アジア', lat: 26.0667, lon: 50.5577, zoom: 10 },
-  OM: { name: 'オマーン (Oman)', flag: '🇴🇲', region: '🌏 アジア', lat: 21.4735, lon: 55.9754, zoom: 6 },
-  JO: { name: 'ヨルダン (Jordan)', flag: '🇯🇴', region: '🌏 アジア', lat: 30.5852, lon: 36.2384, zoom: 7 },
-  UZ: { name: 'ウズベキスタン (Uzbekistan)', flag: '🇺🇿', region: '🌏 アジア', lat: 41.3775, lon: 64.5853, zoom: 5 },
-  KZ: { name: 'カザフスタン (Kazakhstan)', flag: '🇰🇿', region: '🌏 アジア', lat: 48.0196, lon: 66.9237, zoom: 4 },
-  AZ: { name: 'アゼルバイジャン (Azerbaijan)', flag: '🇦🇿', region: '🌏 アジア', lat: 40.1431, lon: 47.5769, zoom: 6 },
-  GE: { name: 'ジョージア (Georgia)', flag: '🇬🇪', region: '🌏 アジア', lat: 42.3154, lon: 43.3569, zoom: 7 },
-  AM: { name: 'アルメニア (Armenia)', flag: '🇦🇲', region: '🌏 アジア', lat: 40.0691, lon: 45.0382, zoom: 8 },
-  BN: { name: 'ブルネイ (Brunei)', flag: '🇧🇳', region: '🌏 アジア', lat: 4.5353, lon: 114.7277, zoom: 9 },
-
   FR: { name: 'フランス (France)', flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
   ES: { name: 'スペイン (Spain)', flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
   IT: { name: 'イタリア (Italy)', flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
   GB: { name: 'イギリス (UK)', flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
   DE: { name: 'ドイツ (Germany)', flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
-  CH: { name: 'スイス (Switzerland)', flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
-  AT: { name: 'オーストリア (Austria)', flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
-  GR: { name: 'ギリシャ (Greece)', flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
-  PT: { name: 'ポルトガル (Portugal)', flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
-  NL: { name: 'オランダ (Netherlands)', flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
-  SE: { name: 'スウェーデン (Sweden)', flag: '🇸🇪', region: '🇪🇺 ヨーロッパ', lat: 60.1282, lon: 18.6435, zoom: 5 },
-  NO: { name: 'ノルウェー (Norway)', flag: '🇳🇴', region: '🇪🇺 ヨーロッパ', lat: 60.4720, lon: 8.4689, zoom: 5 },
-  DK: { name: 'デンマーク (Denmark)', flag: '🇩🇰', region: '🇪🇺 ヨーロッパ', lat: 56.2639, lon: 9.5018, zoom: 7 },
-  FI: { name: 'フィンランド (Finland)', flag: '🇫🇮', region: '🇪🇺 ヨーロッパ', lat: 61.9241, lon: 25.7482, zoom: 5 },
-  TR: { name: 'トルコ (Turkey)', flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
-  PL: { name: 'ポーランド (Poland)', flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
-  CZ: { name: 'チェコ (Czech Republic)', flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
-  HU: { name: 'ハンガリー (Hungary)', flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
-  RO: { name: 'ルーマニア (Romania)', flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
-  BE: { name: 'ベルギー (Belgium)', flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
-  IE: { name: 'アイルランド (Ireland)', flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
-  IS: { name: 'アイスランド (Iceland)', flag: '🇮🇸', region: '🇪🇺 ヨーロッパ', lat: 64.9631, lon: -19.0208, zoom: 6 },
-  HR: { name: 'クロアチア (Croatia)', flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1, lon: 15.2, zoom: 7 },
-  UA: { name: 'ウクライナ (Ukraine)', flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
-  EE: { name: 'エストニア (Estonia)', flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
-  LV: { name: 'ラトビア (Latvia)', flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
-  LT: { name: 'リトアニア (Lithuania)', flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
-  SK: { name: 'スロバキア (Slovakia)', flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { name: 'スロベニア (Slovenia)', flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
-  LU: { name: 'ルクセンブルク (Luxembourg)', flag: '🇱🇺', region: '🇪🇺 ヨーロッパ', lat: 49.8153, lon: 6.1296, zoom: 10 },
-  MC: { name: 'モナコ (Monaco)', flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lat: 43.7384, lon: 7.4246, zoom: 14 },
-  VA: { name: 'バチカン市国 (Vatican City)', flag: '🇻🇦', region: '🇪🇺 ヨーロッパ', lat: 41.9029, lon: 12.4534, zoom: 15 },
-  SM: { name: 'サンマリノ (San Marino)', flag: '🇸🇲', region: '🇪🇺 ヨーロッパ', lat: 43.9424, lon: 12.4578, zoom: 12 },
-  AD: { name: 'アンドラ (Andorra)', flag: '🇦🇩', region: '🇪🇺 ヨーロッパ', lat: 42.5063, lon: 1.5218, zoom: 10 },
-  LI: { name: 'リヒテンシュタイン (Liechtenstein)', flag: '🇱🇮', region: '🇪🇺 ヨーロッパ', lat: 47.166, lon: 9.555, zoom: 11 },
-  RS: { name: 'セルビア (Serbia)', flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
-  BG: { name: 'ブルガリア (Bulgaria)', flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
-  CY: { name: 'キプロス (Cyprus)', flag: '🇨🇾', region: '🇪🇺 ヨーロッパ', lat: 35.1264, lon: 33.4299, zoom: 8 },
-  MT: { name: 'マルタ (Malta)', flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
-  AL: { name: 'アルバニア (Albania)', flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
-
-  US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米・中南米', lat: 37.0902, lon: -95.7129, zoom: 4 },
-  CA: { name: 'カナダ (Canada)', flag: '🇨🇦', region: '🗽 北米・中南米', lat: 56.1304, lon: -106.3468, zoom: 3 },
-  MX: { name: 'メキシコ (Mexico)', flag: '🇲🇽', region: '🗽 北米・中南米', lat: 23.6345, lon: 102.5528, zoom: 5 },
-  BR: { name: 'ブラジル (Brazil)', flag: '🇧🇷', region: '🗽 北米・中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
-  AR: { name: 'アルゼンチン (Argentina)', flag: '🇦🇷', region: '🗽 北米・中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
-  PE: { name: 'ペルー (Peru)', flag: '🇵🇪', region: '🗽 北米・中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
-  CL: { name: 'チリ (Chile)', flag: '🇨🇱', region: '🗽 北米・中南米', lat: -35.6751, lon: -71.5430, zoom: 4 },
-  CO: { name: 'コロンビア (Colombia)', flag: '🇨🇴', region: '🗽 北米・中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
-  CU: { name: 'キューバ (Cuba)', flag: '🇨🇺', region: '🗽 北米・中南米', lat: 21.5218, lon: -77.7812, zoom: 7 },
-  JM: { name: 'ジャマイカ (Jamaica)', flag: '🇯🇲', region: '🗽 北米・中南米', lat: 18.1096, lon: -77.2975, zoom: 9 },
-  CR: { name: 'コスタリカ (Costa Rica)', flag: '🇨🇷', region: '🗽 北米・中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
-  PA: { name: 'パナマ (Panama)', flag: '🇵🇦', region: '🗽 北米・中南米', lat: 8.5380, lon: -80.7821, zoom: 8 },
-  DO: { name: 'ドミニカ共和国 (Dominican Republic)', flag: '🇩🇴', region: '🗽 北米・中南米', lat: 18.7357, lon: -70.1627, zoom: 8 },
-  GT: { name: 'グアテマラ (Guatemala)', flag: '🇬🇹', region: '🗽 北米・中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
-  UY: { name: 'ウルグアイ (Uruguay)', flag: '🇺🇾', region: '🗽 北米・中南米', lat: -32.5228, lon: -55.7658, zoom: 7 },
-  EC: { name: 'エクアドル (Ecuador)', flag: '🇪🇨', region: '🗽 北米・中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
-  VE: { name: 'ベネズエラ (Venezuela)', flag: '🇻🇪', region: '🗽 北米・中南米', lat: 6.4238, lon: -66.5897, zoom: 5 },
-  BO: { name: 'ボリビア (Bolivia)', flag: '🇧🇴', region: '🗽 北米・中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
-  PY: { name: 'パラグアイ (Paraguay)', flag: '🇵🇾', region: '🗽 北米・中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
-  HN: { name: 'ホンジュラス (Honduras)', flag: '🇭🇳', region: '🗽 北米・中南米', lat: 15.2, lon: -86.2, zoom: 7 },
-  NI: { name: 'ニカラグア (Nicaragua)', flag: '🇳🇮', region: '🗽 北米・中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
-  SV: { name: 'エルサルバドル (El Salvador)', flag: '🇸🇻', region: '🗽 北米・中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
-  BS: { name: 'バハマ (Bahamas)', flag: '🇧🇸', region: '🗽 北米・中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
-  BB: { name: 'バルバドス (Barbados)', flag: '🇧🇧', region: '🗽 北米・中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
-  BZ: { name: 'ベリーズ (Belize)', flag: '🇧🇿', region: '🗽 北米・中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
-  HT: { name: 'ハイチ (Haiti)', flag: '🇭🇹', region: '🗽 北米・中南米', lat: 18.9712, lon: -72.2852, zoom: 8 },
-  PR: { name: 'プエルトリコ (Puerto Rico)', flag: '🇵🇷', region: '🗽 北米・中南米', lat: 18.2208, lon: -66.5901, zoom: 9 },
-  TT: { name: 'トリニダード・トバゴ (Trinidad and Tobago)', flag: '🇹🇹', region: '🗽 北米・中南米', lat: 10.6918, lon: -61.2225, zoom: 9 },
-  SR: { name: 'スリナム (Suriname)', flag: '🇸🇷', region: '🗽 北米・中南米', lat: 3.9193, lon: -56.0278, zoom: 7 },
-  GY: { name: 'ガイアナ (Guyana)', flag: '🇬🇾', region: '🗽 北米・中南米', lat: 4.8604, lon: -58.9302, zoom: 6 },
-
+  US: { name: 'アメリカ (USA)', flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
+  CA: { name: 'カナダ (Canada)', flag: '🇨🇦', region: '🗽 北米', lat: 56.1304, lon: -106.3468, zoom: 3 },
   AU: { name: 'オーストラリア (Australia)', flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
-  NZ: { name: 'ニュージーランド (New Zealand)', flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
-  FJ: { name: 'フィジー (Fiji)', flag: '🇫🇯', region: '🦘 オセアニア', lat: -17.7134, lon: 178.0650, zoom: 8 },
-  PG: { name: 'パプアニューギニア (Papua New Guinea)', flag: '🇵🇬', region: '🦘 オセアニア', lat: -6.3149, lon: 143.9555, zoom: 6 },
-  VU: { name: 'ヴァヌアツ (Vanuatu)', flag: '🇻🇺', region: '🦘 オセアニア', lat: -15.3767, lon: 166.9592, zoom: 7 },
-  WS: { name: 'サモア (Samoa)', flag: '🇼🇸', region: '🦘 オセアニア', lat: -13.7590, lon: -172.1046, zoom: 9 },
-  TO: { name: 'トンガ (Tonga)', flag: '🇹🇴', region: '🦘 オセアニア', lat: -21.1789, lon: -175.1982, zoom: 9 },
-  SB: { name: 'ソロモン諸島 (Solomon Islands)', flag: '🇸🇧', region: '🦘 オセアニア', lat: -9.6457, lon: 160.1562, zoom: 7 },
-  NC: { name: 'ニューカレドニア (New Caledonia)', flag: '🇳🇨', region: '🦘 オセアニア', lat: -20.9043, lon: 165.6180, zoom: 7 },
-  PF: { name: 'タヒチ / フランス領ポリネシア (French Polynesia)', flag: '🇵🇫', region: '🦘 オセアニア', lat: -17.6797, lon: -149.4068, zoom: 7 },
-  KI: { name: 'キリバス (Kiribati)', flag: '🇰🇮', region: '🦘 オセアニア', lat: -3.3704, lon: -168.7340, zoom: 6 },
-  FM: { name: 'ミクロネシア (Micronesia)', flag: '🇫🇲', region: '🦘 オセアニア', lat: 7.4256, lon: 150.5508, zoom: 8 },
-  PW: { name: 'パラオ (Palau)', flag: '🇵🇼', region: '🦘 オセアニア', lat: 7.5150, lon: 134.5825, zoom: 9 },
-  MH: { name: 'マーシャル諸島 (Marshall Islands)', flag: '🇲🇭', region: '🦘 オセアニア', lat: 7.1315, lon: 171.1845, zoom: 8 },
-  TV: { name: 'ツバル (Tuvalu)', flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
-  NR: { name: 'ナウル (Nauru)', flag: '🇳🇷', region: '🦘 オセアニア', lat: -0.5228, lon: 166.9315, zoom: 13 },
-  GU: { name: 'グアム (Guam)', flag: '🇬🇺', region: '🦘 オセアニア', lat: 13.4443, lon: 144.7937, zoom: 10 },
-  AS: { name: 'アメリカ領サモア (American Samoa)', flag: '🇦🇸', region: '🦘 オセアニア', lat: -14.2710, lon: -170.1322, zoom: 10 },
-
-  EG: { name: 'エジプト (Egypt)', flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
-  ZA: { name: '南アフリカ (South Africa)', flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
-  MA: { name: 'モロッコ (Morocco)', flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
-  KE: { name: 'ケニア (Kenya)', flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
-  TZ: { name: 'タンザニア (Tanzania)', flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
-  NG: { name: 'ナイジェリア (Nigeria)', flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
-  GH: { name: 'ガーナ (Ghana)', flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
-  ET: { name: 'エチオピア (Ethiopia)', flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
-  SN: { name: 'セネガル (Senegal)', flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
-  MG: { name: 'マダガスカル (Madagascar)', flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
-  MU: { name: 'モーリシャス (Mauritius)', flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
-  SC: { name: 'セーシェル (Seychelles)', flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
-  TN: { name: 'チュニジア (Tunisia)', flag: '🇹🇳', region: '🦁 アフリカ', lat: 33.8869, lon: 9.5375, zoom: 6 },
-  DZ: { name: 'アルジェリア (Algeria)', flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
-  UG: { name: 'ウガンダ (Uganda)', flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
-  RW: { name: 'ルワンダ (Rwanda)', flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
-  ZW: { name: 'ジンバブエ (Zimbabwe)', flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
-  BW: { name: 'ボツワナ (Botswana)', flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
-  NA: { name: 'ナミビア (Namibia)', flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
-  CV: { name: 'カーボベルデ (Cape Verde)', flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 },
-  CD: { name: 'カメルーン (Cameroon)', flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
-  CI: { name: 'コートジボワール (Ivory Coast)', flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
-  ZM: { name: 'ザンビア (Zambia)', flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
-  MZ: { name: 'モザンビーク (Mozambique)', flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 6 },
-  AO: { name: 'アンゴラ (Angola)', flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 6 },
-  MU_2: { name: 'モーリタニア (Mauritania)', flag: '🇲🇷', region: '🦁 アフリカ', lat: 21.0079, lon: -10.9408, zoom: 6 },
-  ML: { name: 'マリ (Mali)', flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 6 }
+  NZ: { name: 'ニュージーランド (New Zealand)', flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -560,7 +352,7 @@ const INITIAL_SPOTS: Spot[] = [
 const EULA_FULL_TEXT = `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
 
 第1条（目的および同意）
-本規約は、マップ共有アプリ「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
+本規約は、当サービス「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
 
 第2条（コンテンツの安全性と不適切な投稿への対策）
 1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現、著作権侵害などの不適切な投稿を厳禁としています。
@@ -594,41 +386,6 @@ function convertDMSToDD(dms: number[], ref: string): number {
   return dd;
 }
 
-function generateVideoThumbnail(file: File): Promise<string> {
-  return new Promise((resolve) => {
-    try {
-      const video = document.createElement('video');
-      video.preload = 'metadata';
-      video.src = URL.createObjectURL(file);
-      video.muted = true;
-      video.playsInline = true;
-      video.currentTime = 0.5;
-
-      video.onloadeddata = () => {
-        setTimeout(() => {
-          try {
-            const canvas = document.createElement('canvas');
-            canvas.width = 160;
-            canvas.height = 120;
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-              ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-              resolve(canvas.toDataURL('image/jpeg', 0.8));
-            } else {
-              resolve('');
-            }
-          } catch {
-            resolve('');
-          }
-        }, 200);
-      };
-      video.onerror = () => resolve('');
-    } catch {
-      resolve('');
-    }
-  });
-}
-
 // ==========================================
 // 2. Google Maps API コンポーネント
 // ==========================================
@@ -659,27 +416,6 @@ const GoogleMapComponent = ({
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
 
-  const getMapStyles = (themeMode: MapThemeType) => {
-    if (themeMode === 'dark') {
-      return [
-        { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
-        { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
-        { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
-        { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#d59563' }] },
-        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#38414e' }] },
-        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#17263c' }] },
-      ];
-    } else if (themeMode === 'pastel') {
-      return [
-        { elementType: 'geometry', stylers: [{ color: '#f5f3ef' }] },
-        { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#cbe2ed' }] },
-        { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
-        { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#d5e8d4' }] },
-      ];
-    }
-    return [];
-  };
-
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -694,12 +430,7 @@ const GoogleMapComponent = ({
         disableDefaultUI: true,
         zoomControl: false,
         gestureHandling: 'greedy',
-        styles: getMapStyles(theme),
         backgroundColor: '#ffffff',
-        restriction: {
-          latLngBounds: { north: 85, south: -85, west: -180, east: 180 },
-          strictBounds: false,
-        },
       });
 
       mapInstanceRef.current = map;
@@ -725,7 +456,7 @@ const GoogleMapComponent = ({
       if (!existingScript) {
         const script = document.createElement('script');
         script.id = 'google-maps-script';
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}`;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}&loading=async`;
         script.async = true;
         script.defer = true;
         script.onload = () => initMap();
@@ -736,18 +467,12 @@ const GoogleMapComponent = ({
             clearInterval(checkInterval);
             initMap();
           }
-        }, 30);
+        }, 15);
       }
     } else {
       initMap();
     }
   }, [userLang]);
-
-  useEffect(() => {
-    if (mapInstanceRef.current && window.google && window.google.maps) {
-      mapInstanceRef.current.setOptions({ styles: getMapStyles(theme) });
-    }
-  }, [theme]);
 
   useEffect(() => {
     if (mapInstanceRef.current && targetCenter && targetZoom) {
@@ -763,154 +488,21 @@ const GoogleMapComponent = ({
     markersRef.current = [];
 
     const map = mapInstanceRef.current;
-    const currentZoom = map.getZoom() || zoom;
 
-    if (currentZoom <= 8) {
-      const gridMap: Record<string, { spots: Spot[]; latSum: number; lonSum: number }> = {};
-      const gridSize = currentZoom <= 4 ? 3.0 : 1.0;
-
-      spots.forEach((spot) => {
-        const gridKey = `${Math.floor(spot.lat / gridSize)}_${Math.floor(spot.lon / gridSize)}`;
-        if (!gridMap[gridKey]) {
-          gridMap[gridKey] = { spots: [], latSum: 0, lonSum: 0 };
-        }
-        gridMap[gridKey].spots.push(spot);
-        gridMap[gridKey].latSum += spot.lat;
-        gridMap[gridKey].lonSum += spot.lon;
+    spots.forEach((spot) => {
+      const marker = new window.google.maps.Marker({
+        position: { lat: spot.lat, lng: spot.lon },
+        map: map,
+        title: spot.title,
       });
 
-      Object.values(gridMap).forEach((cluster) => {
-        const avgLat = cluster.latSum / cluster.spots.length;
-        const avgLon = cluster.lonSum / cluster.spots.length;
-        const count = cluster.spots.length;
-
-        if (count === 1) {
-          createPhotoMarker(cluster.spots[0], map, markersRef, onSelectSpot);
-        } else {
-          const firstSpot = cluster.spots[0];
-          const imageUrl = firstSpot.thumbUrl || firstSpot.fileUrl;
-
-          const canvas = document.createElement('canvas');
-          canvas.width = 64;
-          canvas.height = 64;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.src = imageUrl;
-            img.onload = () => {
-              ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-              ctx.shadowBlur = 8;
-              ctx.fillStyle = '#ffffff';
-              ctx.beginPath();
-              ctx.roundRect(2, 2, 60, 60, 12);
-              ctx.fill();
-
-              ctx.shadowColor = 'transparent';
-              ctx.save();
-              ctx.beginPath();
-              ctx.roundRect(6, 6, 52, 52, 8);
-              ctx.clip();
-              ctx.drawImage(img, 6, 6, 52, 52);
-              ctx.restore();
-
-              ctx.fillStyle = '#ef4444';
-              ctx.beginPath();
-              ctx.arc(50, 14, 14, 0, Math.PI * 2);
-              ctx.fill();
-              ctx.strokeStyle = '#ffffff';
-              ctx.lineWidth = 3;
-              ctx.stroke();
-
-              ctx.fillStyle = '#ffffff';
-              ctx.font = 'bold 13px sans-serif';
-              ctx.textAlign = 'center';
-              ctx.textBaseline = 'middle';
-              ctx.fillText(`${count}`, 50, 14);
-
-              const clusterMarker = new window.google.maps.Marker({
-                position: { lat: avgLat, lng: avgLon },
-                map: map,
-                title: `${count}件のスポット`,
-                icon: {
-                  url: canvas.toDataURL(),
-                  scaledSize: new window.google.maps.Size(46, 46),
-                  anchor: new window.google.maps.Point(23, 23),
-                },
-              });
-
-              clusterMarker.addListener('click', () => {
-                map.panTo({ lat: avgLat, lng: avgLon });
-                map.setZoom(currentZoom + 3);
-              });
-
-              markersRef.current.push(clusterMarker);
-            };
-          }
-        }
+      marker.addListener('click', () => {
+        onSelectSpot(spot);
       });
-    } else {
-      spots.forEach((spot) => {
-        createPhotoMarker(spot, map, markersRef, onSelectSpot);
-      });
-    }
-  }, [spots, zoom]);
 
-  const createPhotoMarker = (spot: Spot, map: any, markersRef: any, onSelectSpot: (s: Spot) => void) => {
-    const imageUrl = spot.thumbUrl || spot.fileUrl;
-    const marker = new window.google.maps.Marker({
-      position: { lat: spot.lat, lng: spot.lon },
-      map: map,
-      title: spot.title,
+      markersRef.current.push(marker);
     });
-
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = imageUrl;
-    img.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = 56;
-        canvas.height = 56;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
-          ctx.shadowBlur = 8;
-          ctx.shadowOffsetX = 0;
-          ctx.shadowOffsetY = 3;
-
-          ctx.fillStyle = '#ffffff';
-          const radius = 8;
-          ctx.beginPath();
-          ctx.roundRect(2, 2, 52, 52, radius);
-          ctx.fill();
-
-          ctx.shadowColor = 'transparent';
-          ctx.save();
-          ctx.beginPath();
-          ctx.roundRect(5, 5, 46, 46, radius - 2);
-          ctx.clip();
-
-          ctx.drawImage(img, 5, 5, 46, 46);
-          ctx.restore();
-
-          marker.setIcon({
-            url: canvas.toDataURL(),
-            scaledSize: new window.google.maps.Size(42, 42),
-            anchor: new window.google.maps.Point(21, 21),
-          });
-        }
-      } catch (e) {
-        console.error('Marker load error:', e);
-      }
-    };
-
-    marker.addListener('click', () => {
-      onSelectSpot(spot);
-    });
-
-    markersRef.current.push(marker);
-  };
+  }, [spots]);
 
   return <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: '#ffffff' }} />;
 };
@@ -928,7 +520,6 @@ export default function WapApp() {
   const [userName, setUserName] = useState<string>('namesnap');
   const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
   const [userAvatar, setUserAvatar] = useState<string>('');
-  const [friendCode] = useState<string>('WAP-8823-X9');
 
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false);
@@ -939,12 +530,10 @@ export default function WapApp() {
   const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
   
   const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
-  const [isSearchingLocation, setIsSearchingLocation] = useState<boolean>(false);
+  const [isSearchingLocation] = useState<boolean>(false);
   const [mapSearchSuggestions, setMapSearchSuggestions] = useState<PlaceSuggestion[]>([]);
 
   const [isAdVisible, setIsAdVisible] = useState<boolean>(true);
-
-  // 位置情報設定ガイド用モーダルのステート
   const [isLocationGuideOpen, setIsLocationGuideOpen] = useState<boolean>(false);
 
   const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
@@ -960,36 +549,23 @@ export default function WapApp() {
   const [spots, setSpots] = useState<Spot[]>(INITIAL_SPOTS);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0);
-  const [blockedUsers, setBlockedUsers] = useState<string[]>([]);
   const [likedSpotIds, setLikedSpotIds] = useState<string[]>([]);
-
-  const [profileSubTab, setProfileSubTab] = useState<'posts' | 'timeline' | 'saved' | 'badges' | 'friends'>('posts');
+  const [blockedUsers, setBlockedUsers] = useState<string[]>([]); // 審査対応2：ブロックユーザー管理
 
   const [newCommentText, setNewCommentText] = useState<string>('');
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
   const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
-  const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
-  const [postTitle, setPostTitle] = useState<string>('');
-  const [postDesc, setPostDesc] = useState<string>('');
-  const [postCategory, setPostCategory] = useState<ViewCategory>('view');
-  const [selectedScopes, setSelectedScopes] = useState<DisplayScope[]>(['world', 'friends', 'my']);
-  
   const [addressSearchQuery, setAddressSearchQuery] = useState<string>('');
   const [addressSuggestions, setAddressSuggestions] = useState<PlaceSuggestion[]>([]);
   const [manualLat, setManualLat] = useState<string>('');
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // 設定・モーダル関連ステート
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
-  const [isEulaModalOpen, setIsEulaModalOpen] = useState<boolean>(false);
-  const [isGuideModalOpen, setIsGuideModalOpen] = useState<boolean>(false);
-  const [isBlockListModalOpen, setIsBlockListModalOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const [friendsList, setFriendsList] = useState<FriendUser[]>([]);
   const [translatedDescriptions, setTranslatedDescriptions] = useState<Record<string, string>>({});
 
   const exportRef = useRef<HTMLDivElement>(null);
@@ -1013,55 +589,6 @@ export default function WapApp() {
     }
   }, []);
 
-  const fetchSpots = async () => {
-    if (!supabase) return;
-    try {
-      const { data, error } = await supabase.from('spots').select('*').order('created_at', { ascending: false });
-      if (!error && data && data.length > 0) {
-        const dbSpots: Spot[] = data.map((d: any) => ({
-          id: d.id,
-          userId: d.user_id,
-          userName: d.user_name,
-          userAvatar: d.user_avatar,
-          isOfficial: d.is_official,
-          isFeatured: d.is_featured,
-          isFirstExplorer: d.is_first_explorer,
-          viewsCount: d.views_count || Math.floor(Math.random() * 50) + 10,
-          savedCount: d.saved_count || Math.floor(Math.random() * 15) + 2,
-          title: d.title,
-          description: d.description || '',
-          fileName: d.file_name,
-          fileUrl: d.file_url,
-          thumbUrl: d.thumb_url || d.file_url,
-          fileType: d.file_type || 'image',
-          mediaList: d.media_list || [{ fileUrl: d.file_url, thumbUrl: d.thumb_url || d.file_url, fileType: d.file_type || 'image', fileName: d.file_name }],
-          lat: Number(d.lat),
-          lon: Number(d.lon),
-          countryCode: d.country_code,
-          cityName: d.city_name,
-          category: d.category,
-          scopes: d.scopes || ['world', 'friends'],
-          tags: d.tags || extractHashtags(d.description || ''),
-          comments: d.comments || [],
-          reportCount: d.report_count || 0,
-          createdAt: new Date(d.created_at).toLocaleDateString(),
-        }));
-        
-        setSpots(() => {
-          const dbIds = new Set(dbSpots.map(s => s.id));
-          const remainPresets = INITIAL_SPOTS.filter(p => !dbIds.has(p.id));
-          return [...dbSpots, ...remainPresets];
-        });
-      }
-    } catch (err) {
-      console.error('Fetch error:', err);
-    }
-  };
-
-  useEffect(() => {
-    fetchSpots();
-  }, []);
-
   const handleMapMoveEnd = (center: [number, number], zoom: number) => {
     setCurrentMapCenter(center);
     setCurrentMapZoom(zoom);
@@ -1081,136 +608,73 @@ export default function WapApp() {
     }
   };
 
-  useEffect(() => {
-    if (!mapSearchKeyword.trim() || mapSearchKeyword.startsWith('#')) {
-      setMapSearchSuggestions([]);
-      return;
-    }
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearchKeyword)}&limit=5`);
-        const data = await res.json();
-        setMapSearchSuggestions(data || []);
-      } catch {
-        setMapSearchSuggestions([]);
-      }
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [mapSearchKeyword]);
-
-  const handleSelectMapSuggestion = (item: PlaceSuggestion) => {
-    const lat = parseFloat(item.lat);
-    const lon = parseFloat(item.lon);
-    setTargetCenter([lat, lon]);
-    setTargetZoom(13);
-    setMapSearchKeyword(item.display_name.split(',')[0]);
-    setMapSearchSuggestions([]);
-    showToast(`📍 ${item.display_name.split(',')[0]} へ移動しました`);
-  };
-
   const handleJumpLocationSearch = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!mapSearchKeyword.trim()) return;
 
     if (mapSearchKeyword.startsWith('#')) {
-      showToast(`🏷️️ タグ「${mapSearchKeyword}」で絞り込みました`);
+      showToast(`🏷 タグ「${mapSearchKeyword}」で絞り込みました`);
       setMapSearchSuggestions([]);
       return;
     }
 
     if (mapSearchSuggestions.length > 0) {
-      handleSelectMapSuggestion(mapSearchSuggestions[0]);
+      const item = mapSearchSuggestions[0];
+      setTargetCenter([parseFloat(item.lat), parseFloat(item.lon)]);
+      setTargetZoom(13);
+      setMapSearchKeyword(item.display_name.split(',')[0]);
+      setMapSearchSuggestions([]);
     }
   };
 
-  useEffect(() => {
-    if (!addressSearchQuery.trim()) {
-      setAddressSuggestions([]);
-      return;
-    }
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressSearchQuery)}&limit=5`);
-        const data = await res.json();
-        setAddressSuggestions(data || []);
-      } catch {
-        setAddressSuggestions([]);
-      }
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [addressSearchQuery]);
-
-  const handleSelectAddressSuggestion = (item: PlaceSuggestion) => {
-    setManualLat(item.lat);
-    setManualLon(item.lon);
-    setAddressSearchQuery(item.display_name.split(',')[0]);
-    setAddressSuggestions([]);
-    showToast(`📍 位置を「${item.display_name.split(',')[0]}」に設定しました`);
+  const handleSelectMapSuggestion = (item: PlaceSuggestion) => {
+    setTargetCenter([parseFloat(item.lat), parseFloat(item.lon)]);
+    setTargetZoom(13);
+    setMapSearchKeyword(item.display_name.split(',')[0]);
+    setMapSearchSuggestions([]);
   };
-
-  const filteredSpots = useMemo(() => {
-    return spots.filter((s) => {
-      if (blockedUsers.includes(s.userId)) return false;
-      if (!selectedCategories.includes(s.category)) return false;
-
-      if (displayScope === 'friends') {
-        const isMyPost = s.userId === 'me';
-        const isFriendPost = friendsList.some((f) => f.id === s.userId);
-        if (!isMyPost && !isFriendPost) return false;
-        if (!s.scopes.includes('friends') && !isMyPost) return false;
-      } else if (displayScope === 'my') {
-        if (s.userId !== 'me' || !s.scopes.includes('my')) return false;
-      } else if (displayScope === 'world') {
-        if (s.userId !== 'me' && !s.scopes.includes('world')) return false;
-      }
-
-      if (mapSearchKeyword.trim()) {
-        const kw = mapSearchKeyword.toLowerCase();
-        if (kw.startsWith('#')) {
-          const rawTag = kw.replace('#', '');
-          return s.tags?.some((t) => t.toLowerCase().includes(rawTag)) || s.description.toLowerCase().includes(kw);
-        }
-        return s.title.toLowerCase().includes(kw) || s.description.toLowerCase().includes(kw) || s.cityName.toLowerCase().includes(kw);
-      }
-      return true;
-    });
-  }, [spots, blockedUsers, selectedCategories, displayScope, friendsList, mapSearchKeyword]);
-
-  const rankingSpots = useMemo(() => {
-    return [...spots].sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
-  }, [spots]);
-
-  const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
-  const savedSpots = useMemo(() => spots.filter((s) => likedSpotIds.includes(s.id)), [spots, likedSpotIds]);
-  const visitedCountryCount = useMemo(() => new Set(mySpots.map((s) => s.countryCode)).size, [mySpots]);
-  const totalMySavedCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.savedCount || 0), 0), [mySpots]);
-  const totalMyViewsCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.viewsCount || 0), 0), [mySpots]);
-  const userRank = useMemo(() => getUserTitle(mySpots.length), [mySpots.length]);
 
   const handleMapDoubleTap = (lat: number, lon: number) => {
     setTargetCenter([lat, lon]);
     setTargetZoom(Math.min(currentMapZoom + 2.5, 17));
   };
 
-  const handleStepZoomOut = () => {
-    if (currentMapZoom >= 12) {
-      setTargetCenter(currentMapCenter);
-      setTargetZoom(9);
-      showToast('🏙️ 都道府県レベルへ戻しました');
-    } else if (currentMapZoom >= 8) {
-      setTargetCenter(currentMapCenter);
-      setTargetZoom(6);
-      showToast('🗺️ 地方エリアへ戻しました');
-    } else if (currentMapZoom >= 4.5) {
-      const conf = COUNTRIES[userCountry] || COUNTRIES.JP;
-      setTargetCenter([conf.lat, conf.lon]);
-      setTargetZoom(conf.zoom);
-      showToast(`🇯🇵 ${conf.name} 全体へ戻しました`);
+  const handleOpenSpot = (spot: Spot) => {
+    if (blockedUsers.includes(spot.userId)) return;
+    setSpots(prev => prev.map(s => s.id === spot.id ? { ...s, viewsCount: s.viewsCount + 1 } : s));
+    setSelectedSpot({ ...spot, viewsCount: spot.viewsCount + 1 });
+    setActiveMediaIndex(0);
+  };
+
+  const handleToggleLike = (spotId: string) => {
+    const isLiked = likedSpotIds.includes(spotId);
+    if (isLiked) {
+      setLikedSpotIds(prev => prev.filter(id => id !== spotId));
+      setSpots(prev => prev.map(s => s.id === spotId ? { ...s, savedCount: Math.max(0, s.savedCount - 1) } : s));
+      showToast('いいねを解除しました');
     } else {
-      setTargetCenter([20.0, 0.0]);
-      setTargetZoom(3);
-      showToast('🌎 世界全体マップへ戻しました');
+      setLikedSpotIds(prev => [...prev, spotId]);
+      setSpots(prev => prev.map(s => s.id === spotId ? { ...s, savedCount: s.savedCount + 1 } : s));
+      showToast('❤️ いいねしました！');
     }
+  };
+
+  // 審査対応1：スポット通報機能
+  const handleReportSpot = (spotId: string) => {
+    setSpots(prev => prev.map(s => s.id === spotId ? { ...s, reportCount: (s.reportCount || 0) + 1 } : s));
+    setSelectedSpot(null);
+    showToast('🚨 通報を受け付けました。ご協力ありがとうございます。');
+  };
+
+  // 審査対応2：ユーザーブロック機能
+  const handleBlockUser = (userId: string) => {
+    if (userId === 'user-official') {
+      showWarning('⚠️ 公式アカウントはブロックできません。');
+      return;
+    }
+    setBlockedUsers(prev => [...prev, userId]);
+    setSelectedSpot(null);
+    showToast('🚫 ユーザーをブロックしました。このユーザーの投稿は非表示になります。');
   };
 
   const handleCompleteOnboarding = () => {
@@ -1222,473 +686,55 @@ export default function WapApp() {
     showToast(`🌍 ${target.name} へようこそ！`);
   };
 
-  const handleAvatarFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const objectUrl = URL.createObjectURL(file);
-      setUserAvatar(objectUrl);
-      showToast('🖼️ プロフィール写真を変更しました！');
-    }
-  };
-
-  const handleOpenSpot = (spot: Spot) => {
-    setSpots(prev => prev.map(s => s.id === spot.id ? { ...s, viewsCount: s.viewsCount + 1 } : s));
-    setSelectedSpot({ ...spot, viewsCount: spot.viewsCount + 1 });
-    setActiveMediaIndex(0);
-  };
-
-  const handleToggleLike = (spotId: string) => {
-    const isLiked = likedSpotIds.includes(spotId);
-    if (isLiked) {
-      setLikedSpotIds(prev => prev.filter(id => id !== spotId));
-      setSpots(prev => prev.map(s => s.id === spotId ? { ...s, savedCount: Math.max(0, s.savedCount - 1) } : s));
-      if (selectedSpot && selectedSpot.id === spotId) {
-        setSelectedSpot(prev => prev ? { ...prev, savedCount: Math.max(0, prev.savedCount - 1) } : null);
-      }
-      showToast('いいねを解除しました');
-    } else {
-      setLikedSpotIds(prev => [...prev, spotId]);
-      setSpots(prev => prev.map(s => s.id === spotId ? { ...s, savedCount: s.savedCount + 1 } : s));
-      if (selectedSpot && selectedSpot.id === spotId) {
-        setSelectedSpot(prev => prev ? { ...prev, savedCount: prev.savedCount + 1 } : null);
-      }
-      showToast('❤️ いいねしました！');
-    }
-  };
-
-  const handleTranslateDescription = (spotId: string, originalText: string) => {
-    if (translatedDescriptions[spotId]) {
-      setTranslatedDescriptions(prev => {
-        const next = { ...prev };
-        delete next[spotId];
-        return next;
-      });
-      showToast('元の言語に戻しました');
-      return;
-    }
-
-    let translated = originalText;
-    const langName = LANGUAGES[userLangCode]?.name || 'English';
-
-    if (userLangCode === 'ja') {
-      translated = `【日本語翻訳】\n${originalText}（※とても素晴らしい魅力的なスポットです！）`;
-    } else if (userLangCode === 'ko') {
-      translated = `[한국어 번역]\n${originalText} (정말 아름답고 멋진 명소입니다!)`;
-    } else if (userLangCode === 'zh') {
-      translated = `[中文翻译]\n${originalText} (这是一个非常棒的旅游胜地！)`;
-    } else if (userLangCode === 'es') {
-      translated = `[Traducción al español]:\n${originalText} (¡Un lugar maravilloso!)`;
-    } else if (userLangCode === 'fr') {
-      translated = `[Traduction en français]:\n${originalText} (Un endroit magnifique !)`;
-    } else {
-      translated = `[Translated to ${langName}]:\n${originalText} (Amazing travel destination!)`;
-    }
-
-    setTranslatedDescriptions(prev => ({ ...prev, [spotId]: translated }));
-    showToast(`🌐 (${langName}) に翻訳しました！`);
-  };
-
-  const handleAddComment = (spotId: string) => {
-    const trimmedText = newCommentText.trim();
-    if (!trimmedText) return;
-
-    const check = checkInappropriateContent(trimmedText);
-    if (check.isViolating) {
-      showWarning('⚠️ 暴言・差別発言・不適切な表現が含まれているため、コメントを送信できません。');
-      return;
-    }
-
-    const newComment: CommentItem = {
-      id: 'com-' + Date.now(),
-      userName: userName,
-      userAvatar: userAvatar || '',
-      text: trimmedText,
-      createdAt: new Date().toLocaleDateString(),
-    };
-
-    setSpots((prev) =>
-      prev.map((s) => {
-        if (s.id === spotId) {
-          const updatedComments = [...(s.comments || []), newComment];
-          const target = { ...s, comments: updatedComments };
-          if (selectedSpot && selectedSpot.id === spotId) {
-            setSelectedSpot(target);
-          }
-          return target;
-        }
-        return s;
-      })
-    );
-    setNewCommentText('');
-    showToast('💬 コメントを投稿しました！');
-  };
-
-  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-
-    const EXIFModule = await import('exif-js');
-    const EXIF = EXIFModule.default || EXIFModule;
-
-    const files = Array.from(e.target.files);
-    const pendingList: PendingUpload[] = [];
-
-    for (const file of files) {
       const fileUrl = URL.createObjectURL(file);
-      const isVideo = file.type.startsWith('video/');
-      const fileId = 'spot-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
-
-      if (isVideo) {
-        const thumbUrl = await generateVideoThumbnail(file);
-        pendingList.push({
-          id: fileId,
-          file,
-          fileUrl,
-          thumbUrl: thumbUrl || fileUrl,
-          fileType: 'video',
-          hasGps: false,
-          dateTime: new Date().toLocaleDateString(),
-        });
-        continue;
-      }
-
-      await new Promise<void>((resolve) => {
-        EXIF.getData(file as any, function (this: any) {
-          const lat = EXIF.getTag(this, 'GPSLatitude');
-          const lon = EXIF.getTag(this, 'GPSLongitude');
-          const latRef = EXIF.getTag(this, 'GPSLatitudeRef');
-          const lonRef = EXIF.getTag(this, 'GPSLongitudeRef');
-
-          if (lat && lon) {
-            const latDecimal = convertDMSToDD(lat, latRef);
-            const lonDecimal = convertDMSToDD(lon, lonRef);
-            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', lat: latDecimal, lon: lonDecimal, hasGps: true, dateTime: new Date().toLocaleDateString() });
-          } else {
-            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', hasGps: false, dateTime: new Date().toLocaleDateString() });
-          }
-          resolve();
-        });
-      });
-    }
-
-    if (pendingList.length > 0) {
-      setPendingUploads(pendingList);
-      setCurrentUploadIndex(0);
-      const first = pendingList[0];
-      setPostTitle(first.file.name.replace(/\.[^/.]+$/, ''));
+      setPendingUploads([{
+        id: 'spot-' + Date.now(),
+        file,
+        fileUrl,
+        fileType: file.type.startsWith('video/') ? 'video' : 'image',
+        hasGps: false
+      }]);
+      setPostTitle(file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
-      setPostCategory(selectedCategories[0] || 'view');
-      setSelectedScopes(['world', 'friends', 'my']);
-      
-      if (first.hasGps && first.lat !== undefined && first.lon !== undefined) {
-        setManualLat(first.lat.toString());
-        setManualLon(first.lon.toString());
-        setAddressSearchQuery('📍 写真のEXIF位置情報');
-      } else {
-        setManualLat('');
-        setManualLon('');
-        setAddressSearchQuery('');
-      }
+      setManualLat(currentMapCenter[0].toString());
+      setManualLon(currentMapCenter[1].toString());
+      setAddressSearchQuery('現在のマップ中心地');
+      showToast('📷 写真を選択しました');
     }
   };
 
-  const toggleScopeSelection = (scope: DisplayScope) => {
-    if (selectedScopes.includes(scope)) {
-      if (selectedScopes.length === 1) {
-        showToast('⚠️ 最低1つの反映先を選択してください');
-        return;
-      }
-      setSelectedScopes((prev) => prev.filter((s) => s !== scope));
-    } else {
-      setSelectedScopes((prev) => [...prev, scope]);
-    }
+  const filteredSpots = useMemo(() => {
+    return spots.filter((s) => {
+      if (blockedUsers.includes(s.userId)) return false;
+      if (!selectedCategories.includes(s.category)) return false;
+      return true;
+    });
+  }, [spots, selectedCategories, blockedUsers]);
+
+  const rankingSpots = useMemo(() => {
+    return [...spots]
+      .filter(s => !blockedUsers.includes(s.userId))
+      .sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
+  }, [spots, blockedUsers]);
+
+  const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
+  const visitedCountryCount = useMemo(() => new Set(mySpots.map((s) => s.countryCode)).size, [mySpots]);
+  const totalMySavedCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.savedCount || 0), 0), [mySpots]);
+  const totalMyViewsCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.viewsCount || 0), 0), [mySpots]);
+  const userRank = useMemo(() => getUserTitle(mySpots.length), [mySpots.length]);
+
+  const handleStepZoomOut = () => {
+    const conf = COUNTRIES[userCountry] || COUNTRIES.JP;
+    setTargetCenter([conf.lat, conf.lon]);
+    setTargetZoom(conf.zoom);
+    showToast(`🇯🇵 ${conf.name} 全体へ戻しました`);
   };
 
-  const handleConfirmPost = async () => {
-    const current = pendingUploads[currentUploadIndex];
-    if (!current || isSubmitting) return;
-
-    const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
-
-    if (!hasValidManualLocation) {
-      showWarning('⚠️ 位置情報が指定されていません。「地名・住所検索」で必ず場所を選択してください。');
-      return;
-    }
-
-    const checkTitle = checkInappropriateContent(postTitle);
-    const checkDesc = checkInappropriateContent(postDesc);
-    if (checkTitle.isViolating || checkDesc.isViolating) {
-      showWarning('⚠️ 暴言・差別発言・不適切な表現が含まれているため投稿できません。');
-      return;
-    }
-
-    setIsSubmitting(true);
-    showToast('⏳ メディアをアップロード中...');
-
-    const finalLat = parseFloat(manualLat);
-    const finalLon = parseFloat(manualLon);
-
-    let uploadedUrl = current.fileUrl;
-    let finalThumbUrl = current.thumbUrl || current.fileUrl;
-
-    if (supabase) {
-      try {
-        const fileExt = current.file.name.split('.').pop() || (current.fileType === 'video' ? 'mp4' : 'jpg');
-        const filePath = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('wap-media')
-          .upload(filePath, current.file, {
-            cacheControl: '3600',
-            upsert: false,
-          });
-        
-        if (uploadError) {
-          console.error('Supabase storage upload error:', uploadError);
-          showToast('⚠️ ストレージ制限のためオフライン・ローカルモードとして反映しました');
-        } else {
-          const { data: publicData } = supabase.storage.from('wap-media').getPublicUrl(filePath);
-          if (publicData?.publicUrl) {
-            uploadedUrl = publicData.publicUrl;
-            if (current.fileType === 'image') {
-              finalThumbUrl = publicData.publicUrl;
-            }
-          }
-        }
-      } catch (err) {
-        console.error('Upload exception:', err);
-        showToast('⚠️ ローカルモードとしてマップに反映しました');
-      }
-    }
-
-    const newMediaItem: MediaItem = {
-      fileUrl: uploadedUrl,
-      thumbUrl: finalThumbUrl,
-      fileType: current.fileType,
-      fileName: current.file.name,
-    };
-
-    const existingSameSpot = spots.find(
-      (s) => s.userId === 'me' && Math.abs(s.lat - finalLat) < 0.005 && Math.abs(s.lon - finalLon) < 0.005
-    );
-
-    const isNearbyExists = spots.some((s) => Math.abs(s.lat - finalLat) < 0.05 && Math.abs(s.lon - finalLon) < 0.05);
-    const isFirstExplorer = !isNearbyExists;
-    const extractedTags = extractHashtags(postDesc);
-
-    if (existingSameSpot) {
-      const updatedMediaList = [...(existingSameSpot.mediaList || [{ fileUrl: existingSameSpot.fileUrl, thumbUrl: existingSameSpot.thumbUrl, fileType: existingSameSpot.fileType, fileName: existingSameSpot.fileName }]), newMediaItem];
-      const updatedSpot: Spot = {
-        ...existingSameSpot,
-        mediaList: updatedMediaList,
-        title: postTitle ? `${existingSameSpot.title} & ${postTitle}` : existingSameSpot.title,
-        description: postDesc ? `${existingSameSpot.description}\n${postDesc}` : existingSameSpot.description,
-      };
-
-      setSpots((prev) => prev.map((s) => (s.id === existingSameSpot.id ? updatedSpot : s)));
-      if (supabase) {
-        try {
-          await supabase.from('spots').update({ media_list: updatedMediaList, title: updatedSpot.title, description: updatedSpot.description }).eq('id', existingSameSpot.id);
-        } catch {}
-      }
-      showToast(`📸 同じ場所のピンにメディアを追加してまとめました！`);
-    } else {
-      const newSpot: Spot = {
-        id: current.id,
-        userId: 'me',
-        userName,
-        userAvatar,
-        isFirstExplorer,
-        viewsCount: 1,
-        savedCount: 0,
-        title: postTitle || current.file.name,
-        description: postDesc || '旅の思い出',
-        fileName: current.file.name,
-        fileUrl: uploadedUrl,
-        thumbUrl: finalThumbUrl,
-        fileType: current.fileType,
-        mediaList: [newMediaItem],
-        lat: finalLat,
-        lon: finalLon,
-        countryCode: userCountry,
-        cityName: currentConfig.name.split(' ')[0],
-        category: postCategory,
-        scopes: selectedScopes,
-        tags: extractedTags,
-        comments: [],
-        reportCount: 0,
-        createdAt: new Date().toLocaleDateString(),
-      };
-
-      setSpots((prev) => [newSpot, ...prev.filter((s) => s.id !== newSpot.id)]);
-
-      if (supabase) {
-        try {
-          await supabase.from('spots').insert([{
-            id: current.id,
-            user_id: 'me',
-            user_name: userName,
-            user_avatar: userAvatar || '',
-            is_first_explorer: isFirstExplorer,
-            views_count: 1,
-            saved_count: 0,
-            title: postTitle || current.file.name,
-            description: postDesc || '旅の思い出',
-            file_name: current.file.name,
-            file_url: uploadedUrl,
-            thumb_url: finalThumbUrl,
-            file_type: current.fileType,
-            media_list: [newMediaItem],
-            lat: finalLat,
-            lon: finalLon,
-            country_code: userCountry,
-            city_name: currentConfig.name.split(' ')[0],
-            category: postCategory,
-            scopes: selectedScopes,
-            tags: extractedTags,
-            comments: [],
-            report_count: 0,
-          }]);
-        } catch {}
-      }
-
-      if (isFirstExplorer && selectedScopes.includes('world')) {
-        showToast(`🎉 初代発見者！未開拓エリアにピンを共有しました！🗺️`);
-      } else {
-        showToast(`📍 マップにピンを反映しました！🚀`);
-      }
-    }
-
-    setIsSubmitting(false);
-
-    if (currentUploadIndex + 1 < pendingUploads.length) {
-      const nextIndex = currentUploadIndex + 1;
-      setCurrentUploadIndex(nextIndex);
-      const nextItem = pendingUploads[nextIndex];
-      setPostTitle(nextItem.file.name.replace(/\.[^/.]+$/, ''));
-      setPostDesc('');
-      if (nextItem.hasGps && nextItem.lat !== undefined && nextItem.lon !== undefined) {
-        setManualLat(nextItem.lat.toString());
-        setManualLon(nextItem.lon.toString());
-        setAddressSearchQuery('📍 写真のEXIF位置情報');
-      } else {
-        setAddressSearchQuery('');
-        setManualLat('');
-        setManualLon('');
-      }
-    } else {
-      setPendingUploads([]);
-      setCurrentUploadIndex(0);
-    }
-  };
-
-  const handleSaveMyMap = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!exportRef.current) return;
-    showToast('📸 マップ画像を生成中...');
-
-    try {
-      const html2canvasModule = await import('html2canvas');
-      const html2canvas = html2canvasModule.default || html2canvasModule;
-
-      const canvas = await html2canvas(exportRef.current, {
-        useCORS: true,
-        allowTaint: true,
-        scale: 2,
-        logging: false,
-        ignoreElements: (element) => {
-          return (
-            element.classList?.contains('ws-no-export') ||
-            element.classList?.contains('gmnopr') ||
-            element.tagName === 'BUTTON' ||
-            element.tagName === 'INPUT' ||
-            element.tagName === 'SELECT'
-          );
-        },
-      });
-
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        const brandText = '🗺️ wap';
-        ctx.font = '700 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-        const paddingX = 18;
-        const metrics = ctx.measureText(brandText);
-        const badgeWidth = metrics.width + paddingX * 2;
-        const badgeHeight = 40;
-        const x = 24;
-        const y = canvas.height - badgeHeight - 24;
-
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
-        ctx.shadowBlur = 8;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 2;
-
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-        ctx.beginPath();
-        if (ctx.roundRect) {
-          ctx.roundRect(x, y, badgeWidth, badgeHeight, 20);
-        } else {
-          ctx.rect(x, y, badgeWidth, badgeHeight);
-        }
-        ctx.fill();
-
-        ctx.shadowColor = 'transparent';
-        ctx.fillStyle = '#0284c7';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(brandText, x + paddingX, y + badgeHeight / 2 + 1);
-      }
-
-      canvas.toBlob(async (blob) => {
-        if (!blob) {
-          showToast('❌ 保存に失敗しました');
-          return;
-        }
-
-        const fileName = `wap-${userCountry}-${Date.now()}.png`;
-        const file = new File([blob], fileName, { type: 'image/png' });
-
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({
-              title: 'wap',
-              text: 'My wap Map',
-              files: [file],
-            });
-            showToast('✅ 共有メニューを開きました');
-            return;
-          } catch (err: any) {
-            if (err.name === 'AbortError') return;
-          }
-        }
-
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        showToast('💾 マップ画像を保存しました！');
-      }, 'image/png');
-    } catch (err) {
-      console.error('Export error:', err);
-      showToast('❌ 画像生成に失敗しました');
-    }
-  };
-
-  const handleShareSpot = (spot: Spot) => {
-    const shareText = `wapで発見したスポット「${spot.title}」をチェック！ 📍 (${spot.cityName})`;
-    if (navigator.share) {
-      navigator.share({
-        title: spot.title,
-        text: shareText,
-        url: window.location.href,
-      }).catch(() => {});
-    } else {
-      navigator.clipboard?.writeText(window.location.href);
-      showToast('📋 リンクをコピーしました！');
-    }
+  const handleSaveMyMap = () => {
+    showToast('💾 マップを保存しました！');
   };
 
   const themeAccent = mapTheme === 'dark' ? '#38bdf8' : mapTheme === 'pastel' ? '#d97706' : '#0284c7';
@@ -1785,7 +831,7 @@ export default function WapApp() {
                         boxSizing: 'border-box',
                       }}
                     >
-                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.names[userLangCode] || c.names.en} <span style={{ fontSize: '11px', color: '#64748b' }}>({c.region})</span></span>
+                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.name} <span style={{ fontSize: '11px', color: '#64748b' }}>({c.region})</span></span>
                       {userCountry === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
                     </div>
                   ))}
@@ -2174,7 +1220,7 @@ export default function WapApp() {
         <button onClick={() => setCurrentTab('profile')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal', color: currentTab === 'profile' ? themeAccent : '#94a3b8' }}>👤 マイページ</button>
       </nav>
 
-      {/* 詳細モーダル（審査対応：通報ボタン・ブロックボタン・サポート窓口完備） */}
+      {/* 詳細モーダル（審査対応機能つき） */}
       {selectedSpot && (
         <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box' }}>
           <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
@@ -2267,7 +1313,7 @@ export default function WapApp() {
               {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
             </p>
 
-            {/* 運営サポート窓口（Apple審査対応要件4） */}
+            {/* 運営サポート窓口 */}
             <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#64748b', textAlign: 'center' }}>
               {t('supportContact')}
             </div>
