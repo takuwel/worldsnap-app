@@ -182,7 +182,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     likedSpot: '❤️ いいね済み',
     report: '⚠️ 通報',
     block: '🚫 ブロック',
-    delete: '🗑️ 削除',
+    delete: '🗑️️ 削除',
     edit: '✏️ 編集',
     visited: '訪問国',
     posts: '投稿',
@@ -233,7 +233,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     report: '⚠️ Report',
     block: '🚫 Block',
     delete: '🗑️ Delete',
-    edit: '✏️ Edit',
+    edit: '✏️️ Edit',
     visited: 'Visited',
     posts: 'Posts',
     friendCode: 'Friend Code',
@@ -332,7 +332,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     likedSpot: '❤️ 已赞',
     report: '⚠️ 举报',
     block: '🚫 拉黑',
-    delete: '🗑️️ 删除',
+    delete: '🗑️ 删除',
     edit: '编辑',
     visited: '已访问',
     posts: '动态',
@@ -353,7 +353,7 @@ const DICTIONaries: Record<string, Record<string, string>> = {
     tabFriends: '👥 好友',
     reportSpot: '🚨 举报此内容',
     blockUser: '🚫 屏蔽此用户',
-    supportContact: '✉️️ 客服邮箱: support@wap-app.com'
+    supportContact: '✉️ 客服邮箱: support@wap-app.com'
   }
 };
 
@@ -516,7 +516,7 @@ export const COUNTRIES: Record<
   BW: { name: 'ボツワナ (Botswana)', flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
   NA: { name: 'ナミビア (Namibia)', flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
   CV: { name: 'カーボベルデ (Cape Verde)', flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 },
-  CD: { name: 'カメルーン (Cameroon)', flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
+  CM: { name: 'カメルーン (Cameroon)', flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
   CI: { name: 'コートジボワール (Ivory Coast)', flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
   ZM: { name: 'ザンビア (Zambia)', flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
   MZ: { name: 'モザンビーク (Mozambique)', flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 6 },
@@ -660,3 +660,859 @@ const GoogleMapComponent = ({
     };
 
     if (!window.google || !window.google.maps) {
+      const existingScript = document.getElementById('google-maps-script');
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.id = 'google-maps-script';
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => initMap();
+        document.head.appendChild(script);
+      } else {
+        const checkInterval = setInterval(() => {
+          if (window.google && window.google.maps) {
+            clearInterval(checkInterval);
+            initMap();
+          }
+        }, 30);
+      }
+    } else {
+      initMap();
+    }
+  }, [userLang]);
+
+  useEffect(() => {
+    if (mapInstanceRef.current && targetCenter && targetZoom) {
+      mapInstanceRef.current.panTo({ lat: targetCenter[0], lng: targetCenter[1] });
+      mapInstanceRef.current.setZoom(targetZoom);
+    }
+  }, [targetCenter, targetZoom]);
+
+  useEffect(() => {
+    if (!mapInstanceRef.current || !window.google || !window.google.maps) return;
+
+    markersRef.current.forEach((m) => m.setMap(null));
+    markersRef.current = [];
+
+    const map = mapInstanceRef.current;
+
+    spots.forEach((spot) => {
+      const marker = new window.google.maps.Marker({
+        position: { lat: spot.lat, lng: spot.lon },
+        map: map,
+        title: spot.title,
+      });
+
+      marker.addListener('click', () => {
+        onSelectSpot(spot);
+      });
+
+      markersRef.current.push(marker);
+    });
+  }, [spots]);
+
+  return <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: '#ffffff' }} />;
+};
+
+// ==========================================
+// 3. メインコンポーネント
+// ==========================================
+export default function WapApp() {
+  const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
+  const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3 | 4>(1);
+
+  const [userLangCode, setUserLangCode] = useState<string>('ja');
+  const [userCountry, setUserCountry] = useState<string>('JP');
+
+  const [userName, setUserName] = useState<string>('namesnap');
+  const [userBio, setUserBio] = useState<string>('世界中を旅して記録中 🌏✈️');
+  const [userAvatar, setUserAvatar] = useState<string>('');
+
+  const [eulaChecked, setEulaChecked] = useState<boolean>(false);
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false);
+
+  const [currentTab, setCurrentTab] = useState<TabType>('map');
+  const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
+  const [mapTheme, setMapTheme] = useState<MapThemeType>('light');
+  const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
+  
+  const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
+  const [isSearchingLocation] = useState<boolean>(false);
+  const [mapSearchSuggestions, setMapSearchSuggestions] = useState<PlaceSuggestion[]>([]);
+
+  const [isAdVisible, setIsAdVisible] = useState<boolean>(true);
+  const [isLocationGuideOpen, setIsLocationGuideOpen] = useState<boolean>(false);
+
+  const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
+  const dict = DICTIONaries[userLangCode] || DICTIONaries.ja;
+  const t = (key: string) => dict[key] || DICTIONaries.ja[key] || key;
+
+  const [currentMapCenter, setCurrentMapCenter] = useState<[number, number]>([currentConfig.lat, currentConfig.lon]);
+  const [currentMapZoom, setCurrentMapZoom] = useState<number>(currentConfig.zoom);
+
+  const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
+  const [targetZoom, setTargetZoom] = useState<number | null>(null);
+
+  const [spots, setSpots] = useState<Spot[]>(INITIAL_SPOTS);
+  const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
+  const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0);
+  const [likedSpotIds, setLikedSpotIds] = useState<string[]>([]);
+  const [blockedUsers, setBlockedUsers] = useState<string[]>([]); // 審査対応2：ブロックユーザー管理
+
+  const [newCommentText, setNewCommentText] = useState<string>('');
+  const [warningMessage, setWarningMessage] = useState<string | null>(null);
+
+  const [pendingUploads, setPendingUploads] = useState<PendingUpload[]>([]);
+  const [addressSearchQuery, setAddressSearchQuery] = useState<string>('');
+  const [addressSuggestions, setAddressSuggestions] = useState<PlaceSuggestion[]>([]);
+  const [manualLat, setManualLat] = useState<string>('');
+  const [manualLon, setManualLon] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const [translatedDescriptions, setTranslatedDescriptions] = useState<Record<string, string>>({});
+
+  const exportRef = useRef<HTMLDivElement>(null);
+  const profileAvatarInputRef = useRef<HTMLInputElement>(null);
+  const onboardingAvatarInputRef = useRef<HTMLInputElement>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const showWarning = (msg: string) => {
+    setWarningMessage(msg);
+    setTimeout(() => setWarningMessage(null), 5000);
+  };
+
+  useEffect(() => {
+    const hasCompleted = localStorage.getItem('wap_onboarded_v1');
+    if (hasCompleted) {
+      setIsOnboarding(false);
+    }
+  }, []);
+
+  const handleMapMoveEnd = (center: [number, number], zoom: number) => {
+    setCurrentMapCenter(center);
+    setCurrentMapZoom(zoom);
+    setTargetCenter(null);
+    setTargetZoom(null);
+  };
+
+  const toggleCategoryFilter = (cat: ViewCategory) => {
+    if (selectedCategories.includes(cat)) {
+      if (selectedCategories.length === 1) {
+        showToast('⚠️ 最低1つのカテゴリを選択する必要があります');
+        return;
+      }
+      setSelectedCategories((prev) => prev.filter((c) => c !== cat));
+    } else {
+      setSelectedCategories((prev) => [...prev, cat]);
+    }
+  };
+
+  const handleJumpLocationSearch = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!mapSearchKeyword.trim()) return;
+
+    if (mapSearchKeyword.startsWith('#')) {
+      showToast(`🏷 タグ「${mapSearchKeyword}」で絞り込みました`);
+      setMapSearchSuggestions([]);
+      return;
+    }
+
+    if (mapSearchSuggestions.length > 0) {
+      const item = mapSearchSuggestions[0];
+      setTargetCenter([parseFloat(item.lat), parseFloat(item.lon)]);
+      setTargetZoom(13);
+      setMapSearchKeyword(item.display_name.split(',')[0]);
+      setMapSearchSuggestions([]);
+    }
+  };
+
+  const handleSelectMapSuggestion = (item: PlaceSuggestion) => {
+    setTargetCenter([parseFloat(item.lat), parseFloat(item.lon)]);
+    setTargetZoom(13);
+    setMapSearchKeyword(item.display_name.split(',')[0]);
+    setMapSearchSuggestions([]);
+  };
+
+  const handleMapDoubleTap = (lat: number, lon: number) => {
+    setTargetCenter([lat, lon]);
+    setTargetZoom(Math.min(currentMapZoom + 2.5, 17));
+  };
+
+  const handleOpenSpot = (spot: Spot) => {
+    if (blockedUsers.includes(spot.userId)) return;
+    setSpots(prev => prev.map(s => s.id === spot.id ? { ...s, viewsCount: s.viewsCount + 1 } : s));
+    setSelectedSpot({ ...spot, viewsCount: spot.viewsCount + 1 });
+    setActiveMediaIndex(0);
+  };
+
+  const handleToggleLike = (spotId: string) => {
+    const isLiked = likedSpotIds.includes(spotId);
+    if (isLiked) {
+      setLikedSpotIds(prev => prev.filter(id => id !== spotId));
+      setSpots(prev => prev.map(s => s.id === spotId ? { ...s, savedCount: Math.max(0, s.savedCount - 1) } : s));
+      showToast('いいねを解除しました');
+    } else {
+      setLikedSpotIds(prev => [...prev, spotId]);
+      setSpots(prev => prev.map(s => s.id === spotId ? { ...s, savedCount: s.savedCount + 1 } : s));
+      showToast('❤️ いいねしました！');
+    }
+  };
+
+  // 審査対応1：スポットの通報機能
+  const handleReportSpot = (spotId: string) => {
+    setSpots(prev => prev.map(s => s.id === spotId ? { ...s, reportCount: (s.reportCount || 0) + 1 } : s));
+    setSelectedSpot(null);
+    showToast('🚨 通報を受け付けました。ご協力ありがとうございます。');
+  };
+
+  // 審査対応2：ユーザーブロック機能
+  const handleBlockUser = (userId: string) => {
+    if (userId === 'user-official') {
+      showWarning('⚠️ 公式アカウントはブロックできません。');
+      return;
+    }
+    setBlockedUsers(prev => [...prev, userId]);
+    setSelectedSpot(null);
+    showToast('🚫 ユーザーをブロックしました。このユーザーの投稿は非表示になります。');
+  };
+
+  const handleCompleteOnboarding = () => {
+    localStorage.setItem('wap_onboarded_v1', 'true');
+    setIsOnboarding(false);
+    const target = COUNTRIES[userCountry] || COUNTRIES.JP;
+    setTargetCenter([target.lat, target.lon]);
+    setTargetZoom(target.zoom);
+    showToast(`🌍 ${target.name} へようこそ！`);
+  };
+
+  const handleAvatarFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const objectUrl = URL.createObjectURL(file);
+      setUserAvatar(objectUrl);
+      showToast('🖼️ プロフィール写真を変更しました！');
+    }
+  };
+
+  const filteredSpots = useMemo(() => {
+    return spots.filter((s) => {
+      if (blockedUsers.includes(s.userId)) return false;
+      if (!selectedCategories.includes(s.category)) return false;
+      return true;
+    });
+  }, [spots, selectedCategories, blockedUsers]);
+
+  const rankingSpots = useMemo(() => {
+    return [...spots]
+      .filter(s => !blockedUsers.includes(s.userId))
+      .sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
+  }, [spots, blockedUsers]);
+
+  const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
+  const visitedCountryCount = useMemo(() => new Set(mySpots.map((s) => s.countryCode)).size, [mySpots]);
+  const totalMySavedCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.savedCount || 0), 0), [mySpots]);
+  const totalMyViewsCount = useMemo(() => mySpots.reduce((acc, cur) => acc + (cur.viewsCount || 0), 0), [mySpots]);
+  const userRank = useMemo(() => getUserTitle(mySpots.length), [mySpots.length]);
+
+  const handleStepZoomOut = () => {
+    const conf = COUNTRIES[userCountry] || COUNTRIES.JP;
+    setTargetCenter([conf.lat, conf.lon]);
+    setTargetZoom(conf.zoom);
+    showToast(`🇯🇵 ${conf.name} 全体へ戻しました`);
+  };
+
+  const handleSaveMyMap = () => {
+    showToast('💾 マップを保存しました！');
+  };
+
+  const themeAccent = mapTheme === 'dark' ? '#38bdf8' : mapTheme === 'pastel' ? '#d97706' : '#0284c7';
+  const navBarBg = '#ffffff';
+  const navBarText = '#0f172a';
+
+  return (
+    <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'env(safe-area-inset-bottom, 0px)', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none', WebkitTouchCallout: 'none', WebkitUserSelect: 'none' }}>
+      
+      {warningMessage && (
+        <div style={{ position: 'fixed', top: 0, insetInline: 0, background: '#ef4444', color: '#fff', padding: '12px 16px', zIndex: 999999, fontSize: '13px', fontWeight: 'bold', textAlign: 'center' }}>
+          {warningMessage}
+        </div>
+      )}
+
+      {toastMessage && (
+        <div style={{ position: 'fixed', top: '14px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,23,42,0.94)', color: '#fff', padding: '10px 20px', borderRadius: '30px', zIndex: 99999, fontSize: '13px', fontWeight: 'bold', boxShadow: '0 8px 24px rgba(0,0,0,0.3)', backdropFilter: 'blur(6px)' }}>
+          {toastMessage}
+        </div>
+      )}
+
+      <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
+      <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
+
+      {/* 初回オンボーディング画面 */}
+      {isOnboarding && (
+        <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', boxSizing: 'border-box' }}>
+          <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center', boxSizing: 'border-box', margin: '0 auto' }}>
+            <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
+            <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
+            <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
+
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 1 ? '#0284c7' : '#e2e8f0' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 2 ? '#0284c7' : '#e2e8f0' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 3 ? '#0284c7' : '#e2e8f0' }}></span>
+              <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 4 ? '#0284c7' : '#e2e8f0' }}></span>
+            </div>
+
+            {onboardingStep === 1 && (
+              <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
+                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step1Title')}</h3>
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t('step1Desc')}</p>
+                <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px', boxSizing: 'border-box' }}>
+                  {Object.entries(LANGUAGES).map(([code, lang]) => (
+                    <div
+                      key={code}
+                      onClick={() => setUserLangCode(code)}
+                      style={{
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: `2px solid ${userLangCode === code ? '#0284c7' : '#e2e8f0'}`,
+                        background: userLangCode === code ? '#f0f9ff' : '#ffffff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        boxSizing: 'border-box',
+                      }}
+                    >
+                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{lang.flag} {lang.nativeName} ({lang.name})</span>
+                      {userLangCode === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
+                    </div>
+                  ))}
+                </div>
+                <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
+                  {t('next')}
+                </button>
+              </div>
+            )}
+
+            {onboardingStep === 2 && (
+              <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
+                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step2Title')}</h3>
+                <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t('step2Desc')}</p>
+                <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px', boxSizing: 'border-box' }}>
+                  {Object.entries(COUNTRIES).map(([code, c]) => (
+                    <div
+                      key={code}
+                      onClick={() => setUserCountry(code)}
+                      style={{
+                        padding: '10px 14px',
+                        borderRadius: '10px',
+                        border: `2px solid ${userCountry === code ? '#0284c7' : '#e2e8f0'}`,
+                        background: userCountry === code ? '#f0f9ff' : '#ffffff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        boxSizing: 'border-box',
+                      }}
+                    >
+                      <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{c.flag} {c.name} <span style={{ fontSize: '11px', color: '#64748b' }}>({c.region})</span></span>
+                      {userCountry === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
+                  <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
+                    {t('back')}
+                  </button>
+                  <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
+                    {t('next')}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {onboardingStep === 3 && (
+              <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
+                <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t('step3Title')}</h3>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', boxSizing: 'border-box' }}>
+                  <div
+                    onClick={() => onboardingAvatarInputRef.current?.click()}
+                    style={{
+                      width: '76px', height: '76px', borderRadius: '50%',
+                      background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
+                      color: '#fff', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      boxShadow: '0 6px 16px rgba(2,132,199,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden', boxSizing: 'border-box'
+                    }}
+                  >
+                    {!userAvatar && <span>👤</span>}
+                    <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '10px', color: '#fff', textAlign: 'center', padding: '2px 0', boxSizing: 'border-box' }}>
+                      📷 変更
+                    </div>
+                  </div>
+                </div>
+
+                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', width: '100%', boxSizing: 'border-box' }}>ユーザー名</label>
+                <input
+                  type="text"
+                  maxLength={20}
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '14px', fontWeight: 'bold', boxSizing: 'border-box' }}
+                />
+                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', width: '100%', boxSizing: 'border-box' }}>自己紹介</label>
+                <input
+                  type="text"
+                  value={userBio}
+                  onChange={(e) => setUserBio(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '13px', boxSizing: 'border-box' }}
+                />
+                <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
+                  <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
+                    {t('back')}
+                  </button>
+                  <button onClick={() => setOnboardingStep(4)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
+                    {t('next')}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {onboardingStep === 4 && (
+              <div style={{ textAlign: 'left', width: '100%', boxSizing: 'border-box' }}>
+                <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step3TitleEula')}</h3>
+                <div
+                  onScroll={(e) => {
+                    const target = e.currentTarget;
+                    if (target.scrollHeight - target.scrollTop <= target.clientHeight + 15) {
+                      setHasScrolledToBottom(true);
+                    }
+                  }}
+                  style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', boxSizing: 'border-box' }}
+                >
+                  {EULA_FULL_TEXT}
+                  <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ ここまでお読みください</div>
+                </div>
+
+                {!hasScrolledToBottom && (
+                  <div style={{ fontSize: '10px', color: '#f43f5e', fontWeight: 'bold', textAlign: 'center', marginBottom: '10px' }}>
+                    ⚠️ 利用規約を最後までスクロールしてください
+                  </div>
+                )}
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#0284c7' : '#94a3b8', marginBottom: '16px', boxSizing: 'border-box' }}>
+                  <input type="checkbox" disabled={!hasScrolledToBottom} checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
+                  <span>{t('eulaAgree')}</span>
+                </label>
+                <div style={{ display: 'flex', gap: '8px', width: '100%', boxSizing: 'border-box' }}>
+                  <button onClick={() => setOnboardingStep(3)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', boxSizing: 'border-box' }}>
+                    {t('back')}
+                  </button>
+                  <button
+                    disabled={!eulaChecked || !hasScrolledToBottom}
+                    onClick={handleCompleteOnboarding}
+                    style={{
+                      flex: 2,
+                      padding: '12px',
+                      background: (eulaChecked && hasScrolledToBottom) ? '#0284c7' : '#94a3b8',
+                      color: '#fff',
+                      fontWeight: 'bold',
+                      border: 'none',
+                      borderRadius: '12px',
+                      cursor: (eulaChecked && hasScrolledToBottom) ? 'pointer' : 'not-allowed',
+                      boxSizing: 'border-box',
+                    }}
+                  >
+                    {t('startApp')}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ヘッダー */}
+      <header style={{ height: 'calc(48px + env(safe-area-inset-top, 0px))', minHeight: 'calc(48px + env(safe-area-inset-top, 0px))', paddingTop: 'env(safe-area-inset-top, 0px)', paddingInline: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', margin: 0, boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1, paddingTop: 'env(safe-area-inset-top, 0px)', boxSizing: 'border-box' }}>
+          <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: navBarText }}>
+            ☰
+          </button>
+          <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7', letterSpacing: '-0.5px', flexShrink: 0 }}>wap</h1>
+          <select
+            value={userCountry}
+            onChange={(e) => {
+              setUserCountry(e.target.value);
+              const conf = COUNTRIES[e.target.value];
+              if (conf) {
+                setTargetCenter([conf.lat, conf.lon]);
+                setTargetZoom(conf.zoom);
+              }
+            }}
+            style={{ background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
+          >
+            {Object.entries(COUNTRIES).map(([code, c]) => (
+              <option key={code} value={code}>
+                {c.flag} {c.name.split(' ')[0]} ({c.region})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button
+          onClick={() => setCurrentTab('profile')}
+          style={{
+            width: '32px', height: '32px', minWidth: '32px', minHeight: '32px', borderRadius: '50%',
+            background: userAvatar ? `url(${userAvatar}) center/cover` : '#0284c7',
+            color: '#fff', border: 'none', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden', marginTop: 'env(safe-area-inset-top, 0px)', boxSizing: 'border-box'
+          }}
+        >
+          {!userAvatar && '👤'}
+        </button>
+      </header>
+
+      {/* メインビュー */}
+      <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 54px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
+        
+        {/* マップタブ */}
+        <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none', boxSizing: 'border-box' }}>
+          
+          <div style={{ position: 'absolute', top: '10px', left: '12px', right: '12px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '8px', pointerEvents: 'none', boxSizing: 'border-box' }}>
+            <div style={{ position: 'relative', pointerEvents: 'auto', boxSizing: 'border-box' }}>
+              <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '8px', background: 'rgba(255,255,255,0.95)', color: '#000', backdropFilter: 'blur(10px)', padding: '6px 14px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
+                <input
+                  type="text"
+                  placeholder={t('searchPlaceholder')}
+                  value={mapSearchKeyword}
+                  onChange={(e) => setMapSearchKeyword(e.target.value)}
+                  style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: '#000', fontSize: '13px', fontWeight: '500', padding: '2px 6px', boxSizing: 'border-box' }}
+                />
+                <button
+                  type="submit"
+                  disabled={isSearchingLocation}
+                  style={{ background: '#0284c7', color: '#fff', border: 'none', borderRadius: '20px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 'bold', cursor: 'pointer', boxSizing: 'border-box', flexShrink: 0 }}
+                >
+                  {isSearchingLocation ? '...' : '🔍'}
+                </button>
+              </form>
+
+              {mapSearchSuggestions.length > 0 && (
+                <div style={{ position: 'absolute', top: '44px', insetInline: 0, background: '#ffffff', color: '#000', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden', zIndex: 600, border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
+                  {mapSearchSuggestions.map((item) => (
+                    <div
+                      key={item.place_id}
+                      onClick={() => handleSelectMapSuggestion(item)}
+                      style={{ padding: '8px 12px', fontSize: '12px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxSizing: 'border-box' }}
+                    >
+                      <span>📍</span>
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '8px', boxSizing: 'border-box' }}>
+              <div style={{ display: 'flex', gap: '6px', background: 'rgba(255,255,255,0.95)', padding: '4px 8px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
+                {(['view', 'gourmet', 'rain'] as const).map((cat) => {
+                  const isChecked = selectedCategories.includes(cat);
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => toggleCategoryFilter(cat)}
+                      style={{
+                        padding: '6px 12px',
+                        borderRadius: '20px',
+                        border: 'none',
+                        background: isChecked ? '#0284c7' : '#f1f5f9',
+                        color: isChecked ? '#ffffff' : '#64748b',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        boxSizing: 'border-box',
+                      }}
+                    >
+                      {isChecked ? '✓ ' : ''}
+                      {cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? `🍔 Gourmet` : `🌧️ Rainy`}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div style={{ display: 'flex', background: 'rgba(255,255,255,0.95)', padding: '4px 10px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
+                <select
+                  value={displayScope}
+                  onChange={(e) => setDisplayScope(e.target.value as DisplayScope)}
+                  style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', padding: '2px 4px', outline: 'none' }}
+                >
+                  <option value="world">🌎 World</option>
+                  <option value="friends">👥 Friends</option>
+                  <option value="my">📍 My Map</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div ref={exportRef} style={{ flex: 1, width: '100%', height: '100%', position: 'relative', boxSizing: 'border-box' }}>
+            <GoogleMapComponent
+              spots={filteredSpots}
+              center={currentMapCenter}
+              zoom={currentMapZoom}
+              targetCenter={targetCenter}
+              targetZoom={targetZoom}
+              theme={mapTheme}
+              userLang={userLangCode}
+              onMoveEnd={handleMapMoveEnd}
+              onSelectSpot={handleOpenSpot}
+              onDoubleTap={handleMapDoubleTap}
+            />
+
+            <div style={{ position: 'absolute', bottom: '75px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '10px', boxSizing: 'border-box' }}>
+              <button
+                title="現在地へ移動"
+                onClick={() => {
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                      (pos) => {
+                        setTargetCenter([pos.coords.latitude, pos.coords.longitude]);
+                        setTargetZoom(15);
+                        showToast('🎯 現在地に移動しました');
+                      },
+                      (err) => {
+                        console.error(err);
+                        setIsLocationGuideOpen(true);
+                      },
+                      { enableHighAccuracy: false, timeout: 6000, maximumAge: 60000 }
+                    );
+                  } else {
+                    showWarning('⚠️ お使いのブラウザは位置情報に対応していません。');
+                  }
+                }}
+                style={{ width: '46px', height: '46px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.2)', fontSize: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}
+              >
+                🎯
+              </button>
+              <button
+                title="引き戻す"
+                onClick={handleStepZoomOut}
+                style={{ width: '46px', height: '46px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.2)', fontSize: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}
+              >
+                🪟
+              </button>
+              <button
+                title="マップを保存"
+                onClick={handleSaveMyMap}
+                style={{ width: '46px', height: '46px', borderRadius: '50%', background: '#0f172a', color: '#fff', border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.3)', fontSize: '20px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}
+              >
+                💾
+              </button>
+            </div>
+          </div>
+
+          <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '56px', minHeight: '56px', maxHeight: '56px', flexShrink: '0', boxSizing: 'border-box' }}>
+            <div>
+              <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a' }}>📍 {currentConfig.flag} {currentConfig.name}</div>
+              <div style={{ fontSize: '10px', color: '#64748b' }}>{filteredSpots.length} spots</div>
+            </div>
+
+            <label
+              style={{
+                flex: 1,
+                maxWidth: '240px',
+                padding: '10px 20px',
+                background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                color: '#fff',
+                borderRadius: '30px',
+                fontWeight: '900',
+                fontSize: '13px',
+                boxShadow: '0 4px 16px rgba(2,132,199,0.3)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                textAlign: 'center',
+                boxSizing: 'border-box',
+              }}
+            >
+              <span>📷＋</span>
+              <span>Add Media</span>
+              <input type="file" accept="image/*,video/*" multiple onChange={handlePhotoSelect} style={{ display: 'none' }} />
+            </label>
+          </div>
+        </div>
+
+        {/* ランキングタブ */}
+        {currentTab === 'ranking' && (
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff' }}>
+            <h2 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '12px' }}>🏆 ランキング</h2>
+            {rankingSpots.map((s, i) => (
+              <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ padding: '12px', borderBottom: '1px solid #e2e8f0', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}>
+                <span style={{ fontSize: '16px', fontWeight: 'bold', width: '24px' }}>#{i + 1}</span>
+                <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
+                  <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{s.title}</div>
+                  <div style={{ fontSize: '11px', color: '#64748b' }}>📍 {s.cityName} | 👀 {s.viewsCount} | ❤️ {s.savedCount}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* マイページタブ */}
+        {currentTab === 'profile' && (
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff' }}>
+            <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '20px', border: '1px solid #e2e8f0', textAlign: 'center', boxSizing: 'border-box' }}>
+              <div
+                onClick={() => profileAvatarInputRef.current?.click()}
+                style={{ width: '70px', height: '70px', borderRadius: '50%', background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent, color: '#fff', fontSize: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px auto', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
+              >
+                {!userAvatar && <span>👤</span>}
+              </div>
+              <h2 style={{ margin: '0 0 4px 0', fontSize: '18px' }}>{userName}</h2>
+              <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: '#64748b' }}>{userBio}</p>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', textAlign: 'center' }}>
+                <div style={{ background: '#fff', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{mySpots.length}</div>
+                  <div style={{ fontSize: '10px', color: '#64748b' }}>投稿</div>
+                </div>
+                <div style={{ background: '#fff', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{visitedCountryCount}</div>
+                  <div style={{ fontSize: '10px', color: '#64748b' }}>訪問国</div>
+                </div>
+                <div style={{ background: '#fff', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0284c7' }}>{totalMyViewsCount}</div>
+                  <div style={{ fontSize: '10px', color: '#64748b' }}>Views</div>
+                </div>
+                <div style={{ background: '#fff', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#f43f5e' }}>{totalMySavedCount}</div>
+                  <div style={{ fontSize: '10px', color: '#64748b' }}>Saves</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ボトムナビ */}
+      <nav style={{ height: 'calc(54px + env(safe-area-inset-bottom, 0px))', minHeight: 'calc(54px + env(safe-area-inset-bottom, 0px))', maxHeight: 'calc(54px + env(safe-area-inset-bottom, 0px))', paddingBottom: 'env(safe-area-inset-bottom, 0px)', background: navBarBg, borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexShrink: 0, zIndex: 1000, touchAction: 'none', margin: 0, boxSizing: 'border-box' }}>
+        <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#94a3b8' }}>🗺️ マップ</button>
+        <button onClick={() => setCurrentTab('ranking')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal', color: currentTab === 'ranking' ? themeAccent : '#94a3b8' }}>🏆 ランキング</button>
+        <button onClick={() => setCurrentTab('profile')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal', color: currentTab === 'profile' ? themeAccent : '#94a3b8' }}>👤 マイページ</button>
+      </nav>
+
+      {/* 詳細モーダル（審査対応：通報ボタン・ブロックボタン・サポート窓口完備） */}
+      {selectedSpot && (
+        <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box' }}>
+          <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
+            <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
+              ← 戻る
+            </button>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={() => handleReportSpot(selectedSpot.id)}
+                style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fee2e2', borderRadius: '8px', padding: '4px 8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                🚨 通報
+              </button>
+              {selectedSpot.userId !== 'me' && selectedSpot.userId !== 'user-official' && (
+                <button
+                  onClick={() => handleBlockUser(selectedSpot.userId)}
+                  style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '4px 8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  🚫 ブロック
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+            <div style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', boxSizing: 'border-box' }}>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${selectedSpot.lat},${selectedSpot.lon}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  flex: 2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  padding: '12px',
+                  background: '#10b981',
+                  color: '#fff',
+                  borderRadius: '12px',
+                  fontWeight: 'bold',
+                  fontSize: '13px',
+                  textDecoration: 'none',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <span>🧭</span>
+                <span>{t('openGoogleMaps')}</span>
+              </a>
+
+              <button
+                onClick={() => handleToggleLike(selectedSpot.id)}
+                style={{
+                  flex: 1,
+                  padding: '12px',
+                  background: likedSpotIds.includes(selectedSpot.id) ? '#f43f5e' : '#f1f5f9',
+                  color: likedSpotIds.includes(selectedSpot.id) ? '#fff' : '#0f172a',
+                  border: 'none',
+                  borderRadius: '12px',
+                  fontWeight: 'bold',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <span style={{ color: '#f43f5e' }}>❤️</span>
+                <span>{selectedSpot.savedCount}</span>
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
+              <button
+                onClick={() => handleTranslateDescription(selectedSpot.id, selectedSpot.description)}
+                style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '16px', padding: '6px 14px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                {t('translate')}
+              </button>
+            </div>
+
+            <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap', marginBottom: '16px' }}>
+              {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
+            </p>
+
+            {/* 運営サポート窓口（Apple審査要件4） */}
+            <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#64748b', textAlign: 'center' }}>
+              ✉️ 運営サポート・通報窓口: support@wap-app.com
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
