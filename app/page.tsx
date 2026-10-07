@@ -115,7 +115,7 @@ function checkInappropriateContent(text: string): { isViolating: boolean; matche
   return { isViolating: false, matchedWord: '' };
 }
 
-// 称号の完全多言語対応システム
+// 15言語対応の称号システム
 function getUserTitle(count: number, lang: string) {
   if (lang === 'en') {
     if (count >= 100) return { title: '👑 Master of 100 Views', color: '#eab308' };
@@ -135,6 +135,14 @@ function getUserTitle(count: number, lang: string) {
     if (count >= 10) return { title: '🎒 十景旅行者', color: '#38bdf8' };
     if (count >= 1) return { title: '🌱 见习探险家', color: '#22c55e' };
     return { title: '🐣 旅游新手', color: '#94a3b8' };
+  } else if (lang === 'es') {
+    if (count >= 100) return { title: '👑 Maestro de 100 Vistas', color: '#eab308' };
+    if (count >= 1) return { title: '🌱 Explorador Aprendiz', color: '#22c55e' };
+    return { title: '🐣 Principiante', color: '#94a3b8' };
+  } else if (lang === 'fr') {
+    if (count >= 100) return { title: '👑 Maître des 100 Vues', color: '#eab308' };
+    if (count >= 1) return { title: '🌱 Explorateur Apprenti', color: '#22c55e' };
+    return { title: '🐣 Débutant', color: '#94a3b8' };
   } else {
     if (count >= 100) return { title: '👑 百景の覇者', color: '#eab308' };
     if (count >= 50) return { title: '🏔️ 五十景の開拓者', color: '#8b5cf6' };
@@ -167,7 +175,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     step1Title: 'Step 1: 表示言語を選択',
     step1Desc: 'お好みの言語を選択してください。',
     step2Title: 'Step 2: ベースの国（初期マップ）を選択',
-    step2Desc: '初期表示位置となるメインの国を選んでください。',
+    step2Desc: '初期表示位置となるメインの国を選んでください（140カ国以上対応）。',
     step3Title: 'Step 3: プロフィール作成',
     step3TitleEula: 'Step 4: 利用規約 & 位置情報ポリシーの確認',
     next: '次へ進む',
@@ -197,8 +205,8 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     friendCode: 'フレンドコード',
     searchPlaceholder: '🔍 地域・都市・#タグを検索（例: 京都、#絶景）',
     settings: '⚙️ 設定メニュー',
-    langSetting: '🌐 表示言語',
-    baseCountrySetting: '📍 ベースの国',
+    langSetting: '🌐 表示言語 (Language)',
+    baseCountrySetting: '📍 ベースの国 (初期マップ)',
     blockListTitle: '🚫 ブロック中ユーザー管理',
     eulaTitle: '📜 利用規約 (EULA)',
     guideTitle: '📖 アプリの操作説明',
@@ -212,24 +220,13 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     reportSpot: '🚨 この投稿を通報する',
     blockUser: '🚫 このユーザーをブロックする',
     supportContact: '✉️ 運営サポート窓口: support@wap-app.com',
+    scopeWorld: '🌎 ワールド',
+    scopeFriends: '👥 フレンド',
+    scopeMy: '📍 マイマップ',
     eulaFullText: `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
-
-第1条（目的および同意）
-本規約は、マップ共有アプリ「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
-
-第2条（位置情報の取得・利用について）
-1. 当サービスは、ユーザーがマップ画面の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一時的に取得します。
-2. 取得した位置情報は、ユーザーの現在の現在地をマップの中心に表示する機能、および周辺の旅のスポットを検索・閲覧する機能の提供にのみ使用されます。
-3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。
-
-第3条（コンテンツの安全性と不適切な投稿への対策）
-1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現などの不適切な投稿を厳禁としています。
-2. 各投稿やコメントには「通報（🚨）」機能および悪質ユーザーの「ブロック（🚫）」機能を完備しています。
-3. 運営チームは、通報を受けたコンテンツについて審査し、規約違反が確認された場合は速やかに該当コンテンツの削除およびアカウントの凍結措置を行います。
-
-【運営サポート窓口・お問い合わせ】
-ご質問、不具合のご報告、規約違反コンテンツの削除依頼などは以下の窓口までご連絡ください。
-✉️ support@wap-app.com`,
+第1条 目的：本規約はwapの利用条件を定めるものです。
+第2条 位置情報：現在地取得時にデバイスのGPSを一時的に利用します。
+第3条 禁止事項：不適切な投稿や誹謗中傷を厳禁とします。違反した場合は通報・ブロック機能および削除・アカウント凍結を行います。`,
     guideFullText: `【wap の詳細な操作説明と全機能ガイド】
 1. 現在地への移動（🎯ボタン）: デバイスのGPSを利用して現在地へ一瞬で移動します。
 2. マップ操作とズーム: ダブルタップで拡大（ズームイン）します。
@@ -240,7 +237,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     step1Title: 'Step 1: Select Language',
     step1Desc: 'Choose your preferred language for the application.',
     step2Title: 'Step 2: Select Base Country',
-    step2Desc: 'Choose your initial country for the map view.',
+    step2Desc: 'Choose your initial country for the map view (140+ countries).',
     step3Title: 'Step 3: Create Profile',
     step3TitleEula: 'Step 4: Terms of Service & Location Policy',
     next: 'Next',
@@ -285,22 +282,24 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     reportSpot: '🚨 Report this post',
     blockUser: '🚫 Block this user',
     supportContact: '✉️ Support: support@wap-app.com',
+    scopeWorld: '🌎 World',
+    scopeFriends: '👥 Friends',
+    scopeMy: '📍 My Map',
     eulaFullText: `[wap Terms of Service & Location Policy]
 Article 1: Purpose.
 Article 2: Location data via GPS is used solely upon user request.
-Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibited.
-Support: support@wap-app.com`,
+Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibited.`,
     guideFullText: `[wap Detailed User Guide & Features]
-1. Current Location: Tap to center map.
-2. Zoom & View: Double tap to zoom.
-3. Media Posting: Share photos/videos.
-4. Community & Safety: Like, comment, report, or block users.`
+1. Current Location: Tap to center the map on your GPS coordinates.
+2. Zoom & View: Double tap to zoom in.
+3. Media Posting: Share photos/videos with custom location.
+4. Community & Safety: Like, comment, translate, report, or block users easily.`
   },
   ko: {
     step1Title: 'Step 1: 언어 선택',
     step1Desc: '앱에서 사용할 언어를 선택하세요.',
     step2Title: 'Step 2: 기본 국가 선택',
-    step2Desc: '지도의 중심이 될 기본 국가를 선택하세요.',
+    step2Desc: '지도의 중심이 될 기본 국가를 선택하세요 (140개국 이상 지원).',
     step3Title: 'Step 3: 프로필 설정',
     step3TitleEula: 'Step 4: 이용약관 및 위치정보 정책',
     next: '다음',
@@ -345,6 +344,9 @@ Support: support@wap-app.com`,
     reportSpot: '🚨 게시물 신고',
     blockUser: '🚫 사용자 차단',
     supportContact: '✉️ 고객센터: support@wap-app.com',
+    scopeWorld: '🌎 전체',
+    scopeFriends: '👥 친구',
+    scopeMy: '📍 내 지도',
     eulaFullText: `[wap 이용약관 및 위치정보 정책]
 제1조 목적으로 본 서비스를 제공합니다.
 제2조 위치정보는 GPS를 통해 요청시에만 활용됩니다.
@@ -359,7 +361,7 @@ Support: support@wap-app.com`,
     step1Title: '步骤 1: 选择语言',
     step1Desc: '请选择您的首选应用语言。',
     step2Title: 'Step 2: 选择基础国家',
-    step2Desc: '请选择地图初始显示的国家。',
+    step2Desc: '请选择地图初始显示的国家（支持140多个国家）。',
     step3Title: 'Step 3: 创建个人资料',
     step3TitleEula: 'Step 4: 服务条款与位置政策',
     next: '下一步',
@@ -404,6 +406,9 @@ Support: support@wap-app.com`,
     reportSpot: '🚨 举报此内容',
     blockUser: '🚫 屏蔽此用户',
     supportContact: '✉️ 客服邮箱: support@wap-app.com',
+    scopeWorld: '🌎 世界',
+    scopeFriends: '👥 好友',
+    scopeMy: '📍 我的地图',
     eulaFullText: `[wap 服务条款与位置政策]
 第一条 目的：规范本应用的使用条件。
 第二条 位置：仅在用户请求时获取GPS数据。
@@ -654,7 +659,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント
+// 2. Google Maps API コンポーネント (サムネイル付きカスタムピン)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -757,10 +762,34 @@ const GoogleMapComponent = ({
     const map = mapInstanceRef.current;
 
     spots.forEach((spot) => {
+      // サムネイル付きカスタムピン要素の作成
+      const imgUrl = spot.thumbUrl || spot.fileUrl;
+      const pinElement = document.createElement('div');
+      pinElement.style.width = '42px';
+      pinElement.style.height = '42px';
+      pinElement.style.borderRadius = '50%';
+      pinElement.style.border = '3px solid #ffffff';
+      pinElement.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+      pinElement.style.overflow = 'hidden';
+      pinElement.style.background = '#0284c7';
+      pinElement.style.cursor = 'pointer';
+
+      const img = document.createElement('img');
+      img.src = imgUrl;
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+      pinElement.appendChild(img);
+
       const marker = new window.google.maps.Marker({
         position: { lat: spot.lat, lng: spot.lon },
         map: map,
         title: spot.title,
+        icon: {
+          url: imgUrl,
+          scaledSize: new window.google.maps.Size(38, 38),
+          anchor: new window.google.maps.Point(19, 19),
+        }
       });
 
       marker.addListener('click', () => {
@@ -1764,7 +1793,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 位置情報設定ガイド用モーダル */}
+        {/* 位置情報ガイド用モーダル */}
         {isLocationGuideOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
@@ -1955,9 +1984,9 @@ export default function WapApp() {
                     onChange={(e) => setDisplayScope(e.target.value as DisplayScope)}
                     style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', padding: '2px 4px', outline: 'none' }}
                   >
-                    <option value="world">🌎 {t('world')}</option>
-                    <option value="friends">👥 {t('friends')}</option>
-                    <option value="my">📍 {t('myMap')}</option>
+                    <option value="world">{t('scopeWorld')}</option>
+                    <option value="friends">{t('scopeFriends')}</option>
+                    <option value="my">{t('scopeMy')}</option>
                   </select>
                 </div>
               </div>
