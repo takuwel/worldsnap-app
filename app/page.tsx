@@ -173,9 +173,9 @@ export const LANGUAGES: Record<string, { name: string; nativeName: string; flag:
 export const DICTIONaries: Record<string, Record<string, string>> = {
   ja: {
     step1Title: 'Step 1: 表示言語を選択',
-    step1Desc: 'お好みの言語を選択してください。',
+    step1Desc: '世界中の人々が使えるよう、お好みの言語を選択してください。',
     step2Title: 'Step 2: ベースの国（初期マップ）を選択',
-    step2Desc: '初期表示位置となるメインの国を選んでください（140カ国以上対応）。',
+    step2Desc: 'マップの初期表示位置となるメインの国を選んでください（140カ国以上対応）。',
     step3Title: 'Step 3: プロフィール作成',
     step3TitleEula: 'Step 4: 利用規約 & 位置情報ポリシーの確認',
     next: '次へ進む',
@@ -224,9 +224,23 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     scopeFriends: '👥 フレンド',
     scopeMy: '📍 マイマップ',
     eulaFullText: `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
-第1条 目的：本規約はwapの利用条件を定めるものです。
-第2条 位置情報：現在地取得時にデバイスのGPSを一時的に利用します。
-第3条 禁止事項：不適切な投稿や誹謗中傷を厳禁とします。違反した場合は通報・ブロック機能および削除・アカウント凍結を行います。`,
+
+第1条（目的および同意）
+本規約は、マップ共有アプリ「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
+
+第2条（位置情報の取得・利用について）
+1. 当サービスは、ユーザーがマップ画面の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一時的に取得します。
+2. 取得した位置情報は、ユーザーの現在の現在地をマップの中心に表示する機能、および周辺の旅のスポットを検索・閲覧する機能の提供にのみ使用されます。
+3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。
+
+第3条（コンテンツの安全性と不適切な投稿への対策）
+1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現などの不適切な投稿を厳禁としています。
+2. 各投稿やコメントには「通報（🚨）」機能および悪質ユーザーの「ブロック（🚫）」機能を完備しています。
+3. 運営チームは、通報を受けたコンテンツについて審査し、規約違反が確認された場合は速やかに該当コンテンツの削除およびアカウントの凍結措置を行います。
+
+【運営サポート窓口・お問い合わせ】
+ご質問、不具合のご報告、規約違反コンテンツの削除依頼などは以下の窓口までご連絡ください。
+✉️ support@wap-app.com`,
     guideFullText: `【wap の詳細な操作説明と全機能ガイド】
 1. 現在地への移動（🎯ボタン）: デバイスのGPSを利用して現在地へ一瞬で移動します。
 2. マップ操作とズーム: ダブルタップで拡大（ズームイン）します。
@@ -659,7 +673,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント (サムネイル付きカスタムピン)
+// 2. Google Maps API コンポーネント (サムネイル付きピン)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -762,33 +776,15 @@ const GoogleMapComponent = ({
     const map = mapInstanceRef.current;
 
     spots.forEach((spot) => {
-      // サムネイル付きカスタムピン要素の作成
       const imgUrl = spot.thumbUrl || spot.fileUrl;
-      const pinElement = document.createElement('div');
-      pinElement.style.width = '42px';
-      pinElement.style.height = '42px';
-      pinElement.style.borderRadius = '50%';
-      pinElement.style.border = '3px solid #ffffff';
-      pinElement.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
-      pinElement.style.overflow = 'hidden';
-      pinElement.style.background = '#0284c7';
-      pinElement.style.cursor = 'pointer';
-
-      const img = document.createElement('img');
-      img.src = imgUrl;
-      img.style.width = '100%';
-      img.style.height = '100%';
-      img.style.objectFit = 'cover';
-      pinElement.appendChild(img);
-
       const marker = new window.google.maps.Marker({
         position: { lat: spot.lat, lng: spot.lon },
         map: map,
         title: spot.title,
         icon: {
           url: imgUrl,
-          scaledSize: new window.google.maps.Size(38, 38),
-          anchor: new window.google.maps.Point(19, 19),
+          scaledSize: new window.google.maps.Size(40, 40),
+          anchor: new window.google.maps.Point(20, 20),
         }
       });
 
