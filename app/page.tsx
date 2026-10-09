@@ -211,10 +211,11 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     tabFriends: '👥 フレンド',
     reportSpot: '🚨 この投稿を通報する',
     blockUser: '🚫 このユーザーをブロックする',
-    supportContact: '✉️ 運営サポート・通報窓口 (24時間以内対応): support@wap-app.com',
+    supportContact: '✉️ 運営サポート・通報窓口 (1〜3日以内対応): support@wap-app.com',
     scopeWorld: '🌎 ワールド',
     scopeFriends: '👥 フレンド',
     scopeMy: '📍 マイマップ',
+    deleteAccountBtn: '⚠️ アカウントを削除（退会する）',
     eulaFullText: `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
 
 第1条（目的および同意）
@@ -228,10 +229,10 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
 第3条（コンテンツの安全性と免責事項・情報の正確性について）
 1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現などの不適切な投稿を厳禁としています。
 2. 掲載されているスポットの写真や店舗情報は投稿時点のものであり、現在地において建物がなくなっている、閉店している、またはリニューアルされている場合があります。当サービスは掲載情報の正確性や現状への適合性を保証するものではなく、現地に赴く際はユーザーご自身の責任で最新情報をご確認ください。
-3. 各投稿やコメントには「通報（🚨）」機能および悪質ユーザーの「ブロック（🚫）」機能を完備しています。運営チームは通報を受けたコンテンツについて24時間以内に審査し、削除やアカウント凍結措置を行います。
+3. 各投稿やコメントには「通報（🚨）」機能および悪質ユーザーの「ブロック（🚫）」機能を完備しています。運営チームは通報を受けたコンテンツについて1〜3日以内に審査し、削除やアカウント凍結措置を行います。
 
 【運営サポート・通報窓口】
-ご質問、不具合のご報告、規約違反コンテンツの削除依頼などは以下の窓口までご連絡ください。
+ご質問、不具合のご報告、規約違反コンテンツの削除依頼などは以下の窓口までご連絡ください。1〜3日以内に対応いたします。
 ✉️ support@wap-app.com`,
     guideFullText: `【wap の詳細な操作説明と全機能ガイド】
 1. 現在地への移動（🎯ボタン）: デバイスのGPSを利用して現在地へ一瞬で移動します。
@@ -287,14 +288,15 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     tabFriends: '👥 Friends',
     reportSpot: '🚨 Report this post',
     blockUser: '🚫 Block this user',
-    supportContact: '✉️ Support & Report Contact (24h response): support@wap-app.com',
+    supportContact: '✉️ Support & Report Contact (1-3 days response): support@wap-app.com',
     scopeWorld: '🌎 World',
     scopeFriends: '👥 Friends',
     scopeMy: '📍 My Map',
+    deleteAccountBtn: '⚠️ Delete Account',
     eulaFullText: `[wap Terms of Service & Location Policy]
 Article 1: Purpose.
 Article 2: Location data via GPS is used solely upon user request.
-Article 3: Spot information is as of the posting time and may have changed. Users visit locations at their own discretion and responsibility.
+Article 3: Spot information is as of posting time and may have changed. Users visit locations at their own discretion and responsibility. Support replies within 1-3 days.
 Support Contact: support@wap-app.com`,
     guideFullText: `[wap Detailed User Guide & Features]
 1. Current Location: Tap to center the map on your GPS coordinates.
@@ -350,10 +352,11 @@ Support Contact: support@wap-app.com`,
     tabFriends: '👥 친구',
     reportSpot: '🚨 게시물 신고',
     blockUser: '🚫 사용자 차단',
-    supportContact: '✉️ 고객센터 및 신고 창구: support@wap-app.com',
+    supportContact: '✉️ 고객센터 및 신고 창구 (1~3일 내 대응): support@wap-app.com',
     scopeWorld: '🌎 전체',
     scopeFriends: '👥 친구',
     scopeMy: '📍 내 지도',
+    deleteAccountBtn: '⚠️ 계정 삭제 (회원탈퇴)',
     eulaFullText: `[wap 이용약관 및 위치정보 정책]
 제1조 목적으로 본 서비스를 제공합니다.
 제2조 위치정보는 GPS를 통해 요청시에만 활용됩니다.
@@ -412,10 +415,11 @@ Support Contact: support@wap-app.com`,
     tabFriends: '👥 好友',
     reportSpot: '🚨 举报此内容',
     blockUser: '🚫 屏蔽此用户',
-    supportContact: '✉️ 客服与举报邮箱: support@wap-app.com',
+    supportContact: '✉️ 客服与举报邮箱 (1-3天内回复): support@wap-app.com',
     scopeWorld: '🌎 世界',
     scopeFriends: '👥 好友',
     scopeMy: '📍 我的地图',
+    deleteAccountBtn: '⚠️ 删除账户 (注销)',
     eulaFullText: `[wap 服务条款与位置政策]
 第一条 目的：规范本应用的使用条件。
 第二条 位置：仅在用户请求时获取GPS数据。
@@ -429,7 +433,7 @@ Support Contact: support@wap-app.com`,
 };
 
 // ==========================================
-// 観光客数上位国ランキングに基づく「厳選140カ国マスターデータ」
+// 観光客数ランキング順＆地域別に完全に整理された「厳選140カ国マスターデータ」
 // ==========================================
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
   // ── 🇪🇺 ヨーロッパ (Europe) ──
@@ -2073,7 +2077,7 @@ export default function WapApp() {
                 <span style={{ fontSize: '11px', background: userRank.color, color: '#fff', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold', display: 'inline-block', marginBottom: '8px' }}>{userRank.title}</span>
                 <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: '#64748b' }}>{userBio}</p>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', textAlign: 'center' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', textAlign: 'center', marginBottom: '14px' }}>
                   <div style={{ background: '#fff', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                     <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{mySpots.length}</div>
                     <div style={{ fontSize: '10px', color: '#64748b' }}>{t('posts')}</div>
@@ -2091,6 +2095,21 @@ export default function WapApp() {
                     <div style={{ fontSize: '10px', color: '#64748b' }}>Saves</div>
                   </div>
                 </div>
+
+                {/* アカウント削除ボタン（Apple審査ガイドライン対応） */}
+                <button
+                  onClick={() => {
+                    if (window.confirm('⚠️ 本当にアカウントおよびすべてのデータを削除しますか？この操作は元に戻せません。')) {
+                      localStorage.clear();
+                      setSpots([]);
+                      setIsOnboarding(true);
+                      showToast('🗑️ アカウントを削除しました');
+                    }
+                  }}
+                  style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fee2e2', borderRadius: '8px', padding: '6px 12px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  {t('deleteAccountBtn')}
+                </button>
               </div>
 
               {/* マイページのサブタブ（投稿・ログ・保存・バッジ） */}
