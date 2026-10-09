@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & 15言語辞書 & 地域別・観光客数上位140カ国マスターデータ
+// 1. 型定義 & 多言語辞書 & 140カ国マスターデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -115,6 +115,7 @@ function checkInappropriateContent(text: string): { isViolating: boolean; matche
   return { isViolating: false, matchedWord: '' };
 }
 
+// 称号の完全多言語対応システム
 function getUserTitle(count: number, lang: string) {
   if (lang === 'en') {
     if (count >= 100) return { title: '👑 Master of 100 Views', color: '#eab308' };
@@ -166,7 +167,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     step1Title: 'Step 1: 表示言語を選択',
     step1Desc: '世界中の人々が使えるよう、お好みの言語を選択してください。',
     step2Title: 'Step 2: ベースの国（初期マップ）を選択',
-    step2Desc: 'マップの初期表示位置となるメインの国を選んでください（観光客数上位の140カ国以上）。',
+    step2Desc: 'マップの初期表示位置となるメインの国を選んでください（140カ国以上対応）。',
     step3Title: 'Step 3: プロフィール作成',
     step3TitleEula: 'Step 4: 利用規約 & 位置情報ポリシーの確認',
     next: '次へ進む',
@@ -178,7 +179,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     profile: 'マイページ',
     addPhoto: '写真 / 動画を追加',
     exportMap: 'マップ保存',
-    view: 'View',
+    view: '景色',
     gourmet: 'グルメ',
     rain: '雨の日',
     myMap: 'マイマップ',
@@ -210,7 +211,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     tabFriends: '👥 フレンド',
     reportSpot: '🚨 この投稿を通報する',
     blockUser: '🚫 このユーザーをブロックする',
-    supportContact: '✉️ 運営サポート窓口: support@wap-app.com',
+    supportContact: '✉️ 運営サポート・通報窓口 (24時間以内対応): support@wap-app.com',
     scopeWorld: '🌎 ワールド',
     scopeFriends: '👥 フレンド',
     scopeMy: '📍 マイマップ',
@@ -229,8 +230,8 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
 2. 各投稿やコメントには「通報（🚨）」機能および悪質ユーザーの「ブロック（🚫）」機能を完備しています。
 3. 運営チームは、通報を受けたコンテンツについて審査し、規約違反が確認された場合は速やかに該当コンテンツの削除およびアカウントの凍結措置を行います。
 
-【運営サポート窓口・お問い合わせ】
-ご質問、不具合のご報告、規約違反コンテンツの削除依頼などは以下の窓口までご連絡ください。
+【運営サポート・通報窓口】
+ご質問、不具合のご報告、規約違反コンテンツの削除依頼などは以下の窓口までご連絡ください。24時間以内に対応いたします。
 ✉️ support@wap-app.com`,
     guideFullText: `【wap の詳細な操作説明と全機能ガイド】
 1. 現在地への移動（🎯ボタン）: デバイスのGPSを利用して現在地へ一瞬で移動します。
@@ -286,14 +287,15 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     tabFriends: '👥 Friends',
     reportSpot: '🚨 Report this post',
     blockUser: '🚫 Block this user',
-    supportContact: '✉️ Support: support@wap-app.com',
+    supportContact: '✉️ Support & Report Contact (24h response): support@wap-app.com',
     scopeWorld: '🌎 World',
     scopeFriends: '👥 Friends',
     scopeMy: '📍 My Map',
     eulaFullText: `[wap Terms of Service & Location Policy]
 Article 1: Purpose.
 Article 2: Location data via GPS is used solely upon user request.
-Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibited.`,
+Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibited.
+Support Contact: support@wap-app.com`,
     guideFullText: `[wap Detailed User Guide & Features]
 1. Current Location: Tap to center the map on your GPS coordinates.
 2. Zoom & View: Double tap to zoom in.
@@ -348,7 +350,7 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     tabFriends: '👥 친구',
     reportSpot: '🚨 게시물 신고',
     blockUser: '🚫 사용자 차단',
-    supportContact: '✉️ 고객센터: support@wap-app.com',
+    supportContact: '✉️ 고객센터 및 신고 창구: support@wap-app.com',
     scopeWorld: '🌎 전체',
     scopeFriends: '👥 친구',
     scopeMy: '📍 내 지도',
@@ -410,7 +412,7 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
     tabFriends: '👥 好友',
     reportSpot: '🚨 举报此内容',
     blockUser: '🚫 屏蔽此用户',
-    supportContact: '✉️ 客服邮箱: support@wap-app.com',
+    supportContact: '✉️ 客服与举报邮箱: support@wap-app.com',
     scopeWorld: '🌎 世界',
     scopeFriends: '👥 好友',
     scopeMy: '📍 我的地图',
@@ -427,10 +429,10 @@ Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibi
 };
 
 // ==========================================
-// 観光客数上位国・主要国 140カ国（地域別・綺麗に並び替え済み）
+// 観光客数ランキング順＆地域別に整理された完全140カ国マスターデータ
 // ==========================================
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
-  // ── 🇪🇺 ヨーロッパ (Europe - 観光客数上位) ──
+  // ── 🇪🇺 ヨーロッパ (Europe) ──
   FR: { names: { ja: 'フランス', en: 'France', ko: '프랑스', zh: '法国' }, flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
   ES: { names: { ja: 'スペイン', en: 'Spain', ko: '스페인', zh: '西班牙' }, flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
   IT: { names: { ja: 'イタリア', en: 'Italy', ko: '이탈리아', zh: '意大利' }, flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
@@ -472,7 +474,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
 
-  // ── 🌏 アジア (Asia - 観光客数上位) ──
+  // ── 🌏 アジア (Asia) ──
   JP: { names: { ja: '日本', en: 'Japan', ko: '일본', zh: '日本' }, flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   CN: { names: { ja: '中国', en: 'China', ko: '중국', zh: '中国' }, flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
   TH: { names: { ja: 'タイ', en: 'Thailand', ko: '태국', zh: '泰国' }, flag: '🇹🇭', region: '🌏 アジア', lat: 15.8700, lon: 100.9925, zoom: 6 },
@@ -509,7 +511,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BH: { names: { ja: 'バーレーン', en: 'Bahrain', ko: '바레인', zh: '巴林' }, flag: '🇧🇭', region: '🌏 アジア', lat: 26.0667, lon: 50.5577, zoom: 10 },
   JO: { names: { ja: 'ヨルダン', en: 'Jordan', ko: '요르단', zh: '约旦' }, flag: '🇯🇴', region: '🌏 アジア', lat: 30.5852, lon: 36.2384, zoom: 7 },
 
-  // ── 🗽 北米・中南米 (Americas - 観光客数上位) ──
+  // ── 🗽 北米・中南米 (Americas) ──
   US: { names: { ja: 'アメリカ', en: 'USA', ko: '미국', zh: '美国' }, flag: '🇺🇸', region: '🗽 北米・中南米', lat: 37.0902, lon: -95.7129, zoom: 4 },
   MX: { names: { ja: 'メキシコ', en: 'Mexico', ko: '멕시코', zh: '墨西哥' }, flag: '🇲🇽', region: '🗽 北米・中南米', lat: 23.6345, lon: 102.5528, zoom: 5 },
   CA: { names: { ja: 'カナダ', en: 'Canada', ko: '캐나다', zh: '加拿大' }, flag: '🇨🇦', region: '🗽 北米・中南米', lat: 56.1304, lon: -106.3468, zoom: 3 },
@@ -1929,7 +1931,7 @@ export default function WapApp() {
                         }}
                       >
                         {isChecked ? '✓ ' : ''}
-                        {cat === 'view' ? '🏔️ View' : cat === 'gourmet' ? `🍔 Gourmet` : `🌧️ Rainy`}
+                        {cat === 'view' ? `🏔️ ${t('view')}` : cat === 'gourmet' ? `🍔 ${t('gourmet')}` : `🌧️ ${t('rain')}`}
                       </button>
                     );
                   })}
