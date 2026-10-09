@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & 多言語辞書 & 140カ国マスターデータ
+// 1. 型定義 & 15言語辞書 & 140カ国マスターデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -225,18 +225,18 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
 2. 取得した位置情報は、ユーザーの現在の現在地をマップの中心に表示する機能、および周辺の旅のスポットを検索・閲覧する機能の提供にのみ使用されます。
 3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。
 
-第3条（コンテンツの安全性と不適切な投稿への対策）
+第3条（コンテンツの安全性と免責事項・情報の正確性について）
 1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現などの不適切な投稿を厳禁としています。
-2. 各投稿やコメントには「通報（🚨）」機能および悪質ユーザーの「ブロック（🚫）」機能を完備しています。
-3. 運営チームは、通報を受けたコンテンツについて審査し、規約違反が確認された場合は速やかに該当コンテンツの削除およびアカウントの凍結措置を行います。
+2. 掲載されているスポットの写真や店舗情報は投稿時点のものであり、現在地において建物がなくなっている、閉店している、またはリニューアルされている場合があります。当サービスは掲載情報の正確性や現状への適合性を保証するものではなく、現地に赴く際はユーザーご自身の責任で最新情報をご確認ください。
+3. 各投稿やコメントには「通報（🚨）」機能および悪質ユーザーの「ブロック（🚫）」機能を完備しています。運営チームは通報を受けたコンテンツについて24時間以内に審査し、削除やアカウント凍結措置を行います。
 
 【運営サポート・通報窓口】
-ご質問、不具合のご報告、規約違反コンテンツの削除依頼などは以下の窓口までご連絡ください。24時間以内に対応いたします。
+ご質問、不具合のご報告、規約違反コンテンツの削除依頼などは以下の窓口までご連絡ください。
 ✉️ support@wap-app.com`,
     guideFullText: `【wap の詳細な操作説明と全機能ガイド】
 1. 現在地への移動（🎯ボタン）: デバイスのGPSを利用して現在地へ一瞬で移動します。
 2. マップ操作とズーム: ダブルタップで拡大（ズームイン）します。
-3. メディアの投稿: 写真や動画を選択して投稿できます。
+3. メディアの投稿: 写真や動画を選択して投稿できます。店舗や建物情報は投稿時点のものであるため、現在の状況と異なる場合があります。
 4. 交流・安全機能: いいね、コメント、翻訳、通報、ブロック機能が使えます。`
   },
   en: {
@@ -294,7 +294,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     eulaFullText: `[wap Terms of Service & Location Policy]
 Article 1: Purpose.
 Article 2: Location data via GPS is used solely upon user request.
-Article 3: Inappropriate posts, hate speech, and harassment are strictly prohibited.
+Article 3: Spot information is as of the posting time and may have changed. Users visit locations at their own discretion and responsibility.
 Support Contact: support@wap-app.com`,
     guideFullText: `[wap Detailed User Guide & Features]
 1. Current Location: Tap to center the map on your GPS coordinates.
@@ -357,7 +357,7 @@ Support Contact: support@wap-app.com`,
     eulaFullText: `[wap 이용약관 및 위치정보 정책]
 제1조 목적으로 본 서비스를 제공합니다.
 제2조 위치정보는 GPS를 통해 요청시에만 활용됩니다.
-제3조 부적절한 게시물은 엄격히 금지되며 신고 및 차단 조치됩니다.`,
+제3조 장소 정보는 게시 시점 기준이며 변경될 수 있습니다. 방문 시 본인 책임하에 확인하세요.`,
     guideFullText: `[wap 상세 가이드 및 기능 설명]
 1. 현재 위치: GPS를 통해 지도 중심을 이동합니다.
 2. 지도 조작: 더블탭으로 확대 가능합니다.
@@ -419,7 +419,7 @@ Support Contact: support@wap-app.com`,
     eulaFullText: `[wap 服务条款与位置政策]
 第一条 目的：规范本应用的使用条件。
 第二条 位置：仅在用户请求时获取GPS数据。
-第三条 严禁发布不当言论，违者将通过举报与屏蔽功能进行处理。`,
+第三条 景点信息仅供参考，可能存在变更，访问时请自行确认。`,
     guideFullText: `[wap 详细操作指南]
 1. 当前位置：快速定位您的GPS坐标。
 2. 地图缩放：双击放大。
@@ -429,7 +429,7 @@ Support Contact: support@wap-app.com`,
 };
 
 // ==========================================
-// 観光客数ランキング順＆地域別に整理された完全140カ国マスターデータ
+// 観光客数上位国ランキングに基づく「厳選140カ国マスターデータ」
 // ==========================================
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
   // ── 🇪🇺 ヨーロッパ (Europe) ──
