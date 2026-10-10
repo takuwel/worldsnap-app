@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & 15言語辞書 & 140カ国マスターデータ
+// 1. 型定義 & 15言語辞書 & 完全140カ国マスターデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -211,7 +211,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     tabFriends: '👥 フレンド',
     reportSpot: '🚨 この投稿を通報する',
     blockUser: '🚫 このユーザーをブロックする',
-    supportContact: '✉️ 運営サポート・通報窓口 (1〜3日以内対応): wap.support.official@gmail.com',
+    supportContactBtn: '✉️ サポート・お問い合わせ（メールを送る）',
     scopeWorld: '🌎 ワールド',
     scopeFriends: '👥 フレンド',
     scopeMy: '📍 マイマップ',
@@ -288,7 +288,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     tabFriends: '👥 Friends',
     reportSpot: '🚨 Report this post',
     blockUser: '🚫 Block this user',
-    supportContact: '✉️ Support & Report Contact (1-3 days response): wap.support.official@gmail.com',
+    supportContactBtn: '✉️ Contact Support (Send Email)',
     scopeWorld: '🌎 World',
     scopeFriends: '👥 Friends',
     scopeMy: '📍 My Map',
@@ -352,7 +352,7 @@ Support Contact: wap.support.official@gmail.com`,
     tabFriends: '👥 친구',
     reportSpot: '🚨 게시물 신고',
     blockUser: '🚫 사용자 차단',
-    supportContact: '✉️ 고객센터 및 신고 창구 (1~3일 내 대응): wap.support.official@gmail.com',
+    supportContactBtn: '✉️ 고객센터 문의 (이메일 보내기)',
     scopeWorld: '🌎 전체',
     scopeFriends: '👥 친구',
     scopeMy: '📍 내 지도',
@@ -415,7 +415,7 @@ Support Contact: wap.support.official@gmail.com`,
     tabFriends: '👥 好友',
     reportSpot: '🚨 举报此内容',
     blockUser: '🚫 屏蔽此用户',
-    supportContact: '✉️ 客服与举报邮箱 (1-3天内回复): wap.support.official@gmail.com',
+    supportContactBtn: '✉️ 联系客服 (发送邮件)',
     scopeWorld: '🌎 世界',
     scopeFriends: '👥 好友',
     scopeMy: '📍 我的地图',
@@ -433,7 +433,7 @@ Support Contact: wap.support.official@gmail.com`,
 };
 
 // ==========================================
-// 観光客数ランキング上位＆地域別に整理された「厳選140カ国マスターデータ」
+// 観光客数上位国ランキングに基づく「完全140カ国マスターデータ」
 // ==========================================
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
   // ── 🇪🇺 ヨーロッパ (Europe) ──
@@ -1756,7 +1756,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 位置情報ガイド用モーダル */}
+        {/* 位置情報設定ガイド用モーダル */}
         {isLocationGuideOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
@@ -2383,10 +2383,23 @@ export default function WapApp() {
                 {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
               </p>
 
-              {/* サポート窓口（mailto: リンク付き） */}
-              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#64748b', textAlign: 'center' }}>
-                <a href="mailto:wap.support.official@gmail.com?subject=【wap】お問い合わせ" style={{ color: '#0284c7', textDecoration: 'underline', fontWeight: 'bold' }}>
-                  {t('supportContact')}
+              {/* サポートお問い合わせボタン（mailto: リンク付き） */}
+              <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center', boxSizing: 'border-box' }}>
+                <a
+                  href="mailto:wap.support.official@gmail.com?subject=【wap】お問い合わせ"
+                  style={{
+                    display: 'inline-block',
+                    padding: '10px 20px',
+                    background: '#0284c7',
+                    color: '#fff',
+                    borderRadius: '20px',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    textDecoration: 'none',
+                    boxShadow: '0 4px 12px rgba(2,132,199,0.3)',
+                  }}
+                >
+                  {t('supportContactBtn')}
                 </a>
               </div>
             </div>
