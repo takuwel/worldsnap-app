@@ -211,7 +211,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     tabFriends: '👥 フレンド',
     reportSpot: '🚨 この投稿を通報する',
     blockUser: '🚫 このユーザーをブロックする',
-    supportContact: '✉️ 運営サポート・通報窓口 (1〜3日以内対応): support@wap-app.com',
+    supportContact: '✉️ 運営サポート・通報窓口 (1〜3日以内対応): wap.support.official@gmail.com',
     scopeWorld: '🌎 ワールド',
     scopeFriends: '👥 フレンド',
     scopeMy: '📍 マイマップ',
@@ -233,7 +233,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
 
 【運営サポート・通報窓口】
 ご質問、不具合のご報告、規約違反コンテンツの削除依頼などは以下の窓口までご連絡ください。1〜3日以内に対応いたします。
-✉️ support@wap-app.com`,
+✉️ wap.support.official@gmail.com`,
     guideFullText: `【wap の詳細な操作説明と全機能ガイド】
 1. 現在地への移動（🎯ボタン）: デバイスのGPSを利用して現在地へ一瞬で移動します。
 2. マップ操作とズーム: ダブルタップで拡大（ズームイン）します。
@@ -288,7 +288,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     tabFriends: '👥 Friends',
     reportSpot: '🚨 Report this post',
     blockUser: '🚫 Block this user',
-    supportContact: '✉️ Support & Report Contact (1-3 days response): support@wap-app.com',
+    supportContact: '✉️ Support & Report Contact (1-3 days response): wap.support.official@gmail.com',
     scopeWorld: '🌎 World',
     scopeFriends: '👥 Friends',
     scopeMy: '📍 My Map',
@@ -297,7 +297,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
 Article 1: Purpose.
 Article 2: Location data via GPS is used solely upon user request.
 Article 3: Spot information is as of posting time and may have changed. Users visit locations at their own discretion and responsibility. Support replies within 1-3 days.
-Support Contact: support@wap-app.com`,
+Support Contact: wap.support.official@gmail.com`,
     guideFullText: `[wap Detailed User Guide & Features]
 1. Current Location: Tap to center the map on your GPS coordinates.
 2. Zoom & View: Double tap to zoom in.
@@ -352,7 +352,7 @@ Support Contact: support@wap-app.com`,
     tabFriends: '👥 친구',
     reportSpot: '🚨 게시물 신고',
     blockUser: '🚫 사용자 차단',
-    supportContact: '✉️ 고객센터 및 신고 창구 (1~3일 내 대응): support@wap-app.com',
+    supportContact: '✉️ 고객센터 및 신고 창구 (1~3일 내 대응): wap.support.official@gmail.com',
     scopeWorld: '🌎 전체',
     scopeFriends: '👥 친구',
     scopeMy: '📍 내 지도',
@@ -415,7 +415,7 @@ Support Contact: support@wap-app.com`,
     tabFriends: '👥 好友',
     reportSpot: '🚨 举报此内容',
     blockUser: '🚫 屏蔽此用户',
-    supportContact: '✉️ 客服与举报邮箱 (1-3天内回复): support@wap-app.com',
+    supportContact: '✉️ 客服与举报邮箱 (1-3天内回复): wap.support.official@gmail.com',
     scopeWorld: '🌎 世界',
     scopeFriends: '👥 好友',
     scopeMy: '📍 我的地图',
@@ -433,7 +433,7 @@ Support Contact: support@wap-app.com`,
 };
 
 // ==========================================
-// 観光客数ランキング順＆地域別に完全に整理された「厳選140カ国マスターデータ」
+// 観光客数ランキング上位＆地域別に整理された「厳選140カ国マスターデータ」
 // ==========================================
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
   // ── 🇪🇺 ヨーロッパ (Europe) ──
@@ -484,7 +484,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   TH: { names: { ja: 'タイ', en: 'Thailand', ko: '태국', zh: '泰国' }, flag: '🇹🇭', region: '🌏 アジア', lat: 15.8700, lon: 100.9925, zoom: 6 },
   MY: { names: { ja: 'マレーシア', en: 'Malaysia', ko: '말레이시아', zh: '马来西亚' }, flag: '🇲🇾', region: '🌏 アジア', lat: 4.2105, lon: 101.9758, zoom: 6 },
   SG: { names: { ja: 'シンガポール', en: 'Singapore', ko: '싱가포르', zh: '新加坡' }, flag: '🇸🇬', region: '🌏 アジア', lat: 1.3521, lon: 103.8198, zoom: 11 },
-  KR: { names: { ja: '韓国', en: 'South Korea', ko: '한국', zh: '韩国' }, flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
+  KR: { names: { ja: '韓国', en: 'South Korea', ko: '한국', zh: '한국' }, flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
   VN: { names: { ja: 'ベトナム', en: 'Vietnam', ko: '베트남', zh: '越南' }, flag: '🇻🇳', region: '🌏 アジア', lat: 14.0583, lon: 108.2772, zoom: 6 },
   HK: { names: { ja: '香港', en: 'Hong Kong', ko: '홍콩', zh: '香港' }, flag: '🇭🇰', region: '🌏 アジア', lat: 22.3193, lon: 114.1694, zoom: 11 },
   MO: { names: { ja: 'マカオ', en: 'Macau', ko: '마카오', zh: '澳门' }, flag: '🇲🇴', region: '🌏 アジア', lat: 22.1987, lon: 113.5439, zoom: 12 },
@@ -1756,7 +1756,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 位置情報設定ガイド用モーダル */}
+        {/* 位置情報ガイド用モーダル */}
         {isLocationGuideOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
@@ -2096,10 +2096,9 @@ export default function WapApp() {
                   </div>
                 </div>
 
-                {/* アカウント削除ボタン（Apple審査ガイドライン対応） */}
                 <button
                   onClick={() => {
-                    if (window.confirm('⚠️ 本当にアカウントおよびすべてのデータを削除しますか？この操作は元に戻せません。')) {
+                    if (window.confirm('⚠️ 本当にアカウントおよびすべてのデータを削除しますか？')) {
                       localStorage.clear();
                       setSpots([]);
                       setIsOnboarding(true);
@@ -2384,9 +2383,11 @@ export default function WapApp() {
                 {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
               </p>
 
-              {/* サポート窓口 */}
+              {/* サポート窓口（mailto: リンク付き） */}
               <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#64748b', textAlign: 'center' }}>
-                {t('supportContact')}
+                <a href="mailto:wap.support.official@gmail.com?subject=【wap】お問い合わせ" style={{ color: '#0284c7', textDecoration: 'underline', fontWeight: 'bold' }}>
+                  {t('supportContact')}
+                </a>
               </div>
             </div>
           </div>
