@@ -216,6 +216,8 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     scopeFriends: '👥 フレンド',
     scopeMy: '📍 マイマップ',
     deleteAccountBtn: '⚠️ アカウントを削除（退会する）',
+    commentPlaceholder: '💬 コメントを入力...',
+    commentSend: '送信',
     eulaFullText: `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
 
 第1条（目的および同意）
@@ -293,6 +295,8 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     scopeFriends: '👥 Friends',
     scopeMy: '📍 My Map',
     deleteAccountBtn: '⚠️ Delete Account',
+    commentPlaceholder: '💬 Write a comment...',
+    commentSend: 'Send',
     eulaFullText: `[wap Terms of Service & Location Policy]
 Article 1: Purpose.
 Article 2: Location data via GPS is used solely upon user request.
@@ -357,6 +361,8 @@ Support Contact: wap.support.official@gmail.com`,
     scopeFriends: '👥 친구',
     scopeMy: '📍 내 지도',
     deleteAccountBtn: '⚠️ 계정 삭제 (회원탈퇴)',
+    commentPlaceholder: '💬 댓글 입력...',
+    commentSend: '전송',
     eulaFullText: `[wap 이용약관 및 위치정보 정책]
 제1조 목적으로 본 서비스를 제공합니다.
 제2조 위치정보는 GPS를 통해 요청시에만 활용됩니다.
@@ -420,6 +426,8 @@ Support Contact: wap.support.official@gmail.com`,
     scopeFriends: '👥 好友',
     scopeMy: '📍 我的地图',
     deleteAccountBtn: '⚠️ 删除账户 (注销)',
+    commentPlaceholder: '💬 输入评论...',
+    commentSend: '发送',
     eulaFullText: `[wap 服务条款与位置政策]
 第一条 目的：规范本应用的使用条件。
 第二条 位置：仅在用户请求时获取GPS数据。
@@ -428,12 +436,12 @@ Support Contact: wap.support.official@gmail.com`,
 1. 当前位置：快速定位您的GPS坐标。
 2. 地图缩放：双击放大。
 3. 发布动态：上传照片或视频并标记地点。
-4. 社区互动：支持点赞、评论、翻译、举报及屏蔽功能。`
+4. 社区互动：支持点赞, 评论, 翻译, 举报及屏蔽功能。`
   }
 };
 
 // ==========================================
-// 観光客数上位国・ヨーロッパ・北欧・アジアを網羅した140カ国マスターデータ
+// 観光客数上位国（ヨーロッパ・北欧・アジア等）を網羅した140カ国マスターデータ
 // ==========================================
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
   // ── 🇪🇺 ヨーロッパ・北欧 (Europe & Nordic) ──
@@ -464,7 +472,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: '塞尔维亚' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯洛เว니아' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯洛文尼亚' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -1579,6 +1587,11 @@ export default function WapApp() {
         <title>wap</title>
         <link rel="icon" href="/icon-192.png" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="wap" />
+        <meta name="theme-color" content="#0284c7" />
       </head>
 
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none' }}>
@@ -1779,7 +1792,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 位置情報設定ガイド用モーダル */}
+        {/* 位置情報ガイド用モーダル */}
         {isLocationGuideOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
@@ -2423,6 +2436,37 @@ export default function WapApp() {
               <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap', marginBottom: '16px' }}>
                 {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
               </p>
+
+              {/* コメントセクション追加 */}
+              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginBottom: '20px' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '10px' }}>💬 コメント ({selectedSpot.comments?.length || 0})</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+                  {selectedSpot.comments?.map((c) => (
+                    <div key={c.id} style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '2px' }}>{c.userName}</div>
+                      <div style={{ fontSize: '12px', color: '#334155' }}>{c.text}</div>
+                    </div>
+                  ))}
+                  {(!selectedSpot.comments || selectedSpot.comments.length === 0) && (
+                    <div style={{ fontSize: '11px', color: '#64748b' }}>まだコメントはありません</div>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="text"
+                    placeholder={t('commentPlaceholder')}
+                    value={newCommentText}
+                    onChange={(e) => setNewCommentText(e.target.value)}
+                    style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+                  />
+                  <button
+                    onClick={() => handleAddComment(selectedSpot.id)}
+                    style={{ padding: '8px 16px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+                  >
+                    {t('commentSend')}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -2496,7 +2540,7 @@ export default function WapApp() {
                 </div>
                 <input
                   type="text"
-                  placeholder="地名・住所・場所名を入力"
+                  placeholder="地名・住所・場所名を入力（GPSがない場合はここで検索）"
                   value={addressSearchQuery}
                   onChange={(e) => setAddressSearchQuery(e.target.value)}
                   style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff', marginBottom: '4px' }}
