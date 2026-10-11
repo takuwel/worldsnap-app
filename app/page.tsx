@@ -300,15 +300,20 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     commentPlaceholder: '💬 Write a comment...',
     commentSend: 'Send',
     eulaFullText: `[wap Terms of Service & Location Policy]
-Article 1: Purpose.
-Article 2: Location data via GPS is used solely upon user request.
-Article 3: Spot information is as of posting time and may have changed. Users visit locations at their own discretion and responsibility. Support replies within 1-3 days.
+Article 1: Purpose and Agreement.
+All users must agree to these terms before using the service.
+
+Article 2: Location Data via GPS.
+Location data is acquired only when the user requests current position.
+
+Article 3: Content Safety & Disclaimer.
+Inappropriate content is prohibited. Spot information is as of posting time and may change. Users visit locations at their own responsibility. Support replies within 1-3 days.
 Support Contact: wap.support.official@gmail.com`,
-    guideFullText: `[wap Detailed User Guide & Features]
-1. Current Location: Tap to center the map on your GPS coordinates.
-2. Zoom & View: Double tap to zoom in.
-3. Media Posting: Share photos/videos with custom location.
-4. Community & Safety: Like, comment, translate, report, or block users easily.`
+    guideFullText: `[wap Detailed User Guide]
+1. Current Location: Center map on GPS.
+2. Zoom: Double tap.
+3. Media Posting: Share photos and videos.
+4. Community: Safety features included.`
   },
   ko: {
     step1Title: 'Step 1: 언어 선택',
@@ -369,12 +374,12 @@ Support Contact: wap.support.official@gmail.com`,
     eulaFullText: `[wap 이용약관 및 위치정보 정책]
 제1조 목적으로 본 서비스를 제공합니다.
 제2조 위치정보는 GPS를 통해 요청시에만 활용됩니다.
-제3조 장소 정보는 게시 시점 기준이며 변경될 수 있습니다. 방문 시 본인 책임하에 확인하세요.`,
+제3조 장소 정보는 게시 시점 기준이며 변경될 수 있습니다. 방문 시 본인 책임하에 확인하세요. 1~3일 내 대응.
+고객센터: wap.support.official@gmail.com`,
     guideFullText: `[wap 상세 가이드 및 기능 설명]
 1. 현재 위치: GPS를 통해 지도 중심을 이동합니다.
 2. 지도 조작: 더블탭으로 확대 가능합니다.
-3. 미디어 업로드: 사진과 영상을 위치 정보와 함께 공유합니다.
-4. 커뮤니티 및 안전: 좋아요, 댓글, 번역, 신고 및 차단 기능 제공.`
+3. 미디어 업로드: 사진과 영상을 공유합니다.`
   },
   zh: {
     step1Title: '步骤 1: 选择语言',
@@ -435,12 +440,12 @@ Support Contact: wap.support.official@gmail.com`,
     eulaFullText: `[wap 服务条款与位置政策]
 第一条 目的：规范本应用的使用条件。
 第二条 位置：仅在用户请求时获取GPS数据。
-第三条 景点信息仅供参考，可能存在变更，访问时请自行确认。`,
+第三条 景点信息仅供参考，可能存在变更，访问时请自行确认。1-3天内回复。
+客服邮箱: wap.support.official@gmail.com`,
     guideFullText: `[wap 详细操作指南]
 1. 当前位置：快速定位您的GPS坐标。
 2. 地图缩放：双击放大。
-3. 发布动态：上传照片或视频并标记地点。
-4. 社区互动：支持点赞, 评论, 翻译, 举报及屏蔽功能。`
+3. 发布动态：上传照片或视频。`
   }
 };
 
@@ -538,7 +543,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   VA: { names: { ja: 'バチカン市国', en: 'Vatican City', ko: '바티칸', zh: '梵蒂冈' }, flag: '🇻🇦', region: '🇪🇺 ヨーロッパ', lat: 41.9029, lon: 12.4534, zoom: 15 },
   SM: { names: { ja: 'サンマリノ', en: 'San Marino', ko: '산마리노', zh: '圣马力诺' }, flag: '🇸🇲', region: '🇪🇺 ヨーロッパ', lat: 43.9424, lon: 12.4578, zoom: 12 },
   AD: { names: { ja: 'アンドラ', en: 'Andorra', ko: '안도라', zh: '安道尔' }, flag: '🇦🇩', region: '🇪🇺 ヨーロッパ', lat: 42.5063, lon: 1.5218, zoom: 10 },
-  LI: { names: { ja: 'リヒテンシュタイン', en: 'Liechtenstein', ko: '리히텐슈타인', zh: '列支敦士登' }, flag: '🇱🇮', region: '🇪🇺 ヨーロッパ', lat: 47.166, lon: 9.555, zoom: 11 },
+  LI: { names: { ja: 'リヒテンシュタイン', en: 'Liechtenstein', ko: '리혼슈타인', zh: '列支敦士登' }, flag: '🇱🇮', region: '🇪🇺 ヨーロッパ', lat: 47.166, lon: 9.555, zoom: 11 },
   CY: { names: { ja: 'キプロス', en: 'Cyprus', ko: '키프로스', zh: '塞浦路斯' }, flag: '🇨🇾', region: '🇪🇺 ヨーロッパ', lat: 35.1264, lon: 33.4299, zoom: 8 },
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
@@ -548,14 +553,13 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MD: { names: { ja: 'モルドバ', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
   RU: { names: { ja: 'ロシア', en: 'Russia', ko: '러시아', zh: '俄罗斯' }, flag: '🇷🇺', region: '🇪🇺 ヨーロッパ', lat: 61.5240, lon: 105.3188, zoom: 3 },
-  RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: '塞尔维亚' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
-  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
 
   // ── 🗽 北米・中南米 (Americas) ──
+  US: { names: { ja: 'アメリカ', en: 'USA', ko: '미국', zh: '美国' }, flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
   CA: { names: { ja: 'カナダ', en: 'Canada', ko: '캐나다', zh: '加拿大' }, flag: '🇨🇦', region: '🗽 北米', lat: 56.1304, lon: -106.3468, zoom: 3 },
   MX: { names: { ja: 'メキシコ', en: 'Mexico', ko: '멕시코', zh: '墨西哥' }, flag: '🇲🇽', region: '🗽 北米', lat: 23.6345, lon: 102.5528, zoom: 5 },
   BR: { names: { ja: 'ブラジル', en: 'Brazil', ko: '브라질', zh: '巴西' }, flag: '🇧🇷', region: '🗽 中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
-  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '아르헨티나' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
+  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '阿根廷' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
   CL: { names: { ja: 'チリ', en: 'Chile', ko: '칠레', zh: '智利' }, flag: '🇨🇱', region: '🗽 中南米', lat: -35.6751, lon: -71.5430, zoom: 4 },
   PE: { names: { ja: 'ペルー', en: 'Peru', ko: '페루', zh: '秘鲁' }, flag: '🇵🇪', region: '🗽 中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
   CO: { names: { ja: 'コロンビア', en: 'Colombia', ko: '콜롬비아', zh: '哥伦比亚' }, flag: '🇨🇴', region: '🗽 中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
@@ -625,8 +629,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   LY: { names: { ja: 'リビア', en: 'Libya', ko: '리비아', zh: '利比亚' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
   ML: { names: { ja: 'マリ', en: 'Mali', ko: '말리', zh: '马里' }, flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 5 },
   NE: { names: { ja: 'ニジェール', en: 'Niger', ko: '니제르', zh: '尼日尔' }, flag: '🇳🇪', region: '🦁 アフリカ', lat: 17.6078, lon: 8.0817, zoom: 5 },
-  SO: { names: { ja: 'ソマリア', en: 'Somalia', ko: '소말리아', zh: '索马里' }, flag: '🇸🇴', region: '🦁 アフリカ', lat: 5.1521, lon: 46.1996, zoom: 6 },
-  ZM: { names: { ja: 'ザンビア', en: 'Zambia', ko: '잠비아', zh: '赞比亚' }, flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 }
+  SO: { names: { ja: 'ソマリア', en: 'Somalia', ko: '소말리아', zh: '索马里' }, flag: '🇸🇴', region: '🦁 アフリカ', lat: 5.1521, lon: 46.1996, zoom: 6 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -1713,7 +1716,7 @@ export default function WapApp() {
                   <h3 style={{ fontSize: '15px', margin: '0 0 4px 0' }}>{t('step2Title')}</h3>
                   <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 10px 0' }}>{t('step2Desc')}</p>
                   
-                  {/* 国検索バー追加 */}
+                  {/* 国検索バー */}
                   <input
                     type="text"
                     placeholder={t('countrySearchPlaceholder')}
@@ -1806,7 +1809,7 @@ export default function WapApp() {
                   <div
                     onScroll={(e) => {
                       const target = e.currentTarget;
-                      if (target.scrollHeight - target.scrollTop <= target.clientHeight + 15) {
+                      if (target.scrollHeight - target.scrollTop <= target.clientHeight + 30) {
                         setHasScrolledToBottom(true);
                       }
                     }}
@@ -1853,7 +1856,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 位置情報設定ガイド用モーダル */}
+        {/* 位置情報ガイド用モーダル */}
         {isLocationGuideOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 99990, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '20px', maxWidth: '380px', width: '100%', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}>
@@ -2296,7 +2299,6 @@ export default function WapApp() {
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t('baseCountrySetting')}</label>
                 
-                {/* 設定メニュー内の国検索バー */}
                 <input
                   type="text"
                   placeholder={t('countrySearchPlaceholder')}
