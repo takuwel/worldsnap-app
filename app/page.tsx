@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & 15言語辞書 & 観光特化140カ国マスターデータ
+// 1. 型定義 & 15言語辞書 & 140カ国マスターデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -167,7 +167,7 @@ export const DICTIONaries: Record<string, Record<string, string>> = {
     step1Title: 'Step 1: 表示言語を選択',
     step1Desc: '世界中の人々が使えるよう、お好みの言語を選択してください。',
     step2Title: 'Step 2: ベースの国（初期マップ）を選択',
-    step2Desc: 'マップの初期表示位置となるメインの国を選んでください（観光大国・140カ国以上収録）。',
+    step2Desc: 'マップの初期表示位置となるメインの国を選んでください（140カ国以上対応）。',
     step3Title: 'Step 3: プロフィール作成',
     step3TitleEula: 'Step 4: 利用規約 & 位置情報ポリシーの確認',
     next: '次へ進む',
@@ -433,7 +433,7 @@ Support Contact: wap.support.official@gmail.com`,
 };
 
 // ==========================================
-// 観光客数上位国（ヨーロッパ・北欧・アジア・北米・中南米・オセアニア・アフリカ）を網羅した140カ国マスターデータ
+// 観光客数上位国・ヨーロッパ・北欧・アジアを網羅した140カ国マスターデータ
 // ==========================================
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
   // ── 🇪🇺 ヨーロッパ・北欧 (Europe & Nordic) ──
@@ -448,7 +448,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
   CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
-  SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스웨덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
+  SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
   NO: { names: { ja: 'ノルウェー', en: 'Norway', ko: '노르웨이', zh: '挪威' }, flag: '🇳🇴', region: '🇪🇺 北欧', lat: 60.4720, lon: 8.4689, zoom: 5 },
   DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: '丹麦' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
   FI: { names: { ja: 'フィンランド', en: 'Finland', ko: '핀란드', zh: '芬兰' }, flag: '🇫🇮', region: '🇪🇺 北欧', lat: 61.9241, lon: 25.7482, zoom: 5 },
@@ -456,7 +456,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   PL: { names: { ja: 'ポーランド', en: 'Poland', ko: '폴란드', zh: '波兰' }, flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
   CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: '捷克' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
   HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: '匈牙利' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
-  IE: { names: { ja: 'アイルランド', en: 'Ireland', ko: '아일랜드', zh: '爱尔兰' }, flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
+  IE: { names: { ja: 'アイルランド', en: 'Ireland', ko: '아이슬란드', zh: '爱尔兰' }, flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
   BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: '比利时' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: '克罗地亚' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1, lon: 15.2, zoom: 7 },
   RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루마니아', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
@@ -464,7 +464,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: '塞尔维亚' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯洛文尼亚' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯洛เว니아' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -2100,7 +2100,7 @@ export default function WapApp() {
                 <span style={{ fontSize: '11px', background: userRank.color, color: '#fff', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold', display: 'inline-block', marginBottom: '8px' }}>{userRank.title}</span>
                 <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: '#64748b' }}>{userBio}</p>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', textAlign: 'center', marginBottom: '14px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', textAlign: 'center' }}>
                   <div style={{ background: '#fff', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                     <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{mySpots.length}</div>
                     <div style={{ fontSize: '10px', color: '#64748b' }}>{t('posts')}</div>
@@ -2118,20 +2118,6 @@ export default function WapApp() {
                     <div style={{ fontSize: '10px', color: '#64748b' }}>Saves</div>
                   </div>
                 </div>
-
-                <button
-                  onClick={() => {
-                    if (window.confirm('⚠️ 本当にアカウントおよびすべてのデータを削除しますか？')) {
-                      localStorage.clear();
-                      setSpots([]);
-                      setIsOnboarding(true);
-                      showToast('🗑️ アカウントを削除しました');
-                    }
-                  }}
-                  style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fee2e2', borderRadius: '8px', padding: '6px 12px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
-                >
-                  {t('deleteAccountBtn')}
-                </button>
               </div>
 
               {/* マイページのサブタブ（投稿・ログ・保存・バッジ） */}
@@ -2233,7 +2219,7 @@ export default function WapApp() {
                 </select>
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
+              <div style={{ marginBottom: '16px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t('baseCountrySetting')}</label>
                 <select
                   value={userCountry}
@@ -2255,7 +2241,7 @@ export default function WapApp() {
                 </select>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
                 <button
                   onClick={() => setIsGuideModalOpen(true)}
                   style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
@@ -2267,6 +2253,38 @@ export default function WapApp() {
                   style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
                 >
                   📜 {t('eulaTitle')}
+                </button>
+                {/* 問い合わせボタン */}
+                <a
+                  href="mailto:wap.support.official@gmail.com?subject=【wap】お問い合わせ"
+                  style={{
+                    padding: '10px',
+                    background: '#e0f2fe',
+                    color: '#0284c7',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    textDecoration: 'none',
+                    textAlign: 'center',
+                    display: 'block'
+                  }}
+                >
+                  {t('supportContactBtn')}
+                </a>
+                {/* アカウント削除ボタン */}
+                <button
+                  onClick={() => {
+                    if (window.confirm('⚠️ 本当にアカウントおよびすべてのデータを削除しますか？')) {
+                      localStorage.clear();
+                      setSpots([]);
+                      setIsOnboarding(true);
+                      setIsSettingsOpen(false);
+                      showToast('🗑️ アカウントを削除しました');
+                    }
+                  }}
+                  style={{ padding: '10px', background: '#fef2f2', color: '#ef4444', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'center' }}
+                >
+                  {t('deleteAccountBtn')}
                 </button>
               </div>
 
@@ -2405,26 +2423,6 @@ export default function WapApp() {
               <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap', marginBottom: '16px' }}>
                 {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
               </p>
-
-              {/* お問い合わせボタン */}
-              <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', textAlign: 'center', boxSizing: 'border-box' }}>
-                <a
-                  href="mailto:wap.support.official@gmail.com?subject=【wap】お問い合わせ"
-                  style={{
-                    display: 'inline-block',
-                    padding: '10px 20px',
-                    background: '#0284c7',
-                    color: '#fff',
-                    borderRadius: '20px',
-                    fontWeight: 'bold',
-                    fontSize: '12px',
-                    textDecoration: 'none',
-                    boxShadow: '0 4px 12px rgba(2,132,199,0.3)',
-                  }}
-                >
-                  {t('supportContactBtn')}
-                </a>
-              </div>
             </div>
           </div>
         )}
