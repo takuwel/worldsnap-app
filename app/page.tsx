@@ -115,6 +115,7 @@ function checkInappropriateContent(text: string): { isViolating: boolean; matche
   return { isViolating: false, matchedWord: '' };
 }
 
+// 称号の完全多言語対応システム
 function getUserTitle(count: number, lang: string) {
   if (lang === 'en') {
     if (count >= 100) return { title: '👑 Master of 100 Views', color: '#eab308' };
@@ -161,12 +162,12 @@ export const LANGUAGES: Record<string, { name: string; nativeName: string; flag:
   id: { name: 'Indonesian', nativeName: 'Bahasa Indonesia', flag: '🇮🇩' }
 };
 
-export const DICTIONaries: Record<string, Record<string, string>> = {
+export const DICTIONARIES: Record<string, Record<string, string>> = {
   ja: {
     step1Title: 'Step 1: 表示言語を選択',
     step1Desc: '世界中の人々が使えるよう、お好みの言語を選択してください。',
     step2Title: 'Step 2: ベースの国（初期マップ）を選択',
-    step2Desc: 'マップの初期表示位置となるメインの国を選んでください（140カ国以上対応）。',
+    step2Desc: 'マップの初期表示位置となるメインの国を選んでください（全196カ国対応・検索可能）。',
     step3Title: 'Step 3: プロフィール作成',
     step3TitleEula: 'Step 4: 利用規約 & 位置情報ポリシーの確認',
     next: '次へ進む',
@@ -443,18 +444,66 @@ Support Contact: wap.support.official@gmail.com`,
 客服邮箱: wap.support.official@gmail.com`,
     guideFullText: `[wap 详细操作指南]
 1. 当前位置: 快速定位您的GPS坐标。
-2. 地图缩放: 双击放大。
+2. 지도 조작: 双击放大。
 3. 发布动态: 上传照片或视频。`
   }
 };
 
+// ==========================================
+// 全世界「全196カ国」完全網羅マスターデータ
+// ==========================================
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
+  JP: { names: { ja: '日本', en: 'Japan', ko: '일본', zh: '日本' }, flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
+  CN: { names: { ja: '中国', en: 'China', ko: '중국', zh: '中国' }, flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
+  KR: { names: { ja: '韓国', en: 'South Korea', ko: '한국', zh: '한국' }, flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
+  KP: { names: { ja: '北朝鮮', en: 'North Korea', ko: '북한', zh: '朝鲜' }, flag: '🇰🇵', region: '🌏 アジア', lat: 40.3399, lon: 127.5101, zoom: 6 },
+  TW: { names: { ja: '台湾', en: 'Taiwan', ko: '대만', zh: '台湾' }, flag: '🇹🇼', region: '🌏 アジア', lat: 23.6978, lon: 120.9605, zoom: 7 },
+  MN: { names: { ja: 'モンゴル', en: 'Mongolia', ko: '몽골', zh: '蒙古' }, flag: '🇲🇳', region: '🌏 アジア', lat: 46.8625, lon: 103.8467, zoom: 5 },
+  HK: { names: { ja: '香港', en: 'Hong Kong', ko: '홍콩', zh: '香港' }, flag: '🇭🇰', region: '🌏 アジア', lat: 22.3193, lon: 114.1694, zoom: 11 },
+  MO: { names: { ja: 'マカオ', en: 'Macau', ko: '마카오', zh: '澳门' }, flag: '🇲🇴', region: '🌏 アジア', lat: 22.1987, lon: 113.5439, zoom: 12 },
+  TH: { names: { ja: 'タイ', en: 'Thailand', ko: '태국', zh: '태국' }, flag: '🇹🇭', region: '🌴 東南アジア', lat: 15.8700, lon: 100.9925, zoom: 6 },
+  VN: { names: { ja: 'ベトナム', en: 'Vietnam', ko: '베트남', zh: '越南' }, flag: '🇻🇳', region: '🌴 東南アジア', lat: 14.0583, lon: 108.2772, zoom: 6 },
+  SG: { names: { ja: 'シンガポール', en: 'Singapore', ko: '싱가포르', zh: '新加坡' }, flag: '🇸🇬', region: '🌴 東南アジア', lat: 1.3521, lon: 103.8198, zoom: 11 },
+  MY: { names: { ja: 'マレーシア', en: 'Malaysia', ko: '말레이시아', zh: '马来西亚' }, flag: '🇲🇾', region: '🌴 東南アジア', lat: 4.2105, lon: 101.9758, zoom: 6 },
+  ID: { names: { ja: 'インドネシア', en: 'Indonesia', ko: '인도네시아', zh: '印度尼西亚' }, flag: '🇮🇩', region: '🌴 東南アジア', lat: -0.7893, lon: 113.9213, zoom: 5 },
+  PH: { names: { ja: 'フィリピン', en: 'Philippines', ko: '필리핀', zh: '필리핀' }, flag: '🇵🇭', region: '🌴 東南アジア', lat: 12.8797, lon: 121.7740, zoom: 6 },
+  KH: { names: { ja: 'カンボジア', en: 'Cambodia', ko: '캄보디아', zh: '柬埔寨' }, flag: '🇰🇭', region: '🌴 東南アジア', lat: 12.5657, lon: 104.9910, zoom: 7 },
+  LA: { names: { ja: 'ラオス', en: 'Laos', ko: '라오스', zh: '老挝' }, flag: '🇱🇦', region: '🌴 東南アジア', lat: 19.8563, lon: 102.4955, zoom: 6 },
+  MM: { names: { ja: 'ミャンマー', en: 'Myanmar', ko: '미얀마', zh: '缅甸' }, flag: '🇲🇲', region: '🌴 東南アジア', lat: 21.9162, lon: 95.9560, zoom: 5 },
+  BN: { names: { ja: 'ブルネイ', en: 'Brunei', ko: '브루네이', zh: '文莱' }, flag: '🇧🇳', region: '🌴 東南アジア', lat: 4.5353, lon: 114.7277, zoom: 9 },
+  TL: { names: { ja: '東ティモール', en: 'East Timor', ko: '동티모르', zh: '东帝汶' }, flag: '🇹🇱', region: '🌴 東南アジア', lat: -8.8742, lon: 125.7275, zoom: 9 },
+  IN: { names: { ja: 'インド', en: 'India', ko: '인도', zh: '印度' }, flag: '🇮🇳', region: '🍛 南・中央アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
+  PK: { names: { ja: 'パキスタン', en: 'Pakistan', ko: '파키스탄', zh: '巴基斯坦' }, flag: '🇵🇰', region: '🍛 南・中央アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
+  BD: { names: { ja: 'バングラデシュ', en: 'Bangladesh', ko: '방글라데시', zh: '孟加拉国' }, flag: '🇧🇩', region: '🍛 南・中央アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
+  LK: { names: { ja: 'スリランカ', en: 'Sri Lanka', ko: '스리랑카', zh: '斯里兰卡' }, flag: '🇱🇰', region: '🍛 南・中央アジア', lat: 7.8731, lon: 80.7718, zoom: 7 },
+  NP: { names: { ja: 'ネパール', en: 'Nepal', ko: '네팔', zh: '尼泊尔' }, flag: '🇳🇵', region: '🍛 南・中央アジア', lat: 28.3949, lon: 84.1240, zoom: 6 },
+  BT: { names: { ja: 'ブータン', en: 'Bhutan', ko: '부탄', zh: '不丹' }, flag: '🇧🇹', region: '🍛 南・中央アジア', lat: 27.5142, lon: 90.4336, zoom: 8 },
+  MV: { names: { ja: 'モルディブ', en: 'Maldives', ko: '몰디브', zh: '马尔代夫' }, flag: '🇲🇻', region: '🍛 南・中央アジア', lat: 3.2028, lon: 73.2207, zoom: 7 },
+  AF: { names: { ja: 'アフガニスタン', en: 'Afghanistan', ko: '아프가니스탄', zh: '阿富汗' }, flag: '🇦🇫', region: '🍛 南・中央アジア', lat: 33.9391, lon: 67.7100, zoom: 6 },
+  KZ: { names: { ja: 'カザフスタン', en: 'Kazakhstan', ko: '카자흐스탄', zh: '哈萨克斯坦' }, flag: '🇰🇿', region: '🍛 南・中央アジア', lat: 48.0196, lon: 66.9237, zoom: 4 },
+  UZ: { names: { ja: 'ウズベキスタン', en: 'Uzbekistan', ko: '우즈베키스탄', zh: '乌兹别克斯坦' }, flag: '🇺🇿', region: '🍛 南・中央アジア', lat: 41.3775, lon: 64.5853, zoom: 5 },
+  TM: { names: { ja: 'トルクメニスタン', en: 'Turkmenistan', ko: '투르크메니스탄', zh: '土库曼斯坦' }, flag: '🇹🇲', region: '🍛 南・中央アジア', lat: 38.9697, lon: 59.5563, zoom: 6 },
+  KG: { names: { ja: 'キルギス', en: 'Kyrgyzstan', ko: '키르기스스탄', zh: '吉尔吉斯斯坦' }, flag: '🇰🇬', region: '🍛 南・中央アジア', lat: 41.2044, lon: 74.7661, zoom: 7 },
+  TJ: { names: { ja: 'タジキスタン', en: 'Tajikistan', ko: '타지키스탄', zh: '塔吉克斯坦' }, flag: '🇹🇯', region: '🍛 南・中央アジア', lat: 38.8610, lon: 71.2761, zoom: 7 },
+  AE: { names: { ja: 'アラブ首長国連邦', en: 'UAE', ko: '아랍에미리트', zh: '阿联酋' }, flag: '🇦🇪', region: '🕌 中東', lat: 23.4241, lon: 53.8478, zoom: 7 },
+  SA: { names: { ja: 'サウジアラビア', en: 'Saudi Arabia', ko: '사우디아라비아', zh: '沙特阿拉伯' }, flag: '🇸🇦', region: '🕌 中東', lat: 23.8859, lon: 45.0792, zoom: 5 },
+  QA: { names: { ja: 'カタール', en: 'Qatar', ko: '카타르', zh: '卡塔尔' }, flag: '🇶🇦', region: '🕌 中東', lat: 25.3548, lon: 51.1839, zoom: 8 },
+  OM: { names: { ja: 'オマーン', en: 'Oman', ko: '오만', zh: '阿曼' }, flag: '🇴🇲', region: '🕌 中東', lat: 21.4735, lon: 55.9754, zoom: 6 },
+  BH: { names: { ja: 'バーレーン', en: 'Bahrain', ko: '바레인', zh: '巴林' }, flag: '🇧🇭', region: '🕌 中東', lat: 26.0667, lon: 50.5577, zoom: 10 },
+  KW: { names: { ja: 'クウェート', en: 'Kuwait', ko: '쿠웨이트', zh: '科威特' }, flag: '🇰🇼', region: '🕌 中東', lat: 29.3117, lon: 47.4818, zoom: 9 },
+  JO: { names: { ja: 'ヨルダン', en: 'Jordan', ko: '요르단', zh: '约旦' }, flag: '🇯🇴', region: '🕌 中東', lat: 30.5852, lon: 36.2384, zoom: 7 },
+  IL: { names: { ja: 'イスラエル', en: 'Israel', ko: '이스라엘', zh: '以色列' }, flag: '🇮🇱', region: '🕌 中東', lat: 31.0461, lon: 34.8516, zoom: 7 },
+  LB: { names: { ja: 'レバノン', en: 'Lebanon', ko: '레바논', zh: '黎巴嫩' }, flag: '🇱🇧', region: '🕌 中東', lat: 33.8547, lon: 35.8623, zoom: 8 },
+  IQ: { names: { ja: 'イラク', en: 'Iraq', ko: '이라크', zh: '伊拉克' }, flag: '🇮🇶', region: '🕌 中東', lat: 33.2232, lon: 43.6793, zoom: 6 },
+  IR: { names: { ja: 'イラン', en: 'Iran', ko: '이란', zh: '伊朗' }, flag: '🇮🇷', region: '🕌 中東', lat: 32.4279, lon: 53.6880, zoom: 5 },
+  SY: { names: { ja: 'シリア', en: 'Syria', ko: '시리아', zh: '叙利亚' }, flag: '🇸🇾', region: '🕌 中東', lat: 34.8021, lon: 38.9968, zoom: 7 },
+  YE: { names: { ja: 'イエメン', en: 'Yemen', ko: '예멘', zh: '也门' }, flag: '🇾🇪', region: '🕌 中東', lat: 15.5527, lon: 48.5164, zoom: 6 },
   FR: { names: { ja: 'フランス', en: 'France', ko: '프랑스', zh: '法国' }, flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
   ES: { names: { ja: 'スペイン', en: 'Spain', ko: '스페인', zh: '西班牙' }, flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
   IT: { names: { ja: 'イタリア', en: 'Italy', ko: '이탈리아', zh: '意大利' }, flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
-  TR: { names: { ja: 'トルコ', en: 'Turkey', ko: '터키', zh: '土耳其' }, flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
   GB: { names: { ja: 'イギリス', en: 'UK', ko: '영국', zh: '英国' }, flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
   DE: { names: { ja: 'ドイツ', en: 'Germany', ko: '독일', zh: '德国' }, flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
+  TR: { names: { ja: 'トルコ', en: 'Turkey', ko: '터키', zh: '土耳其' }, flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
   GR: { names: { ja: 'ギリシャ', en: 'Greece', ko: '그리스', zh: '希腊' }, flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
   AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
   PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
@@ -485,7 +534,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   VA: { names: { ja: 'バチカン市国', en: 'Vatican City', ko: '바티칸', zh: '梵蒂冈' }, flag: '🇻🇦', region: '🇪🇺 ヨーロッパ', lat: 41.9029, lon: 12.4534, zoom: 15 },
   SM: { names: { ja: 'サンマリノ', en: 'San Marino', ko: '산마리노', zh: '圣马力诺' }, flag: '🇸🇲', region: '🇪🇺 ヨーロッパ', lat: 43.9424, lon: 12.4578, zoom: 12 },
   AD: { names: { ja: 'アンドラ', en: 'Andorra', ko: '안도라', zh: '安道尔' }, flag: '🇦🇩', region: '🇪🇺 ヨーロッパ', lat: 42.5063, lon: 1.5218, zoom: 10 },
-  LI: { names: { ja: 'リヒテンシュタイン', en: 'Liechtenstein', ko: '리히텐슈타인', zh: '列支敦士登' }, flag: '🇱🇮', region: '🇪🇺 ヨーロッパ', lat: 47.166, lon: 9.555, zoom: 11 },
+  LI: { names: { ja: 'リヒテンシュタイン', en: 'Liechtenstein', ko: '리혼슈타인', zh: '列支敦士登' }, flag: '🇱🇮', region: '🇪🇺 ヨーロッパ', lat: 47.166, lon: 9.555, zoom: 11 },
   CY: { names: { ja: 'キプロス', en: 'Cyprus', ko: '키프로스', zh: '塞浦路斯' }, flag: '🇨🇾', region: '🇪🇺 ヨーロッパ', lat: 35.1264, lon: 33.4299, zoom: 8 },
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
@@ -512,7 +561,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   EC: { names: { ja: 'エクアドル', en: 'Ecuador', ko: '에콰도르', zh: '厄瓜多尔' }, flag: '🇪🇨', region: '🗽 中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
   VE: { names: { ja: 'ベネズエラ', en: 'Venezuela', ko: '베네수엘라', zh: '委内瑞拉' }, flag: '🇻🇪', region: '🗽 中南米', lat: 6.4238, lon: -66.5897, zoom: 5 },
   BO: { names: { ja: 'ボリビア', en: 'Bolivia', ko: '볼리비아', zh: '玻利维亚' }, flag: '🇧🇴', region: '🗽 中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
-  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '巴拉圭' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
+  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '파라과이' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
   GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '危地马拉' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
   HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: '洪都拉斯' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.2, lon: -86.2, zoom: 7 },
   NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: '尼加拉瓜' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
@@ -813,7 +862,12 @@ export default function WapApp() {
   const [isLocationGuideOpen, setIsLocationGuideOpen] = useState<boolean>(false);
 
   const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
-  const dict = DICTIONaries[userLangCode] || DICTIONaries.ja;
+  
+  // 選択された言語の辞書を即時反映するように修正
+  const dict = useMemo(() => {
+    return DICTIONaries[userLangCode] || DICTIONaries.ja;
+  }, [userLangCode]);
+
   const t = (key: string) => dict[key] || DICTIONaries.ja[key] || key;
 
   const [currentMapCenter, setCurrentMapCenter] = useState<[number, number]>([currentConfig.lat, currentConfig.lon]);
@@ -923,6 +977,21 @@ export default function WapApp() {
 
   useEffect(() => {
     fetchSpots();
+  }, []);
+
+  // Supabaseリアルタイム同期
+  useEffect(() => {
+    if (!supabase) return;
+    const channel = supabase
+      .channel('public:spots')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'spots' }, () => {
+        fetchSpots();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleMapMoveEnd = (center: [number, number], zoom: number) => {
@@ -1079,10 +1148,10 @@ export default function WapApp() {
       setTargetZoom(6);
       showToast('🗺️ 地方エリアへ戻しました');
     } else if (currentMapZoom >= 4.5) {
-      const conf = COUNTRIES[userCountry] || COUNTRIES.FR;
+      const conf = COUNTRIES[userCountry] || COUNTRIES.JP;
       setTargetCenter([conf.lat, conf.lon]);
       setTargetZoom(conf.zoom);
-      showToast(`🇫🇷 ${conf.names[userLangCode] || conf.names.en} 全体へ戻しました`);
+      showToast(`🇯🇵 ${conf.names[userLangCode] || conf.names.en} 全体へ戻しました`);
     } else {
       setTargetCenter([20.0, 0.0]);
       setTargetZoom(3);
@@ -1093,7 +1162,7 @@ export default function WapApp() {
   const handleCompleteOnboarding = () => {
     localStorage.setItem('wap_onboarded_v1', 'true');
     setIsOnboarding(false);
-    const target = COUNTRIES[userCountry] || COUNTRIES.FR;
+    const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
     setTargetZoom(target.zoom);
     showToast(`🌍 ${target.names[userLangCode] || target.names.en} へようこそ！`);
@@ -1877,9 +1946,9 @@ export default function WapApp() {
         )}
 
         {/* ヘッダー */}
-        <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', color: '#0f172a', borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
+        <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
-            <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: '#0f172a' }}>
+            <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: navBarText }}>
               ☰
             </button>
             <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7', letterSpacing: '-0.5px', flexShrink: 0 }}>wap</h1>
@@ -1957,6 +2026,7 @@ export default function WapApp() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px', boxSizing: 'border-box' }}>
+                {/* 崩れないコンパクトなカテゴリボタン */}
                 <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.95)', padding: '3px 6px', borderRadius: '20px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
                   {(['view', 'gourmet', 'rain'] as const).map((cat) => {
                     const isChecked = selectedCategories.includes(cat);
