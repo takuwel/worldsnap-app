@@ -148,7 +148,8 @@ export const LANGUAGES: Record<string, { name: string; nativeName: string; flag:
   ja: { name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
   en: { name: 'English', nativeName: 'English', flag: '🇬🇧' },
   ko: { name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
-  zh: { name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
+  zh: { name: 'Chinese (Simplified)', nativeName: '简体中文', flag: '🇨🇳' },
+  zh_tw: { name: 'Chinese (Traditional)', nativeName: '繁體中文', flag: '🇹🇼' },
   es: { name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
   fr: { name: 'French', nativeName: 'Français', flag: '🇫🇷' },
   de: { name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
@@ -457,7 +458,7 @@ Support Contact: wap.support.official@gmail.com`,
 第二条 位置（权限目的）：位置数据仅用于“搜索和显示周边旅游景点”以及“将地图居中显示在当前位置”。
 第三条 景点信息仅供参考，可能存在变更，访问时请自行确认。1-3天内回复。
 客服邮箱: wap.support.official@gmail.com`,
-    guideFullText: `[wap 상세 가이드 및 기능 설명]
+    guideFullText: `[wap 详细操作指南]
 1. 当前位置: 利用位置权限搜索和显示周边景点并定位当前位置。
 2. 地图缩放: 双击放大。
 3. 发布动态: 上传照片或视频。`
@@ -514,7 +515,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BH: { names: { ja: 'バーレーン', en: 'Bahrain', ko: '바레인', zh: '巴林' }, flag: '🇧🇭', region: '🕌 中東', lat: 26.0667, lon: 50.5577, zoom: 10 },
   KW: { names: { ja: 'クウェート', en: 'Kuwait', ko: '쿠웨이트', zh: '科威特' }, flag: '🇰🇼', region: '🕌 中東', lat: 29.3117, lon: 47.4818, zoom: 9 },
   JO: { names: { ja: 'ヨルダン', en: 'Jordan', ko: '요르단', zh: '约旦' }, flag: '🇯🇴', region: '🕌 中東', lat: 30.5852, lon: 36.2384, zoom: 7 },
-  IL: { names: { ja: 'イスラエル', en: 'Israel', ko: '이스라엘', zh: '이스라엘' }, flag: '🇮🇱', region: '🕌 中東', lat: 31.0461, lon: 34.8516, zoom: 7 },
+  IL: { names: { ja: 'イスラエル', en: 'Israel', ko: '이스라엘', zh: '以色列' }, flag: '🇮🇱', region: '🕌 中東', lat: 31.0461, lon: 34.8516, zoom: 7 },
   LB: { names: { ja: 'レバノン', en: 'Lebanon', ko: '레바논', zh: '黎巴嫩' }, flag: '🇱🇧', region: '🕌 中東', lat: 33.8547, lon: 35.8623, zoom: 8 },
   IQ: { names: { ja: 'イラク', en: 'Iraq', ko: '이라크', zh: '伊拉克' }, flag: '🇮🇶', region: '🕌 中東', lat: 33.2232, lon: 43.6793, zoom: 6 },
   IR: { names: { ja: 'イラン', en: 'Iran', ko: '이란', zh: '伊朗' }, flag: '🇮🇷', region: '🕌 中東', lat: 32.4279, lon: 53.6880, zoom: 5 },
@@ -594,7 +595,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   EC: { names: { ja: 'エクアドル', en: 'Ecuador', ko: '에콰도르', zh: '厄瓜多尔' }, flag: '🇪🇨', region: '🗽 中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
   VE: { names: { ja: 'ベネズエラ', en: 'Venezuela', ko: '베네수엘라', zh: '委内瑞拉' }, flag: '🇻🇪', region: '🗽 中南米', lat: 6.4238, lon: -66.5897, zoom: 5 },
   BO: { names: { ja: 'ボリビア', en: 'Bolivia', ko: '볼리비아', zh: '玻利维亚' }, flag: '🇧🇴', region: '🗽 中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
-  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '파라과이' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
+  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '巴拉圭' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
   GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '危地马拉' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
   HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: '洪都拉斯' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
   NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: '尼加拉瓜' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
@@ -936,6 +937,10 @@ export default function WapApp() {
   // QRコードモーダル用ステート
   const [isMyQrOpen, setIsMyQrOpen] = useState<boolean>(false);
   const [isScanQrOpen, setIsScanQrOpen] = useState<boolean>(false);
+  const [scannerError, setScannerError] = useState<string>('');
+
+  const scannerRef = useRef<HTMLDivElement>(null);
+  const html5QrCodeRef = useRef<any>(null);
 
   const currentConfig = COUNTRIES[userCountry] || COUNTRIES.JP;
   
@@ -1072,6 +1077,63 @@ export default function WapApp() {
       supabase.removeChannel(channel);
     };
   }, []);
+
+  // 実際のカメラを使ったQRコードスキャン制御
+  useEffect(() => {
+    if (!isScanQrOpen) {
+      if (html5QrCodeRef.current) {
+        html5QrCodeRef.current.stop().catch(() => {});
+        html5QrCodeRef.current = null;
+      }
+      return;
+    }
+
+    let isMounted = true;
+    const loadScanner = async () => {
+      try {
+        const { Html5Qrcode } = await import('html5-qrcode');
+        if (!isMounted) return;
+
+        const scannerId = 'real-qr-reader-container';
+        if (scannerRef.current) {
+          scannerRef.current.innerHTML = `<div id="${scannerId}" style="width:100%; height:100%;"></div>`;
+        }
+
+        const html5QrCode = new Html5Qrcode(scannerId);
+        html5QrCodeRef.current = html5QrCode;
+
+        await html5QrCode.start(
+          { facingMode: 'environment' },
+          { fps: 10, qrbox: { width: 200, height: 200 } },
+          (decodedText) => {
+            // スキャン成功時
+            let friendName = decodedText;
+            if (decodedText.startsWith('wap-friend://')) {
+              friendName = decodedText.replace('wap-friend://', '');
+            }
+            setFriendsList(prev => [...prev, { id: 'f-' + Date.now(), name: friendName, avatar: '', bio: 'QRコードで追加したフレンド', postsCount: 1 }]);
+            setIsScanQrOpen(false);
+            showToast(`🎉 ${friendName}さんとフレンドになりました！🤝`);
+            html5QrCode.stop().catch(() => {});
+          },
+          () => {} // スキャン中エラー（無視してOK）
+        );
+      } catch (err) {
+        console.error('Camera scan init error:', err);
+        setScannerError('⚠️ カメラの起動に失敗しました（権限を確認してください）');
+      }
+    };
+
+    setTimeout(loadScanner, 100);
+
+    return () => {
+      isMounted = false;
+      if (html5QrCodeRef.current) {
+        html5QrCodeRef.current.stop().catch(() => {});
+        html5QrCodeRef.current = null;
+      }
+    };
+  }, [isScanQrOpen]);
 
   const handleMapMoveEnd = (center: [number, number], zoom: number) => {
     setCurrentMapCenter(center);
@@ -1748,6 +1810,8 @@ export default function WapApp() {
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="wap" />
         <meta name="theme-color" content="#ffffff" />
+        {/* 本格的なQRコード生成ライブラリ (QRCode.js CDN) */}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
 
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
@@ -2050,17 +2114,36 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 自分のQRコード表示モーダル */}
+        {/* 自分のQRコード表示モーダル（本格的なQR描画対応） */}
         {isMyQrOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '340px', width: '100%', padding: '28px 20px', textAlign: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
               <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: '900', color: '#0284c7' }}>📱 マイQRコード</h3>
               <p style={{ margin: '0 0 20px 0', fontSize: '12px', color: '#64748b' }}>このQRコードを読み取ってもらうと、かんたんにフレンドになれます！</p>
               
-              <div style={{ width: '200px', height: '200px', margin: '0 auto 16px auto', background: '#f8fafc', borderRadius: '16px', border: '2px solid #e2e8f0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '16px', boxSizing: 'border-box' }}>
-                <div style={{ fontSize: '48px', marginBottom: '8px' }}>🔳</div>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>ID: {userName}</div>
-                <div style={{ fontSize: '9px', color: '#64748b', marginTop: '2px' }}>wap-friend://{userName}</div>
+              <div style={{ width: '200px', height: '200px', margin: '0 auto 16px auto', background: '#ffffff', borderRadius: '16px', border: '2px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', boxSizing: 'border-box' }}>
+                <div
+                  ref={(node) => {
+                    if (node && (window as any).QRCode) {
+                      node.innerHTML = '';
+                      new (window as any).QRCode(node, {
+                        text: `wap-friend://${userName}`,
+                        width: 170,
+                        height: 170,
+                        colorDark: '#0f172a',
+                        colorLight: '#ffffff',
+                        correctLevel: (window as any).QRCode.CorrectLevel.H
+                      });
+                    }
+                  }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <div style={{ fontSize: '11px', color: '#64748b' }}>生成中...</div>
+                </div>
+              </div>
+
+              <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a', marginBottom: '16px' }}>
+                ID: {userName}
               </div>
 
               <div style={{ display: 'flex', gap: '8px' }}>
@@ -2084,36 +2167,29 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* QRコードスキャンモーダル */}
+        {/* QRコードスキャンモーダル（実機カメラ対応スキャナー） */}
         {isScanQrOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', color: '#fff' }}>
             <div style={{ width: '100%', maxWidth: '340px', textAlign: 'center' }}>
               <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: '900' }}>📷 QRコードスキャン</h3>
-              <p style={{ margin: '0 0 20px 0', fontSize: '12px', color: '#94a3b8' }}>相手の画面に表示されたQRコードをカメラに向けてください</p>
+              <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: '#94a3b8' }}>相手の画面に表示されたQRコードをカメラに向けてください</p>
 
-              <div style={{ width: '240px', height: '240px', margin: '0 auto 20px auto', border: '3px dashed #38bdf8', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.05)', position: 'relative' }}>
-                <div style={{ fontSize: '13px', color: '#cbd5e1' }}>📸 カメラプレビュー中...</div>
+              {scannerError && (
+                <div style={{ fontSize: '11px', color: '#f43f5e', background: 'rgba(244,63,94,0.1)', padding: '8px', borderRadius: '8px', marginBottom: '12px' }}>
+                  {scannerError}
+                </div>
+              )}
+
+              <div style={{ width: '260px', height: '260px', margin: '0 auto 20px auto', border: '2px solid #38bdf8', borderRadius: '20px', overflow: 'hidden', background: '#000', position: 'relative' }}>
+                <div ref={scannerRef} style={{ width: '100%', height: '100%' }}></div>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <button
-                  onClick={() => {
-                    const mockName = 'Explorer ' + Math.floor(Math.random() * 900 + 100);
-                    setFriendsList(prev => [...prev, { id: 'f-' + Date.now(), name: mockName, avatar: '', bio: 'QRスキャンで追加したフレンド', postsCount: 1 }]);
-                    setIsScanQrOpen(false);
-                    showToast(`🎉 ${mockName}さんとフレンドになりました！🤝`);
-                  }}
-                  style={{ width: '100%', padding: '12px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
-                >
-                  ✨ (テスト用) 読み取り成功シミュレート
-                </button>
-                <button
-                  onClick={() => setIsScanQrOpen(false)}
-                  style={{ width: '100%', padding: '12px', background: '#334155', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
-                >
-                  キャンセル
-                </button>
-              </div>
+              <button
+                onClick={() => setIsScanQrOpen(false)}
+                style={{ width: '100%', padding: '12px', background: '#334155', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+              >
+                キャンセル
+              </button>
             </div>
           </div>
         )}
