@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & 15言語辞書 & 完全196カ国マスターデータ
+// 1. 型定義 & 世界の主要言語辞書 & 完全196カ国マスターデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -144,11 +144,13 @@ function getUserTitle(count: number, lang: string) {
   }
 }
 
+// 世界中の主要言語を網羅した言語リスト
 export const LANGUAGES: Record<string, { name: string; nativeName: string; flag: string }> = {
   ja: { name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
   en: { name: 'English', nativeName: 'English', flag: '🇬🇧' },
   ko: { name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
-  zh: { name: 'Chinese', nativeName: '中文', flag: '🇨🇳' },
+  zh: { name: 'Chinese (Simplified)', nativeName: '简体中文', flag: '🇨🇳' },
+  zh_tw: { name: 'Chinese (Traditional)', nativeName: '繁體中文', flag: '🇹🇼' },
   es: { name: 'Spanish', nativeName: 'Español', flag: '🇪🇸' },
   fr: { name: 'French', nativeName: 'Français', flag: '🇫🇷' },
   de: { name: 'German', nativeName: 'Deutsch', flag: '🇩🇪' },
@@ -159,7 +161,14 @@ export const LANGUAGES: Record<string, { name: string; nativeName: string; flag:
   hi: { name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' },
   th: { name: 'Thai', nativeName: 'ไทย', flag: '🇹🇭' },
   vi: { name: 'Vietnamese', nativeName: 'Tiếng Việt', flag: '🇻🇳' },
-  id: { name: 'Indonesian', nativeName: 'Bahasa Indonesia', flag: '🇮🇩' }
+  id: { name: 'Indonesian', nativeName: 'Bahasa Indonesia', flag: '🇮🇩' },
+  ms: { name: 'Malay', nativeName: 'Bahasa Melayu', flag: '🇲🇾' },
+  tl: { name: 'Filipino', nativeName: 'Tagalog', flag: '🇵🇭' },
+  tr: { name: 'Turkish', nativeName: 'Türkçe', flag: '🇹🇷' },
+  nl: { name: 'Dutch', nativeName: 'Nederlands', flag: '🇳🇱' },
+  pl: { name: 'Polish', nativeName: 'Polski', flag: '🇵🇱' },
+  sv: { name: 'Swedish', nativeName: 'Svenska', flag: '🇸🇪' },
+  uk: { name: 'Ukrainian', nativeName: 'Українська', flag: '🇺🇦' }
 };
 
 export const DICTIONARIES: Record<string, Record<string, string>> = {
@@ -574,7 +583,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
 
   // 🗽 中南米
   BR: { names: { ja: 'ブラジル', en: 'Brazil', ko: '브라질', zh: '巴西' }, flag: '🇧🇷', region: '🗽 中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
-  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '阿根廷' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
+  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '아르헨티나' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
   CL: { names: { ja: 'チリ', en: 'Chile', ko: '칠레', zh: '智利' }, flag: '🇨🇱', region: '🗽 中南米', lat: -35.6751, lon: -71.5430, zoom: 4 },
   PE: { names: { ja: 'ペルー', en: 'Peru', ko: '페루', zh: '秘鲁' }, flag: '🇵🇪', region: '🗽 中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
   CO: { names: { ja: 'コロンビア', en: 'Colombia', ko: '콜롬비아', zh: '哥伦比亚' }, flag: '🇨🇴', region: '🗽 中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
@@ -587,7 +596,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   EC: { names: { ja: 'エクアドル', en: 'Ecuador', ko: '에콰도르', zh: '厄瓜多尔' }, flag: '🇪🇨', region: '🗽 中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
   VE: { names: { ja: 'ベネズエラ', en: 'Venezuela', ko: '베네수엘라', zh: '委内瑞拉' }, flag: '🇻🇪', region: '🗽 中南米', lat: 6.4238, lon: -66.5897, zoom: 5 },
   BO: { names: { ja: 'ボリビア', en: 'Bolivia', ko: '볼리비아', zh: '玻利维亚' }, flag: '🇧🇴', region: '🗽 中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
-  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '파라과이' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
+  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '巴拉圭' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
   GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '危地马拉' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
   HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: '洪都拉斯' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
   NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: '尼加拉瓜' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
@@ -926,7 +935,7 @@ export default function WapApp() {
   const [isAdVisible, setIsAdVisible] = useState<boolean>(true);
   const [isLocationGuideOpen, setIsLocationGuideOpen] = useState<boolean>(false);
 
-  // QRコードモーダル用のステート
+  // QRコードモーダル用ステート
   const [isMyQrOpen, setIsMyQrOpen] = useState<boolean>(false);
   const [isScanQrOpen, setIsScanQrOpen] = useState<boolean>(false);
 
@@ -1152,8 +1161,8 @@ export default function WapApp() {
     showToast(`📍 位置を「${item.display_name.split(',')[0]}」に設定しました`);
   };
 
-  // 地域ごとにグループ化された国リスト（見やすさ＆チェック状態の維持）
-  const groupedCountries = useMemo(() => {
+  // オンボーディング用および設定用の地域別・検索対応国リスト (filteredCountries として定義)
+  const filteredCountries = useMemo(() => {
     const groups: Record<string, [string, typeof COUNTRIES[string]][]> = {};
     const q = countrySearchQuery.toLowerCase();
 
@@ -1819,9 +1828,9 @@ export default function WapApp() {
                     style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px', marginBottom: '8px', boxSizing: 'border-box' }}
                   />
 
-                  {/* 地域別にグループ化された196カ国選択リスト */}
+                  {/* 地域別にグループ化された196カ国選択リスト（選択中ハイライト付き） */}
                   <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', paddingRight: '4px' }}>
-                    {Object.entries(groupedCountries).map(([region, countries]) => (
+                    {Object.entries(filteredCountries).map(([region, countries]) => (
                       <div key={region}>
                         <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '4px', borderBottom: '1px solid #e2e8f0', paddingBottom: '2px' }}>
                           {region}
@@ -2483,7 +2492,7 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ボトムナビ（上に引き上げて片手で押しやすいように改善） */}
+        {/* ボトムナビ（上に引き上げて押しやすいように改善） */}
         <nav style={{ height: 'calc(58px + env(safe-area-inset-bottom, 0px))', minHeight: 'calc(58px + env(safe-area-inset-bottom, 0px))', maxHeight: 'calc(58px + env(safe-area-inset-bottom, 0px))', paddingBottom: 'calc(6px + env(safe-area-inset-bottom, 0px))', paddingTop: '4px', background: navBarBg, borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexShrink: 0, zIndex: 1000, touchAction: 'none', margin: 0, boxSizing: 'border-box' }}>
           <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#94a3b8', padding: '6px' }}>🗺️ {t('map')}</button>
           <button onClick={() => setCurrentTab('ranking')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal', color: currentTab === 'ranking' ? themeAccent : '#94a3b8', padding: '6px' }}>🏆 {t('ranking')}</button>
@@ -2525,24 +2534,39 @@ export default function WapApp() {
                   style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px', marginBottom: '6px', boxSizing: 'border-box' }}
                 />
 
-                <select
-                  value={userCountry}
-                  onChange={(e) => {
-                    setUserCountry(e.target.value);
-                    const conf = COUNTRIES[e.target.value];
-                    if (conf) {
-                      setTargetCenter([conf.lat, conf.lon]);
-                      setTargetZoom(conf.zoom);
-                    }
-                  }}
-                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold' }}
-                >
-                  {filteredCountries.map(([code, c]) => (
-                    <option key={code} value={code}>
-                      {c.flag} {c.names[userLangCode] || c.names.en} ({c.region})
-                    </option>
+                {/* 設定モーダル内の国選択リスト */}
+                <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '6px' }}>
+                  {Object.entries(filteredCountries).map(([region, countries]) => (
+                    <div key={region}>
+                      <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#0284c7', margin: '4px 0' }}>{region}</div>
+                      {countries.map(([code, c]) => {
+                        const isSelected = userCountry === code;
+                        return (
+                          <div
+                            key={code}
+                            onClick={() => setUserCountry(code)}
+                            style={{
+                              padding: '6px 8px',
+                              borderRadius: '6px',
+                              background: isSelected ? '#f0f9ff' : '#ffffff',
+                              border: `1px solid ${isSelected ? '#0284c7' : '#f1f5f9'}`,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              cursor: 'pointer',
+                              fontSize: '12px'
+                            }}
+                          >
+                            <span style={{ fontWeight: isSelected ? 'bold' : 'normal', color: isSelected ? '#0284c7' : '#0f172a' }}>
+                              {c.flag} {c.names[userLangCode] || c.names.en}
+                            </span>
+                            {isSelected && <span style={{ color: '#0284c7', fontSize: '11px' }}>✓</span>}
+                          </div>
+                        );
+                      })}
+                    </div>
                   ))}
-                </select>
+                </div>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
