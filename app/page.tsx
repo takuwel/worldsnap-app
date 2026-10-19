@@ -642,7 +642,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: '肯尼亚' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
   TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: '坦桑尼亚' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
   MU: { names: { ja: 'モーリシャス', en: 'Mauritius', ko: '모리셔스', zh: '毛里求斯' }, flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
-  SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: '塞舌尔' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
+  SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: '세이셸' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
   GH: { names: { ja: 'ガーナ', en: 'Ghana', ko: '가나', zh: '加纳' }, flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
   NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
   ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '埃塞俄比亚' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
@@ -1106,7 +1106,6 @@ export default function WapApp() {
           { facingMode: 'environment' },
           { fps: 10, qrbox: { width: 200, height: 200 } },
           (decodedText) => {
-            // スキャン成功時
             let friendName = decodedText;
             if (decodedText.startsWith('wap-friend://')) {
               friendName = decodedText.replace('wap-friend://', '');
@@ -1116,7 +1115,7 @@ export default function WapApp() {
             showToast(`🎉 ${friendName}さんとフレンドになりました！🤝`);
             html5QrCode.stop().catch(() => {});
           },
-          () => {} // スキャン中エラー（無視してOK）
+          () => {}
         );
       } catch (err) {
         console.error('Camera scan init error:', err);
@@ -1221,7 +1220,6 @@ export default function WapApp() {
     showToast(`📍 位置を「${item.display_name.split(',')[0]}」に設定しました`);
   };
 
-  // 地域ごとにグループ化された国リスト（エラー修正済み）
   const filteredCountries = useMemo(() => {
     const groups: Record<string, [string, typeof COUNTRIES[string]][]> = {};
     const q = countrySearchQuery.toLowerCase();
@@ -2167,7 +2165,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* QRコードスキャンモーダル（実機カメラ対応スキャナー） */}
+        {/* QRコードスキャンモーダル（実機カメラ対応スキャナー・テストボタンなし） */}
         {isScanQrOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', color: '#fff' }}>
             <div style={{ width: '100%', maxWidth: '340px', textAlign: 'center' }}>
@@ -2692,293 +2690,4 @@ export default function WapApp() {
 
               <button
                 onClick={() => {
-                  setIsSettingsOpen(false);
-                  showToast('⚙️ 設定を保存しました！');
-                }}
-                style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
-              >
-                {t('close')}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* 利用規約モーダル */}
-        {isEulaModalOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
-              <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('eulaTitle')}</h3>
-              <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
-                {t('eulaFullText')}
-              </div>
-              <button onClick={() => setIsEulaModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
-                {t('close')}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* 使い方ガイドモーダル */}
-        {isGuideModalOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
-              <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('guideTitle')}</h3>
-              <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
-                {t('guideFullText')}
-              </div>
-              <button onClick={() => setIsGuideModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
-                {t('close')}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ── 詳細モーダル ── */}
-        {selectedSpot && (
-          <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box' }}>
-            <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
-              <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
-                ← 戻る
-              </button>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button
-                  onClick={() => handleReportSpot(selectedSpot.id)}
-                  style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fee2e2', borderRadius: '8px', padding: '4px 8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
-                >
-                  {t('reportSpot')}
-                </button>
-                {selectedSpot.userId !== 'me' && selectedSpot.userId !== 'user-official' && (
-                  <button
-                    onClick={() => handleBlockUser(selectedSpot.userId)}
-                    style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '4px 8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
-                  >
-                    {t('blockUser')}
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-              <div style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', boxSizing: 'border-box' }}>
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${selectedSpot.lat},${selectedSpot.lon}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    flex: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '6px',
-                    padding: '12px',
-                    background: '#10b981',
-                    color: '#fff',
-                    borderRadius: '12px',
-                    fontWeight: 'bold',
-                    fontSize: '13px',
-                    textDecoration: 'none',
-                    boxSizing: 'border-box'
-                  }}
-                >
-                  <span>🧭</span>
-                  <span>{t('openGoogleMaps')}</span>
-                </a>
-
-                <button
-                  onClick={() => handleToggleLike(selectedSpot.id)}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    background: likedSpotIds.includes(selectedSpot.id) ? '#f43f5e' : '#f1f5f9',
-                    color: likedSpotIds.includes(selectedSpot.id) ? '#fff' : '#0f172a',
-                    border: 'none',
-                    borderRadius: '12px',
-                    fontWeight: 'bold',
-                    fontSize: '13px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '4px',
-                    boxSizing: 'border-box'
-                  }}
-                >
-                  <span style={{ color: '#f43f5e' }}>❤️</span>
-                  <span>{selectedSpot.savedCount}</span>
-                </button>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-                <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
-                <button
-                  onClick={() => handleTranslateDescription(selectedSpot.id, selectedSpot.description)}
-                  style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '16px', padding: '6px 14px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
-                >
-                  {t('translate')}
-                </button>
-              </div>
-
-              <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap', marginBottom: '16px' }}>
-                {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
-              </p>
-
-              {/* コメントセクション */}
-              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginBottom: '20px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '10px' }}>💬 コメント ({selectedSpot.comments?.length || 0})</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
-                  {selectedSpot.comments?.map((c) => (
-                    <div key={c.id} style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                      <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '2px' }}>{c.userName}</div>
-                      <div style={{ fontSize: '12px', color: '#334155' }}>{c.text}</div>
-                    </div>
-                  ))}
-                  {(!selectedSpot.comments || selectedSpot.comments.length === 0) && (
-                    <div style={{ fontSize: '11px', color: '#64748b' }}>まだコメントはありません</div>
-                  )}
-                </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <input
-                    type="text"
-                    placeholder={t('commentPlaceholder')}
-                    value={newCommentText}
-                    onChange={(e) => setNewCommentText(e.target.value)}
-                    style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-                  />
-                  <button
-                    onClick={() => handleAddComment(selectedSpot.id)}
-                    style={{ padding: '8px 16px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-                  >
-                    {t('commentSend')}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ── 投稿作成モーダル ── */}
-        {pendingUploads.length > 0 && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 'bold' }}>
-                📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
-              </h3>
-
-              <div style={{ width: '100%', height: '150px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '12px' }}>
-                {pendingUploads[currentUploadIndex].fileType === 'image' ? (
-                  <img src={pendingUploads[currentUploadIndex].fileUrl} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                ) : (
-                  <video src={pendingUploads[currentUploadIndex].fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                )}
-              </div>
-
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
-                🌐 反映させるマップモードを選択
-              </label>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
-                {(['world', 'friends', 'my'] as const).map((scope) => {
-                  const isSelected = selectedScopes.includes(scope);
-                  return (
-                    <div
-                      key={scope}
-                      onClick={() => toggleScopeSelection(scope)}
-                      style={{
-                        padding: '10px 12px',
-                        borderRadius: '10px',
-                        border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
-                        background: isSelected ? '#f0f9ff' : '#ffffff',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        color: isSelected ? themeAccent : '#0f172a',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between'
-                      }}
-                    >
-                      <span>{scope === 'world' ? `🌎 ${t('world')}` : scope === 'friends' ? `👥 ${t('friends')}` : `📍 ${t('myMap')}`}</span>
-                      <span>{isSelected ? '☑️' : '☐'}</span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
-              <input
-                type="text"
-                value={postTitle}
-                onChange={(e) => setPostTitle(e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-              />
-
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグ)</label>
-              <textarea
-                rows={2}
-                value={postDesc}
-                onChange={(e) => setPostDesc(e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-              />
-
-              <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
-                  📍 撮影場所を検索して選択してください（必須）
-                </div>
-                <input
-                  type="text"
-                  placeholder="地名・住所・場所名を入力"
-                  value={addressSearchQuery}
-                  onChange={(e) => setAddressSearchQuery(e.target.value)}
-                  style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff', marginBottom: '4px' }}
-                />
-
-                {addressSuggestions.length > 0 && (
-                  <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
-                    {addressSuggestions.map((item) => (
-                      <div
-                        key={item.place_id}
-                        onClick={() => handleSelectAddressSuggestion(item)}
-                        style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                      >
-                        <span>📍</span>
-                        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
-                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button
-                  type="button"
-                  disabled={isSubmitting}
-                  onClick={() => setPendingUploads([])}
-                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-                >
-                  キャンセル
-                </button>
-                <button
-                  type="button"
-                  disabled={isSubmitting}
-                  onClick={handleConfirmPost}
-                  style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                >
-                  {isSubmitting ? '保存中...' : 'マップに反映する 🚀'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-      </div>
-    </>
-  );
-}
+                  setIsSettingsOpen(
