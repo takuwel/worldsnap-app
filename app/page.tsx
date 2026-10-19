@@ -224,9 +224,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 第1条（目的および同意）
 本規約は、マップ共有アプリ「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
 
-第2条（位置情報の取得・利用について）
+第2条（位置情報の取得・利用について・パーミッション目的）
 1. 当サービスは、ユーザーがマップ画面の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一時的に取得します。
-2. 取得した位置情報は、ユーザーの現在の現在地をマップの中心に表示する機能、および周辺の旅のスポットを検索・閲覧する機能の提供にのみ使用されます。
+2. 取得した位置情報は、「周辺の旅のスポットを検索・表示するため」「現在地を中心にマップを表示するため」にのみ使用されます。
 3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。
 
 第3条（コンテンツの安全性と免責事項・情報の正確性について）
@@ -238,7 +238,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 ご質問、不具合のご報告、規約違反コンテンツの削除依頼などは以下の窓口までご連絡ください。1〜3日以内に対応いたします。
 ✉️ wap.support.official@gmail.com`,
     guideFullText: `【wap の詳細な操作説明と全機能ガイド】
-1. 現在地への移動（🎯ボタン）: デバイスのGPSを利用して現在地へ一瞬で移動します。
+1. 現在地への移動（🎯ボタン）: 「周辺の旅のスポットを検索・表示するため」「現在地を中心にマップを表示するため」の目的でデバイスのGPSを利用し、一瞬で現在地へ移動します。
 2. マップ操作とズーム: ダブルタップで拡大（ズームイン）します。
 3. メディアの投稿: 写真や動画を選択して投稿できます。店舗や建物情報は投稿時点のものであるため、現在の状況と異なる場合があります。
 4. 交流・安全機能: いいね、コメント、翻訳、通報、ブロック機能が使えます。`
@@ -303,14 +303,14 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 Article 1: Purpose and Agreement.
 All users must agree to these terms before using the service.
 
-Article 2: Location Data via GPS.
-Location data is acquired only when the user requests current position.
+Article 2: Location Data via GPS (Permission Purpose).
+Location data is acquired only when the user requests current position. The purpose is explicitly to "search and display surrounding travel spots" and "center the map on the current location".
 
 Article 3: Content Safety & Disclaimer.
 Inappropriate content is prohibited. Spot information is as of posting time and may have changed. Users visit locations at their own responsibility. Support replies within 1-3 days.
 Support Contact: wap.support.official@gmail.com`,
     guideFullText: `[wap Detailed User Guide]
-1. Current Location: Center map on GPS.
+1. Current Location: Center map on GPS (Used to search and display surrounding spots and center the map).
 2. Zoom: Double tap.
 3. Media Posting: Share photos and videos.
 4. Community: Safety features included.`
@@ -373,11 +373,11 @@ Support Contact: wap.support.official@gmail.com`,
     commentSend: '전송',
     eulaFullText: `[wap 이용약관 및 위치정보 정책]
 제1조 목적으로 본 서비스를 제공합니다.
-제2조 위치정보는 GPS를 통해 요청시에만 활용됩니다.
+제2조 위치정보(퍼미션 목적): 주변 여행 명소를 검색 및 표시하고, 현재 위치를 중심으로 지도를 표시하기 위해서만 GPS 정보를 활용합니다.
 제3조 장소 정보는 게시 시점 기준이며 변경될 수 있습니다. 방문 시 본인 책임하에 확인하세요. 1~3일 내 대응.
 고객센터: wap.support.official@gmail.com`,
     guideFullText: `[wap 상세 가이드 및 기능 설명]
-1. 현재 위치: GPS를 통해 지도 중심을 이동합니다.
+1. 현재 위치: 주변 여행 명소를 검색·표시하고 현재 위치를 중심으로 지도를 표시하기 위해 위치 권한을 활용합니다.
 2. 지도 조작: 더블탭으로 확대 가능합니다.
 3. 미디어 업로드: 사진과 영상을 공유합니다.`
   },
@@ -439,11 +439,11 @@ Support Contact: wap.support.official@gmail.com`,
     commentSend: '发送',
     eulaFullText: `[wap 服务条款与位置政策]
 第一条 目的：规范本应用的使用条件。
-第二条 位置：仅在用户请求时获取GPS数据。
+第二条 位置（权限目的）：位置数据仅用于“搜索和显示周边旅游景点”以及“将地图居中显示在当前位置”。
 第三条 景点信息仅供参考，可能存在变更，访问时请自行确认。1-3天内回复。
 客服邮箱: wap.support.official@gmail.com`,
     guideFullText: `[wap 详细操作指南]
-1. 当前位置: 快速定位您的GPS坐标。
+1. 当前位置: 利用位置权限搜索和显示周边景点并定位当前位置。
 2. 地图缩放: 双击放大。
 3. 发布动态: 上传照片或视频。`
   }
@@ -1154,7 +1154,7 @@ export default function WapApp() {
   const rankingSpots = useMemo(() => {
     return [...spots]
       .filter(s => !blockedUsers.includes(s.userId))
-      .sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (b.viewsCount || 0)));
+      .sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
   }, [spots, blockedUsers]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
@@ -2308,7 +2308,7 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ボトムナビ（上に引き上げて押しやすいように改善） */}
+        {/* ボトムナビ（上に引き上げて片手で押しやすいように改善） */}
         <nav style={{ height: 'calc(58px + env(safe-area-inset-bottom, 0px))', minHeight: 'calc(58px + env(safe-area-inset-bottom, 0px))', maxHeight: 'calc(58px + env(safe-area-inset-bottom, 0px))', paddingBottom: 'calc(6px + env(safe-area-inset-bottom, 0px))', paddingTop: '4px', background: navBarBg, borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexShrink: 0, zIndex: 1000, touchAction: 'none', margin: 0, boxSizing: 'border-box' }}>
           <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#94a3b8', padding: '6px' }}>🗺️ {t('map')}</button>
           <button onClick={() => setCurrentTab('ranking')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal', color: currentTab === 'ranking' ? themeAccent : '#94a3b8', padding: '6px' }}>🏆 {t('ranking')}</button>
