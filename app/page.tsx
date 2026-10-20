@@ -41,8 +41,6 @@ export interface MediaItem {
   thumbUrl: string;
   fileType: 'image' | 'video';
   fileName: string;
-  title?: string;       // 各写真ごとのタイトル
-  description?: string; // 各写真ごとのメモ
 }
 
 export interface Spot {
@@ -84,8 +82,6 @@ export interface PendingUpload {
   lon?: number;
   hasGps: boolean;
   dateTime?: string;
-  title?: string;
-  description?: string;
 }
 
 export interface PlaceSuggestion {
@@ -521,7 +517,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   IR: { names: { ja: 'イラン', en: 'Iran', ko: '이란', zh: '伊朗' }, flag: '🇮🇷', region: '🕌 中東', lat: 32.4279, lon: 53.6880, zoom: 5 },
   SY: { names: { ja: 'シリア', en: 'Syria', ko: '시리아', zh: '叙利亚' }, flag: '🇸🇾', region: '🕌 中東', lat: 34.8021, lon: 38.9968, zoom: 7 },
   YE: { names: { ja: 'イエメン', en: 'Yemen', ko: '예멘', zh: '也门' }, flag: '🇾🇪', region: '🕌 中東', lat: 15.5527, lon: 48.5164, zoom: 6 },
-  AM: { names: { ja: 'アルメニア', en: 'Armenia', ko: '알바니아', zh: '亚美尼亚' }, flag: '🇦🇲', region: '🕌 中東', lat: 40.0691, lon: 45.0382, zoom: 8 },
+  AM: { names: { ja: 'アルメニア', en: 'Armenia', ko: '아르메니아', zh: '亚美尼亚' }, flag: '🇦🇲', region: '🕌 中東', lat: 40.0691, lon: 45.0382, zoom: 8 },
   AZ: { names: { ja: 'アゼルバイジャン', en: 'Azerbaijan', ko: '아제르바이잔', zh: '阿塞拜疆' }, flag: '🇦🇿', region: '🕌 中東', lat: 40.1431, lon: 47.5769, zoom: 7 },
   GE: { names: { ja: 'ジョージア', en: 'Georgia', ko: '조지아', zh: '格鲁吉亚' }, flag: '🇬🇪', region: '🕌 中東', lat: 42.3154, lon: 43.3569, zoom: 7 },
   FR: { names: { ja: 'フランス', en: 'France', ko: '프랑스', zh: '法国' }, flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
@@ -546,7 +542,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -555,7 +551,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   VA: { names: { ja: 'バチカン市国', en: 'Vatican City', ko: '바티칸', zh: '梵蒂冈' }, flag: '🇻🇦', region: '🇪🇺 ヨーロッパ', lat: 41.9029, lon: 12.4534, zoom: 15 },
   SM: { names: { ja: 'サンマリノ', en: 'San Marino', ko: '산마리노', zh: '圣马力诺' }, flag: '🇸🇲', region: '🇪🇺 ヨーロッパ', lat: 43.9424, lon: 12.4578, zoom: 12 },
   AD: { names: { ja: 'アンドラ', en: 'Andorra', ko: '안도라', zh: '安道尔' }, flag: '🇦🇩', region: '🇪🇺 ヨーロッパ', lat: 42.5063, lon: 1.5218, zoom: 10 },
-  LI: { names: { ja: 'リヒテンシュタイン', en: 'Liechtenstein', ko: '리히텐슈타인', zh: '列支敦士登' }, flag: '🇱🇮', region: '🇪🇺 ヨーロッパ', lat: 47.1660, lon: 9.5550, zoom: 11 },
+  LI: { names: { ja: 'リヒテンシュタイン', en: 'Liechtenstein', ko: '리혼슈타인', zh: '列支敦士登' }, flag: '🇱🇮', region: '🇪🇺 ヨーロッパ', lat: 47.1660, lon: 9.5550, zoom: 11 },
   CY: { names: { ja: 'キプロス', en: 'Cyprus', ko: '키프로스', zh: '塞浦路斯' }, flag: '🇨🇾', region: '🇪🇺 ヨーロッパ', lat: 35.1264, lon: 33.4299, zoom: 8 },
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
@@ -610,7 +606,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   NZ: { names: { ja: 'ニュージーランド', en: 'New Zealand', ko: '뉴질랜드', zh: '新西兰' }, flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
   FJ: { names: { ja: 'フィジー', en: 'Fiji', ko: '피지', zh: '斐济' }, flag: '🇫🇯', region: '🦘 オセアニア', lat: -17.7134, lon: 178.0650, zoom: 8 },
   PG: { names: { ja: 'パプアニューギニア', en: 'Papua New Guinea', ko: '파푸아뉴기니', zh: '巴布亚新几内亚' }, flag: '🇵🇬', region: '🦘 オセアニア', lat: -6.3149, lon: 143.9555, zoom: 6 },
-  VU: { names: { ja: 'ヴァヌアツ', en: 'Vanuatu', ko: '바누아투', zh: '瓦努阿图' }, flag: '🇻🇺', region: '🦘 オセアニア', lat: -15.3767, lon: 166.9592, zoom: 7 },
+  VU: { names: { ja: 'ヴァヌアツ', en: 'Vanuatu', ko: '바누아투', zh: '瓦努アツ' }, flag: '🇻🇺', region: '🦘 オセアニア', lat: -15.3767, lon: 166.9592, zoom: 7 },
   WS: { names: { ja: 'サモア', en: 'Samoa', ko: '사모아', zh: '萨摩亚' }, flag: '🇼🇸', region: '🦘 オセアニア', lat: -13.7590, lon: -172.1046, zoom: 9 },
   GU: { names: { ja: 'グアム', en: 'Guam', ko: '괌', zh: '关岛' }, flag: '🇬🇺', region: '🦘 オセアニア', lat: 13.4443, lon: 144.7937, zoom: 10 },
   NC: { names: { ja: 'ニューカレドニア', en: 'New Caledonia', ko: '누벨칼레도니', zh: '新喀里多尼亚' }, flag: '🇳🇨', region: '🦘 オセアニア', lat: -20.9043, lon: 165.6180, zoom: 7 },
@@ -630,7 +626,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: '肯尼亚' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
   TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: '坦桑尼亚' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
   MU: { names: { ja: 'モーリシャス', en: 'Mauritius', ko: '모리셔스', zh: '毛里求斯' }, flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
-  SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: '세이셸' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
+  SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: '塞舌尔' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
   GH: { names: { ja: 'ガーナ', en: 'Ghana', ko: '가나', zh: '加纳' }, flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
   NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
   ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '埃塞俄比亚' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
@@ -639,7 +635,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: '卢旺达' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
   UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: '乌干达' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
   ZM: { names: { ja: 'ザンビア', en: 'Zambia', ko: '잠비아', zh: '赞比亚' }, flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
-  ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바브웨', zh: '津巴布韦' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
+  ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바ブ웨', zh: '津巴布韦' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
   BW: { names: { ja: 'ボツワナ', en: 'Botswana', ko: '보츠와나', zh: '博茨瓦纳' }, flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
   NA: { names: { ja: 'ナミビア', en: 'Namibia', ko: '나미비아', zh: '纳米比亚' }, flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
   DZ: { names: { ja: 'アルジェリア', en: 'Algeria', ko: '알제리', zh: '阿尔及利亚' }, flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
@@ -758,7 +754,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント (サムネイル余白なし・ピン一杯に表示)
+// 2. Google Maps API コンポーネント (サムネイル真っ白防止Base64キャッシュ対応)
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -798,11 +794,11 @@ const GoogleMapComponent = ({
       img.onload = () => {
         try {
           const canvas = document.createElement('canvas');
-          canvas.width = 64;
-          canvas.height = 64;
+          canvas.width = 40;
+          canvas.height = 40;
           const ctx = canvas.getContext('2d');
           if (ctx) {
-            ctx.drawImage(img, 0, 0, 64, 64);
+            ctx.drawImage(img, 0, 0, 40, 40);
             const dataUri = canvas.toDataURL('image/jpeg');
             setThumbCache(prev => ({ ...prev, [url]: dataUri }));
           }
@@ -904,34 +900,26 @@ const GoogleMapComponent = ({
       const imgUrl = thumbCache[rawUrl] || rawUrl;
 
       const badgeSvg = count > 1 ? `
-        <circle cx="36" cy="10" r="10" fill="#10b981" stroke="#ffffff" stroke-width="2" />
-        <text x="36" y="14" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
+        <circle cx="34" cy="12" r="10" fill="#10b981" stroke="#ffffff" stroke-width="2" />
+        <text x="34" y="16" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
       ` : '';
 
-      // 余白なしでピン一杯に表示するSVG（clipPathでピン形状にクリップし、imageは座標0,0にフィット）
       const marker = new window.google.maps.Marker({
         position: { lat: spot.lat, lng: spot.lon },
         map: map,
         title: spot.title,
         icon: {
           url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="52" viewBox="0 0 44 52">
-              <defs>
-                <clipPath id="pinClip">
-                  <path d="M22 50 C22 50 40 31 40 20 C40 9 31 1 22 1 C13 1 4 9 4 20 C4 31 22 50 22 50 Z" />
-                </clipPath>
-              </defs>
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="52" viewBox="0 0 48 52">
               <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
                 <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.3)" />
               </filter>
               <path d="M22 50 C22 50 40 31 40 20 C40 9 31 1 22 1 C13 1 4 9 4 20 C4 31 22 50 22 50 Z" fill="#ffffff" stroke="#0284c7" stroke-width="3" filter="url(#shadow)" />
-              <g clip-path="url(#pinClip)">
-                <image href="${imgUrl}" x="0" y="0" width="44" height="44" preserveAspectRatio="xMidYMid slice" />
-              </g>
+              <image href="${imgUrl}" x="6" y="6" width="32" height="32" clip-path="circle(16px at 16px 16px)" preserveAspectRatio="xMidYMid slice" />
               ${badgeSvg}
             </svg>
           `)}`,
-          scaledSize: new window.google.maps.Size(44, 52),
+          scaledSize: new window.google.maps.Size(48, 52),
           anchor: new window.google.maps.Point(22, 52),
         }
       });
@@ -1105,6 +1093,7 @@ export default function WapApp() {
     fetchSpots();
   }, []);
 
+  // Supabaseリアルタイム同期
   useEffect(() => {
     if (!supabase) return;
     const channel = supabase
@@ -1163,7 +1152,7 @@ export default function WapApp() {
         );
       } catch (err) {
         console.error('Camera scan init error:', err);
-        setScannerError('⚠️ カメラの起動に失敗しました（ブラウザ設定からカメラ権限を許可してください）');
+        setScannerError('⚠️ カメラの起動に失敗しました（設定からカメラ権限を確認してください）');
       }
     };
 
@@ -1495,7 +1484,6 @@ export default function WapApp() {
       const fileUrl = URL.createObjectURL(file);
       const isVideo = file.type.startsWith('video/');
       const fileId = 'spot-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
-      const defaultName = file.name.replace(/\.[^/.]+$/, '');
 
       if (isVideo) {
         const thumbUrl = await generateVideoThumbnail(file);
@@ -1507,8 +1495,6 @@ export default function WapApp() {
           fileType: 'video',
           hasGps: false,
           dateTime: new Date().toLocaleDateString(),
-          title: defaultName,
-          description: '',
         });
         continue;
       }
@@ -1523,9 +1509,9 @@ export default function WapApp() {
           if (lat && lon) {
             const latDecimal = convertDMSToDD(lat, latRef);
             const lonDecimal = convertDMSToDD(lon, lonRef);
-            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', lat: latDecimal, lon: lonDecimal, hasGps: true, dateTime: new Date().toLocaleDateString(), title: defaultName, description: '' });
+            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', lat: latDecimal, lon: lonDecimal, hasGps: true, dateTime: new Date().toLocaleDateString() });
           } else {
-            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', hasGps: false, dateTime: new Date().toLocaleDateString(), title: defaultName, description: '' });
+            pendingList.push({ id: fileId, file, fileUrl, thumbUrl: fileUrl, fileType: 'image', hasGps: false, dateTime: new Date().toLocaleDateString() });
           }
           resolve();
         });
@@ -1536,8 +1522,8 @@ export default function WapApp() {
       setPendingUploads(pendingList);
       setCurrentUploadIndex(0);
       const first = pendingList[0];
-      setPostTitle(first.title || '');
-      setPostDesc(first.description || '');
+      setPostTitle(first.file.name.replace(/\.[^/.]+$/, ''));
+      setPostDesc('');
       setPostCategory(selectedCategories[0] || 'view');
       setSelectedScopes(['world', 'friends', 'my']);
       
@@ -1556,24 +1542,13 @@ export default function WapApp() {
   const toggleScopeSelection = (scope: DisplayScope) => {
     if (selectedScopes.includes(scope)) {
       if (selectedScopes.length === 1) {
-        showToast('⚠️ 最低1つの反映先を選択する必要があります');
+        showToast('⚠️ 最低1つの反映先を選択してください');
         return;
       }
       setSelectedScopes((prev) => prev.filter((s) => s !== scope));
     } else {
       setSelectedScopes((prev) => [...prev, scope]);
     }
-  };
-
-  // 各写真ごとの文言変更を一時ステートに反映
-  const handleTitleChange = (val: string) => {
-    setPostTitle(val);
-    setPendingUploads(prev => prev.map((item, idx) => idx === currentUploadIndex ? { ...item, title: val } : item));
-  };
-
-  const handleDescChange = (val: string) => {
-    setPostDesc(val);
-    setPendingUploads(prev => prev.map((item, idx) => idx === currentUploadIndex ? { ...item, description: val } : item));
   };
 
   const handleConfirmPost = async () => {
@@ -1633,14 +1608,11 @@ export default function WapApp() {
       }
     }
 
-    // 各メディアごとに個別のタイトル・メモを持たせる
     const newMediaItem: MediaItem = {
       fileUrl: uploadedUrl,
       thumbUrl: finalThumbUrl,
       fileType: current.fileType,
       fileName: current.file.name,
-      title: postTitle,
-      description: postDesc,
     };
 
     const existingSameSpot = spots.find(
@@ -1668,7 +1640,7 @@ export default function WapApp() {
           await supabase.from('spots').update({ thumb_url: finalThumbUrl, file_url: uploadedUrl, media_list: updatedMediaList, title: updatedSpot.title, description: updatedSpot.description }).eq('id', existingSameSpot.id);
         } catch {}
       }
-      showToast(`📸 同じ場所のピンに新しい写真・文言を追加しました！`);
+      showToast(`📸 同じ場所のピンにメディアを追加してまとめました！`);
     } else {
       const newSpot: Spot = {
         id: current.id,
@@ -1738,13 +1710,12 @@ export default function WapApp() {
 
     setIsSubmitting(false);
 
-    // 複数枚ある場合は次の写真の設定へ
     if (currentUploadIndex + 1 < pendingUploads.length) {
       const nextIndex = currentUploadIndex + 1;
       setCurrentUploadIndex(nextIndex);
       const nextItem = pendingUploads[nextIndex];
-      setPostTitle(nextItem.title || '');
-      setPostDesc(nextItem.description || '');
+      setPostTitle(nextItem.file.name.replace(/\.[^/.]+$/, ''));
+      setPostDesc('');
       if (nextItem.hasGps && nextItem.lat !== undefined && nextItem.lon !== undefined) {
         setManualLat(nextItem.lat.toString());
         setManualLon(nextItem.lon.toString());
@@ -2131,4 +2102,1065 @@ export default function WapApp() {
                   onClick={() => profileAvatarInputRef.current?.click()}
                   style={{
                     width: '64px', height: '64px', borderRadius: '50%',
-                    background: userAvatar ?
+                    background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
+                    color: '#fff', fontSize: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', position: 'relative', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                  }}
+                >
+                  {!userAvatar && <span>👤</span>}
+                  <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.5)', fontSize: '9px', color: '#fff', textAlign: 'center', padding: '2px 0' }}>
+                    変更
+                  </div>
+                </div>
+              </div>
+
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>ユーザー名</label>
+              <input
+                type="text"
+                maxLength={20}
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                style={{ width: '100%', padding: '10px', marginTop: '4px', marginBottom: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold' }}
+              />
+
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>自己紹介</label>
+              <input
+                type="text"
+                value={userBio}
+                onChange={(e) => setUserBio(e.target.value)}
+                style={{ width: '100%', padding: '10px', marginTop: '4px', marginBottom: '20px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+              />
+
+              <button
+                onClick={() => {
+                  setIsEditProfileOpen(false);
+                  showToast('✨ プロフィールを更新しました！');
+                }}
+                style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+              >
+                保存する
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 自分のQRコード表示モーダル */}
+        {isMyQrOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '340px', width: '100%', padding: '28px 20px', textAlign: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
+              <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: '900', color: '#0284c7' }}>📱 マイQRコード</h3>
+              <p style={{ margin: '0 0 20px 0', fontSize: '12px', color: '#64748b' }}>このQRコードを読み取ってもらうと、かんたんにフレンドになれます！</p>
+              
+              <div style={{ width: '200px', height: '200px', margin: '0 auto 16px auto', background: '#ffffff', borderRadius: '16px', border: '2px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', boxSizing: 'border-box' }}>
+                <div
+                  ref={(node) => {
+                    if (node && (window as any).QRCode) {
+                      node.innerHTML = '';
+                      new (window as any).QRCode(node, {
+                        text: `wap-friend://${userName}`,
+                        width: 170,
+                        height: 170,
+                        colorDark: '#0f172a',
+                        colorLight: '#ffffff',
+                        correctLevel: (window as any).QRCode.CorrectLevel.H
+                      });
+                    }
+                  }}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <div style={{ fontSize: '11px', color: '#64748b' }}>生成中...</div>
+                </div>
+              </div>
+
+              <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a', marginBottom: '16px' }}>
+                ID: {userName}
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => {
+                    navigator.clipboard?.writeText(`wap-friend://${userName}`);
+                    showToast('📋 フレンドリンクをコピーしました！');
+                  }}
+                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+                >
+                  リンクコピー
+                </button>
+                <button
+                  onClick={() => setIsMyQrOpen(false)}
+                  style={{ flex: 1, padding: '10px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+                >
+                  閉じる
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* QRコードスキャンモーダル */}
+        {isScanQrOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', color: '#fff' }}>
+            <div style={{ width: '100%', maxWidth: '340px', textAlign: 'center' }}>
+              <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: '900' }}>📷 QRコードスキャン</h3>
+              <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: '#94a3b8' }}>相手の画面に表示されたQRコードをカメラに向けてください</p>
+
+              {scannerError && (
+                <div style={{ fontSize: '11px', color: '#f43f5e', background: 'rgba(244,63,94,0.1)', padding: '8px', borderRadius: '8px', marginBottom: '12px' }}>
+                  {scannerError}
+                </div>
+              )}
+
+              <div style={{ width: '260px', height: '260px', margin: '0 auto 20px auto', border: '2px solid #38bdf8', borderRadius: '20px', overflow: 'hidden', background: '#000', position: 'relative' }}>
+                <div ref={scannerRef} style={{ width: '100%', height: '100%' }}></div>
+              </div>
+
+              <button
+                onClick={() => setIsScanQrOpen(false)}
+                style={{ width: '100%', padding: '12px', background: '#334155', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+              >
+                キャンセル
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* フレンド個別プロフィール詳細モーダル */}
+        {selectedFriend && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 8500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '340px', width: '100%', padding: '24px', textAlign: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#0284c7', color: '#fff', fontSize: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px auto', fontWeight: 'bold' }}>
+                {selectedFriend.name.charAt(0)}
+              </div>
+              <h3 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: '900' }}>{selectedFriend.name}</h3>
+              <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: '#64748b' }}>{selectedFriend.bio}</p>
+              
+              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', marginBottom: '20px', border: '1px solid #e2e8f0', fontSize: '12px', color: '#334155' }}>
+                📍 投稿数: <b>{selectedFriend.postsCount}</b> 箇所のスポット
+              </div>
+
+              <button
+                onClick={() => setSelectedFriend(null)}
+                style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ヘッダー */}
+        <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
+            <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: navBarText }}>
+              ☰
+            </button>
+            <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7', letterSpacing: '-0.5px', flexShrink: 0 }}>wap</h1>
+            <select
+              value={userCountry}
+              onChange={(e) => {
+                setUserCountry(e.target.value);
+                const conf = COUNTRIES[e.target.value];
+                if (conf) {
+                  setTargetCenter([conf.lat, conf.lon]);
+                  setTargetZoom(conf.zoom);
+                }
+              }}
+              style={{ background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
+            >
+              {Object.entries(COUNTRIES).map(([code, c]) => (
+                <option key={code} value={code}>
+                  {c.flag} {c.names[userLangCode] || c.names.en} ({c.region})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            onClick={() => setCurrentTab('profile')}
+            style={{
+              width: '32px', height: '32px', minWidth: '32px', minHeight: '32px', borderRadius: '50%',
+              background: userAvatar ? `url(${userAvatar}) center/cover` : '#0284c7',
+              color: '#fff', border: 'none', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden'
+            }}
+          >
+            {!userAvatar && '👤'}
+          </button>
+        </header>
+
+        {/* ── メインビュー ── */}
+        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 64px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
+          
+          {/* マップタブ */}
+          <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none', boxSizing: 'border-box' }}>
+            
+            <div style={{ position: 'absolute', top: '10px', left: '12px', right: '12px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '6px', pointerEvents: 'none', boxSizing: 'border-box' }}>
+              <div style={{ position: 'relative', pointerEvents: 'auto', boxSizing: 'border-box' }}>
+                <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '8px', background: 'rgba(255,255,255,0.95)', color: '#000', backdropFilter: 'blur(10px)', padding: '5px 12px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
+                  <input
+                    type="text"
+                    placeholder={t('searchPlaceholder')}
+                    value={mapSearchKeyword}
+                    onChange={(e) => setMapSearchKeyword(e.target.value)}
+                    style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', color: '#000', fontSize: '12px', fontWeight: '500', padding: '2px 4px', boxSizing: 'border-box' }}
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSearchingLocation}
+                    style={{ background: '#0284c7', color: '#fff', border: 'none', borderRadius: '20px', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', boxSizing: 'border-box', flexShrink: 0 }}
+                  >
+                    {isSearchingLocation ? '...' : '🔍'}
+                  </button>
+                </form>
+
+                {mapSearchSuggestions.length > 0 && (
+                  <div style={{ position: 'absolute', top: '40px', insetInline: 0, background: '#ffffff', color: '#000', borderRadius: '12px', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', overflow: 'hidden', zIndex: 600, border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
+                    {mapSearchSuggestions.map((item) => (
+                      <div
+                        key={item.place_id}
+                        onClick={() => handleSelectMapSuggestion(item)}
+                        style={{ padding: '8px 12px', fontSize: '12px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxSizing: 'border-box' }}
+                      >
+                        <span>📍</span>
+                        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px', boxSizing: 'border-box' }}>
+                <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.95)', padding: '3px 6px', borderRadius: '20px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
+                  {(['view', 'gourmet', 'rain'] as const).map((cat) => {
+                    const isChecked = selectedCategories.includes(cat);
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => toggleCategoryFilter(cat)}
+                        style={{
+                          padding: '4px 8px',
+                          borderRadius: '16px',
+                          border: 'none',
+                          background: isChecked ? '#0284c7' : '#f1f5f9',
+                          color: isChecked ? '#ffffff' : '#64748b',
+                          fontWeight: 'bold',
+                          fontSize: '11px',
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          boxSizing: 'border-box',
+                        }}
+                      >
+                        {isChecked ? '✓ ' : ''}
+                        {cat === 'view' ? `🏔️${t('view')}` : cat === 'gourmet' ? `🍔${t('gourmet')}` : `🌧️${t('rain')}`}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div style={{ display: 'flex', background: 'rgba(255,255,255,0.95)', padding: '3px 8px', borderRadius: '20px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
+                  <select
+                    value={displayScope}
+                    onChange={(e) => setDisplayScope(e.target.value as DisplayScope)}
+                    style={{ background: 'transparent', border: 'none', color: '#0f172a', fontWeight: 'bold', fontSize: '11px', cursor: 'pointer', padding: '2px', outline: 'none' }}
+                  >
+                    <option value="world">{t('scopeWorld')}</option>
+                    <option value="friends">{t('scopeFriends')}</option>
+                    <option value="my">{t('scopeMy')}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div ref={exportRef} style={{ flex: 1, width: '100%', height: '100%', position: 'relative', boxSizing: 'border-box' }}>
+              <GoogleMapComponent
+                spots={filteredSpots}
+                center={currentMapCenter}
+                zoom={currentMapZoom}
+                targetCenter={targetCenter}
+                targetZoom={targetZoom}
+                theme={mapTheme}
+                userLang={userLangCode}
+                onMoveEnd={handleMapMoveEnd}
+                onSelectSpot={handleOpenSpot}
+                onDoubleTap={handleMapDoubleTap}
+              />
+
+              <div style={{ position: 'absolute', bottom: '75px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '10px', boxSizing: 'border-box' }}>
+                <button
+                  title="現在地へ移動"
+                  onClick={() => {
+                    if (navigator.geolocation) {
+                      navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                          setTargetCenter([pos.coords.latitude, pos.coords.longitude]);
+                          setTargetZoom(15);
+                          showToast('🎯 現在地に移動しました');
+                        },
+                        (err) => {
+                          console.error(err);
+                          setIsLocationGuideOpen(true);
+                        },
+                        { enableHighAccuracy: false, timeout: 6000, maximumAge: 60000 }
+                      );
+                    } else {
+                      showWarning('⚠️ お使いのブラウザは位置情報に対応していません。');
+                    }
+                  }}
+                  style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.2)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}
+                >
+                  🎯
+                </button>
+                <button
+                  title="引き戻す"
+                  onClick={handleStepZoomOut}
+                  style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#ffffff', border: `2px solid ${themeAccent}`, boxShadow: '0 4px 16px rgba(0,0,0,0.2)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}
+                >
+                  🪟
+                </button>
+                <button
+                  title="マップを保存"
+                  onClick={handleSaveMyMap}
+                  style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#0f172a', color: '#fff', border: 'none', boxShadow: '0 4px 16px rgba(0,0,0,0.3)', fontSize: '18px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}
+                >
+                  💾
+                </button>
+              </div>
+            </div>
+
+            <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '52px', minHeight: '52px', maxHeight: '52px', flexShrink: '0', boxSizing: 'border-box' }}>
+              <div>
+                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>📍 {currentConfig.flag} {currentConfig.names[userLangCode] || currentConfig.names.en}</div>
+                <div style={{ fontSize: '9px', color: '#64748b' }}>{filteredSpots.length} spots</div>
+              </div>
+
+              <label
+                style={{
+                  flex: 1,
+                  maxWidth: '220px',
+                  padding: '8px 16px',
+                  background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                  color: '#fff',
+                  borderRadius: '30px',
+                  fontWeight: '900',
+                  fontSize: '12px',
+                  boxShadow: '0 4px 16px rgba(2,132,199,0.3)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  textAlign: 'center',
+                  boxSizing: 'border-box',
+                }}
+              >
+                <span>📷＋</span>
+                <span>{t('addPhoto')}</span>
+                <input type="file" accept="image/*,video/*" multiple onChange={handlePhotoSelect} style={{ display: 'none' }} />
+              </label>
+            </div>
+          </div>
+
+          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆タグ検索 */}
+          {currentTab === 'timeline' && (
+            <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%' }}>
+              <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  placeholder="🔍 タグやワードで検索 (例: #絶景, 東京)"
+                  value={timelineSearchKeyword}
+                  onChange={(e) => setTimelineSearchKeyword(e.target.value)}
+                  style={{ flex: 1, padding: '8px 12px', borderRadius: '20px', border: '1px solid #334155', background: '#1e293b', color: '#fff', fontSize: '12px', outline: 'none' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+                {timelineSpots.map((spot) => (
+                  <div
+                    key={spot.id}
+                    style={{ width: '100%', height: 'calc(100dvh - 48px - 64px - 50px)', scrollSnapAlign: 'start', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden' }}
+                  >
+                    <div
+                      onClick={() => handleOpenSpot(spot)}
+                      style={{ flex: 1, width: '100%', height: '100%', position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)' }}></div>
+                    </div>
+
+                    <div style={{ position: 'absolute', bottom: '20px', left: '16px', right: '16px', color: '#fff', pointerEvents: 'none' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                          {spot.userName.charAt(0)}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{spot.userName}</div>
+                          <div style={{ fontSize: '11px', color: '#94a3b8' }}>📍 {spot.cityName}</div>
+                        </div>
+                      </div>
+                      <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
+                      <p style={{ margin: 0, fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
+                    </div>
+
+                    <div style={{ position: 'absolute', right: '16px', bottom: '100px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }}>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleToggleLike(spot.id); }}
+                        style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
+                      >
+                        <span>{likedSpotIds.includes(spot.id) ? '❤️' : '🤍'}</span>
+                        <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{spot.savedCount}</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {timelineSpots.length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '60px', color: '#94a3b8', fontSize: '13px' }}>
+                    該当する投稿が見つかりませんでした 📭
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ランキングタブ */}
+          {currentTab === 'ranking' && (
+            <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff' }}>
+              <h2 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '12px' }}>🏆 {t('ranking')}</h2>
+              {rankingSpots.map((s, i) => (
+                <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ padding: '12px', borderBottom: '1px solid #e2e8f0', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}>
+                  <span style={{ fontSize: '16px', fontWeight: 'bold', width: '24px' }}>#{i + 1}</span>
+                  <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
+                    <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{s.title}</div>
+                    <div style={{ fontSize: '11px', color: '#64748b' }}>📍 {s.cityName} | 👀 {s.viewsCount} | ❤️ {s.savedCount}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* マイページタブ */}
+          {currentTab === 'profile' && (
+            <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff' }}>
+              <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '20px', border: '1px solid #e2e8f0', textAlign: 'center', boxSizing: 'border-box', marginBottom: '12px' }}>
+                <div
+                  onClick={() => profileAvatarInputRef.current?.click()}
+                  style={{ width: '70px', height: '70px', borderRadius: '50%', background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent, color: '#fff', fontSize: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px auto', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
+                >
+                  {!userAvatar && <span>👤</span>}
+                </div>
+                <h2 style={{ margin: '0 0 4px 0', fontSize: '18px' }}>{userName}</h2>
+                <span style={{ fontSize: '11px', background: userRank.color, color: '#fff', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold', display: 'inline-block', marginBottom: '8px' }}>{userRank.title}</span>
+                <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: '#64748b' }}>{userBio}</p>
+                
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', textAlign: 'center', marginBottom: '16px' }}>
+                  <div style={{ background: '#fff', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{mySpots.length}</div>
+                    <div style={{ fontSize: '10px', color: '#64748b' }}>{t('posts')}</div>
+                  </div>
+                  <div style={{ background: '#fff', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{visitedCountryCount}</div>
+                    <div style={{ fontSize: '10px', color: '#64748b' }}>{t('visited')}</div>
+                  </div>
+                  <div style={{ background: '#fff', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#0284c7' }}>{totalMyViewsCount}</div>
+                    <div style={{ fontSize: '10px', color: '#64748b' }}>Views</div>
+                  </div>
+                  <div style={{ background: '#fff', padding: '8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#f43f5e' }}>{totalMySavedCount}</div>
+                    <div style={{ fontSize: '10px', color: '#64748b' }}>Saves</div>
+                  </div>
+                </div>
+
+                {/* QRコード操作ボタン */}
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  <button
+                    onClick={() => setIsMyQrOpen(true)}
+                    style={{ flex: 1, padding: '10px 12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+                  >
+                    <span>📱</span>
+                    <span>{t('myQrCode')}</span>
+                  </button>
+                  <button
+                    onClick={() => setIsScanQrOpen(true)}
+                    style={{ flex: 1, padding: '10px 12px', background: '#10b981', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+                  >
+                    <span>📷</span>
+                    <span>{t('scanQrCode')}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* マイページのサブタブ（投稿・ログ・保存・バッジ・フレンド） */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '4px', marginBottom: '12px' }}>
+                {(['posts', 'timeline', 'saved', 'badges', 'friends'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setProfileSubTab(tab)}
+                    style={{
+                      padding: '8px 2px',
+                      borderRadius: '10px',
+                      border: '1px solid #e2e8f0',
+                      background: profileSubTab === tab ? themeAccent : '#f8fafc',
+                      color: profileSubTab === tab ? '#fff' : '#64748b',
+                      fontWeight: 'bold',
+                      fontSize: '10px',
+                      cursor: 'pointer',
+                      textAlign: 'center',
+                    }}
+                  >
+                    {tab === 'posts' ? t('tabPosts') : tab === 'timeline' ? t('tabTimeline') : tab === 'saved' ? t('tabSaved') : tab === 'badges' ? t('tabBadges') : t('tabFriends')}
+                  </button>
+                ))}
+              </div>
+
+              {profileSubTab === 'posts' && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
+                  {mySpots.map((s) => (
+                    <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
+                      <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                    </div>
+                  ))}
+                  {mySpots.length === 0 && (
+                    <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '30px', color: '#64748b', fontSize: '12px' }}>
+                      投稿したスポットがありません 📸
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {profileSubTab === 'timeline' && (
+                <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', textAlign: 'center', color: '#64748b', fontSize: '12px', border: '1px solid #e2e8f0' }}>
+                  📅 旅のログタイムライン
+                </div>
+              )}
+
+              {profileSubTab === 'saved' && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
+                  {savedSpots.map((s) => (
+                    <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
+                      <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                    </div>
+                  ))}
+                  {savedSpots.length === 0 && (
+                    <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '30px', color: '#64748b', fontSize: '12px' }}>
+                      保存したスポットがありません 💛
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {profileSubTab === 'badges' && (
+                <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', textAlign: 'center', color: '#64748b', fontSize: '12px', border: '1px solid #e2e8f0' }}>
+                  🏅 獲得称号: {userRank.title}
+                </div>
+              )}
+
+              {profileSubTab === 'friends' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 'bold' }}>👥 フレンド ({friendsList.length})</span>
+                    <button onClick={() => setIsScanQrOpen(true)} style={{ background: '#0284c7', color: '#fff', border: 'none', borderRadius: '8px', padding: '4px 10px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}>
+                      + 追加する
+                    </button>
+                  </div>
+                  {friendsList.map((f) => (
+                    <div
+                      key={f.id}
+                      onClick={() => setSelectedFriend(f)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f8fafc', padding: '10px 12px', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer' }}
+                    >
+                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px', flexShrink: 0 }}>
+                        {f.name.charAt(0)}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '13px', fontWeight: 'bold' }}>{f.name}</div>
+                        <div style={{ fontSize: '11px', color: '#64748b' }}>{f.bio}</div>
+                      </div>
+                      <span style={{ fontSize: '12px', color: '#94a3b8' }}>›</span>
+                    </div>
+                  ))}
+                  {friendsList.length === 0 && (
+                    <div style={{ textAlign: 'center', padding: '30px', color: '#64748b', fontSize: '12px' }}>
+                      まだフレンドがいません。QRコードから追加しよう！ 📱
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* ボトムナビ（上にしっかり引き上げて片手で押しやすく配置） */}
+        <nav style={{ height: 'calc(64px + env(safe-area-inset-bottom, 0px))', minHeight: 'calc(64px + env(safe-area-inset-bottom, 0px))', maxHeight: 'calc(64px + env(safe-area-inset-bottom, 0px))', paddingBottom: 'calc(8px + env(safe-area-inset-bottom, 0px))', paddingTop: '6px', background: navBarBg, borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexShrink: 0, zIndex: 1000, touchAction: 'none', margin: 0, boxSizing: 'border-box' }}>
+          <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#94a3b8', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+            <span style={{ fontSize: '16px' }}>🗺️</span><span>{t('map')}</span>
+          </button>
+          <button onClick={() => setCurrentTab('timeline')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'timeline' ? 'bold' : 'normal', color: currentTab === 'timeline' ? themeAccent : '#94a3b8', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+            <span style={{ fontSize: '16px' }}>📅</span><span>{t('feed')}</span>
+          </button>
+          <button onClick={() => setCurrentTab('ranking')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal', color: currentTab === 'ranking' ? themeAccent : '#94a3b8', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+            <span style={{ fontSize: '16px' }}>🏆</span><span>{t('ranking')}</span>
+          </button>
+          <button onClick={() => setCurrentTab('profile')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal', color: currentTab === 'profile' ? themeAccent : '#94a3b8', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+            <span style={{ fontSize: '16px' }}>👤</span><span>{t('profile')}</span>
+          </button>
+        </nav>
+
+        {/* 設定メニューモーダル */}
+        {isSettingsOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>{t('settings')}</h3>
+                <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
+              </div>
+
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t('langSetting')}</label>
+                <select
+                  value={userLangCode}
+                  onChange={(e) => setUserLangCode(e.target.value)}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '13px', fontWeight: 'bold' }}
+                >
+                  {Object.entries(LANGUAGES).map(([code, lang]) => (
+                    <option key={code} value={code}>
+                      {lang.flag} {lang.nativeName} ({lang.name})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>{t('baseCountrySetting')}</label>
+                
+                <input
+                  type="text"
+                  placeholder={t('countrySearchPlaceholder')}
+                  value={countrySearchQuery}
+                  onChange={(e) => setCountrySearchQuery(e.target.value)}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px', marginBottom: '6px', boxSizing: 'border-box' }}
+                />
+
+                <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '6px' }}>
+                  {Object.entries(filteredCountries).map(([region, countries]) => (
+                    <div key={region}>
+                      <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#0284c7', margin: '4px 0' }}>{region}</div>
+                      {countries.map(([code, c]) => {
+                        const isSelected = userCountry === code;
+                        return (
+                          <div
+                            key={code}
+                            onClick={() => setUserCountry(code)}
+                            style={{
+                              padding: '6px 8px',
+                              borderRadius: '6px',
+                              background: isSelected ? '#f0f9ff' : '#ffffff',
+                              border: `1px solid ${isSelected ? '#0284c7' : '#f1f5f9'}`,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              cursor: 'pointer',
+                              fontSize: '12px'
+                            }}
+                          >
+                            <span style={{ fontWeight: isSelected ? 'bold' : 'normal', color: isSelected ? '#0284c7' : '#0f172a' }}>
+                              {c.flag} {c.names[userLangCode] || c.names.en}
+                            </span>
+                            {isSelected && <span style={{ color: '#0284c7', fontSize: '11px' }}>✓</span>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
+                <button
+                  onClick={() => setIsGuideModalOpen(true)}
+                  style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  📖 {t('guideTitle')}
+                </button>
+                <button
+                  onClick={() => setIsEulaModalOpen(true)}
+                  style={{ padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  📜 {t('eulaTitle')}
+                </button>
+                <a
+                  href="mailto:wap.support.official@gmail.com?subject=【wap】お問い合わせ"
+                  style={{
+                    padding: '10px',
+                    background: '#e0f2fe',
+                    color: '#0284c7',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    textDecoration: 'none',
+                    textAlign: 'center',
+                    display: 'block'
+                  }}
+                >
+                  {t('supportContactBtn')}
+                </a>
+                <button
+                  onClick={() => {
+                    if (window.confirm('⚠️ 本当にアカウントおよびすべてのデータを削除しますか？')) {
+                      localStorage.clear();
+                      setSpots([]);
+                      setIsOnboarding(true);
+                      setIsSettingsOpen(false);
+                      showToast('🗑️ アカウントを削除しました');
+                    }
+                  }}
+                  style={{ padding: '10px', background: '#fef2f2', color: '#ef4444', border: 'none', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'center' }}
+                >
+                  {t('deleteAccountBtn')}
+                </button>
+              </div>
+
+              <button
+                onClick={() => {
+                  setIsSettingsOpen(false);
+                  showToast('⚙️ 設定を保存しました！');
+                }}
+                style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
+              >
+                {t('close')}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 利用規約モーダル */}
+        {isEulaModalOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+              <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('eulaTitle')}</h3>
+              <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
+                {t('eulaFullText')}
+              </div>
+              <button onClick={() => setIsEulaModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                {t('close')}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* 使い方ガイドモーダル */}
+        {isGuideModalOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+              <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('guideTitle')}</h3>
+              <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
+                {t('guideFullText')}
+              </div>
+              <button onClick={() => setIsGuideModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                {t('close')}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── 詳細モーダル ── */}
+        {selectedSpot && (
+          <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box' }}>
+            <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
+              <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
+                ← 戻る
+              </button>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => handleReportSpot(selectedSpot.id)}
+                  style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fee2e2', borderRadius: '8px', padding: '4px 8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  {t('reportSpot')}
+                </button>
+                {selectedSpot.userId !== 'me' && selectedSpot.userId !== 'user-official' && (
+                  <button
+                    onClick={() => handleBlockUser(selectedSpot.userId)}
+                    style={{ background: '#f1f5f9', color: '#64748b', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '4px 8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                  >
+                    {t('blockUser')}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+              <div
+                onClick={() => {
+                  if (selectedSpot.mediaList && selectedSpot.mediaList.length > 1) {
+                    setActiveMediaIndex((prev) => (prev + 1) % selectedSpot.mediaList!.length);
+                  }
+                }}
+                style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', cursor: selectedSpot.mediaList && selectedSpot.mediaList.length > 1 ? 'pointer' : 'default' }}
+              >
+                {(() => {
+                  const currentMedia = selectedSpot.mediaList && selectedSpot.mediaList[activeMediaIndex]
+                    ? selectedSpot.mediaList[activeMediaIndex]
+                    : { fileUrl: selectedSpot.fileUrl, fileType: selectedSpot.fileType };
+                  
+                  return currentMedia.fileType === 'video' ? (
+                    <video src={currentMedia.fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  ) : (
+                    <img src={currentMedia.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  );
+                })()}
+
+                {selectedSpot.mediaList && selectedSpot.mediaList.length > 1 && (
+                  <div style={{ position: 'absolute', bottom: '10px', background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 'bold' }}>
+                    📷 {activeMediaIndex + 1} / {selectedSpot.mediaList.length} (タップして次へ)
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', boxSizing: 'border-box' }}>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${selectedSpot.lat},${selectedSpot.lon}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    flex: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    padding: '12px',
+                    background: '#10b981',
+                    color: '#fff',
+                    borderRadius: '12px',
+                    fontWeight: 'bold',
+                    fontSize: '13px',
+                    textDecoration: 'none',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  <span>🧭</span>
+                  <span>{t('openGoogleMaps')}</span>
+                </a>
+
+                <button
+                  onClick={() => handleToggleLike(selectedSpot.id)}
+                  style={{
+                    flex: 1,
+                    padding: '12px',
+                    background: likedSpotIds.includes(selectedSpot.id) ? '#f43f5e' : '#f1f5f9',
+                    color: likedSpotIds.includes(selectedSpot.id) ? '#fff' : '#0f172a',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontWeight: 'bold',
+                    fontSize: '13px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  <span style={{ color: '#f43f5e' }}>❤️</span>
+                  <span>{selectedSpot.savedCount}</span>
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
+                <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
+                <button
+                  onClick={() => handleTranslateDescription(selectedSpot.id, selectedSpot.description)}
+                  style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '16px', padding: '6px 14px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  {t('translate')}
+                </button>
+              </div>
+
+              <p style={{ fontSize: '13px', color: '#334155', lineHeight: '1.6', whiteSpace: 'pre-wrap', marginBottom: '16px' }}>
+                {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
+              </p>
+
+              {/* コメントセクション */}
+              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginBottom: '20px' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '10px' }}>💬 コメント ({selectedSpot.comments?.length || 0})</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+                  {selectedSpot.comments?.map((c) => (
+                    <div key={c.id} style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '2px' }}>{c.userName}</div>
+                      <div style={{ fontSize: '12px', color: '#334155' }}>{c.text}</div>
+                    </div>
+                  ))}
+                  {(!selectedSpot.comments || selectedSpot.comments.length === 0) && (
+                    <div style={{ fontSize: '11px', color: '#64748b' }}>まだコメントはありません</div>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="text"
+                    placeholder={t('commentPlaceholder')}
+                    value={newCommentText}
+                    onChange={(e) => setNewCommentText(e.target.value)}
+                    style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+                  />
+                  <button
+                    onClick={() => handleAddComment(selectedSpot.id)}
+                    style={{ padding: '8px 16px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+                  >
+                    {t('commentSend')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── 投稿作成モーダル ── */}
+        {pendingUploads.length > 0 && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 'bold' }}>
+                📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
+              </h3>
+
+              <div style={{ width: '100%', height: '150px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '12px' }}>
+                {pendingUploads[currentUploadIndex].fileType === 'image' ? (
+                  <img src={pendingUploads[currentUploadIndex].fileUrl} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <video src={pendingUploads[currentUploadIndex].fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                )}
+              </div>
+
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                🏷️ スポットのカテゴリを選択
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '12px' }}>
+                {(['view', 'gourmet', 'rain'] as const).map((cat) => {
+                  const isSelected = postCategory === cat;
+                  return (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setPostCategory(cat)}
+                      style={{
+                        padding: '8px 4px',
+                        borderRadius: '10px',
+                        border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
+                        background: isSelected ? '#f0f9ff' : '#ffffff',
+                        color: isSelected ? themeAccent : '#64748b',
+                        fontWeight: 'bold',
+                        fontSize: '11px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {cat === 'view' ? `🏔️ ${t('view')}` : cat === 'gourmet' ? `🍔 ${t('gourmet')}` : `🌧️ ${t('rain')}`}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                🌐 反映させるマップモードを選択
+              </label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
+                {(['world', 'friends', 'my'] as const).map((scope) => {
+                  const isSelected = selectedScopes.includes(scope);
+                  return (
+                    <div
+                      key={scope}
+                      onClick={() => toggleScopeSelection(scope)}
+                      style={{
+                        padding: '10px 12px',
+                        borderRadius: '10px',
+                        border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
+                        background: isSelected ? '#f0f9ff' : '#ffffff',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        color: isSelected ? themeAccent : '#0f172a',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}
+                    >
+                      <span>{scope === 'world' ? `🌎 ${t('world')}` : scope === 'friends' ? `👥 ${t('friends')}` : `📍 ${t('myMap')}`}</span>
+                      <span>{isSelected ? '☑️' : '☐'}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
+              <input
+                type="text"
+                value={postTitle}
+                onChange={(e) => setPostTitle(e.target.value)}
+                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+              />
+
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグ)</label>
+              <textarea
+                rows={2}
+                value={postDesc}
+                onChange={(e) => setPostDesc(e.target.value)}
+                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+              />
+
+              <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
+                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
+                  📍 撮影場所を検索して選択してください（必須）
+                </div>
+                <input
+                  type="text"
+                  placeholder="地名・住所・場所名を入力"
+                  value={addressSearchQuery}
+                  onChange={(e) => setAddressSearchQuery(e.target.value)}
+                  style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff', marginBottom: '4px' }}
+                />
+
+                {addressSuggestions.length > 0 && (
+                  <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
+                    {addressSuggestions.map((item) => (
+                      <div
+                        key={item.place_id}
+                        onClick={() => handleSelectAddressSuggestion(item)}
+                        style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                      >
+                        <span>📍</span>
+                        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
+                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => setPendingUploads([])}
+                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+                >
+                  キャンセル
+                </button>
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={handleConfirmPost}
+                  style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                >
+                  {isSubmitting ? '保存中...' : 'マップに反映する 🚀'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </>
+  );
+}
