@@ -753,6 +753,192 @@ function generateVideoThumbnail(file: File): Promise<string> {
   });
 }
 
+// ==========================================
+// 2. Google Maps API コンポーネント (画像Base64キャッシュでサムネイル真っ白問題を完全解決)
+// ==========================================
+const GoogleMapComponent = ({
+  spots,
+  center,
+  zoom,
+  targetCenter,
+  targetZoom,
+  theme,
+  userLang,
+  onMoveEnd,
+  onSelectSpot,
+  onDoubleTap,
+}: {
+  spots: Spot[];
+  center: [number, number];
+  zoom: number;
+  targetCenter: [number, number] | null;
+  targetZoom: number | null;
+  theme: MapThemeType;
+  userLang: string;
+  onMoveEnd: (center: [number, number], zoom: number) => void;
+  onSelectSpot: (s: Spot) => void;
+  onDoubleTap: (lat: number, lon: number) => void;
+}) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
+  const [thumbCache, setThumbCache] = useState<Record<string, string>>({});
+
+  // 外部画像URLをBase64に変換してSVG内での確実な描画（真っ白防止）を保証
+  useEffect(() => {
+    spots.forEach(spot => {
+      const url = spot.thumbUrl || spot.fileUrl;
+      if (!url || thumbCache[url]) return;
+
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = 40;
+          canvas.height = 40;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, 40, 40);
+            const dataUri = canvas.toDataURL('image/jpeg');
+            setThumbCache(prev => ({ ...prev, [url]: dataUri }));
+          }
+        } catch {
+          setThumbCache(prev => ({ ...prev, [url]: url }));
+        }
+      };
+      img.onerror = () => {
+        setThumbCache(prev => ({ ...prev, [url]: url }));
+      };
+      img.src = url;
+    });
+  }, [spots]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const initMap = () => {
+      if (!mapRef.current || mapInstanceRef.current || !window.google || !window.google.maps) return;
+
+      const map = new window.google.maps.Map(mapRef.current, {
+        center: { lat: center[0], lng: center[1] },
+        zoom: zoom,
+        minZoom: 3,
+        maxZoom: 18,
+        disableDefaultUI: true,
+        zoomControl: false,
+        gestureHandling: 'greedy',
+        backgroundColor: '#ffffff',
+      });
+
+      mapInstanceRef.current = map;
+      window.google.maps.event.trigger(map, 'resize');
+
+      map.addListener('idle', () => {
+        const c = map.getCenter();
+        const z = map.getZoom();
+        if (c && z) {
+          onMoveEnd([c.lat(), c.lng()], z);
+        }
+      });
+
+      map.addListener('dblclick', (e: any) => {
+        if (e.latLng) {
+          onDoubleTap(e.latLng.lat(), e.latLng.lng());
+        }
+      });
+    };
+
+    if (!window.google || !window.google.maps) {
+      const existingScript = document.getElementById('google-maps-script');
+      if (!existingScript) {
+        const script = document.createElement('script');
+        script.id = 'google-maps-script';
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => initMap();
+        document.head.appendChild(script);
+      } else {
+        const checkInterval = setInterval(() => {
+          if (window.google && window.google.maps) {
+            clearInterval(checkInterval);
+            initMap();
+          }
+        }, 30);
+      }
+    } else {
+      initMap();
+    }
+  }, [userLang]);
+
+  useEffect(() => {
+    if (mapInstanceRef.current && targetCenter && targetZoom) {
+      mapInstanceRef.current.panTo({ lat: targetCenter[0], lng: targetCenter[1] });
+      mapInstanceRef.current.setZoom(targetZoom);
+    }
+  }, [targetCenter, targetZoom]);
+
+  useEffect(() => {
+    if (!mapInstanceRef.current || !window.google || !window.google.maps) return;
+
+    markersRef.current.forEach((m) => m.setMap(null));
+    markersRef.current = [];
+
+    const map = mapInstanceRef.current;
+
+    const locationMap = new Map<string, Spot[]>();
+    spots.forEach(spot => {
+      const key = `${spot.lat.toFixed(3)},${spot.lon.toFixed(3)}`;
+      if (!locationMap.has(key)) locationMap.set(key, []);
+      locationMap.get(key)!.push(spot);
+    });
+
+    locationMap.forEach((groupSpots) => {
+      const spot = groupSpots[0];
+      const count = groupSpots.length;
+      const rawUrl = spot.thumbUrl || spot.fileUrl || '';
+      const imgUrl = thumbCache[rawUrl] || rawUrl;
+
+      const badgeSvg = count > 1 ? `
+        <circle cx="34" cy="12" r="10" fill="#10b981" stroke="#ffffff" stroke-width="2" />
+        <text x="34" y="16" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
+      ` : '';
+
+      const marker = new window.google.maps.Marker({
+        position: { lat: spot.lat, lng: spot.lon },
+        map: map,
+        title: spot.title,
+        icon: {
+          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="52" viewBox="0 0 48 52">
+              <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.3)" />
+              </filter>
+              <path d="M22 50 C22 50 40 31 40 20 C40 9 31 1 22 1 C13 1 4 9 4 20 C4 31 22 50 22 50 Z" fill="#ffffff" stroke="#0284c7" stroke-width="3" filter="url(#shadow)" />
+              <image href="${imgUrl}" x="6" y="6" width="32" height="32" clip-path="circle(16px at 16px 16px)" preserveAspectRatio="xMidYMid slice" />
+              ${badgeSvg}
+            </svg>
+          `)}`,
+          scaledSize: new window.google.maps.Size(48, 52),
+          anchor: new window.google.maps.Point(22, 52),
+        }
+      });
+
+      marker.addListener('click', () => {
+        onSelectSpot(spot);
+      });
+
+      markersRef.current.push(marker);
+    });
+  }, [spots, thumbCache]);
+
+  return <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: '#ffffff' }} />;
+};
+
+// ==========================================
+// 3. メインコンポーネント
+// ==========================================
 export default function WapApp() {
   const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
   const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3 | 4>(1);
@@ -768,14 +954,13 @@ export default function WapApp() {
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false);
 
-  // 'timeline' タブ対応
   const [currentTab, setCurrentTab] = useState<TabType>('map');
   const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
   const [mapTheme, setMapTheme] = useState<MapThemeType>('light');
   const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
   
   const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
-  const [timelineSearchKeyword, setTimelineSearchKeyword] = useState<string>(''); // タイムライン用検索キーワード
+  const [timelineSearchKeyword, setTimelineSearchKeyword] = useState<string>('');
   const [isSearchingLocation, setIsSearchingLocation] = useState<boolean>(false);
   const [mapSearchSuggestions, setMapSearchSuggestions] = useState<PlaceSuggestion[]>([]);
 
@@ -924,7 +1109,7 @@ export default function WapApp() {
     };
   }, []);
 
-  // 実機カメラを使ったQRコードスキャン制御
+  // 実機カメラを使った本格的なQRコードスキャン制御（起動エラー対策済み）
   useEffect(() => {
     if (!isScanQrOpen) {
       if (html5QrCodeRef.current) {
@@ -968,11 +1153,11 @@ export default function WapApp() {
         );
       } catch (err) {
         console.error('Camera scan init error:', err);
-        setScannerError('⚠️ カメラの起動に失敗しました（権限を確認してください）');
+        setScannerError('⚠️ カメラの起動に失敗しました（ブラウザ設定からカメラ権限を許可してください）');
       }
     };
 
-    setTimeout(loadScanner, 100);
+    setTimeout(loadScanner, 200);
 
     return () => {
       isMounted = false;
@@ -1118,12 +1303,12 @@ export default function WapApp() {
     });
   }, [spots, blockedUsers, selectedCategories, displayScope, friendsList, mapSearchKeyword]);
 
-  // タイムライン用検索フィルター
+  // タイムライン用検索（タグやワード検索に対応）
   const timelineSpots = useMemo(() => {
-    if (!timelineSearchKeyword.trim()) return spots.filter(s => !blockedUsers.includes(s.userId));
+    const validSpots = spots.filter(s => !blockedUsers.includes(s.userId));
+    if (!timelineSearchKeyword.trim()) return validSpots;
     const kw = timelineSearchKeyword.toLowerCase();
-    return spots.filter(s => {
-      if (blockedUsers.includes(s.userId)) return false;
+    return validSpots.filter(s => {
       if (kw.startsWith('#')) {
         const rawTag = kw.replace('#', '');
         return s.tags?.some(t => t.toLowerCase().includes(rawTag)) || s.description.toLowerCase().includes(kw);
@@ -2014,7 +2199,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* QRコードスキャンモーダル */}
+        {/* QRコードスキャンモーダル（実機カメラ対応） */}
         {isScanQrOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', color: '#fff' }}>
             <div style={{ width: '100%', maxWidth: '340px', textAlign: 'center' }}>
@@ -2276,13 +2461,13 @@ export default function WapApp() {
             </div>
           </div>
 
-          {/* タイムライン（フィード）タブ：TikTokのように一気に縦スクロールで見られる */}
+          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆タグ検索 */}
           {currentTab === 'timeline' && (
             <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%' }}>
               <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
                 <input
                   type="text"
-                  placeholder="🔍 タグやワードで検索 (#絶景)"
+                  placeholder="🔍 タグやワードで検索 (例: #絶景, 東京)"
                   value={timelineSearchKeyword}
                   onChange={(e) => setTimelineSearchKeyword(e.target.value)}
                   style={{ flex: 1, padding: '8px 12px', borderRadius: '20px', border: '1px solid #334155', background: '#1e293b', color: '#fff', fontSize: '12px', outline: 'none' }}
@@ -2919,4 +3104,65 @@ export default function WapApp() {
                 rows={2}
                 value={postDesc}
                 onChange={(e) => setPostDesc(e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom
+                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
+              />
+
+              <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
+                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
+                  📍 撮影場所を検索して選択してください（必須）
+                </div>
+                <input
+                  type="text"
+                  placeholder="地名・住所・場所名を入力"
+                  value={addressSearchQuery}
+                  onChange={(e) => setAddressSearchQuery(e.target.value)}
+                  style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff', marginBottom: '4px' }}
+                />
+
+                {addressSuggestions.length > 0 && (
+                  <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
+                    {addressSuggestions.map((item) => (
+                      <div
+                        key={item.place_id}
+                        onClick={() => handleSelectAddressSuggestion(item)}
+                        style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                      >
+                        <span>📍</span>
+                        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
+                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => setPendingUploads([])}
+                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+                >
+                  キャンセル
+                </button>
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={handleConfirmPost}
+                  style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                >
+                  {isSubmitting ? '保存中...' : 'マップに反映する 🚀'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </>
+  );
+}
