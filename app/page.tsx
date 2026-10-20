@@ -468,7 +468,6 @@ Support Contact: wap.support.official@gmail.com`,
 // 全世界「全196カ国」完全網羅マスターデータ（地域別に整理）
 // ==========================================
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
-  // 🌏 アジア
   JP: { names: { ja: '日本', en: 'Japan', ko: '일본', zh: '日本' }, flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   CN: { names: { ja: '中国', en: 'China', ko: '중국', zh: '中国' }, flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
   KR: { names: { ja: '韓国', en: 'South Korea', ko: '한국', zh: '한국' }, flag: '🇰🇷', region: '🌏 アジア', lat: 35.9078, lon: 127.7669, zoom: 7 },
@@ -477,8 +476,6 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MN: { names: { ja: 'モンゴル', en: 'Mongolia', ko: '몽골', zh: '蒙古' }, flag: '🇲🇳', region: '🌏 アジア', lat: 46.8625, lon: 103.8467, zoom: 5 },
   HK: { names: { ja: '香港', en: 'Hong Kong', ko: '홍콩', zh: '香港' }, flag: '🇭🇰', region: '🌏 アジア', lat: 22.3193, lon: 114.1694, zoom: 11 },
   MO: { names: { ja: 'マカオ', en: 'Macau', ko: '마카오', zh: '澳门' }, flag: '🇲🇴', region: '🌏 アジア', lat: 22.1987, lon: 113.5439, zoom: 12 },
-
-  // 🌴 東南アジア
   TH: { names: { ja: 'タイ', en: 'Thailand', ko: '태국', zh: '泰国' }, flag: '🇹🇭', region: '🌴 東南アジア', lat: 15.8700, lon: 100.9925, zoom: 6 },
   VN: { names: { ja: 'ベトナム', en: 'Vietnam', ko: '베트남', zh: '越南' }, flag: '🇻🇳', region: '🌴 東南アジア', lat: 14.0583, lon: 108.2772, zoom: 6 },
   SG: { names: { ja: 'シンガポール', en: 'Singapore', ko: '싱가포르', zh: '新加坡' }, flag: '🇸🇬', region: '🌴 東南アジア', lat: 1.3521, lon: 103.8198, zoom: 11 },
@@ -490,8 +487,6 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MM: { names: { ja: 'ミャンマー', en: 'Myanmar', ko: '미얀마', zh: '缅甸' }, flag: '🇲🇲', region: '🌴 東南アジア', lat: 21.9162, lon: 95.9560, zoom: 5 },
   BN: { names: { ja: 'ブルネイ', en: 'Brunei', ko: '브루네이', zh: '文莱' }, flag: '🇧🇳', region: '🌴 東南アジア', lat: 4.5353, lon: 114.7277, zoom: 9 },
   TL: { names: { ja: '東ティモール', en: 'East Timor', ko: '동티모르', zh: '东帝汶' }, flag: '🇹🇱', region: '🌴 東南アジア', lat: -8.8742, lon: 125.7275, zoom: 9 },
-
-  // 🍛 南・中央アジア
   IN: { names: { ja: 'インド', en: 'India', ko: '인도', zh: '印度' }, flag: '🇮🇳', region: '🍛 南・中央アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
   PK: { names: { ja: 'パキスタン', en: 'Pakistan', ko: '파키스탄', zh: '巴基斯坦' }, flag: '🇵🇰', region: '🍛 南・中央アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
   BD: { names: { ja: 'バングラデシュ', en: 'Bangladesh', ko: '방글라데시', zh: '孟加拉国' }, flag: '🇧🇩', region: '🍛 南・中央アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
@@ -505,8 +500,6 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   TM: { names: { ja: 'トルクメニスタン', en: 'Turkmenistan', ko: '투르크메니스탄', zh: '土库曼斯坦' }, flag: '🇹🇲', region: '🍛 南・中央アジア', lat: 38.9697, lon: 59.5563, zoom: 6 },
   KG: { names: { ja: 'キルギス', en: 'Kyrgyzstan', ko: '키르기스스탄', zh: '吉尔吉斯斯坦' }, flag: '🇰🇬', region: '🍛 南・中央アジア', lat: 41.2044, lon: 74.7661, zoom: 7 },
   TJ: { names: { ja: 'タジキスタン', en: 'Tajikistan', ko: '타지키스탄', zh: '塔吉克斯坦' }, flag: '🇹🇯', region: '🍛 南・中央アジア', lat: 38.8610, lon: 71.2761, zoom: 7 },
-
-  // 🕌 中東
   AE: { names: { ja: 'アラブ首長国連邦', en: 'UAE', ko: '아랍에미리트', zh: '阿联酋' }, flag: '🇦🇪', region: '🕌 中東', lat: 23.4241, lon: 53.8478, zoom: 7 },
   SA: { names: { ja: 'サウジアラビア', en: 'Saudi Arabia', ko: '사우디아라비아', zh: '沙特阿拉伯' }, flag: '🇸🇦', region: '🕌 中東', lat: 23.8859, lon: 45.0792, zoom: 5 },
   QA: { names: { ja: 'カタール', en: 'Qatar', ko: '카타르', zh: '卡塔尔' }, flag: '🇶🇦', region: '🕌 中東', lat: 25.3548, lon: 51.1839, zoom: 8 },
@@ -523,8 +516,6 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AM: { names: { ja: 'アルメニア', en: 'Armenia', ko: '아르메니아', zh: '亚美尼亚' }, flag: '🇦🇲', region: '🕌 中東', lat: 40.0691, lon: 45.0382, zoom: 8 },
   AZ: { names: { ja: 'アゼルバイジャン', en: 'Azerbaijan', ko: '아제르바이잔', zh: '阿塞拜疆' }, flag: '🇦🇿', region: '🕌 中東', lat: 40.1431, lon: 47.5769, zoom: 7 },
   GE: { names: { ja: 'ジョージア', en: 'Georgia', ko: '조지아', zh: '格鲁吉亚' }, flag: '🇬🇪', region: '🕌 中東', lat: 42.3154, lon: 43.3569, zoom: 7 },
-
-  // 🇪🇺 ヨーロッパ
   FR: { names: { ja: 'フランス', en: 'France', ko: '프랑스', zh: '法国' }, flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
   ES: { names: { ja: 'スペイン', en: 'Spain', ko: '스페인', zh: '西班牙' }, flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
   IT: { names: { ja: 'イタリア', en: 'Italy', ko: '이탈리아', zh: '意大利' }, flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
@@ -545,9 +536,9 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루마니아', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
   UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: '乌克兰' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
-  RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: '塞尔维亚' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
+  RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯洛文尼亚' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -566,22 +557,16 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MD: { names: { ja: 'モルドバ', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
   RU: { names: { ja: 'ロシア', en: 'Russia', ko: '러시아', zh: '俄罗斯' }, flag: '🇷🇺', region: '🇪🇺 ヨーロッパ', lat: 61.5240, lon: 105.3188, zoom: 3 },
-
-  // 🇪🇺 北欧
   SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
   NO: { names: { ja: 'ノルウェー', en: 'Norway', ko: '노르웨이', zh: '挪威' }, flag: '🇳🇴', region: '🇪🇺 北欧', lat: 60.4720, lon: 8.4689, zoom: 5 },
   DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: '丹麦' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
   FI: { names: { ja: 'フィンランド', en: 'Finland', ko: '핀란드', zh: '芬兰' }, flag: '🇫🇮', region: '🇪🇺 北欧', lat: 61.9241, lon: 25.7482, zoom: 5 },
   IS: { names: { ja: 'アイスランド', en: 'Iceland', ko: '아이슬란드', zh: '冰岛' }, flag: '🇮🇸', region: '🇪🇺 北欧', lat: 64.9631, lon: -19.0208, zoom: 6 },
-
-  // 🗽 北米
   US: { names: { ja: 'アメリカ', en: 'USA', ko: '미국', zh: '美国' }, flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
   CA: { names: { ja: 'カナダ', en: 'Canada', ko: '캐나다', zh: '加拿大' }, flag: '🇨🇦', region: '🗽 北米', lat: 56.1304, lon: -106.3468, zoom: 3 },
   MX: { names: { ja: 'メキシコ', en: 'Mexico', ko: '멕시코', zh: '墨西哥' }, flag: '🇲🇽', region: '🗽 北米', lat: 23.6345, lon: 102.5528, zoom: 5 },
-
-  // 🗽 中南米
   BR: { names: { ja: 'ブラジル', en: 'Brazil', ko: '브라질', zh: '巴西' }, flag: '🇧🇷', region: '🗽 中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
-  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '아르헨티나' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
+  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '阿根廷' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
   CL: { names: { ja: 'チリ', en: 'Chile', ko: '칠레', zh: '智利' }, flag: '🇨🇱', region: '🗽 中南米', lat: -35.6751, lon: -71.5430, zoom: 4 },
   PE: { names: { ja: 'ペルー', en: 'Peru', ko: '페루', zh: '秘鲁' }, flag: '🇵🇪', region: '🗽 中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
   CO: { names: { ja: 'コロンビア', en: 'Colombia', ko: '콜롬비아', zh: '哥伦比亚' }, flag: '🇨🇴', region: '🗽 中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
@@ -594,7 +579,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   EC: { names: { ja: 'エクアドル', en: 'Ecuador', ko: '에콰도르', zh: '厄瓜多尔' }, flag: '🇪🇨', region: '🗽 中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
   VE: { names: { ja: 'ベネズエラ', en: 'Venezuela', ko: '베네수엘라', zh: '委内瑞拉' }, flag: '🇻🇪', region: '🗽 中南米', lat: 6.4238, lon: -66.5897, zoom: 5 },
   BO: { names: { ja: 'ボリビア', en: 'Bolivia', ko: '볼리비아', zh: '玻利维亚' }, flag: '🇧🇴', region: '🗽 中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
-  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '파라과이' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
+  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '巴拉圭' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
   GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '危地马拉' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
   HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: '洪都拉斯' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
   NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: '尼加拉瓜' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
@@ -613,8 +598,6 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
   LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루시아', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
-
-  // 🦘 オセアニア
   AU: { names: { ja: 'オーストラリア', en: 'Australia', ko: '호주', zh: '澳大利亚' }, flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
   NZ: { names: { ja: 'ニュージーランド', en: 'New Zealand', ko: '뉴질랜드', zh: '新西兰' }, flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
   FJ: { names: { ja: 'フィジー', en: 'Fiji', ko: '피지', zh: '斐济' }, flag: '🇫🇯', region: '🦘 オセアニア', lat: -17.7134, lon: 178.0650, zoom: 8 },
@@ -632,8 +615,6 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   NR: { names: { ja: 'ナウル', en: 'Nauru', ko: '나우루', zh: '瑙鲁' }, flag: '🇳🇷', region: '🦘 オセアニア', lat: -0.5228, lon: 166.9315, zoom: 13 },
   PW: { names: { ja: 'パラオ', en: 'Palau', ko: '팔라우', zh: '帕劳' }, flag: '🇵🇼', region: '🦘 オセアニア', lat: 7.5150, lon: 134.5825, zoom: 9 },
   TV: { names: { ja: 'ツバル', en: 'Tuvalu', ko: '투발루', zh: '图瓦卢' }, flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
-
-  // 🦁 アフリカ
   ZA: { names: { ja: '南アフリカ', en: 'South Africa', ko: '남아프리카', zh: '南非' }, flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
   EG: { names: { ja: 'エジプト', en: 'Egypt', ko: '이집트', zh: '埃及' }, flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
   MA: { names: { ja: 'モロッコ', en: 'Morocco', ko: '모로코', zh: '摩洛哥' }, flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
@@ -938,6 +919,9 @@ export default function WapApp() {
   const [isScanQrOpen, setIsScanQrOpen] = useState<boolean>(false);
   const [scannerError, setScannerError] = useState<string>('');
 
+  // フレンド詳細プロフィール表示用ステート
+  const [selectedFriend, setSelectedFriend] = useState<FriendUser | null>(null);
+
   const scannerRef = useRef<HTMLDivElement>(null);
   const html5QrCodeRef = useRef<any>(null);
 
@@ -986,10 +970,8 @@ export default function WapApp() {
   const [isGuideModalOpen, setIsGuideModalOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const [friendsList, setFriendsList] = useState<FriendUser[]>([
-    { id: 'f-1', name: 'Tanta', avatar: '', bio: '世界を巡るトラベラー', postsCount: 12 },
-    { id: 'f-2', name: 'Yuki', avatar: '', bio: '絶景ハンター 📸', postsCount: 24 }
-  ]);
+  // 初期フレンドリストを空（0人）に変更
+  const [friendsList, setFriendsList] = useState<FriendUser[]>([]);
   const [translatedDescriptions, setTranslatedDescriptions] = useState<Record<string, string>>({});
 
   const exportRef = useRef<HTMLDivElement>(null);
@@ -1077,7 +1059,7 @@ export default function WapApp() {
     };
   }, []);
 
-  // 実際のカメラを使ったQRコードスキャン制御
+  // 実際のカメラを使った本格的なQRコードスキャン制御
   useEffect(() => {
     if (!isScanQrOpen) {
       if (html5QrCodeRef.current) {
@@ -1109,7 +1091,10 @@ export default function WapApp() {
             if (decodedText.startsWith('wap-friend://')) {
               friendName = decodedText.replace('wap-friend://', '');
             }
-            setFriendsList(prev => [...prev, { id: 'f-' + Date.now(), name: friendName, avatar: '', bio: 'QRコードで追加したフレンド', postsCount: 1 }]);
+            setFriendsList(prev => {
+              if (prev.some(f => f.name === friendName)) return prev;
+              return [...prev, { id: 'f-' + Date.now(), name: friendName, avatar: '', bio: 'QRコードで追加したフレンド', postsCount: 1 }];
+            });
             setIsScanQrOpen(false);
             showToast(`🎉 ${friendName}さんとフレンドになりました！🤝`);
             html5QrCode.stop().catch(() => {});
@@ -1580,6 +1565,8 @@ export default function WapApp() {
       const updatedMediaList = [...(existingSameSpot.mediaList || [{ fileUrl: existingSameSpot.fileUrl, thumbUrl: existingSameSpot.thumbUrl, fileType: existingSameSpot.fileType, fileName: existingSameSpot.fileName }]), newMediaItem];
       const updatedSpot: Spot = {
         ...existingSameSpot,
+        thumbUrl: finalThumbUrl, // サムネイルも最新の写真に更新
+        fileUrl: uploadedUrl,
         mediaList: updatedMediaList,
         title: postTitle ? `${existingSameSpot.title} & ${postTitle}` : existingSameSpot.title,
         description: postDesc ? `${existingSameSpot.description}\n${postDesc}` : existingSameSpot.description,
@@ -1588,7 +1575,7 @@ export default function WapApp() {
       setSpots((prev) => prev.map((s) => (s.id === existingSameSpot.id ? updatedSpot : s)));
       if (supabase) {
         try {
-          await supabase.from('spots').update({ media_list: updatedMediaList, title: updatedSpot.title, description: updatedSpot.description }).eq('id', existingSameSpot.id);
+          await supabase.from('spots').update({ thumb_url: finalThumbUrl, file_url: uploadedUrl, media_list: updatedMediaList, title: updatedSpot.title, description: updatedSpot.description }).eq('id', existingSameSpot.id);
         } catch {}
       }
       showToast(`📸 同じ場所のピンにメディアを追加してまとめました！`);
@@ -1605,7 +1592,7 @@ export default function WapApp() {
         description: postDesc || '旅の思い出',
         fileName: current.file.name,
         fileUrl: uploadedUrl,
-        thumbUrl: finalThumbUrl,
+        thumbUrl: finalThumbUrl, // 真っ白にならないよう確実に設定
         fileType: current.fileType,
         mediaList: [newMediaItem],
         lat: finalLat,
@@ -1775,20 +1762,6 @@ export default function WapApp() {
     } catch (err) {
       console.error('Export error:', err);
       showToast('❌ 画像生成に失敗しました');
-    }
-  };
-
-  const handleShareSpot = (spot: Spot) => {
-    const shareText = `wapで発見したスポット「${spot.title}」をチェック！ 📍 (${spot.cityName})`;
-    if (navigator.share) {
-      navigator.share({
-        title: spot.title,
-        text: shareText,
-        url: window.location.href,
-      }).catch(() => {});
-    } else {
-      navigator.clipboard?.writeText(window.location.href);
-      showToast('📋 リンクをコピーしました！');
     }
   };
 
@@ -2162,7 +2135,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* QRコードスキャンモーダル */}
+        {/* QRコードスキャンモーダル（リアルタイム実機カメラ対応） */}
         {isScanQrOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', color: '#fff' }}>
             <div style={{ width: '100%', maxWidth: '340px', textAlign: 'center' }}>
@@ -2189,47 +2162,83 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー */}
-        <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
-            <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: navBarText }}>
+        {/* フレンド個別プロフィール詳細モーダル */}
+        {selectedFriend && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 8500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '340px', width: '100%', padding: '24px', textAlign: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#0284c7', color: '#fff', fontSize: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px auto', fontWeight: 'bold' }}>
+                {selectedFriend.name.charAt(0)}
+              </div>
+              <h3 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: '900' }}>{selectedFriend.name}</h3>
+              <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: '#64748b' }}>{selectedFriend.bio}</p>
+              
+              <div style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', marginBottom: '20px', border: '1px solid #e2e8f0', fontSize: '12px', color: '#334155' }}>
+                📍 投稿数: <b>{selectedFriend.postsCount}</b> 箇所のスポット
+              </div>
+
+              <button
+                onClick={() => setSelectedFriend(null)}
+                style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ヘッダー（ランキング・マップ・マイページへの切り替えボタンを上部に配置して押しやすく改善） */}
+        <header style={{ height: '52px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none', boxSizing: 'border-box' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+            <button onClick={() => setIsSettingsOpen(true)} style={{ background: '#f1f5f9', border: 'none', borderRadius: '8px', fontSize: '16px', cursor: 'pointer', padding: '6px 8px', flexShrink: 0, color: navBarText, fontWeight: 'bold' }}>
               ☰
             </button>
             <h1 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7', letterSpacing: '-0.5px', flexShrink: 0 }}>wap</h1>
-            <select
-              value={userCountry}
-              onChange={(e) => {
-                setUserCountry(e.target.value);
-                const conf = COUNTRIES[e.target.value];
-                if (conf) {
-                  setTargetCenter([conf.lat, conf.lon]);
-                  setTargetZoom(conf.zoom);
-                }
-              }}
-              style={{ background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
-            >
-              {Object.entries(COUNTRIES).map(([code, c]) => (
-                <option key={code} value={code}>
-                  {c.flag} {c.names[userLangCode] || c.names.en} ({c.region})
-                </option>
-              ))}
-            </select>
+            
+            {/* 上部タブ切り替えボタン（押しやすいように配置） */}
+            <div style={{ display: 'flex', background: '#f1f5f9', padding: '2px', borderRadius: '20px', gap: '2px' }}>
+              <button
+                onClick={() => setCurrentTab('map')}
+                style={{ padding: '4px 10px', borderRadius: '16px', border: 'none', background: currentTab === 'map' ? '#0284c7' : 'transparent', color: currentTab === 'map' ? '#fff' : '#64748b', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                🗺️ {t('map')}
+              </button>
+              <button
+                onClick={() => setCurrentTab('ranking')}
+                style={{ padding: '4px 10px', borderRadius: '16px', border: 'none', background: currentTab === 'ranking' ? '#0284c7' : 'transparent', color: currentTab === 'ranking' ? '#fff' : '#64748b', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                🏆 {t('ranking')}
+              </button>
+              <button
+                onClick={() => setCurrentTab('profile')}
+                style={{ padding: '4px 10px', borderRadius: '16px', border: 'none', background: currentTab === 'profile' ? '#0284c7' : 'transparent', color: currentTab === 'profile' ? '#fff' : '#64748b', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                👤 {t('profile')}
+              </button>
+            </div>
           </div>
 
-          <button
-            onClick={() => setCurrentTab('profile')}
-            style={{
-              width: '32px', height: '32px', minWidth: '32px', minHeight: '32px', borderRadius: '50%',
-              background: userAvatar ? `url(${userAvatar}) center/cover` : '#0284c7',
-              color: '#fff', border: 'none', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, overflow: 'hidden'
+          <select
+            value={userCountry}
+            onChange={(e) => {
+              setUserCountry(e.target.value);
+              const conf = COUNTRIES[e.target.value];
+              if (conf) {
+                setTargetCenter([conf.lat, conf.lon]);
+                setTargetZoom(conf.zoom);
+              }
             }}
+            style={{ background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '6px', padding: '4px 6px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '110px', textOverflow: 'ellipsis' }}
           >
-            {!userAvatar && '👤'}
-          </button>
+            {Object.entries(COUNTRIES).map(([code, c]) => (
+              <option key={code} value={code}>
+                {c.flag} {c.names[userLangCode] || c.names.en}
+              </option>
+            ))}
+          </select>
         </header>
 
         {/* ── メインビュー ── */}
-        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 58px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
+        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 52px - 58px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
           
           {/* マップタブ */}
           <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none', boxSizing: 'border-box' }}>
@@ -2545,7 +2554,11 @@ export default function WapApp() {
                     </button>
                   </div>
                   {friendsList.map((f) => (
-                    <div key={f.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f8fafc', padding: '10px 12px', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                    <div
+                      key={f.id}
+                      onClick={() => setSelectedFriend(f)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f8fafc', padding: '10px 12px', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer' }}
+                    >
                       <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '14px', flexShrink: 0 }}>
                         {f.name.charAt(0)}
                       </div>
@@ -2553,15 +2566,21 @@ export default function WapApp() {
                         <div style={{ fontSize: '13px', fontWeight: 'bold' }}>{f.name}</div>
                         <div style={{ fontSize: '11px', color: '#64748b' }}>{f.bio}</div>
                       </div>
+                      <span style={{ fontSize: '12px', color: '#94a3b8' }}>›</span>
                     </div>
                   ))}
+                  {friendsList.length === 0 && (
+                    <div style={{ textAlign: 'center', padding: '30px', color: '#64748b', fontSize: '12px' }}>
+                      まだフレンドがいません。QRコードから追加しよう！ 📱
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           )}
         </div>
 
-        {/* ボトムナビ（上に引き上げて片手で押しやすいように改善） */}
+        {/* ボトムナビ */}
         <nav style={{ height: 'calc(58px + env(safe-area-inset-bottom, 0px))', minHeight: 'calc(58px + env(safe-area-inset-bottom, 0px))', maxHeight: 'calc(58px + env(safe-area-inset-bottom, 0px))', paddingBottom: 'calc(6px + env(safe-area-inset-bottom, 0px))', paddingTop: '4px', background: navBarBg, borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexShrink: 0, zIndex: 1000, touchAction: 'none', margin: 0, boxSizing: 'border-box' }}>
           <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#94a3b8', padding: '6px' }}>🗺️ {t('map')}</button>
           <button onClick={() => setCurrentTab('ranking')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal', color: currentTab === 'ranking' ? themeAccent : '#94a3b8', padding: '6px' }}>🏆 {t('ranking')}</button>
@@ -2650,7 +2669,6 @@ export default function WapApp() {
                 >
                   📜 {t('eulaTitle')}
                 </button>
-                {/* 問い合わせボタン */}
                 <a
                   href="mailto:wap.support.official@gmail.com?subject=【wap】お問い合わせ"
                   style={{
@@ -2667,7 +2685,6 @@ export default function WapApp() {
                 >
                   {t('supportContactBtn')}
                 </a>
-                {/* アカウント削除ボタン */}
                 <button
                   onClick={() => {
                     if (window.confirm('⚠️ 本当にアカウントおよびすべてのデータを削除しますか？')) {
@@ -2727,7 +2744,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 詳細モーダル ── */}
+        {/* ── 詳細モーダル（複数枚メディアのカルーセル・タップ切り替え対応） ── */}
         {selectedSpot && (
           <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box' }}>
             <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
@@ -2753,8 +2770,32 @@ export default function WapApp() {
             </div>
 
             <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-              <div style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <img src={selectedSpot.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              {/* メディアカルーセル表示（タップで次の写真・動画に切り替え） */}
+              <div
+                onClick={() => {
+                  if (selectedSpot.mediaList && selectedSpot.mediaList.length > 1) {
+                    setActiveMediaIndex((prev) => (prev + 1) % selectedSpot.mediaList!.length);
+                  }
+                }}
+                style={{ width: '100%', height: '280px', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', cursor: selectedSpot.mediaList && selectedSpot.mediaList.length > 1 ? 'pointer' : 'default' }}
+              >
+                {(() => {
+                  const currentMedia = selectedSpot.mediaList && selectedSpot.mediaList[activeMediaIndex]
+                    ? selectedSpot.mediaList[activeMediaIndex]
+                    : { fileUrl: selectedSpot.fileUrl, fileType: selectedSpot.fileType };
+                  
+                  return currentMedia.fileType === 'video' ? (
+                    <video src={currentMedia.fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  ) : (
+                    <img src={currentMedia.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  );
+                })()}
+
+                {selectedSpot.mediaList && selectedSpot.mediaList.length > 1 && (
+                  <div style={{ position: 'absolute', bottom: '10px', background: 'rgba(0,0,0,0.6)', color: '#fff', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 'bold' }}>
+                    📷 {activeMediaIndex + 1} / {selectedSpot.mediaList.length} (タップして次へ)
+                  </div>
+                )}
               </div>
 
               <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', boxSizing: 'border-box' }}>
