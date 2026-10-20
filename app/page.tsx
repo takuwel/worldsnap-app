@@ -540,9 +540,9 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루마니아', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
   UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: '乌克兰' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
-  RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
+  RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: '塞尔维亚' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯洛ベニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -670,7 +670,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MR: { names: { ja: 'モーリタニア', en: 'Mauritania', ko: '모리타니', zh: '毛里塔尼亚' }, flag: '🇲🇷', region: '🦁 アフリカ', lat: 21.0079, lon: -10.9408, zoom: 5 },
   ST: { names: { ja: 'サントメ・プリンシペ', en: 'Sao Tome and Principe', ko: '상투메 프린시페', zh: '圣多美和普林西比' }, flag: '🇸🇹', region: '🦁 アフリカ', lat: 0.1864, lon: 6.6131, zoom: 9 },
   SL: { names: { ja: 'シエラレオネ', en: 'Sierra Leone', ko: '시에라리온', zh: '塞拉利昂' }, flag: '🇸🇱', region: '🦁 アフリカ', lat: 8.4606, lon: -11.7799, zoom: 7 },
-  SS: { names: { ja: '南スーダン', en: 'South Sudan', ko: '남수단', zh: '南苏ダン' }, flag: '🇸🇸', region: '🦁 アフリカ', lat: 6.8770, lon: 31.3070, zoom: 6 },
+  SS: { names: { ja: '南スーダン', en: 'South Sudan', ko: '남수단', zh: '南苏丹' }, flag: '🇸🇸', region: '🦁 アフリカ', lat: 6.8770, lon: 31.3070, zoom: 6 },
   TG: { names: { ja: 'トーゴ', en: 'Togo', ko: '토고', zh: '多哥' }, flag: '🇹🇬', region: '🦁 アフリカ', lat: 8.6195, lon: 0.8248, zoom: 7 }
 };
 
@@ -753,162 +753,6 @@ function generateVideoThumbnail(file: File): Promise<string> {
   });
 }
 
-// ==========================================
-// 2. Google Maps API コンポーネント (サムネイル＆複数重なり数字バッジ対応)
-// ==========================================
-const GoogleMapComponent = ({
-  spots,
-  center,
-  zoom,
-  targetCenter,
-  targetZoom,
-  theme,
-  userLang,
-  onMoveEnd,
-  onSelectSpot,
-  onDoubleTap,
-}: {
-  spots: Spot[];
-  center: [number, number];
-  zoom: number;
-  targetCenter: [number, number] | null;
-  targetZoom: number | null;
-  theme: MapThemeType;
-  userLang: string;
-  onMoveEnd: (center: [number, number], zoom: number) => void;
-  onSelectSpot: (s: Spot) => void;
-  onDoubleTap: (lat: number, lon: number) => void;
-}) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const initMap = () => {
-      if (!mapRef.current || mapInstanceRef.current || !window.google || !window.google.maps) return;
-
-      const map = new window.google.maps.Map(mapRef.current, {
-        center: { lat: center[0], lng: center[1] },
-        zoom: zoom,
-        minZoom: 3,
-        maxZoom: 18,
-        disableDefaultUI: true,
-        zoomControl: false,
-        gestureHandling: 'greedy',
-        backgroundColor: '#ffffff',
-      });
-
-      mapInstanceRef.current = map;
-      window.google.maps.event.trigger(map, 'resize');
-
-      map.addListener('idle', () => {
-        const c = map.getCenter();
-        const z = map.getZoom();
-        if (c && z) {
-          onMoveEnd([c.lat(), c.lng()], z);
-        }
-      });
-
-      map.addListener('dblclick', (e: any) => {
-        if (e.latLng) {
-          onDoubleTap(e.latLng.lat(), e.latLng.lng());
-        }
-      });
-    };
-
-    if (!window.google || !window.google.maps) {
-      const existingScript = document.getElementById('google-maps-script');
-      if (!existingScript) {
-        const script = document.createElement('script');
-        script.id = 'google-maps-script';
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}`;
-        script.async = true;
-        script.defer = true;
-        script.onload = () => initMap();
-        document.head.appendChild(script);
-      } else {
-        const checkInterval = setInterval(() => {
-          if (window.google && window.google.maps) {
-            clearInterval(checkInterval);
-            initMap();
-          }
-        }, 30);
-      }
-    } else {
-      initMap();
-    }
-  }, [userLang]);
-
-  useEffect(() => {
-    if (mapInstanceRef.current && targetCenter && targetZoom) {
-      mapInstanceRef.current.panTo({ lat: targetCenter[0], lng: targetCenter[1] });
-      mapInstanceRef.current.setZoom(targetZoom);
-    }
-  }, [targetCenter, targetZoom]);
-
-  // 同一座標付近の投稿数をカウントしてピンにバッジを付けるロジック
-  useEffect(() => {
-    if (!mapInstanceRef.current || !window.google || !window.google.maps) return;
-
-    markersRef.current.forEach((m) => m.setMap(null));
-    markersRef.current = [];
-
-    const map = mapInstanceRef.current;
-
-    // 座標ごとにスポットをグループ化
-    const locationMap = new Map<string, Spot[]>();
-    spots.forEach(spot => {
-      const key = `${spot.lat.toFixed(3)},${spot.lon.toFixed(3)}`;
-      if (!locationMap.has(key)) locationMap.set(key, []);
-      locationMap.get(key)!.push(spot);
-    });
-
-    locationMap.forEach((groupSpots, key) => {
-      const spot = groupSpots[0]; // 代表スポット
-      const count = groupSpots.length;
-      const imgUrl = spot.thumbUrl || spot.fileUrl || '';
-
-      const badgeSvg = count > 1 ? `
-        <circle cx="34" cy="12" r="10" fill="#10b981" stroke="#ffffff" stroke-width="2" />
-        <text x="34" y="16" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
-      ` : '';
-
-      const marker = new window.google.maps.Marker({
-        position: { lat: spot.lat, lng: spot.lon },
-        map: map,
-        title: spot.title,
-        icon: {
-          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="52" viewBox="0 0 48 52">
-              <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.3)" />
-              </filter>
-              <path d="M22 50 C22 50 40 31 40 20 C40 9 31 1 22 1 C13 1 4 9 4 20 C4 31 22 50 22 50 Z" fill="#ffffff" stroke="#0284c7" stroke-width="3" filter="url(#shadow)" />
-              <image href="${imgUrl}" x="6" y="6" width="32" height="32" clip-path="circle(16px at 16px 16px)" preserveAspectRatio="xMidYMid slice" />
-              ${badgeSvg}
-            </svg>
-          `)}`,
-          scaledSize: new window.google.maps.Size(48, 52),
-          anchor: new window.google.maps.Point(22, 52),
-        }
-      });
-
-      marker.addListener('click', () => {
-        onSelectSpot(spot);
-      });
-
-      markersRef.current.push(marker);
-    });
-  }, [spots]);
-
-  return <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: '#ffffff' }} />;
-};
-
-// ==========================================
-// 3. メインコンポーネント
-// ==========================================
 export default function WapApp() {
   const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
   const [onboardingStep, setOnboardingStep] = useState<1 | 2 | 3 | 4>(1);
@@ -924,17 +768,17 @@ export default function WapApp() {
   const [eulaChecked, setEulaChecked] = useState<boolean>(false);
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false);
 
-  // 'timeline' タブを新規追加
+  // 'timeline' タブ対応
   const [currentTab, setCurrentTab] = useState<TabType>('map');
   const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
   const [mapTheme, setMapTheme] = useState<MapThemeType>('light');
   const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
   
   const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
+  const [timelineSearchKeyword, setTimelineSearchKeyword] = useState<string>(''); // タイムライン用検索キーワード
   const [isSearchingLocation, setIsSearchingLocation] = useState<boolean>(false);
   const [mapSearchSuggestions, setMapSearchSuggestions] = useState<PlaceSuggestion[]>([]);
 
-  const [isAdVisible, setIsAdVisible] = useState<boolean>(true);
   const [isLocationGuideOpen, setIsLocationGuideOpen] = useState<boolean>(false);
 
   // QRコードモーダル用ステート
@@ -1080,7 +924,7 @@ export default function WapApp() {
     };
   }, []);
 
-  // 実機カメラを使った本格的なQRコードスキャン制御
+  // 実機カメラを使ったQRコードスキャン制御
   useEffect(() => {
     if (!isScanQrOpen) {
       if (html5QrCodeRef.current) {
@@ -1273,6 +1117,20 @@ export default function WapApp() {
       return true;
     });
   }, [spots, blockedUsers, selectedCategories, displayScope, friendsList, mapSearchKeyword]);
+
+  // タイムライン用検索フィルター
+  const timelineSpots = useMemo(() => {
+    if (!timelineSearchKeyword.trim()) return spots.filter(s => !blockedUsers.includes(s.userId));
+    const kw = timelineSearchKeyword.toLowerCase();
+    return spots.filter(s => {
+      if (blockedUsers.includes(s.userId)) return false;
+      if (kw.startsWith('#')) {
+        const rawTag = kw.replace('#', '');
+        return s.tags?.some(t => t.toLowerCase().includes(rawTag)) || s.description.toLowerCase().includes(kw);
+      }
+      return s.title.toLowerCase().includes(kw) || s.description.toLowerCase().includes(kw) || s.cityName.toLowerCase().includes(kw);
+    });
+  }, [spots, blockedUsers, timelineSearchKeyword]);
 
   const rankingSpots = useMemo(() => {
     return [...spots]
@@ -2156,7 +2014,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* QRコードスキャンモーダル（実機カメラ対応） */}
+        {/* QRコードスキャンモーダル */}
         {isScanQrOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', color: '#fff' }}>
             <div style={{ width: '100%', maxWidth: '340px', textAlign: 'center' }}>
@@ -2247,7 +2105,7 @@ export default function WapApp() {
         </header>
 
         {/* ── メインビュー ── */}
-        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 58px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
+        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 64px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
           
           {/* マップタブ */}
           <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none', boxSizing: 'border-box' }}>
@@ -2418,44 +2276,64 @@ export default function WapApp() {
             </div>
           </div>
 
-          {/* タイムライン（フィード）タブ：一気にスクロールして見られる機能 */}
+          {/* タイムライン（フィード）タブ：TikTokのように一気に縦スクロールで見られる */}
           {currentTab === 'timeline' && (
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#f8fafc', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <h2 style={{ fontSize: '16px', fontWeight: 'bold', margin: '0 0 4px 0' }}>📅 タイムラインフィード</h2>
-              {filteredSpots.map((spot) => (
-                <div
-                  key={spot.id}
-                  onClick={() => handleOpenSpot(spot)}
-                  style={{ background: '#ffffff', borderRadius: '16px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', cursor: 'pointer' }}
-                >
-                  <div style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid #f1f5f9' }}>
-                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#0284c7', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '13px' }}>
-                      {spot.userName.charAt(0)}
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '13px', fontWeight: 'bold' }}>{spot.userName}</div>
-                      <div style={{ fontSize: '10px', color: '#64748b' }}>📍 {spot.cityName} ({spot.createdAt})</div>
-                    </div>
-                  </div>
+            <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%' }}>
+              <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  placeholder="🔍 タグやワードで検索 (#絶景)"
+                  value={timelineSearchKeyword}
+                  onChange={(e) => setTimelineSearchKeyword(e.target.value)}
+                  style={{ flex: 1, padding: '8px 12px', borderRadius: '20px', border: '1px solid #334155', background: '#1e293b', color: '#fff', fontSize: '12px', outline: 'none' }}
+                />
+              </div>
 
-                  <div style={{ width: '100%', height: '220px', background: '#000' }}>
-                    <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
-                  </div>
+              <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+                {timelineSpots.map((spot) => (
+                  <div
+                    key={spot.id}
+                    style={{ width: '100%', height: 'calc(100dvh - 48px - 64px - 50px)', scrollSnapAlign: 'start', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden' }}
+                  >
+                    <div
+                      onClick={() => handleOpenSpot(spot)}
+                      style={{ flex: 1, width: '100%', height: '100%', position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)' }}></div>
+                    </div>
 
-                  <div style={{ padding: '12px' }}>
-                    <h3 style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: 'bold' }}>{spot.title}</h3>
-                    <p style={{ margin: 0, fontSize: '12px', color: '#475569', lineHeight: '1.5' }}>{spot.description}</p>
-                    <div style={{ marginTop: '8px', fontSize: '11px', color: '#0284c7', fontWeight: 'bold' }}>
-                      👀 {spot.viewsCount} views | ❤️ {spot.savedCount} saves
+                    <div style={{ position: 'absolute', bottom: '20px', left: '16px', right: '16px', color: '#fff', pointerEvents: 'none' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                          {spot.userName.charAt(0)}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{spot.userName}</div>
+                          <div style={{ fontSize: '11px', color: '#94a3b8' }}>📍 {spot.cityName}</div>
+                        </div>
+                      </div>
+                      <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
+                      <p style={{ margin: 0, fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
+                    </div>
+
+                    <div style={{ position: 'absolute', right: '16px', bottom: '100px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }}>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleToggleLike(spot.id); }}
+                        style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
+                      >
+                        <span>{likedSpotIds.includes(spot.id) ? '❤️' : '🤍'}</span>
+                        <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{spot.savedCount}</span>
+                      </button>
                     </div>
                   </div>
-                </div>
-              ))}
-              {filteredSpots.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '40px', color: '#64748b', fontSize: '12px' }}>
-                  表示できる投稿がありません 📭
-                </div>
-              )}
+                ))}
+                {timelineSpots.length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '60px', color: '#94a3b8', fontSize: '13px' }}>
+                    該当する投稿が見つかりませんでした 📭
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -2630,7 +2508,7 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ボトムナビ（上に引き上げて片手で押しやすいように改善） */}
+        {/* ボトムナビ（上にしっかり引き上げて押しやすく配置） */}
         <nav style={{ height: 'calc(64px + env(safe-area-inset-bottom, 0px))', minHeight: 'calc(64px + env(safe-area-inset-bottom, 0px))', maxHeight: 'calc(64px + env(safe-area-inset-bottom, 0px))', paddingBottom: 'calc(8px + env(safe-area-inset-bottom, 0px))', paddingTop: '6px', background: navBarBg, borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexShrink: 0, zIndex: 1000, touchAction: 'none', margin: 0, boxSizing: 'border-box' }}>
           <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#94a3b8', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
             <span style={{ fontSize: '16px' }}>🗺️</span><span>{t('map')}</span>
@@ -2803,7 +2681,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 詳細モーダル（複数枚メディアのカルーセル・タップ切り替え対応） ── */}
+        {/* ── 詳細モーダル ── */}
         {selectedSpot && (
           <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box' }}>
             <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
@@ -2829,7 +2707,6 @@ export default function WapApp() {
             </div>
 
             <div style={{ padding: '16px', maxWidth: '600px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-              {/* メディアカルーセル表示（タップで次の写真・動画に切り替え） */}
               <div
                 onClick={() => {
                   if (selectedSpot.mediaList && selectedSpot.mediaList.length > 1) {
@@ -3042,65 +2919,4 @@ export default function WapApp() {
                 rows={2}
                 value={postDesc}
                 onChange={(e) => setPostDesc(e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
-              />
-
-              <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
-                  📍 撮影場所を検索して選択してください（必須）
-                </div>
-                <input
-                  type="text"
-                  placeholder="地名・住所・場所名を入力"
-                  value={addressSearchQuery}
-                  onChange={(e) => setAddressSearchQuery(e.target.value)}
-                  style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff', marginBottom: '4px' }}
-                />
-
-                {addressSuggestions.length > 0 && (
-                  <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
-                    {addressSuggestions.map((item) => (
-                      <div
-                        key={item.place_id}
-                        onClick={() => handleSelectAddressSuggestion(item)}
-                        style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                      >
-                        <span>📍</span>
-                        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
-                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button
-                  type="button"
-                  disabled={isSubmitting}
-                  onClick={() => setPendingUploads([])}
-                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-                >
-                  キャンセル
-                </button>
-                <button
-                  type="button"
-                  disabled={isSubmitting}
-                  onClick={handleConfirmPost}
-                  style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
-                >
-                  {isSubmitting ? '保存中...' : 'マップに反映する 🚀'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-      </div>
-    </>
-  );
-}
+                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom
