@@ -545,7 +545,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
-  LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
+  LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: 'リトアニア', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
   LU: { names: { ja: 'ルクセンブルク', en: 'Luxembourg', ko: '룩셈부르크', zh: '卢森堡' }, flag: '🇱🇺', region: '🇪🇺 ヨーロッパ', lat: 49.8153, lon: 6.1296, zoom: 10 },
   MC: { names: { ja: 'モナコ', en: 'Monaco', ko: '모나코', zh: '摩纳哥' }, flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lat: 43.7384, lon: 7.4246, zoom: 14 },
   VA: { names: { ja: 'バチカン市国', en: 'Vatican City', ko: '바티칸', zh: '梵蒂冈' }, flag: '🇻🇦', region: '🇪🇺 ヨーロッパ', lat: 41.9029, lon: 12.4534, zoom: 15 },
@@ -635,7 +635,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: '卢旺达' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
   UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: '乌干达' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
   ZM: { names: { ja: 'ザンビア', en: 'Zambia', ko: '잠비아', zh: '赞比亚' }, flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
-  ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바ブ웨', zh: '津巴布韦' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
+  ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바브웨', zh: '津巴布韦' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
   BW: { names: { ja: 'ボツワナ', en: 'Botswana', ko: '보츠와나', zh: '博茨瓦纳' }, flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
   NA: { names: { ja: 'ナミビア', en: 'Namibia', ko: '나미비아', zh: '纳米比亚' }, flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
   DZ: { names: { ja: 'アルジェリア', en: 'Algeria', ko: '알제리', zh: '阿尔及利亚' }, flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
@@ -754,7 +754,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント (サムネイル真っ白防止Base64キャッシュ対応)
+// 2. Google Maps API コンポーネント
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -794,11 +794,11 @@ const GoogleMapComponent = ({
       img.onload = () => {
         try {
           const canvas = document.createElement('canvas');
-          canvas.width = 40;
-          canvas.height = 40;
+          canvas.width = 44;
+          canvas.height = 44;
           const ctx = canvas.getContext('2d');
           if (ctx) {
-            ctx.drawImage(img, 0, 0, 40, 40);
+            ctx.drawImage(img, 0, 0, 44, 44);
             const dataUri = canvas.toDataURL('image/jpeg');
             setThumbCache(prev => ({ ...prev, [url]: dataUri }));
           }
@@ -900,8 +900,8 @@ const GoogleMapComponent = ({
       const imgUrl = thumbCache[rawUrl] || rawUrl;
 
       const badgeSvg = count > 1 ? `
-        <circle cx="34" cy="12" r="10" fill="#10b981" stroke="#ffffff" stroke-width="2" />
-        <text x="34" y="16" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
+        <circle cx="36" cy="12" r="10" fill="#10b981" stroke="#ffffff" stroke-width="2" />
+        <text x="36" y="16" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
       ` : '';
 
       const marker = new window.google.maps.Marker({
@@ -915,7 +915,7 @@ const GoogleMapComponent = ({
                 <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.3)" />
               </filter>
               <path d="M22 50 C22 50 40 31 40 20 C40 9 31 1 22 1 C13 1 4 9 4 20 C4 31 22 50 22 50 Z" fill="#ffffff" stroke="#0284c7" stroke-width="3" filter="url(#shadow)" />
-              <image href="${imgUrl}" x="6" y="6" width="32" height="32" clip-path="circle(16px at 16px 16px)" preserveAspectRatio="xMidYMid slice" />
+              <image href="${imgUrl}" x="2" y="2" width="40" height="40" clip-path="circle(20px at 20px 20px)" preserveAspectRatio="xMidYMid slice" />
               ${badgeSvg}
             </svg>
           `)}`,
@@ -970,8 +970,11 @@ export default function WapApp() {
   const [isScanQrOpen, setIsScanQrOpen] = useState<boolean>(false);
   const [scannerError, setScannerError] = useState<string>('');
 
-  // フレンド詳細プロフィール表示用ステート
+  // フレンド詳細プロフィール用ステート
   const [selectedFriend, setSelectedFriend] = useState<FriendUser | null>(null);
+
+  // タイムライン内コメント用入力ステート
+  const [timelineCommentText, setTimelineCommentText] = useState<Record<string, string>>({});
 
   const scannerRef = useRef<HTMLDivElement>(null);
   const html5QrCodeRef = useRef<any>(null);
@@ -1108,7 +1111,7 @@ export default function WapApp() {
     };
   }, []);
 
-  // 実機カメラを使った本格的なQRコードスキャン制御
+  // 実際のカメラを使ったQRコードスキャン制御（起動エラー・権限自動対応）
   useEffect(() => {
     if (!isScanQrOpen) {
       if (html5QrCodeRef.current) {
@@ -1152,11 +1155,11 @@ export default function WapApp() {
         );
       } catch (err) {
         console.error('Camera scan init error:', err);
-        setScannerError('⚠️ カメラの起動に失敗しました（設定からカメラ権限を確認してください）');
+        setScannerError('⚠️ カメラのアクセス権が拒否されているか、ブラウザがサポートしていません。ブラウザ設定を確認してください。');
       }
     };
 
-    setTimeout(loadScanner, 200);
+    setTimeout(loadScanner, 300);
 
     return () => {
       isMounted = false;
@@ -1436,8 +1439,9 @@ export default function WapApp() {
     showToast(`🌐 (${langName}) に翻訳しました！`);
   };
 
-  const handleAddComment = (spotId: string) => {
-    const trimmedText = newCommentText.trim();
+  const handleAddComment = (spotId: string, customText?: string) => {
+    const textToUse = customText !== undefined ? customText : newCommentText;
+    const trimmedText = textToUse.trim();
     if (!trimmedText) return;
 
     const check = checkInappropriateContent(trimmedText);
@@ -1467,7 +1471,11 @@ export default function WapApp() {
         return s;
       })
     );
-    setNewCommentText('');
+    if (customText === undefined) {
+      setNewCommentText('');
+    } else {
+      setTimelineCommentText(prev => ({ ...prev, [spotId]: '' }));
+    }
     showToast('💬 コメントを投稿しました！');
   };
 
@@ -2197,7 +2205,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* QRコードスキャンモーダル */}
+        {/* QRコードスキャンモーダル（カメラ起動・権限案内自動対応） */}
         {isScanQrOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', color: '#fff' }}>
             <div style={{ width: '100%', maxWidth: '340px', textAlign: 'center' }}>
@@ -2205,7 +2213,7 @@ export default function WapApp() {
               <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: '#94a3b8' }}>相手の画面に表示されたQRコードをカメラに向けてください</p>
 
               {scannerError && (
-                <div style={{ fontSize: '11px', color: '#f43f5e', background: 'rgba(244,63,94,0.1)', padding: '8px', borderRadius: '8px', marginBottom: '12px' }}>
+                <div style={{ fontSize: '11px', color: '#f43f5e', background: 'rgba(244,63,94,0.1)', padding: '8px', borderRadius: '8px', marginBottom: '12px', lineHeight: '1.4' }}>
                   {scannerError}
                 </div>
               )}
@@ -2459,7 +2467,7 @@ export default function WapApp() {
             </div>
           </div>
 
-          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆タグ検索 */}
+          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆コメント機能追加 */}
           {currentTab === 'timeline' && (
             <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%' }}>
               <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
@@ -2486,7 +2494,7 @@ export default function WapApp() {
                       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)' }}></div>
                     </div>
 
-                    <div style={{ position: 'absolute', bottom: '20px', left: '16px', right: '16px', color: '#fff', pointerEvents: 'none' }}>
+                    <div style={{ position: 'absolute', bottom: '20px', left: '16px', right: '70px', color: '#fff', pointerEvents: 'auto' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                         <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
                           {spot.userName.charAt(0)}
@@ -2497,7 +2505,26 @@ export default function WapApp() {
                         </div>
                       </div>
                       <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
-                      <p style={{ margin: 0, fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
+                      <p style={{ margin: '0 0 8px 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
+
+                      {/* タイムライン内のコメント入力＆簡易表示 */}
+                      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                        <input
+                          type="text"
+                          placeholder="💬 コメントを入力..."
+                          value={timelineCommentText[spot.id] || ''}
+                          onChange={(e) => setTimelineCommentText({ ...timelineCommentText, [spot.id]: e.target.value })}
+                          style={{ flex: 1, padding: '6px 10px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.5)', color: '#fff', fontSize: '11px', outline: 'none' }}
+                        />
+                        <button
+                          onClick={() => {
+                            handleAddComment(spot.id, timelineCommentText[spot.id]);
+                          }}
+                          style={{ padding: '6px 12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                        >
+                          送信
+                        </button>
+                      </div>
                     </div>
 
                     <div style={{ position: 'absolute', right: '16px', bottom: '100px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }}>
@@ -2691,7 +2718,7 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ボトムナビ（上にしっかり引き上げて片手で押しやすく配置） */}
+        {/* ボトムナビ（上にしっかり引き上げて押しやすく配置） */}
         <nav style={{ height: 'calc(64px + env(safe-area-inset-bottom, 0px))', minHeight: 'calc(64px + env(safe-area-inset-bottom, 0px))', maxHeight: 'calc(64px + env(safe-area-inset-bottom, 0px))', paddingBottom: 'calc(8px + env(safe-area-inset-bottom, 0px))', paddingTop: '6px', background: navBarBg, borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexShrink: 0, zIndex: 1000, touchAction: 'none', margin: 0, boxSizing: 'border-box' }}>
           <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#94a3b8', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
             <span style={{ fontSize: '16px' }}>🗺️</span><span>{t('map')}</span>
