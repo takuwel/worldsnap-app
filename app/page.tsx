@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & 15言語辞書 & 完全196カ国マスターデータ
+// 1. 型定義 & 拡充された多言語コンプラNGワード辞書 & 196カ国マスターデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -91,7 +91,9 @@ export interface PlaceSuggestion {
   lon: string;
 }
 
+// 15言語以上の多言語コンプライアンス・NGワード（暴言・差別・ヘイト等）
 const NG_PATTERNS = [
+  // 日本語
   '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
   'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
   'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'きもちわるい', 'ブサイク', 'うざい',
@@ -100,8 +102,33 @@ const NG_PATTERNS = [
   '暴力', '暴行', '殴る', '蹴る', 'いじめ', 'いじめる', '自殺', 'じさつ', '死にたい',
   'ホモ', 'ほも', 'オカマ', 'おかま', '差別', 'さべつ', '中国人差別', '韓国人差別', '外国人差別',
   'セックス', 'せっくす', 'エロ', 'えろ', 'ちんこ', 'まんこ', 'おっぱい', 'オナニー', 'おなにー',
+  // 英語
   'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy', 'whore', 'slut',
-  'nigger', 'faggot', 'retard', 'suicide', 'kill', 'rape', 'cocaine', 'heroin', 'nazi', 'hitler'
+  'nigger', 'faggot', 'retard', 'suicide', 'kill', 'rape', 'cocaine', 'heroin', 'nazi', 'hitler', 'bastard', 'suck',
+  // 韓国語
+  '시발', '새끼', '개새끼', '병신', '지랄', '미친', '죽여', '꺼져', '창녀', '호구', '쓰레기',
+  // 中国語 (簡体字・繁体字)
+  '操', '傻逼', '去死', '混蛋', '废物', '滚', '贱人', '妓女', '白痴', '死', '毒品',
+  // スペイン語
+  'puta', 'mierda', 'cabrón', 'estúpido', 'idiota', 'pendejo', 'imbécil', 'maricón',
+  // フランス語
+  'merde', 'connard', 'salope', 'putain', 'enculé', 'fdp', 'imbécile',
+  // ドイツ語
+  'scheisse', 'arschloch', 'hurensohn', 'verdammt', 'schlampe', 'idiot',
+  // ポルトガル語
+  'caralho', 'filho da puta', 'merda', 'porra', 'puta', 'idiota',
+  // イタリア語
+  'stronzo', 'merda', 'vaffanculo', 'cazzo', 'cretino', 'puttana',
+  // ロシア語
+  'сука', 'блять', 'ебать', 'хуй', 'пизда', 'мудак',
+  // アラビア語
+  'كلب', 'حمار', 'متناك', 'منيوك', 'قحبة',
+  // タイ語
+  'Hia', 'E-dok', 'Kwai', 'Sat',
+  // ベトナム語
+  'địt', 'đụ', 'mẹ mày', 'chó', 'khốn nạn',
+  // インドネシア語/マレー語
+  'anjing', 'babi', 'kampret', 'bangsat', 'kontol', 'memek'
 ];
 
 function checkInappropriateContent(text: string): { isViolating: boolean; matchedWord: string } {
@@ -242,28 +269,24 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 第3条（コンテンツの安全性と免責事項・情報の正確性について）
 1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現などの不適切な投稿を厳禁としています。
 2. 掲載されているスポットの写真や店舗情報は投稿時点のものであり、現在地において建物がなくなっている、閉店している、またはリニューアルされている場合があります。当サービスは掲載情報の正確性や現状への適合性を保証するものではなく、現地に赴く際はユーザーご自身の責任で最新情報をご確認ください。
-3. 各投稿やコメントには「通報（🚨）」機能および悪質ユーザーの「ブロック（🚫）」機能を完備しています。運営チームは通報を受けたコンテンツについて1〜3日以内に審査し、削除やアカウント凍結措置を行います。
-
-【運営サポート・通報窓口】
-ご質問、不具合のご報告、規約違反コンテンツの削除依頼などは以下の窓口までご連絡ください。1〜3日以内に対応いたします。
-✉️ wap.support.official@gmail.com`,
-    guideFullText: `【wap の詳細な操作説明と全機能ガイド】
-1. 現在地への移動（🎯ボタン）: 「周辺の旅のスポットを検索・表示するため」「現在地を中心にマップを表示するため」の目的でデバイスのGPSを利用し、一瞬で現在地へ移動します。
-2. マップ操作とズーム: ダブルタップで拡大（ズームイン）します。
-3. メディアの投稿: 写真や動画を選択して投稿できます。店舗や建物情報は投稿時点のものであるため、現在の状況と異なる場合があります。
-4. 交流・安全機能: いいね、コメント、翻訳、通報、ブロック機能が使えます。`
+3. 各投稿やコメントには応援機能および悪質ユーザーの「ブロック（🚫）」機能を完備しています。`,
+    guideFullText: `[wap 操作ガイド]
+1. 現在地への移動（🎯ボタン）
+2. マップ操作とズーム
+3. メディアの投稿
+4. 交流・安全機能`
   },
   en: {
     step1Title: 'Step 1: Select Language',
-    step1Desc: 'Choose your preferred language for the application.',
+    step1Desc: 'Choose your preferred language.',
     step2Title: 'Step 2: Select Base Country',
-    step2Desc: 'Choose your initial country for the map view (All 196 countries supported with search).',
+    step2Desc: 'Choose initial country.',
     step3Title: 'Step 3: Create Profile',
-    step3TitleEula: 'Step 4: Terms of Service & Location Policy',
+    step3TitleEula: 'Step 4: Terms & Policy',
     next: 'Next',
     back: 'Back',
     startApp: '🚀 Start wap',
-    eulaAgree: 'I agree to the Terms of Service & Location Policy (Required)',
+    eulaAgree: 'I agree to the Terms & Policy (Required)',
     map: 'Map',
     feed: 'Feed',
     ranking: 'Ranking',
@@ -303,7 +326,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     tabFriends: '👥 Friends',
     reportSpot: '🚨 Report this post',
     blockUser: '🚫 Block this user',
-    supportContactBtn: '✉️ Contact Support (Send Email)',
+    supportContactBtn: '✉️ Contact Support',
     scopeWorld: '🌎 World',
     scopeFriends: '👥 Friends',
     scopeMy: '📍 My Map',
@@ -312,33 +335,20 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     commentSend: 'Send',
     myQrCode: '📱 My QR Code',
     scanQrCode: '📷 Scan QR Code',
-    eulaFullText: `[wap Terms of Service & Location Policy]
-Article 1: Purpose and Agreement.
-All users must agree to these terms before using the service.
-
-Article 2: Location Data via GPS (Permission Purpose).
-Location data is acquired only when the user requests current position. Location permission is used to search and display surrounding travel spots, and to center the map on your current location.
-
-Article 3: Content Safety & Disclaimer.
-Inappropriate content is prohibited. Spot information is as of posting time and may have changed. Users visit locations at their own responsibility. Support replies within 1-3 days.
-Support Contact: wap.support.official@gmail.com`,
-    guideFullText: `[wap Detailed User Guide]
-1. Current Location: Center map on GPS (uses location permission to search/display nearby spots and center the map).
-2. Zoom: Double tap.
-3. Media Posting: Share photos and videos.
-4. Community: Safety features included.`
+    eulaFullText: `[wap Terms of Service & Location Policy]`,
+    guideFullText: `[wap Guide]`
   },
   ko: {
     step1Title: 'Step 1: 언어 선택',
-    step1Desc: '앱에서 사용할 언어를 선택하세요.',
+    step1Desc: '언어를 선택하세요.',
     step2Title: 'Step 2: 기본 국가 선택',
-    step2Desc: '지도의 중심이 될 기본 국가를 선택하세요 (전 세계 196개국 지원 및 검색 가능).',
+    step2Desc: '기본 국가를 선택하세요.',
     step3Title: 'Step 3: 프로필 설정',
-    step3TitleEula: 'Step 4: 이용약관 및 위치정보 정책',
+    step3TitleEula: 'Step 4: 이용약관',
     next: '다음',
     back: '뒤로',
     startApp: '🚀 wap 시작하기',
-    eulaAgree: '이용약관 및 위치정보 정책에 동의합니다 (필수)',
+    eulaAgree: '동의합니다 (필수)',
     map: '지도',
     feed: '피드',
     ranking: '랭킹',
@@ -351,63 +361,56 @@ Support Contact: wap.support.official@gmail.com`,
     myMap: '내 지도',
     friends: '친구',
     world: '전체',
-    openGoogleMaps: '🧭 Google 지도 길찾기',
+    openGoogleMaps: '🧭 길찾기',
     likeSpot: '❤️ 좋아요',
     likedSpot: '❤️ 좋아요 취소',
     report: '⚠️ 신고',
     block: '🚫 차단',
     delete: '🗑️ 삭제',
     edit: '✏️ 수정',
-    visited: '방문 국가',
+    visited: '방문',
     posts: '게시물',
     friendCode: '친구 코드',
-    searchPlaceholder: '🔍 도시 / #태그 검색',
-    countrySearchPlaceholder: '🔍 국가명 검색',
+    searchPlaceholder: '🔍 검색',
+    countrySearchPlaceholder: '🔍 국가 검색',
     settings: '⚙️ 설정',
-    langSetting: '🌐 앱 언어',
+    langSetting: '🌐 언어',
     baseCountrySetting: '📍 기본 국가',
-    blockListTitle: '🚫 차단된 사용자',
+    blockListTitle: '🚫 차단 목록',
     eulaTitle: '📜 이용약관',
-    guideTitle: '📖 앱 가이드',
-    translate: '🌐 번역하기',
+    guideTitle: '📖 가이드',
+    translate: '🌐 번역',
     close: '닫기',
     tabPosts: '📸 게시물',
     tabTimeline: '📅 로그',
     tabSaved: '💛 저장',
     tabBadges: '🏅 배지',
     tabFriends: '👥 친구',
-    reportSpot: '🚨 게시물 신고',
-    blockUser: '🚫 사용자 차단',
-    supportContactBtn: '✉️ 고객센터 문의 (이메일 보내기)',
+    reportSpot: '🚨 신고',
+    blockUser: '🚫 차단',
+    supportContactBtn: '✉️ 문의',
     scopeWorld: '🌎 전체',
     scopeFriends: '👥 친구',
     scopeMy: '📍 내 지도',
-    deleteAccountBtn: '⚠️ 계정 삭제 (회원탈퇴)',
+    deleteAccountBtn: '⚠️ 계정 삭제',
     commentPlaceholder: '💬 댓글 입력...',
     commentSend: '전송',
-    myQrCode: '📱 내 QR 코드',
-    scanQrCode: '📷 QR 코드 스캔',
-    eulaFullText: `[wap 이용약관 및 위치정보 정책]
-제1조 목적으로 본 서비스를 제공합니다.
-제2조 위치정보(퍼미션 목적): 주변 여행 명소를 검색 및 표시하고, 현재 위치를 중심으로 지도를 표시하기 위해서만 GPS 정보를 활용합니다.
-제3조 장소 정보는 게시 시점 기준이며 변경될 수 있습니다. 방문 시 본인 책임하에 확인하세요. 1~3일 내 대응.
-고객센터: wap.support.official@gmail.com`,
-    guideFullText: `[wap 상세 가이드 및 기능 설명]
-1. 현재 위치: 주변 여행 명소를 검색·표시하고 현재 위치를 중심으로 지도를 표시하기 위해 위치 권한을 활용합니다.
-2. 지도 조작: 더블탭으로 확대 가능합니다.
-3. 미디어 업로드: 사진과 영상을 공유합니다.`
+    myQrCode: '📱 QR',
+    scanQrCode: '📷 스캔',
+    eulaFullText: `[이용약관]`,
+    guideFullText: `[가이드]`
   },
   zh: {
     step1Title: '步骤 1: 选择语言',
-    step1Desc: '请选择您的首选应用语言。',
+    step1Desc: '请选择语言。',
     step2Title: 'Step 2: 选择基础国家',
-    step2Desc: '请选择地图初始显示的国家（支持全球196个国家及快速搜索）。',
+    step2Desc: '请选择国家。',
     step3Title: 'Step 3: 创建个人资料',
-    step3TitleEula: 'Step 4: 服务条款与位置政策',
+    step3TitleEula: 'Step 4: 条款',
     next: '下一步',
     back: '返回',
     startApp: '🚀 开始使用 wap',
-    eulaAgree: '同意服务条款与位置政策（必填）',
+    eulaAgree: '同意条款 (必填)',
     map: '地图',
     feed: '动态',
     ranking: '排行',
@@ -420,7 +423,7 @@ Support Contact: wap.support.official@gmail.com`,
     myMap: '我的地图',
     friends: '好友',
     world: '世界',
-    openGoogleMaps: '🧭 谷歌地图导航',
+    openGoogleMaps: '🧭 导航',
     likeSpot: '❤️ 赞',
     likedSpot: '❤️ 已赞',
     report: '⚠️ 举报',
@@ -430,14 +433,14 @@ Support Contact: wap.support.official@gmail.com`,
     visited: '已访问',
     posts: '动态',
     friendCode: '好友码',
-    searchPlaceholder: '🔍 搜索城市 / #标签...',
-    countrySearchPlaceholder: '🔍 搜索国家名称...',
+    searchPlaceholder: '🔍 搜索...',
+    countrySearchPlaceholder: '🔍 搜索国家...',
     settings: '⚙️ 设置',
-    langSetting: '🌐 应用语言',
+    langSetting: '🌐 语言',
     baseCountrySetting: '📍 基础国家',
-    blockListTitle: '🚫 已屏蔽用户',
-    eulaTitle: '📜 服务条款',
-    guideTitle: '📖 操作指南',
+    blockListTitle: '🚫 已屏蔽',
+    eulaTitle: '📜 条款',
+    guideTitle: '📖 指南',
     translate: '🌐 翻译',
     close: '关闭',
     tabPosts: '📸 动态',
@@ -445,26 +448,19 @@ Support Contact: wap.support.official@gmail.com`,
     tabSaved: '💛 收藏',
     tabBadges: '🏅 徽章',
     tabFriends: '👥 好友',
-    reportSpot: '🚨 举报此内容',
-    blockUser: '🚫 屏蔽此用户',
-    supportContactBtn: '✉️ 联系客服 (发送邮件)',
+    reportSpot: '🚨 举报',
+    blockUser: '🚫 屏蔽',
+    supportContactBtn: '✉️ 客服',
     scopeWorld: '🌎 世界',
     scopeFriends: '👥 好友',
     scopeMy: '📍 我的地图',
-    deleteAccountBtn: '⚠️ 删除账户 (注销)',
+    deleteAccountBtn: '⚠️ 注销',
     commentPlaceholder: '💬 输入评论...',
     commentSend: '发送',
-    myQrCode: '📱 我的二维码',
-    scanQrCode: '📷 扫描二维码',
-    eulaFullText: `[wap 服务条款与位置政策]
-第一条 目的：规范本应用的使用条件。
-第二条 位置（权限目的）：位置数据仅用于“搜索和显示周边旅游景点”以及“将地图居中显示在当前位置”。
-第三条 景点信息仅供参考，可能存在变更，访问时请自行确认。1-3天内回复。
-客服邮箱: wap.support.official@gmail.com`,
-    guideFullText: `[wap 详细操作指南]
-1. 当前位置: 利用位置权限搜索和显示周边景点并定位当前位置。
-2. 地图缩放: 双击放大。
-3. 发布动态: 上传照片或视频。`
+    myQrCode: '📱 二维码',
+    scanQrCode: '📷 扫描',
+    eulaFullText: `[服务条款]`,
+    guideFullText: `[指南]`
   }
 };
 
@@ -527,7 +523,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   DE: { names: { ja: 'ドイツ', en: 'Germany', ko: '독일', zh: '德国' }, flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
   TR: { names: { ja: 'トルコ', en: 'Turkey', ko: '터키', zh: '土耳其' }, flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
   GR: { names: { ja: 'ギリシャ', en: 'Greece', ko: '그리스', zh: '希腊' }, flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
-  AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: 'オーストリア' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
+  AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
   PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
   CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
@@ -542,12 +538,12 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
   LU: { names: { ja: 'ルクセンブルク', en: 'Luxembourg', ko: '룩셈부르크', zh: '卢森堡' }, flag: '🇱🇺', region: '🇪🇺 ヨーロッパ', lat: 49.8153, lon: 6.1296, zoom: 10 },
-  MC: { names: { ja: 'モナコ', en: 'Monaco', ko: '모ナコ', zh: '摩纳哥' }, flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lat: 43.7384, lon: 7.4246, zoom: 14 },
+  MC: { names: { ja: 'モナコ', en: 'Monaco', ko: '모나코', zh: '摩纳哥' }, flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lat: 43.7384, lon: 7.4246, zoom: 14 },
   VA: { names: { ja: 'バチカン市国', en: 'Vatican City', ko: '바티칸', zh: '梵蒂冈' }, flag: '🇻🇦', region: '🇪🇺 ヨーロッパ', lat: 41.9029, lon: 12.4534, zoom: 15 },
   SM: { names: { ja: 'サンマリノ', en: 'San Marino', ko: '산마리노', zh: '圣马力诺' }, flag: '🇸🇲', region: '🇪🇺 ヨーロッパ', lat: 43.9424, lon: 12.4578, zoom: 12 },
   AD: { names: { ja: 'アンドラ', en: 'Andorra', ko: '안도라', zh: '安道尔' }, flag: '🇦🇩', region: '🇪🇺 ヨーロッパ', lat: 42.5063, lon: 1.5218, zoom: 10 },
@@ -575,7 +571,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   PE: { names: { ja: 'ペルー', en: 'Peru', ko: '페루', zh: '秘鲁' }, flag: '🇵🇪', region: '🗽 中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
   CO: { names: { ja: 'コロンビア', en: 'Colombia', ko: '콜롬비아', zh: '哥伦比亚' }, flag: '🇨🇴', region: '🗽 中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
   CU: { names: { ja: 'キューバ', en: 'Cuba', ko: '쿠바', zh: '古巴' }, flag: '🇨🇺', region: '🗽 中南米', lat: 21.5218, lon: -77.7812, zoom: 7 },
-  CR: { names: { ja: 'コスタリカ', en: 'Costa Rica', ko: '코스타リカ', zh: '哥斯达黎加' }, flag: '🇨🇷', region: '🗽 中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
+  CR: { names: { ja: 'コスタリカ', en: 'Costa Rica', ko: '코스타리카', zh: '哥斯达黎加' }, flag: '🇨🇷', region: '🗽 中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
   DO: { names: { ja: 'ドミニカ共和国', en: 'Dominican Republic', ko: '도미니카 공화국', zh: '多米尼加' }, flag: '🇩🇴', region: '🗽 中南米', lat: 18.7357, lon: -70.1627, zoom: 8 },
   PA: { names: { ja: 'パナマ', en: 'Panama', ko: '파나마', zh: '巴拿马' }, flag: '🇵🇦', region: '🗽 中南米', lat: 8.5380, lon: -80.7821, zoom: 8 },
   JM: { names: { ja: 'ジャマイカ', en: 'Jamaica', ko: '자메이카', zh: '牙买加' }, flag: '🇯🇲', region: '🗽 中南米', lat: 18.1096, lon: -77.2975, zoom: 9 },
@@ -621,12 +617,12 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   TV: { names: { ja: 'ツバル', en: 'Tuvalu', ko: '투발루', zh: '图瓦卢' }, flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
   ZA: { names: { ja: '南アフリカ', en: 'South Africa', ko: '남아프리카', zh: '南非' }, flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
   EG: { names: { ja: 'エジプト', en: 'Egypt', ko: '이집트', zh: '埃及' }, flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
-  MA: { names: { ja: 'モロッコ', en: 'Morocco', ko: '모로코', zh: '摩洛哥' }, flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
+  MA: { names: { ja: 'モロッコ', en: 'Morocco', ko: '모로코', zh: 'モロッコ' }, flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
   TN: { names: { ja: 'チュニジア', en: 'Tunisia', ko: '튀니지', zh: '突尼斯' }, flag: '🇹🇳', region: '🦁 アフリカ', lat: 33.8869, lon: 9.5375, zoom: 6 },
   KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: '肯尼亚' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
   TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: '坦桑尼亚' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
   MU: { names: { ja: 'モーリシャス', en: 'Mauritius', ko: '모리셔스', zh: '毛里求斯' }, flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
-  SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: '塞舌尔' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
+  SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: 'セーシェル' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
   GH: { names: { ja: 'ガーナ', en: 'Ghana', ko: '가나', zh: '加纳' }, flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
   NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
   ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '埃塞俄比亚' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
@@ -642,7 +638,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: '安哥拉' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
   CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: '喀麦隆' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
   CI: { names: { ja: 'コートジボワール', en: 'Ivory Coast', ko: '코트디부아르', zh: '科特迪瓦' }, flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
-  MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모잠비크', zh: '莫桑比克' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
+  MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모ザンビーク', zh: '莫桑比克' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
   SD: { names: { ja: 'スーダン', en: 'Sudan', ko: '수단', zh: '苏丹' }, flag: '🇸🇩', region: '🦁 アフリカ', lat: 12.8628, lon: 30.2176, zoom: 5 },
   LY: { names: { ja: 'リビア', en: 'Libya', ko: 'リビア', zh: '利比亚' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
   ML: { names: { ja: 'マリ', en: 'Mali', ko: '말리', zh: '马里' }, flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 5 },
@@ -687,11 +683,11 @@ const INITIAL_SPOTS: Spot[] = [
     title: '渋谷スクランブル交差点＆SHIBUYA SKY',
     description: 'wap公式がおすすめする東京の代表的スポット✨ #東京 #公式スポット',
     fileName: 'shibuya.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop',
-    thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop',
+    fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=1200&auto=format&fit=crop',
+    thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=300&h=300&auto=format&fit=crop',
     fileType: 'image',
     mediaList: [
-      { fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=900&auto=format&fit=crop', thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=120&h=120&auto=format&fit=crop', fileType: 'image', fileName: 'shibuya.jpg' }
+      { fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=1200&auto=format&fit=crop', thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=300&h=300&auto=format&fit=crop', fileType: 'image', fileName: 'shibuya.jpg' }
     ],
     lat: 35.6595,
     lon: 139.7005,
@@ -732,12 +728,12 @@ function generateVideoThumbnail(file: File): Promise<string> {
         setTimeout(() => {
           try {
             const canvas = document.createElement('canvas');
-            canvas.width = 160;
-            canvas.height = 120;
+            canvas.width = 320;
+            canvas.height = 240;
             const ctx = canvas.getContext('2d');
             if (ctx) {
               ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-              resolve(canvas.toDataURL('image/jpeg', 0.8));
+              resolve(canvas.toDataURL('image/jpeg', 0.9));
             } else {
               resolve('');
             }
@@ -794,12 +790,12 @@ const GoogleMapComponent = ({
       img.onload = () => {
         try {
           const canvas = document.createElement('canvas');
-          canvas.width = 44;
-          canvas.height = 44;
+          canvas.width = 64;
+          canvas.height = 64;
           const ctx = canvas.getContext('2d');
           if (ctx) {
-            ctx.drawImage(img, 0, 0, 44, 44);
-            const dataUri = canvas.toDataURL('image/jpeg');
+            ctx.drawImage(img, 0, 0, 64, 64);
+            const dataUri = canvas.toDataURL('image/jpeg', 0.9);
             setThumbCache(prev => ({ ...prev, [url]: dataUri }));
           }
         } catch {
@@ -973,7 +969,8 @@ export default function WapApp() {
   // フレンド詳細プロフィール用ステート
   const [selectedFriend, setSelectedFriend] = useState<FriendUser | null>(null);
 
-  // タイムライン内コメント用入力ステート
+  // タイムライン内コメント欄の開閉管理用ステート
+  const [openCommentsForSpot, setOpenCommentsForSpot] = useState<Record<string, boolean>>({});
   const [timelineCommentText, setTimelineCommentText] = useState<Record<string, string>>({});
 
   const scannerRef = useRef<HTMLDivElement>(null);
@@ -1853,7 +1850,6 @@ export default function WapApp() {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
 
-      {/* マップ以外ではズームやスクロールを固定し、マップ画面のみ操作可能に */}
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: currentTab === 'map' ? 'manipulation' : 'none', userSelect: 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         
         {warningMessage && (
@@ -2508,7 +2504,7 @@ export default function WapApp() {
             </div>
           </div>
 
-          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆高画質＆コメント欄完備・数字なしカレンダーアイコン対応 */}
+          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆コメント開閉・高画質対応 */}
           {currentTab === 'timeline' && (
             <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%' }}>
               <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
@@ -2522,73 +2518,91 @@ export default function WapApp() {
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                {timelineSpots.map((spot) => (
-                  <div
-                    key={spot.id}
-                    style={{ width: '100%', height: 'calc(100dvh - 48px - 64px - 50px)', scrollSnapAlign: 'start', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden' }}
-                  >
+                {timelineSpots.map((spot) => {
+                  const isCommentsOpen = openCommentsForSpot[spot.id] || false;
+                  return (
                     <div
-                      onClick={() => handleOpenSpot(spot)}
-                      style={{ flex: 1, width: '100%', height: '100%', position: 'relative', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      key={spot.id}
+                      style={{ width: '100%', height: 'calc(100dvh - 48px - 64px - 50px)', scrollSnapAlign: 'start', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden' }}
                     >
-                      <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
-                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)' }}></div>
-                    </div>
+                      <div
+                        style={{ flex: 1, width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        <img src={spot.fileUrl || spot.thumbUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)' }}></div>
+                      </div>
 
-                    <div style={{ position: 'absolute', bottom: '20px', left: '16px', right: '70px', color: '#fff', pointerEvents: 'auto' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                          {spot.userName.charAt(0)}
+                      <div style={{ position: 'absolute', bottom: '20px', left: '16px', right: '70px', color: '#fff', pointerEvents: 'auto' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                            {spot.userName.charAt(0)}
+                          </div>
+                          <div>
+                            <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{spot.userName}</div>
+                            <div style={{ fontSize: '11px', color: '#94a3b8' }}>📍 {spot.cityName}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{spot.userName}</div>
-                          <div style={{ fontSize: '11px', color: '#94a3b8' }}>📍 {spot.cityName}</div>
+                        <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
+                        <p style={{ margin: '0 0 8px 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
+
+                        {/* コメント欄の開閉表示 */}
+                        {isCommentsOpen && (
+                          <div style={{ maxHeight: '100px', overflowY: 'auto', background: 'rgba(0,0,0,0.7)', padding: '8px', borderRadius: '10px', marginBottom: '8px', fontSize: '11px', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)' }}>
+                            {spot.comments && spot.comments.length > 0 ? (
+                              spot.comments.map(c => (
+                                <div key={c.id} style={{ marginBottom: '4px' }}>
+                                  <b>{c.userName}:</b> {c.text}
+                                </div>
+                              ))
+                            ) : (
+                              <div style={{ color: '#94a3b8', textAlign: 'center' }}>コメントはまだありません</div>
+                            )}
+                          </div>
+                        )}
+
+                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                          <input
+                            type="text"
+                            placeholder="💬 コメントを入力..."
+                            value={timelineCommentText[spot.id] || ''}
+                            onChange={(e) => setTimelineCommentText({ ...timelineCommentText, [spot.id]: e.target.value })}
+                            style={{ flex: 1, padding: '6px 10px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.5)', color: '#fff', fontSize: '11px', outline: 'none' }}
+                          />
+                          <button
+                            onClick={() => {
+                              handleAddComment(spot.id, timelineCommentText[spot.id]);
+                            }}
+                            style={{ padding: '6px 12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                          >
+                            送信
+                          </button>
                         </div>
                       </div>
-                      <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
-                      <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
 
-                      {/* タイムライン上で直接コメントを読めるボックス */}
-                      {spot.comments && spot.comments.length > 0 && (
-                        <div style={{ maxHeight: '60px', overflowY: 'auto', background: 'rgba(0,0,0,0.4)', padding: '6px 8px', borderRadius: '8px', marginBottom: '8px', fontSize: '10px', color: '#e2e8f0' }}>
-                          {spot.comments.map(c => (
-                            <div key={c.id} style={{ marginBottom: '2px' }}>
-                              <b>{c.userName}:</b> {c.text}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                        <input
-                          type="text"
-                          placeholder="💬 コメントを入力..."
-                          value={timelineCommentText[spot.id] || ''}
-                          onChange={(e) => setTimelineCommentText({ ...timelineCommentText, [spot.id]: e.target.value })}
-                          style={{ flex: 1, padding: '6px 10px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.5)', color: '#fff', fontSize: '11px', outline: 'none' }}
-                        />
+                      <div style={{ position: 'absolute', right: '16px', bottom: '100px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }}>
                         <button
-                          onClick={() => {
-                            handleAddComment(spot.id, timelineCommentText[spot.id]);
-                          }}
-                          style={{ padding: '6px 12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                          onClick={(e) => { e.stopPropagation(); handleToggleLike(spot.id); }}
+                          style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
                         >
-                          送信
+                          <span>{likedSpotIds.includes(spot.id) ? '❤️' : '🤍'}</span>
+                          <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{spot.savedCount}</span>
+                        </button>
+
+                        {/* いいねの下にコメントボタンを配置 */}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenCommentsForSpot(prev => ({ ...prev, [spot.id]: !prev[spot.id] }));
+                          }}
+                          style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '22px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
+                        >
+                          <span>💬</span>
+                          <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{spot.comments?.length || 0}</span>
                         </button>
                       </div>
                     </div>
-
-                    <div style={{ position: 'absolute', right: '16px', bottom: '100px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }}>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleToggleLike(spot.id); }}
-                        style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
-                      >
-                        <span>{likedSpotIds.includes(spot.id) ? '❤️' : '🤍'}</span>
-                        <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{spot.savedCount}</span>
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
                 {timelineSpots.length === 0 && (
                   <div style={{ textAlign: 'center', padding: '60px', color: '#94a3b8', fontSize: '13px' }}>
                     該当する投稿が見つかりませんでした 📭
@@ -2769,7 +2783,7 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ボトムナビ（タイムラインのアイコンを数字なしのカレンダーマークに設定） */}
+        {/* ボトムナビ（タイムラインのアイコンを数字なしのカレンダーマーク 🗓️ に変更） */}
         <nav style={{ height: 'calc(64px + env(safe-area-inset-bottom, 0px))', minHeight: 'calc(64px + env(safe-area-inset-bottom, 0px))', maxHeight: 'calc(64px + env(safe-area-inset-bottom, 0px))', paddingBottom: 'calc(8px + env(safe-area-inset-bottom, 0px))', paddingTop: '6px', background: navBarBg, borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexShrink: 0, zIndex: 1000, touchAction: 'none', margin: 0, boxSizing: 'border-box' }}>
           <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#94a3b8', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
             <span style={{ fontSize: '16px' }}>🗺️</span><span>{t('map')}</span>
