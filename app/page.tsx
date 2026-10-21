@@ -463,7 +463,7 @@ Support Contact: wap.support.official@gmail.com`,
 客服邮箱: wap.support.official@gmail.com`,
     guideFullText: `[wap 详细操作指南]
 1. 当前位置: 利用位置权限搜索和显示周边景点并定位当前位置。
-2. 地图缩放: 双击放大。
+2. 지도 조작: 双击放大。
 3. 发布动态: 上传照片或视频。`
   }
 };
@@ -517,7 +517,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   IR: { names: { ja: 'イラン', en: 'Iran', ko: '이란', zh: '伊朗' }, flag: '🇮🇷', region: '🕌 中東', lat: 32.4279, lon: 53.6880, zoom: 5 },
   SY: { names: { ja: 'シリア', en: 'Syria', ko: '시리아', zh: '叙利亚' }, flag: '🇸🇾', region: '🕌 中東', lat: 34.8021, lon: 38.9968, zoom: 7 },
   YE: { names: { ja: 'イエメン', en: 'Yemen', ko: '예멘', zh: '也门' }, flag: '🇾🇪', region: '🕌 中東', lat: 15.5527, lon: 48.5164, zoom: 6 },
-  AM: { names: { ja: 'アルメニア', en: 'Armenia', ko: '알바니아', zh: '亚美尼亚' }, flag: '🇦🇲', region: '🕌 中東', lat: 40.0691, lon: 45.0382, zoom: 8 },
+  AM: { names: { ja: 'アルメニア', en: 'Armenia', ko: '아르메니아', zh: '亚美尼亚' }, flag: '🇦🇲', region: '🕌 中東', lat: 40.0691, lon: 45.0382, zoom: 8 },
   AZ: { names: { ja: 'アゼルバイジャン', en: 'Azerbaijan', ko: '아제르바이잔', zh: '阿塞拜疆' }, flag: '🇦🇿', region: '🕌 中東', lat: 40.1431, lon: 47.5769, zoom: 7 },
   GE: { names: { ja: 'ジョージア', en: 'Georgia', ko: '조지아', zh: '格鲁吉亚' }, flag: '🇬🇪', region: '🕌 中東', lat: 42.3154, lon: 43.3569, zoom: 7 },
   FR: { names: { ja: 'フランス', en: 'France', ko: '프랑스', zh: '法国' }, flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
@@ -544,8 +544,8 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
   SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
-  LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
-  LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: 'リトアニア', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
+  LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: 'ラトビア', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
+  LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
   LU: { names: { ja: 'ルクセンブルク', en: 'Luxembourg', ko: '룩셈부르크', zh: '卢森堡' }, flag: '🇱🇺', region: '🇪🇺 ヨーロッパ', lat: 49.8153, lon: 6.1296, zoom: 10 },
   MC: { names: { ja: 'モナコ', en: 'Monaco', ko: '모나코', zh: '摩纳哥' }, flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lat: 43.7384, lon: 7.4246, zoom: 14 },
   VA: { names: { ja: 'バチカン市国', en: 'Vatican City', ko: '바티칸', zh: '梵蒂冈' }, flag: '🇻🇦', region: '🇪🇺 ヨーロッパ', lat: 41.9029, lon: 12.4534, zoom: 15 },
@@ -754,7 +754,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント (丸型ピン余白なし一杯一杯表示)
+// 2. Google Maps API コンポーネント
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -1111,7 +1111,7 @@ export default function WapApp() {
     };
   }, []);
 
-  // 実機カメラを使ったQRコードスキャン制御（カメラ起動・ファイルフォールバック対応）
+  // 実機カメラを使った本格的なQRコードスキャン制御
   useEffect(() => {
     if (!isScanQrOpen) {
       if (html5QrCodeRef.current) {
@@ -1155,7 +1155,7 @@ export default function WapApp() {
         );
       } catch (err) {
         console.error('Camera scan init error:', err);
-        setScannerError('⚠️ カメラがブロックされているか対応していません。下のファイル読み込みボタンをご利用ください。');
+        setScannerError('⚠️ カメラのアクセス権が拒否されているか、ブラウザがサポートしていません。下のファイル読み込みボタンをご利用ください。');
       }
     };
 
@@ -1321,7 +1321,7 @@ export default function WapApp() {
   const rankingSpots = useMemo(() => {
     return [...spots]
       .filter(s => !blockedUsers.includes(s.userId))
-      .sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (b.viewsCount || 0)));
+      .sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
   }, [spots, blockedUsers]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
@@ -1845,6 +1845,7 @@ export default function WapApp() {
         <title>wap</title>
         <link rel="icon" href="/icon-192.png" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
+        {/* マップ以外での画面ズーム・ピンチインを禁止し、ビューポートを完全に固定 */}
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -1853,7 +1854,7 @@ export default function WapApp() {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
 
-      <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: 'manipulation', userSelect: 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: currentTab === 'map' ? 'manipulation' : 'none', userSelect: 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         
         {warningMessage && (
           <div style={{ position: 'fixed', top: 0, insetInline: 0, background: '#ef4444', color: '#fff', padding: '12px 16px', zIndex: 999999, fontSize: '13px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 4px 16px rgba(239,68,68,0.4)' }}>
@@ -2152,22 +2153,22 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 自分のQRコード表示モーダル（中央に「wap」ロゴ入りオリジナルデザイン） */}
+        {/* 自分のQRコード表示モーダル */}
         {isMyQrOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '340px', width: '100%', padding: '28px 20px', textAlign: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
               <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: '900', color: '#0284c7' }}>📱 マイQRコード</h3>
               <p style={{ margin: '0 0 20px 0', fontSize: '12px', color: '#64748b' }}>このQRコードを読み取ってもらうと、かんたんにフレンドになれます！</p>
               
-              <div style={{ width: '210px', height: '210px', margin: '0 auto 16px auto', background: '#ffffff', borderRadius: '16px', border: '2px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', boxSizing: 'border-box', position: 'relative' }}>
+              <div style={{ width: '200px', height: '200px', margin: '0 auto 16px auto', background: '#ffffff', borderRadius: '16px', border: '2px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', boxSizing: 'border-box' }}>
                 <div
                   ref={(node) => {
                     if (node && (window as any).QRCode) {
                       node.innerHTML = '';
                       new (window as any).QRCode(node, {
                         text: `wap-friend://${userName}`,
-                        width: 180,
-                        height: 180,
+                        width: 170,
+                        height: 170,
                         colorDark: '#0f172a',
                         colorLight: '#ffffff',
                         correctLevel: (window as any).QRCode.CorrectLevel.H
@@ -2177,10 +2178,6 @@ export default function WapApp() {
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   <div style={{ fontSize: '11px', color: '#64748b' }}>生成中...</div>
-                </div>
-                {/* 中央に「wap」ロゴバッジ */}
-                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '36px', height: '36px', background: '#0284c7', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '900', border: '2px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}>
-                  wap
                 </div>
               </div>
 
@@ -2209,24 +2206,23 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* QRコードスキャンモーダル（実機カメラ＆ファイル選択フォールバック完備） */}
+        {/* QRコードスキャンモーダル（背景透過修正＆ファイル選択対応版） */}
         {isScanQrOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', color: '#fff' }}>
-            <div style={{ width: '100%', maxWidth: '340px', textAlign: 'center' }}>
-              <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: '900' }}>📷 QRコードスキャン</h3>
+            <div style={{ width: '100%', maxWidth: '340px', background: '#0f172a', borderRadius: '24px', padding: '24px', textAlign: 'center', boxShadow: '0 25px 60px rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: '900', color: '#38bdf8' }}>📷 QRコードスキャン</h3>
               <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: '#94a3b8' }}>相手の画面のQRコードをカメラに向けてください</p>
 
               {scannerError && (
-                <div style={{ fontSize: '11px', color: '#f43f5e', background: 'rgba(244,63,94,0.1)', padding: '8px', borderRadius: '8px', marginBottom: '12px', lineHeight: '1.4' }}>
+                <div style={{ fontSize: '11px', color: '#f43f5e', background: 'rgba(244,63,94,0.15)', padding: '8px', borderRadius: '8px', marginBottom: '12px', lineHeight: '1.4' }}>
                   {scannerError}
                 </div>
               )}
 
-              <div style={{ width: '260px', height: '260px', margin: '0 auto 16px auto', border: '2px solid #38bdf8', borderRadius: '20px', overflow: 'hidden', background: '#000', position: 'relative' }}>
+              <div style={{ width: '240px', height: '240px', margin: '0 auto 16px auto', border: '2px solid #38bdf8', borderRadius: '20px', overflow: 'hidden', background: '#000', position: 'relative' }}>
                 <div ref={scannerRef} style={{ width: '100%', height: '100%' }}></div>
               </div>
 
-              {/* カメラ起動失敗時の保険：QR画像のファイル読み込みボタン */}
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ display: 'inline-block', padding: '8px 16px', background: '#0284c7', color: '#fff', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
                   📁 保存したQR画像ファイルから読み取る
@@ -2512,7 +2508,7 @@ export default function WapApp() {
             </div>
           </div>
 
-          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆高画質＆コメント欄完備 */}
+          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆コメント機能追加 */}
           {currentTab === 'timeline' && (
             <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%' }}>
               <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
@@ -2552,7 +2548,6 @@ export default function WapApp() {
                       <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
                       <p style={{ margin: '0 0 8px 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
 
-                      {/* コメント入力欄 */}
                       <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                         <input
                           type="text"
@@ -2763,7 +2758,7 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ボトムナビ（上にしっかり引き上げて片手で押しやすく配置） */}
+        {/* ボトムナビ（上にしっかり引き上げて押しやすく配置） */}
         <nav style={{ height: 'calc(64px + env(safe-area-inset-bottom, 0px))', minHeight: 'calc(64px + env(safe-area-inset-bottom, 0px))', maxHeight: 'calc(64px + env(safe-area-inset-bottom, 0px))', paddingBottom: 'calc(8px + env(safe-area-inset-bottom, 0px))', paddingTop: '6px', background: navBarBg, borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexShrink: 0, zIndex: 1000, touchAction: 'none', margin: 0, boxSizing: 'border-box' }}>
           <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#94a3b8', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
             <span style={{ fontSize: '16px' }}>🗺️</span><span>{t('map')}</span>
