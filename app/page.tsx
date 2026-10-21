@@ -463,7 +463,7 @@ Support Contact: wap.support.official@gmail.com`,
 客服邮箱: wap.support.official@gmail.com`,
     guideFullText: `[wap 详细操作指南]
 1. 当前位置: 利用位置权限搜索和显示周边景点并定位当前位置。
-2. 지도 조작: 双击放大。
+2. 地图缩放: 双击放大。
 3. 发布动态: 上传照片或视频。`
   }
 };
@@ -544,7 +544,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
   SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
-  LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: 'ラトビア', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
+  LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
   LU: { names: { ja: 'ルクセンブルク', en: 'Luxembourg', ko: '룩셈부르크', zh: '卢森堡' }, flag: '🇱🇺', region: '🇪🇺 ヨーロッパ', lat: 49.8153, lon: 6.1296, zoom: 10 },
   MC: { names: { ja: 'モナコ', en: 'Monaco', ko: '모나코', zh: '摩纳哥' }, flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lat: 43.7384, lon: 7.4246, zoom: 14 },
@@ -556,7 +556,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
   BA: { names: { ja: 'ボスニア・ヘルツェゴビナ', en: 'Bosnia and Herzegovina', ko: '보스니아 헤르체고비나', zh: '波黑' }, flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lat: 43.9159, lon: 17.6791, zoom: 7 },
-  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네그로', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
+  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테ネグロ', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
   MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케도니아', zh: '北马其顿' }, flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lat: 41.6086, lon: 21.7453, zoom: 8 },
   MD: { names: { ja: 'モルドバ', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
@@ -570,7 +570,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   CA: { names: { ja: 'カナダ', en: 'Canada', ko: '캐나다', zh: '加拿大' }, flag: '🇨🇦', region: '🗽 北米', lat: 56.1304, lon: -106.3468, zoom: 3 },
   MX: { names: { ja: 'メキシコ', en: 'Mexico', ko: '멕시코', zh: '墨西哥' }, flag: '🇲🇽', region: '🗽 北米', lat: 23.6345, lon: 102.5528, zoom: 5 },
   BR: { names: { ja: 'ブラジル', en: 'Brazil', ko: '브라질', zh: '巴西' }, flag: '🇧🇷', region: '🗽 中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
-  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '阿根廷' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
+  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '아르헨티나' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
   CL: { names: { ja: 'チリ', en: 'Chile', ko: '칠레', zh: '智利' }, flag: '🇨🇱', region: '🗽 中南米', lat: -35.6751, lon: -71.5430, zoom: 4 },
   PE: { names: { ja: 'ペルー', en: 'Peru', ko: '페루', zh: '秘鲁' }, flag: '🇵🇪', region: '🗽 中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
   CO: { names: { ja: 'コロンビア', en: 'Colombia', ko: '콜롬비아', zh: '哥伦比亚' }, flag: '🇨🇴', region: '🗽 中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
@@ -583,7 +583,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   EC: { names: { ja: 'エクアドル', en: 'Ecuador', ko: '에콰도르', zh: '厄瓜多尔' }, flag: '🇪🇨', region: '🗽 中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
   VE: { names: { ja: 'ベネズエラ', en: 'Venezuela', ko: '베네수엘라', zh: '委内瑞拉' }, flag: '🇻🇪', region: '🗽 中南米', lat: 6.4238, lon: -66.5897, zoom: 5 },
   BO: { names: { ja: 'ボリビア', en: 'Bolivia', ko: '볼리비아', zh: '玻利维亚' }, flag: '🇧🇴', region: '🗽 中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
-  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '파라과이' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
+  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '巴拉圭' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
   GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '危地马拉' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
   HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: '洪都拉斯' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
   NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: '尼加拉瓜' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
@@ -626,7 +626,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: '肯尼亚' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
   TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: '坦桑尼亚' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
   MU: { names: { ja: 'モーリシャス', en: 'Mauritius', ko: '모리셔스', zh: '毛里求斯' }, flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
-  SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: '塞舌尔' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
+  SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: 'セーシェル' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
   GH: { names: { ja: 'ガーナ', en: 'Ghana', ko: '가나', zh: '加纳' }, flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
   NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
   ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '埃塞俄比亚' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
@@ -1111,7 +1111,7 @@ export default function WapApp() {
     };
   }, []);
 
-  // 実機カメラを使った本格的なQRコードスキャン制御
+  // 実機カメラを使ったQRコードスキャン制御
   useEffect(() => {
     if (!isScanQrOpen) {
       if (html5QrCodeRef.current) {
@@ -1845,7 +1845,7 @@ export default function WapApp() {
         <title>wap</title>
         <link rel="icon" href="/icon-192.png" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
-        {/* マップ以外での画面ズーム・ピンチインを禁止し、ビューポートを完全に固定 */}
+        {/* マップ画面以外でのズームを完全に禁止し、ビューを固定 */}
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -1854,6 +1854,7 @@ export default function WapApp() {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
 
+      {/* マップタブ以外の画面では touchAction: 'none' で拡大・スクロールジェスチャーを完全に固定 */}
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', touchAction: currentTab === 'map' ? 'manipulation' : 'none', userSelect: 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         
         {warningMessage && (
@@ -2153,22 +2154,22 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 自分のQRコード表示モーダル */}
+        {/* 自分のQRコード表示モーダル（中央に「wap」ロゴ入りオリジナルデザイン） */}
         {isMyQrOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 9000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '340px', width: '100%', padding: '28px 20px', textAlign: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.3)' }}>
               <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: '900', color: '#0284c7' }}>📱 マイQRコード</h3>
               <p style={{ margin: '0 0 20px 0', fontSize: '12px', color: '#64748b' }}>このQRコードを読み取ってもらうと、かんたんにフレンドになれます！</p>
               
-              <div style={{ width: '200px', height: '200px', margin: '0 auto 16px auto', background: '#ffffff', borderRadius: '16px', border: '2px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', boxSizing: 'border-box' }}>
+              <div style={{ width: '210px', height: '210px', margin: '0 auto 16px auto', background: '#ffffff', borderRadius: '16px', border: '2px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px', boxSizing: 'border-box', position: 'relative' }}>
                 <div
                   ref={(node) => {
                     if (node && (window as any).QRCode) {
                       node.innerHTML = '';
                       new (window as any).QRCode(node, {
                         text: `wap-friend://${userName}`,
-                        width: 170,
-                        height: 170,
+                        width: 180,
+                        height: 180,
                         colorDark: '#0f172a',
                         colorLight: '#ffffff',
                         correctLevel: (window as any).QRCode.CorrectLevel.H
@@ -2178,6 +2179,9 @@ export default function WapApp() {
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   <div style={{ fontSize: '11px', color: '#64748b' }}>生成中...</div>
+                </div>
+                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '36px', height: '36px', background: '#0284c7', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '900', border: '2px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.2)' }}>
+                  wap
                 </div>
               </div>
 
@@ -2206,7 +2210,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* QRコードスキャンモーダル（背景透過修正＆ファイル選択対応版） */}
+        {/* QRコードスキャンモーダル（背景透過なしの不透明コンテナで綺麗に表示） */}
         {isScanQrOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 9000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', color: '#fff' }}>
             <div style={{ width: '100%', maxWidth: '340px', background: '#0f172a', borderRadius: '24px', padding: '24px', textAlign: 'center', boxShadow: '0 25px 60px rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}>
@@ -2508,7 +2512,7 @@ export default function WapApp() {
             </div>
           </div>
 
-          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆コメント機能追加 */}
+          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆コメント直接閲覧・投稿対応 */}
           {currentTab === 'timeline' && (
             <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%' }}>
               <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
@@ -2546,7 +2550,18 @@ export default function WapApp() {
                         </div>
                       </div>
                       <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
-                      <p style={{ margin: '0 0 8px 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
+                      <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
+
+                      {/* タイムライン上でコメントを直接読めるリスト表示 */}
+                      {spot.comments && spot.comments.length > 0 && (
+                        <div style={{ maxHeight: '60px', overflowY: 'auto', background: 'rgba(0,0,0,0.4)', padding: '6px 8px', borderRadius: '8px', marginBottom: '8px', fontSize: '10px', color: '#e2e8f0' }}>
+                          {spot.comments.map(c => (
+                            <div key={c.id} style={{ marginBottom: '2px' }}>
+                              <b>{c.userName}:</b> {c.text}
+                            </div>
+                          ))}
+                        </div>
+                      )}
 
                       <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                         <input
