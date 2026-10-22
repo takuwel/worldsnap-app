@@ -242,8 +242,25 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     commentSend: '送信',
     myQrCode: '📱 自分のQRコード',
     scanQrCode: '📷 QRコードをスキャン',
-    eulaFullText: `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】`,
-    guideFullText: `[wap 操作ガイド]`
+    eulaFullText: `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
+
+第1条（目的および同意）
+本規約は、マップ共有アプリ「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
+
+第2条（位置情報の取得・利用について・パーミッション目的）
+1. 当サービスは、ユーザーがマップ画面の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一時的に取得します。
+2. 取得した位置情報は、「周辺の旅のスポットを検索・表示するため」「現在地を中心にマップを表示するため」にのみ使用されます。
+3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。
+
+第3条（コンテンツの安全性と免責事項・情報の正確性について）
+1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現などの不適切な投稿を厳禁としています。
+2. 掲載されているスポットの写真や店舗情報は投稿時点のものであり、現在地において建物がなくなっている、閉店している、またはリニューアルされている場合があります。当サービスは掲載情報の正確性や現状への適合性を保証するものではなく、現地に赴く際はユーザーご自身の責任で最新情報をご確認ください。
+3. 各投稿やコメントには応援機能および悪質ユーザーの「ブロック（🚫）」機能を完備しています。`,
+    guideFullText: `[wap 操作ガイド]
+1. 現在地への移動（🎯ボタン）
+2. マップ操作とズーム
+3. メディアの投稿
+4. 交流・安全機能`
   },
   en: {
     step1Title: 'Step 1: Select Language',
@@ -304,7 +321,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     commentSend: 'Send',
     myQrCode: '📱 My QR Code',
     scanQrCode: '📷 Scan QR Code',
-    eulaFullText: `[wap Terms]`,
+    eulaFullText: `[wap Terms of Service & Location Policy]`,
     guideFullText: `[wap Guide]`
   },
   ko: {
@@ -535,7 +552,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   CA: { names: { ja: 'カナダ', en: 'Canada', ko: '캐나다', zh: '加拿大' }, flag: '🇨🇦', region: '🗽 北米', lat: 56.1304, lon: -106.3468, zoom: 3 },
   MX: { names: { ja: 'メキシコ', en: 'Mexico', ko: '멕시코', zh: '墨西哥' }, flag: '🇲🇽', region: '🗽 北米', lat: 23.6345, lon: 102.5528, zoom: 5 },
   BR: { names: { ja: 'ブラジル', en: 'Brazil', ko: '브라질', zh: '巴西' }, flag: '🇧🇷', region: '🗽 中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
-  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '아르헨티나' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
+  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '阿根廷' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
   CL: { names: { ja: 'チリ', en: 'Chile', ko: '칠레', zh: '智利' }, flag: '🇨🇱', region: '🗽 中南米', lat: -35.6751, lon: -71.5430, zoom: 4 },
   PE: { names: { ja: 'ペルー', en: 'Peru', ko: '페루', zh: '秘鲁' }, flag: '🇵🇪', region: '🗽 中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
   CO: { names: { ja: 'コロンビア', en: 'Colombia', ko: '콜롬비아', zh: '哥伦比亚' }, flag: '🇨🇴', region: '🗽 中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
@@ -630,7 +647,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   GN: { names: { ja: 'ギニア', en: 'Guinea', ko: '기니', zh: '几内亚' }, flag: '🇬🇳', region: '🦁 アフリカ', lat: 9.9456, lon: -9.6966, zoom: 7 },
   GW: { names: { ja: 'ギニアビサウ', en: 'Guinea-Bissau', ko: '기니비사우', zh: '几内亚比绍' }, flag: '🇬🇼', region: '🦁 アフリカ', lat: 11.8037, lon: -15.1804, zoom: 8 },
   LS: { names: { ja: 'レソト', en: 'Lesotho', ko: '레소토', zh: '莱索托' }, flag: '🇱🇸', region: '🦁 アフリカ', lat: -29.6100, lon: 28.2336, zoom: 8 },
-  LR: { names: { ja: 'リベリア', en: 'Liberia', ko: '라이베리아', zh: 'リベリア' }, flag: '🇱🇷', region: '🦁 アフリカ', lat: 6.4281, lon: -9.4295, zoom: 7 },
+  LR: { names: { ja: 'リベリア', en: 'Liberia', ko: '라이베리아', zh: '利比里亚' }, flag: '🇱🇷', region: '🦁 アフリカ', lat: 6.4281, lon: -9.4295, zoom: 7 },
   MW: { names: { ja: 'マラウイ', en: 'Malawi', ko: '말라위', zh: '马拉维' }, flag: '🇲🇼', region: '🦁 アフリカ', lat: -13.2543, lon: 34.3015, zoom: 6 },
   MR: { names: { ja: 'モーリタニア', en: 'Mauritania', ko: '모리타니', zh: '毛里塔尼亚' }, flag: '🇲🇷', region: '🦁 アフリカ', lat: 21.0079, lon: -10.9408, zoom: 5 },
   ST: { names: { ja: 'サントメ・プリンシペ', en: 'Sao Tome and Principe', ko: '상투메 프린시페', zh: '圣多美和普林西比' }, flag: '🇸🇹', region: '🦁 アフリカ', lat: 0.1864, lon: 6.6131, zoom: 9 },
@@ -2497,6 +2514,7 @@ export default function WapApp() {
                       key={spot.id}
                       style={{ width: '100%', height: 'calc(100dvh - 48px - 64px - 50px)', scrollSnapAlign: 'start', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden' }}
                     >
+                      {/* 公式投稿や通常投稿の画質を最高にするため object-fit: cover と高画質URL対応 */}
                       <div
                         style={{ flex: 1, width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
@@ -2517,6 +2535,7 @@ export default function WapApp() {
                         <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
                         <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
 
+                        {/* コメント開閉時のみコメント欄を表示 */}
                         {isCommentsOpen && (
                           <div style={{ maxHeight: '110px', overflowY: 'auto', background: 'rgba(0,0,0,0.75)', padding: '8px', borderRadius: '10px', marginBottom: '8px', fontSize: '11px', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)' }}>
                             {spot.comments && spot.comments.length > 0 ? (
@@ -2551,6 +2570,7 @@ export default function WapApp() {
                         </div>
                       </div>
 
+                      {/* 右側のインタラクションボタン（いいね ＆ コメントボタン） */}
                       <div style={{ position: 'absolute', right: '16px', bottom: '100px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }}>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleToggleLike(spot.id); }}
@@ -2635,6 +2655,7 @@ export default function WapApp() {
                   </div>
                 </div>
 
+                {/* QRコード操作ボタン */}
                 <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
                   <button
                     onClick={() => setIsMyQrOpen(true)}
@@ -2653,6 +2674,7 @@ export default function WapApp() {
                 </div>
               </div>
 
+              {/* マイページのサブタブ（投稿・ログ・保存・バッジ・フレンド） */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '4px', marginBottom: '12px' }}>
                 {(['posts', 'timeline', 'saved', 'badges', 'friends'] as const).map((tab) => (
                   <button
