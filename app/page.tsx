@@ -603,7 +603,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   TV: { names: { ja: 'ツバル', en: 'Tuvalu', ko: '투발루', zh: '图瓦卢' }, flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
   ZA: { names: { ja: '南アフリカ', en: 'South Africa', ko: '남아프리카', zh: '南非' }, flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
   EG: { names: { ja: 'エジプト', en: 'Egypt', ko: '이집트', zh: '埃及' }, flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
-  MA: { names: { ja: 'モロッコ', en: 'Morocco', ko: '모로코', zh: '摩洛哥' }, flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
+  MA: { names: { ja: 'モロッコ', en: 'Morocco', ko: '모로코', zh: 'モロッコ' }, flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
   TN: { names: { ja: 'チュニジア', en: 'Tunisia', ko: '튀니지', zh: '突尼斯' }, flag: '🇹🇳', region: '🦁 アフリカ', lat: 33.8869, lon: 9.5375, zoom: 6 },
   KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: '肯尼亚' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
   TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: '坦桑尼亚' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
@@ -620,7 +620,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바브웨', zh: '津巴布韦' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
   BW: { names: { ja: 'ボツワナ', en: 'Botswana', ko: '보츠와나', zh: '博茨瓦纳' }, flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
   NA: { names: { ja: 'ナミビア', en: 'Namibia', ko: '나미비아', zh: '纳米比亚' }, flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
-  DZ: { names: { ja: 'アルジェリア', en: 'Algeria', ko: '알제리', zh: '阿尔及利亚' }, flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
+  DZ: { names: { ja: 'アルジェリア', en: 'Algeria', ko: '알제리', zh: '알제리' }, flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
   AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: '安哥拉' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
   CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: '喀麦隆' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
   CI: { names: { ja: 'コートジボワール', en: 'Ivory Coast', ko: '코트디부아르', zh: '科特迪瓦' }, flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
@@ -1042,25 +1042,25 @@ export default function WapApp() {
           isOfficial: d.is_official,
           isFeatured: d.is_featured,
           isFirstExplorer: d.is_first_explorer,
-          viewsCount: d.views_count || Math.floor(Math.random() * 50) + 10,
-          savedCount: d.saved_count || Math.floor(Math.random() * 15) + 2,
+          viewsCount: d.views_count || 1,
+          savedCount: d.saved_count || 0,
           title: d.title,
           description: d.description || '',
-          fileName: d.file_name,
+          fileName: d.file_name || 'image.jpg',
           fileUrl: d.file_url,
           thumbUrl: d.thumb_url || d.file_url,
           fileType: d.file_type || 'image',
-          mediaList: d.media_list || [{ fileUrl: d.file_url, thumbUrl: d.thumb_url || d.file_url, fileType: d.file_type || 'image', fileName: d.file_name }],
+          mediaList: d.media_list || [{ fileUrl: d.file_url, thumbUrl: d.thumb_url || d.file_url, fileType: d.file_type || 'image', fileName: d.file_name || 'image.jpg' }],
           lat: Number(d.lat),
           lon: Number(d.lon),
-          countryCode: d.country_code,
-          cityName: d.city_name,
-          category: d.category,
-          scopes: d.scopes || ['world', 'friends'],
+          countryCode: d.country_code || 'JP',
+          cityName: d.city_name || '日本',
+          category: d.category || 'view',
+          scopes: d.scopes || ['world', 'friends', 'my'],
           tags: d.tags || extractHashtags(d.description || ''),
           comments: d.comments || [],
           reportCount: d.report_count || 0,
-          createdAt: new Date(d.created_at).toLocaleDateString(),
+          createdAt: d.created_at ? new Date(d.created_at).toLocaleDateString() : new Date().toLocaleDateString(),
         }));
         
         setSpots(() => {
@@ -1578,10 +1578,7 @@ export default function WapApp() {
             upsert: false,
           });
         
-        if (uploadError) {
-          console.error('Supabase storage upload error:', uploadError);
-          showToast('⚠️ ストレージ制限のためオフライン・ローカルモードとして反映しました');
-        } else {
+        if (!uploadError) {
           const { data: publicData } = supabase.storage.from('wap-media').getPublicUrl(filePath);
           if (publicData?.publicUrl) {
             uploadedUrl = publicData.publicUrl;
@@ -1591,8 +1588,7 @@ export default function WapApp() {
           }
         }
       } catch (err) {
-        console.error('Upload exception:', err);
-        showToast('⚠️ ローカルモードとしてマップに反映しました');
+        console.error('Storage upload exception:', err);
       }
     }
 
@@ -1625,8 +1621,16 @@ export default function WapApp() {
       setSpots((prev) => prev.map((s) => (s.id === existingSameSpot.id ? updatedSpot : s)));
       if (supabase) {
         try {
-          await supabase.from('spots').update({ thumb_url: finalThumbUrl, file_url: uploadedUrl, media_list: updatedMediaList, title: updatedSpot.title, description: updatedSpot.description }).eq('id', existingSameSpot.id);
-        } catch {}
+          await supabase.from('spots').update({ 
+            thumb_url: finalThumbUrl, 
+            file_url: uploadedUrl, 
+            media_list: updatedMediaList, 
+            title: updatedSpot.title, 
+            description: updatedSpot.description 
+          }).eq('id', existingSameSpot.id);
+        } catch (dbErr) {
+          console.error('DB update fallback error:', dbErr);
+        }
       }
       showToast(`📸 同じ場所のピンにメディアを追加してまとめました！`);
     } else {
@@ -1686,7 +1690,9 @@ export default function WapApp() {
             comments: [],
             report_count: 0,
           }]);
-        } catch {}
+        } catch (dbErr) {
+          console.error('DB insert fallback error:', dbErr);
+        }
       }
 
       if (isFirstExplorer && selectedScopes.includes('world')) {
