@@ -510,7 +510,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   TR: { names: { ja: 'トルコ', en: 'Turkey', ko: '터키', zh: '土耳其' }, flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
   GR: { names: { ja: 'ギリシャ', en: 'Greece', ko: '그리스', zh: '希腊' }, flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
   AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
-  PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: 'ポルトガル' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
+  PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
   CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
   PL: { names: { ja: 'ポーランド', en: 'Poland', ko: '폴란드', zh: '波兰' }, flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
@@ -518,7 +518,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: '匈牙利' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
   IE: { names: { ja: 'アイルランド', en: 'Ireland', ko: '아이슬란드', zh: '爱尔兰' }, flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
   BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: '比利时' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
-  HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: 'クロアチア' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
+  HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: '克罗地亚' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
   RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루마니아', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
   UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: '乌克兰' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
@@ -545,19 +545,19 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   RU: { names: { ja: 'ロシア', en: 'Russia', ko: '러시아', zh: '俄罗斯' }, flag: '🇷🇺', region: '🇪🇺 ヨーロッパ', lat: 61.5240, lon: 105.3188, zoom: 3 },
   SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
   NO: { names: { ja: 'ノルウェー', en: 'Norway', ko: '노르웨이', zh: '挪威' }, flag: '🇳🇴', region: '🇪🇺 北欧', lat: 60.4720, lon: 8.4689, zoom: 5 },
-  DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: 'デンマーク' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
+  DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: '덴마크' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
   FI: { names: { ja: 'フィンランド', en: 'Finland', ko: '핀란드', zh: '芬兰' }, flag: '🇫🇮', region: '🇪🇺 北欧', lat: 61.9241, lon: 25.7482, zoom: 5 },
   IS: { names: { ja: 'アイスランド', en: 'Iceland', ko: '아이슬란드', zh: '冰岛' }, flag: '🇮🇸', region: '🇪🇺 北欧', lat: 64.9631, lon: -19.0208, zoom: 6 },
   US: { names: { ja: 'アメリカ', en: 'USA', ko: '미국', zh: '미국' }, flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
   CA: { names: { ja: 'カナダ', en: 'Canada', ko: '캐나다', zh: '加拿大' }, flag: '🇨🇦', region: '🗽 北米', lat: 56.1304, lon: -106.3468, zoom: 3 },
   MX: { names: { ja: 'メキシコ', en: 'Mexico', ko: '멕시코', zh: '墨西哥' }, flag: '🇲🇽', region: '🗽 北米', lat: 23.6345, lon: 102.5528, zoom: 5 },
   BR: { names: { ja: 'ブラジル', en: 'Brazil', ko: '브라질', zh: '巴西' }, flag: '🇧🇷', region: '🗽 中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
-  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '아르헨티나' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
+  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '阿根廷' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
   CL: { names: { ja: 'チリ', en: 'Chile', ko: '칠레', zh: '智利' }, flag: '🇨🇱', region: '🗽 中南米', lat: -35.6751, lon: -71.5430, zoom: 4 },
   PE: { names: { ja: 'ペルー', en: 'Peru', ko: '페루', zh: '秘鲁' }, flag: '🇵🇪', region: '🗽 中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
   CO: { names: { ja: 'コロンビア', en: 'Colombia', ko: '콜롬비아', zh: '哥伦比亚' }, flag: '🇨🇴', region: '🗽 中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
   CU: { names: { ja: 'キューバ', en: 'Cuba', ko: '쿠바', zh: '古巴' }, flag: '🇨🇺', region: '🗽 中南米', lat: 21.5218, lon: -77.7812, zoom: 7 },
-  CR: { names: { ja: 'コスタリカ', en: 'Costa Rica', ko: '코스타リカ', zh: '哥斯达黎加' }, flag: '🇨🇷', region: '🗽 中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
+  CR: { names: { ja: 'コスタリカ', en: 'Costa Rica', ko: '코스타리카', zh: '哥斯达黎加' }, flag: '🇨🇷', region: '🗽 中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
   DO: { names: { ja: 'ドミニカ共和国', en: 'Dominican Republic', ko: '도미니카 공화국', zh: '多米尼加' }, flag: '🇩🇴', region: '🗽 中南米', lat: 18.7357, lon: -70.1627, zoom: 8 },
   PA: { names: { ja: 'パナマ', en: 'Panama', ko: '파나마', zh: '巴拿马' }, flag: '🇵🇦', region: '🗽 中南米', lat: 8.5380, lon: -80.7821, zoom: 8 },
   JM: { names: { ja: 'ジャマイカ', en: 'Jamaica', ko: '자메이카', zh: '牙买加' }, flag: '🇯🇲', region: '🗽 中南米', lat: 18.1096, lon: -77.2975, zoom: 9 },
@@ -3197,4 +3197,55 @@ export default function WapApp() {
                 <input
                   type="text"
                   placeholder="地名・住所・場所名を入力"
-                  value={address
+                  value={addressSearchQuery}
+                  onChange={(e) => setAddressSearchQuery(e.target.value)}
+                  style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '11px', background: '#ffffff', marginBottom: '4px' }}
+                />
+
+                {addressSuggestions.length > 0 && (
+                  <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
+                    {addressSuggestions.map((item) => (
+                      <div
+                        key={item.place_id}
+                        onClick={() => handleSelectAddressSuggestion(item)}
+                        style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                      >
+                        <span>📍</span>
+                        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
+                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '10px', background: '#ffffff' }} />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={() => setPendingUploads([])}
+                  style={{ flex: 1, padding: '10px', background: '#f1f5f9', border: 'none', borderRadius: '10px', color: '#0f172a', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
+                >
+                  キャンセル
+                </button>
+                <button
+                  type="button"
+                  disabled={isSubmitting}
+                  onClick={handleConfirmPost}
+                  style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+                >
+                  {isSubmitting ? '保存中...' : 'マップに反映する 🚀'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </>
+  );
+}
