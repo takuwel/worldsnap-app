@@ -552,7 +552,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   CA: { names: { ja: 'カナダ', en: 'Canada', ko: '캐나다', zh: '加拿大' }, flag: '🇨🇦', region: '🗽 北米', lat: 56.1304, lon: -106.3468, zoom: 3 },
   MX: { names: { ja: 'メキシコ', en: 'Mexico', ko: '멕시코', zh: '墨西哥' }, flag: '🇲🇽', region: '🗽 北米', lat: 23.6345, lon: 102.5528, zoom: 5 },
   BR: { names: { ja: 'ブラジル', en: 'Brazil', ko: '브라질', zh: '巴西' }, flag: '🇧🇷', region: '🗽 中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
-  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '阿根廷' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
+  AR: { names: { ja: 'アルゼンチン', en: 'Argentina', ko: '아르헨티나', zh: '아르헨티나' }, flag: '🇦🇷', region: '🗽 中南米', lat: -38.4161, lon: -63.6167, zoom: 4 },
   CL: { names: { ja: 'チリ', en: 'Chile', ko: '칠레', zh: '智利' }, flag: '🇨🇱', region: '🗽 中南米', lat: -35.6751, lon: -71.5430, zoom: 4 },
   PE: { names: { ja: 'ペルー', en: 'Peru', ko: '페루', zh: '秘鲁' }, flag: '🇵🇪', region: '🗽 中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
   CO: { names: { ja: 'コロンビア', en: 'Colombia', ko: '콜롬비아', zh: '哥伦比亚' }, flag: '🇨🇴', region: '🗽 中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
@@ -613,7 +613,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
   ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '埃塞俄比亚' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
   SN: { names: { ja: 'セネガル', en: 'Senegal', ko: '세네갈', zh: '塞内加尔' }, flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
-  MG: { names: { ja: 'マダガスカル', en: 'Madagascar', ko: '마다가스카르', zh: '马达加斯加' }, flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
+  MG: { names: { ja: 'マダガスカル', en: 'Madagascar', ko: '마다가스카르', zh: 'マダガスカル' }, flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
   RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: '卢旺达' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
   UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: '乌干达' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
   ZM: { names: { ja: 'ザンビア', en: 'Zambia', ko: '잠비아', zh: '赞比亚' }, flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
@@ -957,7 +957,6 @@ export default function WapApp() {
 
   // タイムライン内コメント欄の開閉管理用ステート
   const [openCommentsForSpot, setOpenCommentsForSpot] = useState<Record<string, boolean>>({});
-  const [timelineCommentText, setTimelineCommentText] = useState<Record<string, string>>({});
 
   const scannerRef = useRef<HTMLDivElement>(null);
   const html5QrCodeRef = useRef<any>(null);
@@ -1456,8 +1455,6 @@ export default function WapApp() {
     );
     if (customText === undefined) {
       setNewCommentText('');
-    } else {
-      setTimelineCommentText(prev => ({ ...prev, [spotId]: '' }));
     }
     showToast('💬 コメントを投稿しました！');
   };
@@ -2493,7 +2490,7 @@ export default function WapApp() {
             </div>
           </div>
 
-          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆高画質＆コメント開閉・ボタン完備 */}
+          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆下部コメント入力欄削除済み */}
           {currentTab === 'timeline' && (
             <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%' }}>
               <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
@@ -2514,7 +2511,6 @@ export default function WapApp() {
                       key={spot.id}
                       style={{ width: '100%', height: 'calc(100dvh - 48px - 64px - 50px)', scrollSnapAlign: 'start', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden' }}
                     >
-                      {/* 公式投稿や通常投稿の画質を最高にするため object-fit: cover と高画質URL対応 */}
                       <div
                         style={{ flex: 1, width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
@@ -2535,39 +2531,39 @@ export default function WapApp() {
                         <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
                         <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
 
-                        {/* コメント開閉時のみコメント欄を表示 */}
+                        {/* コメント開閉時のみコメント一覧を表示 */}
                         {isCommentsOpen && (
-                          <div style={{ maxHeight: '110px', overflowY: 'auto', background: 'rgba(0,0,0,0.75)', padding: '8px', borderRadius: '10px', marginBottom: '8px', fontSize: '11px', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.1)' }}>
+                          <div style={{ maxHeight: '140px', overflowY: 'auto', background: 'rgba(0,0,0,0.85)', padding: '10px', borderRadius: '12px', marginBottom: '8px', fontSize: '11px', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.15)' }}>
+                            <div style={{ fontWeight: 'bold', marginBottom: '6px', color: '#38bdf8' }}>💬 コメント一覧</div>
                             {spot.comments && spot.comments.length > 0 ? (
                               spot.comments.map(c => (
-                                <div key={c.id} style={{ marginBottom: '4px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '2px' }}>
+                                <div key={c.id} style={{ marginBottom: '6px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '4px' }}>
                                   <b>{c.userName}:</b> {c.text}
                                 </div>
                               ))
                             ) : (
-                              <div style={{ color: '#94a3b8', textAlign: 'center' }}>コメントはまだありません</div>
+                              <div style={{ color: '#94a3b8', textAlign: 'center', padding: '6px 0' }}>コメントはまだありません</div>
                             )}
+                            <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+                              <input
+                                type="text"
+                                placeholder="💬 コメントを入力..."
+                                value={newCommentText}
+                                onChange={(e) => setNewCommentText(e.target.value)}
+                                style={{ flex: 1, padding: '6px 10px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '11px', outline: 'none' }}
+                              />
+                              <button
+                                onClick={() => {
+                                  handleAddComment(spot.id, newCommentText);
+                                  setNewCommentText('');
+                                }}
+                                style={{ padding: '6px 12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                              >
+                                送信
+                              </button>
+                            </div>
                           </div>
                         )}
-
-                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                          <input
-                            type="text"
-                            placeholder="💬 コメントを入力..."
-                            value={timelineCommentText[spot.id] || ''}
-                            onChange={(e) => setTimelineCommentText({ ...timelineCommentText, [spot.id]: e.target.value })}
-                            style={{ flex: 1, padding: '6px 10px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.5)', color: '#fff', fontSize: '11px', outline: 'none' }}
-                          />
-                          <button
-                            onClick={() => {
-                              handleAddComment(spot.id, timelineCommentText[spot.id]);
-                              setOpenCommentsForSpot(prev => ({ ...prev, [spot.id]: true }));
-                            }}
-                            style={{ padding: '6px 12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
-                          >
-                            送信
-                          </button>
-                        </div>
                       </div>
 
                       {/* 右側のインタラクションボタン（いいね ＆ コメントボタン） */}
