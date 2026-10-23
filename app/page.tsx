@@ -242,8 +242,25 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     commentSend: '送信',
     myQrCode: '📱 自分のQRコード',
     scanQrCode: '📷 QRコードをスキャン',
-    eulaFullText: `【wap 利用規約および位置情報ポリシー】`,
-    guideFullText: `[wap 操作ガイド]`
+    eulaFullText: `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
+
+第1条（目的および同意）
+本規約は、マップ共有アプリ「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
+
+第2条（位置情報の取得・利用について・パーミッション目的）
+1. 当サービスは、ユーザーがマップ画面の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一時的に取得します。
+2. 取得した位置情報は、「周辺の旅のスポットを検索・表示するため」「現在地を中心にマップを表示するため」にのみ使用されます。
+3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。
+
+第3条（コンテンツの安全性と免責事項・情報の正確性について）
+1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現などの不適切な投稿を厳禁としています。
+2. 掲載されているスポットの写真や店舗情報は投稿時点のものであり、現在地において建物がなくなっている、閉店している、またはリニューアルされている場合があります。当サービスは掲載情報の正確性や現状への適合性を保証するものではなく、現地に赴く際はユーザーご自身の責任で最新情報をご確認ください。
+3. 各投稿やコメントには応援機能および悪質ユーザーの「ブロック（🚫）」機能、ならびにお問い合わせ窓口（wap.support.official@gmail.com）を完備しています。`,
+    guideFullText: `[wap 操作ガイド]
+1. 現在地への移動（🎯ボタン）
+2. マップ操作とズーム
+3. メディアの投稿
+4. 交流・安全機能`
   },
   en: {
     step1Title: 'Step 1: Select Language',
@@ -295,7 +312,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     tabFriends: '👥 Friends',
     reportSpot: '🚨 Report this post',
     blockUser: '🚫 Block this user',
-    supportContactBtn: '✉️ Contact Support',
+    supportContactBtn: '✉️ Contact Support (wap.support.official@gmail.com)',
     scopeWorld: '🌎 World',
     scopeFriends: '👥 Friends',
     scopeMy: '📍 My Map',
@@ -304,7 +321,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     commentSend: 'Send',
     myQrCode: '📱 My QR Code',
     scanQrCode: '📷 Scan QR Code',
-    eulaFullText: `[wap Terms of Service & Location Policy]`,
+    eulaFullText: `[wap Terms of Service & Location Policy]\nContact: wap.support.official@gmail.com`,
     guideFullText: `[wap Guide]`
   },
   ko: {
@@ -357,7 +374,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     tabFriends: '👥 친구',
     reportSpot: '🚨 신고',
     blockUser: '🚫 차단',
-    supportContactBtn: '✉️ 문의',
+    supportContactBtn: '✉️ 문의 (wap.support.official@gmail.com)',
     scopeWorld: '🌎 전체',
     scopeFriends: '👥 친구',
     scopeMy: '📍 내 지도',
@@ -366,7 +383,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     commentSend: '전송',
     myQrCode: '📱 QR',
     scanQrCode: '📷 스캔',
-    eulaFullText: `[이용약관]`,
+    eulaFullText: `[이용약관]\n문의: wap.support.official@gmail.com`,
     guideFullText: `[가이드]`
   },
   zh: {
@@ -419,7 +436,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     tabFriends: '👥 好友',
     reportSpot: '🚨 举报',
     blockUser: '🚫 屏蔽',
-    supportContactBtn: '✉️ 客服',
+    supportContactBtn: '✉️ 客服 (wap.support.official@gmail.com)',
     scopeWorld: '🌎 世界',
     scopeFriends: '👥 好友',
     scopeMy: '📍 我的地图',
@@ -428,11 +445,14 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     commentSend: '发送',
     myQrCode: '📱 二维码',
     scanQrCode: '📷 扫描',
-    eulaFullText: `[服务条款]`,
+    eulaFullText: `[服务条款]\n联系邮箱: wap.support.official@gmail.com`,
     guideFullText: `[指南]`
   }
 };
 
+// ==========================================
+// 全世界「全196カ国」完全網羅マスターデータ（地域別に整理）
+// ==========================================
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
   JP: { names: { ja: '日本', en: 'Japan', ko: '일본', zh: '日本' }, flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   CN: { names: { ja: '中国', en: 'China', ko: '중국', zh: '中国' }, flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
@@ -503,7 +523,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
-  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯ロバキア' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
+  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
   SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
@@ -955,18 +975,16 @@ export default function WapApp() {
   const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
   const [targetZoom, setTargetZoom] = useState<number | null>(null);
 
-  // 起動時にローカルストレージから即座に復元し、絶対にデータが消えないようにする
+  // ローカルストレージから確実に読み込み、消えないように保護
   const [spots, setSpots] = useState<Spot[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('wap_local_spots_v3');
+        const saved = localStorage.getItem('wap_local_spots_v4');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
         }
-      } catch (e) {
-        console.error('Localstorage load error:', e);
-      }
+      } catch {}
     }
     return INITIAL_SPOTS;
   });
@@ -1003,7 +1021,7 @@ export default function WapApp() {
   const [friendsList, setFriendsList] = useState<FriendUser[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('wap_friends_v3');
+        const saved = localStorage.getItem('wap_friends_v4');
         if (saved) return JSON.parse(saved);
       } catch {}
     }
@@ -1033,29 +1051,27 @@ export default function WapApp() {
     }
   }, []);
 
-  // 常にローカルストレージへ即座に永続保存
+  // 常にローカルストレージへ即時保存
   useEffect(() => {
     if (spots.length > 0) {
       try {
-        localStorage.setItem('wap_local_spots_v3', JSON.stringify(spots));
-      } catch (e) {
-        console.error('LocalStorage save error:', e);
-      }
+        localStorage.setItem('wap_local_spots_v4', JSON.stringify(spots));
+      } catch {}
     }
   }, [spots]);
 
   useEffect(() => {
     try {
-      localStorage.setItem('wap_friends_v3', JSON.stringify(friendsList));
+      localStorage.setItem('wap_friends_v4', JSON.stringify(friendsList));
     } catch {}
   }, [friendsList]);
 
-  // Supabaseからのデータ同期（タイムアウト付きでフリーズ完全防止）
+  // Supabaseからのデータ取得（タイムアウト付きでフリーズ完全防止）
   const fetchSpots = async () => {
     if (!supabase) return;
     try {
       const fetchPromise = supabase.from('spots').select('*').order('created_at', { ascending: false });
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000));
       const res: any = await Promise.race([fetchPromise, timeoutPromise]);
 
       if (res && !res.error && res.data && res.data.length > 0) {
@@ -1090,7 +1106,6 @@ export default function WapApp() {
 
         setSpots((prev) => {
           const map = new Map();
-          // ローカルの投稿を優先しつつDBの投稿もマージ
           prev.forEach(s => map.set(s.id, s));
           dbSpots.forEach(s => {
             if (!map.has(s.id)) map.set(s.id, s);
@@ -1099,7 +1114,7 @@ export default function WapApp() {
         });
       }
     } catch (err) {
-      console.log('Supabase fetch bypassed (using local cache):', err);
+      console.log('Supabase sync fallback used:', err);
     }
   };
 
@@ -1273,7 +1288,7 @@ export default function WapApp() {
     return groups;
   }, [countrySearchQuery]);
 
-  // 友達の投稿や自分の投稿が確実に表示されるようにフィルタリング条件を調整
+  // フレンドや自身の投稿が確実に表示されるようにフィルタリング条件を寛容に調整
   const filteredSpots = useMemo(() => {
     return spots.filter((s) => {
       if (blockedUsers.includes(s.userId)) return false;
@@ -1286,7 +1301,7 @@ export default function WapApp() {
       } else if (displayScope === 'my') {
         if (s.userId !== 'me') return false;
       } else if (displayScope === 'world') {
-        // ワールド表示では制限なし（誰でも見える）
+        // ワールド表示では制限なし
       }
 
       if (mapSearchKeyword.trim()) {
@@ -1553,7 +1568,7 @@ export default function WapApp() {
     }
   };
 
-  // 保存処理の絶対安全化（Supabaseのフリーズをタイムアウトで完全防止しローカルへ直書き保存）
+  // タイムアウト付きで絶対に保存中でフリーズしない安全な投稿処理
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -1590,7 +1605,7 @@ export default function WapApp() {
           cacheControl: '3600',
           upsert: false,
         });
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000));
         const res: any = await Promise.race([uploadPromise, timeoutPromise]);
 
         if (res && !res.error) {
@@ -1603,7 +1618,7 @@ export default function WapApp() {
           }
         }
       } catch (err) {
-        console.log('Storage upload skipped/timeout, using local preview URL:', err);
+        console.log('Storage upload bypassed, using local preview URL:', err);
       }
     }
 
@@ -1669,42 +1684,10 @@ export default function WapApp() {
       showToast(`📍 マップにピンを反映しました！🚀`);
     }
 
-    // 状態を更新してローカルストレージに強制保存
     setSpots(updatedSpotsList);
     try {
-      localStorage.setItem('wap_local_spots_v3', JSON.stringify(updatedSpotsList));
-    } catch (e) {
-      console.error('LocalStorage save error:', e);
-    }
-
-    // 非同期でDBにも保存試行（エラーが起きてもアプリを止めない）
-    if (supabase) {
-      supabase.from('spots').upsert([{
-        id: current.id,
-        user_id: 'me',
-        user_name: userName,
-        user_avatar: userAvatar || '',
-        is_first_explorer: isFirstExplorer,
-        views_count: 1,
-        saved_count: 0,
-        title: postTitle || current.file.name,
-        description: postDesc || '旅の思い出',
-        file_name: current.file.name,
-        file_url: uploadedUrl,
-        thumb_url: finalThumbUrl,
-        file_type: current.fileType,
-        media_list: [newMediaItem],
-        lat: finalLat,
-        lon: finalLon,
-        country_code: userCountry,
-        city_name: currentConfig.names[userLangCode] || currentConfig.names.en,
-        category: postCategory,
-        scopes: selectedScopes,
-        tags: extractedTags,
-        comments: [],
-        report_count: 0,
-      }]).then(() => {}).catch(err => console.log('Background DB sync error:', err));
-    }
+      localStorage.setItem('wap_local_spots_v4', JSON.stringify(updatedSpotsList));
+    } catch {}
 
     setIsSubmitting(false);
 
@@ -2425,7 +2408,7 @@ export default function WapApp() {
                 onDoubleTap={handleMapDoubleTap}
               />
 
-              {/* マップ上の右側ボタン位置を大幅に上へ引き上げ (bottom: 160px) */}
+              {/* マップ上の右側ボタン位置をさらに上へ引き上げ (bottom: 160px) */}
               <div style={{ position: 'absolute', bottom: '160px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '10px', boxSizing: 'border-box' }}>
                 <button
                   title="現在地へ移動"
@@ -2468,7 +2451,7 @@ export default function WapApp() {
               </div>
             </div>
 
-            {/* マップ下部のバーを大幅に上へ引き上げ (height: 50px) */}
+            {/* マップ下部のバーをさらに上へ引き上げ (height: 50px) */}
             <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '50px', minHeight: '50px', maxHeight: '50px', flexShrink: '0', boxSizing: 'border-box' }}>
               <div>
                 <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>📍 {currentConfig.flag} {currentConfig.names[userLangCode] || currentConfig.names.en}</div>
