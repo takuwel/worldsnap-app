@@ -486,7 +486,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   TM: { names: { ja: 'トルクメニスタン', en: 'Turkmenistan', ko: '투르크메니스탄', zh: '土库曼斯坦' }, flag: '🇹🇲', region: '🍛 南・中央アジア', lat: 38.9697, lon: 59.5563, zoom: 6 },
   KG: { names: { ja: 'キルギス', en: 'Kyrgyzstan', ko: '키르기스스탄', zh: '吉尔吉斯斯坦' }, flag: '🇰🇬', region: '🍛 南・中央アジア', lat: 41.2044, lon: 74.7661, zoom: 7 },
   TJ: { names: { ja: 'タジキスタン', en: 'Tajikistan', ko: '타지키스탄', zh: '塔吉克斯坦' }, flag: '🇹🇯', region: '🍛 南・中央アジア', lat: 38.8610, lon: 71.2761, zoom: 7 },
-  AE: { names: { ja: 'アラブ首長国連邦', en: 'UAE', ko: '아랍에미리트', zh: '아랍에미리트' }, flag: '🇦🇪', region: '🕌 中東', lat: 23.4241, lon: 53.8478, zoom: 7 },
+  AE: { names: { ja: 'アラブ首長国連邦', en: 'UAE', ko: '아랍에미리트', zh: '阿联酋' }, flag: '🇦🇪', region: '🕌 中東', lat: 23.4241, lon: 53.8478, zoom: 7 },
   SA: { names: { ja: 'サウジアラビア', en: 'Saudi Arabia', ko: '사우디아라비아', zh: '沙特阿拉伯' }, flag: '🇸🇦', region: '🕌 中東', lat: 23.8859, lon: 45.0792, zoom: 5 },
   QA: { names: { ja: 'カタール', en: 'Qatar', ko: '카타르', zh: '卡塔尔' }, flag: '🇶🇦', region: '🕌 中東', lat: 25.3548, lon: 51.1839, zoom: 8 },
   OM: { names: { ja: 'オマーン', en: 'Oman', ko: '오만', zh: '阿曼' }, flag: '🇴🇲', region: '🕌 中東', lat: 21.4735, lon: 55.9754, zoom: 6 },
@@ -538,7 +538,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
   BA: { names: { ja: 'ボスニア・ヘルツェゴビナ', en: 'Bosnia and Herzegovina', ko: '보스니아 헤르체고비나', zh: '波黑' }, flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lat: 43.9159, lon: 17.6791, zoom: 7 },
-  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테ネグロ', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
+  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네그로', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
   MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케도니아', zh: '北马其顿' }, flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lat: 41.6086, lon: 21.7453, zoom: 8 },
   MD: { names: { ja: 'モルドバ', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
@@ -580,7 +580,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AG: { names: { ja: 'アンティグア・バーブーダ', en: 'Antigua and Barbuda', ko: '앤티가 바부다', zh: '安提瓜和巴布达' }, flag: '🇦🇬', region: '🗽 中南米', lat: 17.0608, lon: -61.7964, zoom: 9 },
   BB: { names: { ja: 'バルバドス', en: 'Barbados', ko: '바베이도스', zh: '巴巴多斯' }, flag: '🇧🇧', region: '🗽 中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
   DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
-  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레ナダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
+  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나ダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
   LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루시아', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
@@ -736,7 +736,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント
+// 2. Google Maps API コンポーネント（マップ画面以外はピンチイン・ズーム等を固定）
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -982,7 +982,7 @@ export default function WapApp() {
   const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
   const [targetZoom, setTargetZoom] = useState<number | null>(null);
 
-  // 国変更時に一発でマップが切り替わるように即座に反映
+  // 国変更時に即座にマップの中心とズームを更新（一発で国が変わるように修正）
   useEffect(() => {
     const conf = COUNTRIES[userCountry];
     if (conf) {
@@ -2301,6 +2301,11 @@ export default function WapApp() {
               value={userCountry}
               onChange={(e) => {
                 setUserCountry(e.target.value);
+                const conf = COUNTRIES[e.target.value];
+                if (conf) {
+                  setTargetCenter([conf.lat, conf.lon]);
+                  setTargetZoom(conf.zoom);
+                }
               }}
               style={{ background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
             >
@@ -2464,7 +2469,7 @@ export default function WapApp() {
               </div>
             </div>
 
-            {/* 写真/動画を追加ボタン（左下に配置し、他のボタンと被らないように調整） */}
+            {/* 写真/動画を追加ボタン（左下配置） */}
             <div style={{ position: 'absolute', bottom: '85px', left: '16px', zIndex: 450, boxSizing: 'border-box' }}>
               <label
                 style={{
@@ -2520,7 +2525,7 @@ export default function WapApp() {
                         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)' }}></div>
                       </div>
 
-                      {/* タイムラインのテキスト情報：いいね・コメントボタンと被らないよう配置 */}
+                      {/* タイムラインのテキスト情報 */}
                       <div style={{ position: 'absolute', bottom: '110px', left: '16px', right: '85px', color: '#fff', pointerEvents: 'auto' }} onClick={(e) => e.stopPropagation()}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                           <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
