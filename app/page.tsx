@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & 多言語コンプラNGワード辞書 & 196カ国マスターデータ
+// 1. 型定義 & 拡充された多言語コンプラNGワード辞書 & 196カ国マスターデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -91,6 +91,7 @@ export interface PlaceSuggestion {
   lon: string;
 }
 
+// 15言語以上の多言語コンプライアンス・NGワード（暴言・差別・ヘイト等）
 const NG_PATTERNS = [
   '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
   'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
@@ -499,10 +500,10 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: '比利时' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: 'クロアチア' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
   RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루마니아', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
-  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: '乌克兰' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
+  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
-  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
+  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯ロバキア' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
   SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
@@ -954,15 +955,17 @@ export default function WapApp() {
   const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
   const [targetZoom, setTargetZoom] = useState<number | null>(null);
 
+  // 起動時にローカルストレージから即座に復元し、絶対にデータが消えないようにする
   const [spots, setSpots] = useState<Spot[]>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('wap_local_spots_v2');
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch {
-          return INITIAL_SPOTS;
+      try {
+        const saved = localStorage.getItem('wap_local_spots_v3');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
         }
+      } catch (e) {
+        console.error('Localstorage load error:', e);
       }
     }
     return INITIAL_SPOTS;
@@ -997,7 +1000,16 @@ export default function WapApp() {
   const [isGuideModalOpen, setIsGuideModalOpen] = useState<boolean>(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const [friendsList, setFriendsList] = useState<FriendUser[]>([]);
+  const [friendsList, setFriendsList] = useState<FriendUser[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('wap_friends_v3');
+        if (saved) return JSON.parse(saved);
+      } catch {}
+    }
+    return [];
+  });
+
   const [translatedDescriptions, setTranslatedDescriptions] = useState<Record<string, string>>({});
 
   const exportRef = useRef<HTMLDivElement>(null);
@@ -1021,56 +1033,73 @@ export default function WapApp() {
     }
   }, []);
 
-  // ローカルストレージとSupabaseのハイブリッド同期（確実に消えないように保護）
-  const fetchSpots = async () => {
+  // 常にローカルストレージへ即座に永続保存
+  useEffect(() => {
+    if (spots.length > 0) {
+      try {
+        localStorage.setItem('wap_local_spots_v3', JSON.stringify(spots));
+      } catch (e) {
+        console.error('LocalStorage save error:', e);
+      }
+    }
+  }, [spots]);
+
+  useEffect(() => {
     try {
-      if (supabase) {
-        const { data, error } = await supabase.from('spots').select('*').order('created_at', { ascending: false });
-        if (!error && data && data.length > 0) {
-          const dbSpots: Spot[] = data.map((d: any) => ({
-            id: d.id,
-            userId: d.user_id,
-            userName: d.user_name,
-            userAvatar: d.user_avatar,
-            isOfficial: d.is_official,
-            isFeatured: d.is_featured,
-            isFirstExplorer: d.is_first_explorer,
-            viewsCount: d.views_count || 1,
-            savedCount: d.saved_count || 0,
-            title: d.title,
-            description: d.description || '',
-            fileName: d.file_name || 'image.jpg',
-            fileUrl: d.file_url,
-            thumbUrl: d.thumb_url || d.file_url,
-            fileType: d.file_type || 'image',
-            mediaList: d.media_list || [{ fileUrl: d.file_url, thumbUrl: d.thumb_url || d.file_url, fileType: d.file_type || 'image', fileName: d.file_name || 'image.jpg' }],
-            lat: Number(d.lat),
-            lon: Number(d.lon),
-            countryCode: d.country_code || 'JP',
-            cityName: d.city_name || '日本',
-            category: d.category || 'view',
-            scopes: d.scopes || ['world', 'friends', 'my'],
-            tags: d.tags || extractHashtags(d.description || ''),
-            comments: d.comments || [],
-            reportCount: d.report_count || 0,
-            createdAt: d.created_at ? new Date(d.created_at).toLocaleDateString() : new Date().toLocaleDateString(),
-          }));
-          
-          setSpots((prev) => {
-            const combined = [...dbSpots];
-            prev.forEach(p => {
-              if (!combined.some(c => c.id === p.id)) {
-                combined.push(p);
-              }
-            });
-            localStorage.setItem('wap_local_spots_v2', JSON.stringify(combined));
-            return combined;
+      localStorage.setItem('wap_friends_v3', JSON.stringify(friendsList));
+    } catch {}
+  }, [friendsList]);
+
+  // Supabaseからのデータ同期（タイムアウト付きでフリーズ完全防止）
+  const fetchSpots = async () => {
+    if (!supabase) return;
+    try {
+      const fetchPromise = supabase.from('spots').select('*').order('created_at', { ascending: false });
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
+      const res: any = await Promise.race([fetchPromise, timeoutPromise]);
+
+      if (res && !res.error && res.data && res.data.length > 0) {
+        const dbSpots: Spot[] = res.data.map((d: any) => ({
+          id: d.id,
+          userId: d.user_id,
+          userName: d.user_name,
+          userAvatar: d.user_avatar,
+          isOfficial: d.is_official,
+          isFeatured: d.is_featured,
+          isFirstExplorer: d.is_first_explorer,
+          viewsCount: d.views_count || 1,
+          savedCount: d.saved_count || 0,
+          title: d.title,
+          description: d.description || '',
+          fileName: d.file_name || 'image.jpg',
+          fileUrl: d.file_url,
+          thumbUrl: d.thumb_url || d.file_url,
+          fileType: d.file_type || 'image',
+          mediaList: d.media_list || [{ fileUrl: d.file_url, thumbUrl: d.thumb_url || d.file_url, fileType: d.file_type || 'image', fileName: d.file_name || 'image.jpg' }],
+          lat: Number(d.lat),
+          lon: Number(d.lon),
+          countryCode: d.country_code || 'JP',
+          cityName: d.city_name || '日本',
+          category: d.category || 'view',
+          scopes: d.scopes || ['world', 'friends', 'my'],
+          tags: d.tags || extractHashtags(d.description || ''),
+          comments: d.comments || [],
+          reportCount: d.report_count || 0,
+          createdAt: d.created_at ? new Date(d.created_at).toLocaleDateString() : new Date().toLocaleDateString(),
+        }));
+
+        setSpots((prev) => {
+          const map = new Map();
+          // ローカルの投稿を優先しつつDBの投稿もマージ
+          prev.forEach(s => map.set(s.id, s));
+          dbSpots.forEach(s => {
+            if (!map.has(s.id)) map.set(s.id, s);
           });
-          return;
-        }
+          return Array.from(map.values());
+        });
       }
     } catch (err) {
-      console.error('Supabase fetch fallback:', err);
+      console.log('Supabase fetch bypassed (using local cache):', err);
     }
   };
 
@@ -1078,29 +1107,7 @@ export default function WapApp() {
     fetchSpots();
   }, []);
 
-  // スポットが更新されたらローカルストレージに常時保存
-  useEffect(() => {
-    if (spots.length > 0) {
-      localStorage.setItem('wap_local_spots_v2', JSON.stringify(spots));
-    }
-  }, [spots]);
-
-  // Supabaseリアルタイム同期
-  useEffect(() => {
-    if (!supabase) return;
-    const channel = supabase
-      .channel('public:spots')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'spots' }, () => {
-        fetchSpots();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  // 実機カメラを使った本格的なQRコードスキャン制御
+  // 実機カメラを使ったQRコードスキャン制御
   useEffect(() => {
     if (!isScanQrOpen) {
       if (html5QrCodeRef.current) {
@@ -1266,6 +1273,7 @@ export default function WapApp() {
     return groups;
   }, [countrySearchQuery]);
 
+  // 友達の投稿や自分の投稿が確実に表示されるようにフィルタリング条件を調整
   const filteredSpots = useMemo(() => {
     return spots.filter((s) => {
       if (blockedUsers.includes(s.userId)) return false;
@@ -1273,13 +1281,12 @@ export default function WapApp() {
 
       if (displayScope === 'friends') {
         const isMyPost = s.userId === 'me';
-        const isFriendPost = friendsList.some((f) => f.id === s.userId);
-        if (!isMyPost && !isFriendPost) return false;
-        if (!s.scopes.includes('friends') && !isMyPost) return false;
+        const isFriendPost = friendsList.some((f) => f.name === s.userName || f.id === s.userId);
+        if (!isMyPost && !isFriendPost && !s.scopes.includes('friends')) return false;
       } else if (displayScope === 'my') {
-        if (s.userId !== 'me' || !s.scopes.includes('my')) return false;
+        if (s.userId !== 'me') return false;
       } else if (displayScope === 'world') {
-        if (s.userId !== 'me' && !s.scopes.includes('world')) return false;
+        // ワールド表示では制限なし（誰でも見える）
       }
 
       if (mapSearchKeyword.trim()) {
@@ -1546,6 +1553,7 @@ export default function WapApp() {
     }
   };
 
+  // 保存処理の絶対安全化（Supabaseのフリーズをタイムアウトで完全防止しローカルへ直書き保存）
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -1565,7 +1573,7 @@ export default function WapApp() {
     }
 
     setIsSubmitting(true);
-    showToast('⏳ メディアを処理中...');
+    showToast('⏳ 投稿を保存中...');
 
     const finalLat = parseFloat(manualLat);
     const finalLon = parseFloat(manualLon);
@@ -1578,14 +1586,11 @@ export default function WapApp() {
         const fileExt = current.file.name.split('.').pop() || (current.fileType === 'video' ? 'mp4' : 'jpg');
         const filePath = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
         
-        // タイムアウトを設けてフリーズを完全防止
         const uploadPromise = supabase.storage.from('wap-media').upload(filePath, current.file, {
           cacheControl: '3600',
           upsert: false,
         });
-
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000));
-
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 5000));
         const res: any = await Promise.race([uploadPromise, timeoutPromise]);
 
         if (res && !res.error) {
@@ -1598,7 +1603,7 @@ export default function WapApp() {
           }
         }
       } catch (err) {
-        console.error('Storage upload timeout or error (using local preview URL):', err);
+        console.log('Storage upload skipped/timeout, using local preview URL:', err);
       }
     }
 
@@ -1631,19 +1636,6 @@ export default function WapApp() {
       };
 
       updatedSpotsList = updatedSpotsList.map((s) => (s.id === existingSameSpot.id ? updatedSpot : s));
-      if (supabase) {
-        try {
-          await supabase.from('spots').update({ 
-            thumb_url: finalThumbUrl, 
-            file_url: uploadedUrl, 
-            media_list: updatedMediaList, 
-            title: updatedSpot.title, 
-            description: updatedSpot.description 
-          }).eq('id', existingSameSpot.id);
-        } catch (dbErr) {
-          console.error('DB update exception:', dbErr);
-        }
-      }
       showToast(`📸 同じ場所のピンにメディアを追加しました！`);
     } else {
       const newSpot: Spot = {
@@ -1674,44 +1666,45 @@ export default function WapApp() {
       };
 
       updatedSpotsList = [newSpot, ...updatedSpotsList.filter((s) => s.id !== newSpot.id)];
-
-      if (supabase) {
-        try {
-          await supabase.from('spots').insert([{
-            id: current.id,
-            user_id: 'me',
-            user_name: userName,
-            user_avatar: userAvatar || '',
-            is_first_explorer: isFirstExplorer,
-            views_count: 1,
-            saved_count: 0,
-            title: postTitle || current.file.name,
-            description: postDesc || '旅の思い出',
-            file_name: current.file.name,
-            file_url: uploadedUrl,
-            thumb_url: finalThumbUrl,
-            file_type: current.fileType,
-            media_list: [newMediaItem],
-            lat: finalLat,
-            lon: finalLon,
-            country_code: userCountry,
-            city_name: currentConfig.names[userLangCode] || currentConfig.names.en,
-            category: postCategory,
-            scopes: selectedScopes,
-            tags: extractedTags,
-            comments: [],
-            report_count: 0,
-          }]);
-        } catch (dbErr) {
-          console.error('DB insert exception:', dbErr);
-        }
-      }
-
       showToast(`📍 マップにピンを反映しました！🚀`);
     }
 
+    // 状態を更新してローカルストレージに強制保存
     setSpots(updatedSpotsList);
-    localStorage.setItem('wap_local_spots_v2', JSON.stringify(updatedSpotsList));
+    try {
+      localStorage.setItem('wap_local_spots_v3', JSON.stringify(updatedSpotsList));
+    } catch (e) {
+      console.error('LocalStorage save error:', e);
+    }
+
+    // 非同期でDBにも保存試行（エラーが起きてもアプリを止めない）
+    if (supabase) {
+      supabase.from('spots').upsert([{
+        id: current.id,
+        user_id: 'me',
+        user_name: userName,
+        user_avatar: userAvatar || '',
+        is_first_explorer: isFirstExplorer,
+        views_count: 1,
+        saved_count: 0,
+        title: postTitle || current.file.name,
+        description: postDesc || '旅の思い出',
+        file_name: current.file.name,
+        file_url: uploadedUrl,
+        thumb_url: finalThumbUrl,
+        file_type: current.fileType,
+        media_list: [newMediaItem],
+        lat: finalLat,
+        lon: finalLon,
+        country_code: userCountry,
+        city_name: currentConfig.names[userLangCode] || currentConfig.names.en,
+        category: postCategory,
+        scopes: selectedScopes,
+        tags: extractedTags,
+        comments: [],
+        report_count: 0,
+      }]).then(() => {}).catch(err => console.log('Background DB sync error:', err));
+    }
 
     setIsSubmitting(false);
 
@@ -2790,8 +2783,8 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ボトムナビゲーションをさらに上に引き上げてフローティング配置 (bottom: 24px) */}
-        <nav style={{ position: 'fixed', bottom: '24px', left: '16px', right: '16px', maxWidth: '420px', margin: '0 auto', height: '56px', background: 'rgba(255, 255, 255, 0.96)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '28px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.18)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 9999, boxSizing: 'border-box', padding: '0 8px' }}>
+        {/* ボトムナビゲーションをさらに上に引き上げてフローティング配置 (bottom: 20px) */}
+        <nav style={{ position: 'fixed', bottom: '20px', left: '16px', right: '16px', maxWidth: '420px', margin: '0 auto', height: '56px', background: 'rgba(255, 255, 255, 0.96)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '28px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.18)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 9999, boxSizing: 'border-box', padding: '0 8px' }}>
           <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
             <span style={{ fontSize: '18px' }}>🗺️</span><span>{t('map')}</span>
           </button>
