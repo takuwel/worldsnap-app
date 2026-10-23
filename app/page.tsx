@@ -25,6 +25,7 @@ export interface CommentItem {
   userName: string;
   userAvatar?: string;
   text: string;
+  replyTo?: string; // どのコメントに対する返信か
   createdAt: string;
 }
 
@@ -512,19 +513,19 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
   PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
-  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
+  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: 'ス위스', zh: 'スイス' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
   PL: { names: { ja: 'ポーランド', en: 'Poland', ko: '폴란드', zh: '波兰' }, flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
   CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: '捷克' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
   HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: '匈牙利' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
   IE: { names: { ja: 'アイルランド', en: 'Ireland', ko: '아이슬란드', zh: '爱尔兰' }, flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
   BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: '比利时' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: 'クロアチア' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
-  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루마니아', zh: 'ルーマニア' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
+  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루マニア', zh: 'ルーマニア' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
   UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: 'ウクライナ', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
-  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯ロバキア' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロベニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -965,6 +966,9 @@ export default function WapApp() {
   // タイムライン内コメント欄の開閉管理用ステート
   const [openCommentsForSpot, setOpenCommentsForSpot] = useState<Record<string, boolean>>({});
 
+  // どのコメントに対する返信かを保持するステート
+  const [replyTargetUser, setReplyTargetUser] = useState<string | null>(null);
+
   const scannerRef = useRef<HTMLDivElement>(null);
   const html5QrCodeRef = useRef<any>(null);
 
@@ -982,7 +986,7 @@ export default function WapApp() {
   const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
   const [targetZoom, setTargetZoom] = useState<number | null>(null);
 
-  // 国変更時に即座にマップの中心とズームを更新（一発で国が変わるように修正）
+  // 国変更時に即座にマップの中心とズームを更新
   useEffect(() => {
     const conf = COUNTRIES[userCountry];
     if (conf) {
@@ -997,7 +1001,7 @@ export default function WapApp() {
   const [spots, setSpots] = useState<Spot[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('wap_local_spots_v8');
+        const saved = localStorage.getItem('wap_local_spots_v9');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -1039,7 +1043,7 @@ export default function WapApp() {
   const [friendsList, setFriendsList] = useState<FriendUser[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('wap_friends_v8');
+        const saved = localStorage.getItem('wap_friends_v9');
         if (saved) return JSON.parse(saved);
       } catch {}
     }
@@ -1073,14 +1077,14 @@ export default function WapApp() {
   useEffect(() => {
     if (spots.length > 0) {
       try {
-        localStorage.setItem('wap_local_spots_v8', JSON.stringify(spots));
+        localStorage.setItem('wap_local_spots_v9', JSON.stringify(spots));
       } catch {}
     }
   }, [spots]);
 
   useEffect(() => {
     try {
-      localStorage.setItem('wap_friends_v8', JSON.stringify(friendsList));
+      localStorage.setItem('wap_friends_v9', JSON.stringify(friendsList));
     } catch {}
   }, [friendsList]);
 
@@ -1349,7 +1353,7 @@ export default function WapApp() {
   const rankingSpots = useMemo(() => {
     return [...spots]
       .filter(s => !blockedUsers.includes(s.userId))
-      .sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (b.viewsCount || 0)));
+      .sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
   }, [spots, blockedUsers]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
@@ -1478,11 +1482,14 @@ export default function WapApp() {
       return;
     }
 
+    const commentTextFinal = replyTargetUser ? `@${replyTargetUser} ${trimmedText}` : trimmedText;
+
     const newComment: CommentItem = {
       id: 'com-' + Date.now(),
       userName: userName,
       userAvatar: userAvatar || '',
-      text: trimmedText,
+      text: commentTextFinal,
+      replyTo: replyTargetUser || undefined,
       createdAt: new Date().toLocaleDateString(),
     };
 
@@ -1501,6 +1508,7 @@ export default function WapApp() {
     );
     if (customText === undefined) {
       setNewCommentText('');
+      setReplyTargetUser(null);
     }
     showToast('💬 コメントを投稿しました！');
   };
@@ -1703,7 +1711,7 @@ export default function WapApp() {
 
     setSpots(updatedSpotsList);
     try {
-      localStorage.setItem('wap_local_spots_v8', JSON.stringify(updatedSpotsList));
+      localStorage.setItem('wap_local_spots_v9', JSON.stringify(updatedSpotsList));
     } catch {}
 
     setIsSubmitting(false);
@@ -1835,7 +1843,6 @@ export default function WapApp() {
         <title>wap</title>
         <link rel="icon" href="/icon-192.png" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
-        {/* ステータスバー周辺の白を維持するための viewport 設定 */}
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -1844,7 +1851,6 @@ export default function WapApp() {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
 
-      {/* アプリ全体の高さを画面ぴったりに固定し、上部ステータスバーを含めて白く綺麗に演出 */}
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         
         {warningMessage && (
@@ -2527,7 +2533,7 @@ export default function WapApp() {
                       </div>
 
                       {/* タイムラインのテキスト情報 */}
-                      <div style={{ position: 'absolute', bottom: '110px', left: '16px', right: '85px', color: '#fff', pointerEvents: 'auto' }} onClick={(e) => e.stopPropagation()}>
+                      <div style={{ position: 'absolute', bottom: '100px', left: '16px', right: '85px', color: '#fff', pointerEvents: 'auto' }} onClick={(e) => e.stopPropagation()}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                           <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
                             {spot.userName.charAt(0)}
@@ -2541,57 +2547,74 @@ export default function WapApp() {
                         <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
 
                         {isCommentsOpen && (
-                          <div style={{ maxHeight: '140px', overflowY: 'auto', background: 'rgba(0,0,0,0.85)', padding: '10px', borderRadius: '12px', marginBottom: '8px', fontSize: '11px', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.15)' }}>
-                            <div style={{ fontWeight: 'bold', marginBottom: '6px', color: '#38bdf8' }}>💬 コメント一覧</div>
+                          <div style={{ maxHeight: '150px', overflowY: 'auto', background: 'rgba(0,0,0,0.9)', padding: '10px', borderRadius: '12px', marginBottom: '8px', fontSize: '11px', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.15)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                              <span style={{ fontWeight: 'bold', color: '#38bdf8' }}>💬 コメント一覧 (タップして返信)</span>
+                              {replyTargetUser && (
+                                <span onClick={() => setReplyTargetUser(null)} style={{ color: '#f43f5e', fontSize: '10px', cursor: 'pointer' }}>返信キャンセル ✕</span>
+                              )}
+                            </div>
+
                             {spot.comments && spot.comments.length > 0 ? (
                               spot.comments.map(c => (
-                                <div key={c.id} style={{ marginBottom: '6px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '4px' }}>
+                                <div
+                                  key={c.id}
+                                  onClick={() => setReplyTargetUser(c.userName)}
+                                  style={{ marginBottom: '6px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '4px', cursor: 'pointer', background: replyTargetUser === c.userName ? 'rgba(2,132,199,0.3)' : 'transparent', borderRadius: '4px' }}
+                                >
                                   <b>{c.userName}:</b> {c.text}
                                 </div>
                               ))
                             ) : (
                               <div style={{ color: '#94a3b8', textAlign: 'center', padding: '6px 0' }}>コメントはまだありません</div>
                             )}
-                            <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
-                              <input
-                                type="text"
-                                placeholder="💬 コメントを入力..."
-                                value={newCommentText}
-                                onChange={(e) => setNewCommentText(e.target.value)}
-                                style={{ flex: 1, padding: '6px 10px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '11px', outline: 'none' }}
-                              />
-                              <button
-                                onClick={() => {
-                                  handleAddComment(spot.id, newCommentText);
-                                  setNewCommentText('');
-                                }}
-                                style={{ padding: '6px 12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
-                              >
-                                送信
-                              </button>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '8px' }}>
+                              {replyTargetUser && (
+                                <div style={{ fontSize: '10px', color: '#38bdf8', fontWeight: 'bold' }}>
+                                  @{replyTargetUser} さんへ返信中...
+                                </div>
+                              )}
+                              <div style={{ display: 'flex', gap: '6px' }}>
+                                <input
+                                  type="text"
+                                  placeholder={replyTargetUser ? `@${replyTargetUser} への返信...` : "💬 コメントを入力..."}
+                                  value={newCommentText}
+                                  onChange={(e) => setNewCommentText(e.target.value)}
+                                  style={{ flex: 1, padding: '6px 10px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '11px', outline: 'none' }}
+                                />
+                                <button
+                                  onClick={() => {
+                                    handleAddComment(spot.id, newCommentText);
+                                  }}
+                                  style={{ padding: '6px 12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '16px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                                >
+                                  送信
+                                </button>
+                              </div>
                             </div>
                           </div>
                         )}
                       </div>
 
-                      {/* いいね・コメントボタン (bottom: 140px) */}
-                      <div style={{ position: 'absolute', right: '16px', bottom: '140px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }} onClick={(e) => e.stopPropagation()}>
+                      {/* いいね・コメントボタンを上に引き上げて大きく表示 (bottom: 130px) */}
+                      <div style={{ position: 'absolute', right: '16px', bottom: '130px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }} onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => handleToggleLike(spot.id)}
-                          style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
+                          style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '26px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
                         >
                           <span>{likedSpotIds.includes(spot.id) ? '❤️' : '🤍'}</span>
-                          <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{spot.savedCount}</span>
+                          <span style={{ fontSize: '11px', fontWeight: 'bold' }}>{spot.savedCount}</span>
                         </button>
 
                         <button
                           onClick={() => {
                             setOpenCommentsForSpot(prev => ({ ...prev, [spot.id]: !prev[spot.id] }));
                           }}
-                          style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '22px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
+                          style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
                         >
                           <span>💬</span>
-                          <span style={{ fontSize: '10px', fontWeight: 'bold' }}>{spot.comments?.length || 0}</span>
+                          <span style={{ fontSize: '11px', fontWeight: 'bold' }}>{spot.comments?.length || 0}</span>
                         </button>
                       </div>
                     </div>
@@ -2777,18 +2800,18 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ボトムナビゲーションを大きくして押しやすくフローティング配置 (bottom: 12px, height: 60px) */}
-        <nav style={{ position: 'fixed', bottom: '12px', left: '16px', right: '16px', maxWidth: '420px', margin: '0 auto', height: '60px', background: 'rgba(255, 255, 255, 0.98)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '30px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 9999, boxSizing: 'border-box', padding: '0 8px' }}>
-          <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
+        {/* ボトムナビゲーション：どの画面からでも一発で押せるように zIndex を高く設定 (zIndex: 99999) */}
+        <nav style={{ position: 'fixed', bottom: '12px', left: '16px', right: '16px', maxWidth: '420px', margin: '0 auto', height: '60px', background: 'rgba(255, 255, 255, 0.98)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '30px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 99999, boxSizing: 'border-box', padding: '0 8px' }}>
+          <button onClick={() => { setSelectedSpot(null); setCurrentTab('map'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
             <span style={{ fontSize: '20px' }}>🗺️</span><span>{t('map')}</span>
           </button>
-          <button onClick={() => setCurrentTab('timeline')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'timeline' ? 'bold' : 'normal', color: currentTab === 'timeline' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
+          <button onClick={() => { setSelectedSpot(null); setCurrentTab('timeline'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'timeline' ? 'bold' : 'normal', color: currentTab === 'timeline' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
             <span style={{ fontSize: '20px' }}>🗓️</span><span>{t('feed')}</span>
           </button>
-          <button onClick={() => setCurrentTab('ranking')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal', color: currentTab === 'ranking' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
+          <button onClick={() => { setSelectedSpot(null); setCurrentTab('ranking'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal', color: currentTab === 'ranking' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
             <span style={{ fontSize: '20px' }}>🏆</span><span>{t('ranking')}</span>
           </button>
-          <button onClick={() => setCurrentTab('profile')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal', color: currentTab === 'profile' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
+          <button onClick={() => { setSelectedSpot(null); setCurrentTab('profile'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal', color: currentTab === 'profile' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
             <span style={{ fontSize: '20px' }}>👤</span><span>{t('profile')}</span>
           </button>
         </nav>
@@ -3068,11 +3091,21 @@ export default function WapApp() {
 
               {/* コメントセクション */}
               <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginBottom: '20px' }}>
-                <h3 style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '10px' }}>💬 コメント ({selectedSpot.comments?.length || 0})</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <h3 style={{ fontSize: '14px', fontWeight: 'bold', margin: 0 }}>💬 コメント ({selectedSpot.comments?.length || 0})</h3>
+                  {replyTargetUser && (
+                    <span onClick={() => setReplyTargetUser(null)} style={{ color: '#ef4444', fontSize: '11px', cursor: 'pointer' }}>返信先: @{replyTargetUser} (解除 ✕)</span>
+                  )}
+                </div>
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
                   {selectedSpot.comments?.map((c) => (
-                    <div key={c.id} style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                      <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '2px' }}>{c.userName}</div>
+                    <div
+                      key={c.id}
+                      onClick={() => setReplyTargetUser(c.userName)}
+                      style={{ background: replyTargetUser === c.userName ? '#e0f2fe' : '#f8fafc', padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', cursor: 'pointer' }}
+                    >
+                      <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '2px' }}>{c.userName} (タップして返信)</div>
                       <div style={{ fontSize: '12px', color: '#334155' }}>{c.text}</div>
                     </div>
                   ))}
@@ -3083,7 +3116,7 @@ export default function WapApp() {
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input
                     type="text"
-                    placeholder={t('commentPlaceholder')}
+                    placeholder={replyTargetUser ? `@${replyTargetUser} への返信...` : t('commentPlaceholder')}
                     value={newCommentText}
                     onChange={(e) => setNewCommentText(e.target.value)}
                     style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '12px' }}
