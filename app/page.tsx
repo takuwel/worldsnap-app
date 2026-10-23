@@ -509,7 +509,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   DE: { names: { ja: 'ドイツ', en: 'Germany', ko: '독일', zh: '德国' }, flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
   TR: { names: { ja: 'トルコ', en: 'Turkey', ko: '터키', zh: '土耳其' }, flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
   GR: { names: { ja: 'ギリシャ', en: 'Greece', ko: '그리스', zh: '希腊' }, flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
-  AT: { names: { ja: 'オーストリア', en: 'Austria', ko: 'オーストリア', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
+  AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
   PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
   CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
@@ -519,8 +519,8 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   IE: { names: { ja: 'アイルランド', en: 'Ireland', ko: '아이슬란드', zh: '爱尔兰' }, flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
   BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: '比利时' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: 'クロアチア' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
-  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루마니아', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
-  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: '乌克兰' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
+  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루마니아', zh: 'ルーマニア' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
+  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
@@ -538,7 +538,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
   BA: { names: { ja: 'ボスニア・ヘルツェゴビナ', en: 'Bosnia and Herzegovina', ko: '보스니아 헤르체고비나', zh: '波黑' }, flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lat: 43.9159, lon: 17.6791, zoom: 7 },
-  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네그로', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
+  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테ネグロ', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
   MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케도니아', zh: '北马其顿' }, flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lat: 41.6086, lon: 21.7453, zoom: 8 },
   MD: { names: { ja: 'モルドバ', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
@@ -625,7 +625,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: '喀麦隆' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
   CI: { names: { ja: 'コートジボワール', en: 'Ivory Coast', ko: '코트디부아르', zh: '科特迪瓦' }, flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
   MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모잠비크', zh: '莫桑比克' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
-  SD: { names: { ja: 'スーダン', en: 'Sudan', ko: '수단', zh: '苏丹' }, flag: '🇸🇩', region: '🦁 アフリカ', lat: 12.8628, lon: 30.2176, zoom: 5 },
+  SD: { names: { ja: 'スーダン', en: 'Sudan', ko: '수단', zh: '苏ダン' }, flag: '🇸🇩', region: '🦁 アフリカ', lat: 12.8628, lon: 30.2176, zoom: 5 },
   LY: { names: { ja: 'リビア', en: 'Libya', ko: '리비아', zh: '利比亚' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
   ML: { names: { ja: 'マリ', en: 'Mali', ko: '말리', zh: '马里' }, flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 5 },
   NE: { names: { ja: 'ニジェール', en: 'Niger', ko: '니제르', zh: '尼日尔' }, flag: '🇳🇪', region: '🦁 アフリカ', lat: 17.6078, lon: 8.0817, zoom: 5 },
@@ -736,7 +736,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント（マップ画面以外はピンチイン・ズーム等を固定）
+// 2. Google Maps API コンポーネント
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -808,7 +808,6 @@ const GoogleMapComponent = ({
         maxZoom: 18,
         disableDefaultUI: true,
         zoomControl: false,
-        // マップ画面のみ操作可能、他画面では固定
         gestureHandling: 'greedy',
         backgroundColor: '#ffffff',
       });
@@ -854,7 +853,6 @@ const GoogleMapComponent = ({
     }
   }, [userLang]);
 
-  // 国変更や初期位置変更時に一発目で確実に対応
   useEffect(() => {
     if (mapInstanceRef.current && window.google && window.google.maps) {
       mapInstanceRef.current.setCenter({ lat: center[0], lng: center[1] });
@@ -984,7 +982,7 @@ export default function WapApp() {
   const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
   const [targetZoom, setTargetZoom] = useState<number | null>(null);
 
-  // 国変更時に即座にマップの中心とズームを更新（一発で国が変わるように修正）
+  // 国変更時に一発でマップが切り替わるように即座に反映
   useEffect(() => {
     const conf = COUNTRIES[userCountry];
     if (conf) {
@@ -999,7 +997,7 @@ export default function WapApp() {
   const [spots, setSpots] = useState<Spot[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('wap_local_spots_v6');
+        const saved = localStorage.getItem('wap_local_spots_v7');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -1041,7 +1039,7 @@ export default function WapApp() {
   const [friendsList, setFriendsList] = useState<FriendUser[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('wap_friends_v6');
+        const saved = localStorage.getItem('wap_friends_v7');
         if (saved) return JSON.parse(saved);
       } catch {}
     }
@@ -1075,14 +1073,14 @@ export default function WapApp() {
   useEffect(() => {
     if (spots.length > 0) {
       try {
-        localStorage.setItem('wap_local_spots_v6', JSON.stringify(spots));
+        localStorage.setItem('wap_local_spots_v7', JSON.stringify(spots));
       } catch {}
     }
   }, [spots]);
 
   useEffect(() => {
     try {
-      localStorage.setItem('wap_friends_v6', JSON.stringify(friendsList));
+      localStorage.setItem('wap_friends_v7', JSON.stringify(friendsList));
     } catch {}
   }, [friendsList]);
 
@@ -1705,7 +1703,7 @@ export default function WapApp() {
 
     setSpots(updatedSpotsList);
     try {
-      localStorage.setItem('wap_local_spots_v6', JSON.stringify(updatedSpotsList));
+      localStorage.setItem('wap_local_spots_v7', JSON.stringify(updatedSpotsList));
     } catch {}
 
     setIsSubmitting(false);
@@ -2303,11 +2301,6 @@ export default function WapApp() {
               value={userCountry}
               onChange={(e) => {
                 setUserCountry(e.target.value);
-                const conf = COUNTRIES[e.target.value];
-                if (conf) {
-                  setTargetCenter([conf.lat, conf.lon]);
-                  setTargetZoom(conf.zoom);
-                }
               }}
               style={{ background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '6px', padding: '3px 4px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', maxWidth: '120px', textOverflow: 'ellipsis' }}
             >
@@ -2331,8 +2324,8 @@ export default function WapApp() {
           </button>
         </header>
 
-        {/* ── メインビュー（下部の無駄な余白を完全に無くし、高さをフルに拡張） ── */}
-        <div style={{ flex: 1, minHeight: 0, height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
+        {/* ── メインビュー（マップ以外はズーム・ピンチイン等を完全固定） ── */}
+        <div style={{ flex: 1, minHeight: 0, height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box', touchAction: currentTab === 'map' ? 'auto' : 'none' }}>
           
           {/* マップタブ */}
           <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none', boxSizing: 'border-box' }}>
@@ -2428,7 +2421,7 @@ export default function WapApp() {
                 onDoubleTap={handleMapDoubleTap}
               />
 
-              {/* マップ右側のコントロールボタン（フローティングナビの上部に綺麗に収まる位置） */}
+              {/* マップ上の右側コントロールボタン */}
               <div style={{ position: 'absolute', bottom: '90px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
                 <button
                   title="現在地へ移動"
@@ -2471,7 +2464,7 @@ export default function WapApp() {
               </div>
             </div>
 
-            {/* 写真/動画を追加ボタン（左下に配置し、右側のボタンやナビと被らないように調整） */}
+            {/* 写真/動画を追加ボタン（左下に配置し、他のボタンと被らないように調整） */}
             <div style={{ position: 'absolute', bottom: '85px', left: '16px', zIndex: 450, boxSizing: 'border-box' }}>
               <label
                 style={{
@@ -2498,9 +2491,9 @@ export default function WapApp() {
             </div>
           </div>
 
-          {/* タイムライン（フィード）タブ：TikTok風縦スクロール＆タップで詳細画面へ遷移 */}
+          {/* タイムライン（フィード）タブ：TikTok風縦スクロール ＆ タップで詳細画面へジャンプ */}
           {currentTab === 'timeline' && (
-            <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%' }}>
+            <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%', touchAction: 'pan-y' }}>
               <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
                 <input
                   type="text"
@@ -2527,7 +2520,8 @@ export default function WapApp() {
                         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)' }}></div>
                       </div>
 
-                      <div style={{ position: 'absolute', bottom: '90px', left: '16px', right: '70px', color: '#fff', pointerEvents: 'auto' }} onClick={(e) => e.stopPropagation()}>
+                      {/* タイムラインのテキスト情報：いいね・コメントボタンと被らないよう配置 */}
+                      <div style={{ position: 'absolute', bottom: '100px', left: '16px', right: '85px', color: '#fff', pointerEvents: 'auto' }} onClick={(e) => e.stopPropagation()}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                           <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
                             {spot.userName.charAt(0)}
@@ -2574,7 +2568,8 @@ export default function WapApp() {
                         )}
                       </div>
 
-                      <div style={{ position: 'absolute', right: '16px', bottom: '100px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }} onClick={(e) => e.stopPropagation()}>
+                      {/* いいね・コメントボタンをさらに上に引き上げて押しやすく改善 (bottom: 120px) */}
+                      <div style={{ position: 'absolute', right: '16px', bottom: '120px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }} onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => handleToggleLike(spot.id)}
                           style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
@@ -2607,7 +2602,7 @@ export default function WapApp() {
 
           {/* ランキングタブ */}
           {currentTab === 'ranking' && (
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff', touchAction: 'pan-y' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '12px' }}>🏆 {t('ranking')}</h2>
               {rankingSpots.map((s, i) => (
                 <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ padding: '12px', borderBottom: '1px solid #e2e8f0', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}>
@@ -2626,7 +2621,7 @@ export default function WapApp() {
 
           {/* マイページタブ */}
           {currentTab === 'profile' && (
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff', touchAction: 'pan-y' }}>
               <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '20px', border: '1px solid #e2e8f0', textAlign: 'center', boxSizing: 'border-box', marginBottom: '12px' }}>
                 <div
                   onClick={() => profileAvatarInputRef.current?.click()}
