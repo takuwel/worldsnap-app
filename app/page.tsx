@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & 拡充された多言語コンプラNGワード辞書 & 196カ国マスターデータ
+// 1. 型定義 & 多言語コンプラNGワード辞書 & 196カ国マスターデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -91,7 +91,6 @@ export interface PlaceSuggestion {
   lon: string;
 }
 
-// 15言語以上の多言語コンプライアンス・NGワード（暴言・差別・ヘイト等）
 const NG_PATTERNS = [
   '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
   'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
@@ -242,25 +241,8 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     commentSend: '送信',
     myQrCode: '📱 自分のQRコード',
     scanQrCode: '📷 QRコードをスキャン',
-    eulaFullText: `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
-
-第1条（目的および同意）
-本規約は、マップ共有アプリ「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
-
-第2条（位置情報の取得・利用について・パーミッション目的）
-1. 当サービスは、ユーザーがマップ画面の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一時的に取得します。
-2. 取得した位置情報は、「周辺の旅のスポットを検索・表示するため」「現在地を中心にマップを表示するため」にのみ使用されます。
-3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。
-
-第3条（コンテンツの安全性と免責事項・情報の正確性について）
-1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現などの不適切な投稿を厳禁としています。
-2. 掲載されているスポットの写真や店舗情報は投稿時点のものであり、現在地において建物がなくなっている、閉店している、またはリニューアルされている場合があります。当サービスは掲載情報の正確性や現状への適合性を保証するものではなく、現地に赴く際はユーザーご自身の責任で最新情報をご確認ください。
-3. 各投稿やコメントには応援機能および悪質ユーザーの「ブロック（🚫）」機能、ならびにお問い合わせ窓口（wap.support.official@gmail.com）を完備しています。`,
-    guideFullText: `[wap 操作ガイド]
-1. 現在地への移動（🎯ボタン）
-2. マップ操作とズーム
-3. メディアの投稿
-4. 交流・安全機能`
+    eulaFullText: `【wap 利用規約および位置情報ポリシー】`,
+    guideFullText: `[wap 操作ガイド]`
   },
   en: {
     step1Title: 'Step 1: Select Language',
@@ -450,9 +432,6 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
   }
 };
 
-// ==========================================
-// 全世界「全196カ国」完全網羅マスターデータ（地域別に整理）
-// ==========================================
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
   JP: { names: { ja: '日本', en: 'Japan', ko: '일본', zh: '日本' }, flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   CN: { names: { ja: '中国', en: 'China', ko: '중국', zh: '中国' }, flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
@@ -975,7 +954,20 @@ export default function WapApp() {
   const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
   const [targetZoom, setTargetZoom] = useState<number | null>(null);
 
-  const [spots, setSpots] = useState<Spot[]>(INITIAL_SPOTS);
+  const [spots, setSpots] = useState<Spot[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('wap_local_spots_v2');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return INITIAL_SPOTS;
+        }
+      }
+    }
+    return INITIAL_SPOTS;
+  });
+
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0);
   const [likedSpotIds, setLikedSpotIds] = useState<string[]>([]);
@@ -1029,54 +1021,69 @@ export default function WapApp() {
     }
   }, []);
 
+  // ローカルストレージとSupabaseのハイブリッド同期（確実に消えないように保護）
   const fetchSpots = async () => {
-    if (!supabase) return;
     try {
-      const { data, error } = await supabase.from('spots').select('*').order('created_at', { ascending: false });
-      if (!error && data && data.length > 0) {
-        const dbSpots: Spot[] = data.map((d: any) => ({
-          id: d.id,
-          userId: d.user_id,
-          userName: d.user_name,
-          userAvatar: d.user_avatar,
-          isOfficial: d.is_official,
-          isFeatured: d.is_featured,
-          isFirstExplorer: d.is_first_explorer,
-          viewsCount: d.views_count || 1,
-          savedCount: d.saved_count || 0,
-          title: d.title,
-          description: d.description || '',
-          fileName: d.file_name || 'image.jpg',
-          fileUrl: d.file_url,
-          thumbUrl: d.thumb_url || d.file_url,
-          fileType: d.file_type || 'image',
-          mediaList: d.media_list || [{ fileUrl: d.file_url, thumbUrl: d.thumb_url || d.file_url, fileType: d.file_type || 'image', fileName: d.file_name || 'image.jpg' }],
-          lat: Number(d.lat),
-          lon: Number(d.lon),
-          countryCode: d.country_code || 'JP',
-          cityName: d.city_name || '日本',
-          category: d.category || 'view',
-          scopes: d.scopes || ['world', 'friends', 'my'],
-          tags: d.tags || extractHashtags(d.description || ''),
-          comments: d.comments || [],
-          reportCount: d.report_count || 0,
-          createdAt: d.created_at ? new Date(d.created_at).toLocaleDateString() : new Date().toLocaleDateString(),
-        }));
-        
-        setSpots(() => {
-          const dbIds = new Set(dbSpots.map(s => s.id));
-          const remainPresets = INITIAL_SPOTS.filter(p => !dbIds.has(p.id));
-          return [...dbSpots, ...remainPresets];
-        });
+      if (supabase) {
+        const { data, error } = await supabase.from('spots').select('*').order('created_at', { ascending: false });
+        if (!error && data && data.length > 0) {
+          const dbSpots: Spot[] = data.map((d: any) => ({
+            id: d.id,
+            userId: d.user_id,
+            userName: d.user_name,
+            userAvatar: d.user_avatar,
+            isOfficial: d.is_official,
+            isFeatured: d.is_featured,
+            isFirstExplorer: d.is_first_explorer,
+            viewsCount: d.views_count || 1,
+            savedCount: d.saved_count || 0,
+            title: d.title,
+            description: d.description || '',
+            fileName: d.file_name || 'image.jpg',
+            fileUrl: d.file_url,
+            thumbUrl: d.thumb_url || d.file_url,
+            fileType: d.file_type || 'image',
+            mediaList: d.media_list || [{ fileUrl: d.file_url, thumbUrl: d.thumb_url || d.file_url, fileType: d.file_type || 'image', fileName: d.file_name || 'image.jpg' }],
+            lat: Number(d.lat),
+            lon: Number(d.lon),
+            countryCode: d.country_code || 'JP',
+            cityName: d.city_name || '日本',
+            category: d.category || 'view',
+            scopes: d.scopes || ['world', 'friends', 'my'],
+            tags: d.tags || extractHashtags(d.description || ''),
+            comments: d.comments || [],
+            reportCount: d.report_count || 0,
+            createdAt: d.created_at ? new Date(d.created_at).toLocaleDateString() : new Date().toLocaleDateString(),
+          }));
+          
+          setSpots((prev) => {
+            const combined = [...dbSpots];
+            prev.forEach(p => {
+              if (!combined.some(c => c.id === p.id)) {
+                combined.push(p);
+              }
+            });
+            localStorage.setItem('wap_local_spots_v2', JSON.stringify(combined));
+            return combined;
+          });
+          return;
+        }
       }
     } catch (err) {
-      console.error('Fetch error:', err);
+      console.error('Supabase fetch fallback:', err);
     }
   };
 
   useEffect(() => {
     fetchSpots();
   }, []);
+
+  // スポットが更新されたらローカルストレージに常時保存
+  useEffect(() => {
+    if (spots.length > 0) {
+      localStorage.setItem('wap_local_spots_v2', JSON.stringify(spots));
+    }
+  }, [spots]);
 
   // Supabaseリアルタイム同期
   useEffect(() => {
@@ -1558,7 +1565,7 @@ export default function WapApp() {
     }
 
     setIsSubmitting(true);
-    showToast('⏳ メディアをアップロード中...');
+    showToast('⏳ メディアを処理中...');
 
     const finalLat = parseFloat(manualLat);
     const finalLon = parseFloat(manualLon);
@@ -1571,14 +1578,17 @@ export default function WapApp() {
         const fileExt = current.file.name.split('.').pop() || (current.fileType === 'video' ? 'mp4' : 'jpg');
         const filePath = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
         
-        const { error: uploadError } = await supabase.storage
-          .from('wap-media')
-          .upload(filePath, current.file, {
-            cacheControl: '3600',
-            upsert: false,
-          });
-        
-        if (!uploadError) {
+        // タイムアウトを設けてフリーズを完全防止
+        const uploadPromise = supabase.storage.from('wap-media').upload(filePath, current.file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
+
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000));
+
+        const res: any = await Promise.race([uploadPromise, timeoutPromise]);
+
+        if (res && !res.error) {
           const { data: publicData } = supabase.storage.from('wap-media').getPublicUrl(filePath);
           if (publicData?.publicUrl) {
             uploadedUrl = publicData.publicUrl;
@@ -1588,7 +1598,7 @@ export default function WapApp() {
           }
         }
       } catch (err) {
-        console.error('Storage upload exception (falling back to local):', err);
+        console.error('Storage upload timeout or error (using local preview URL):', err);
       }
     }
 
@@ -1607,6 +1617,8 @@ export default function WapApp() {
     const isFirstExplorer = !isNearbyExists;
     const extractedTags = extractHashtags(postDesc);
 
+    let updatedSpotsList = [...spots];
+
     if (existingSameSpot) {
       const updatedMediaList = [...(existingSameSpot.mediaList || [{ fileUrl: existingSameSpot.fileUrl, thumbUrl: existingSameSpot.thumbUrl, fileType: existingSameSpot.fileType, fileName: existingSameSpot.fileName }]), newMediaItem];
       const updatedSpot: Spot = {
@@ -1618,7 +1630,7 @@ export default function WapApp() {
         description: postDesc ? `${existingSameSpot.description}\n${postDesc}` : existingSameSpot.description,
       };
 
-      setSpots((prev) => prev.map((s) => (s.id === existingSameSpot.id ? updatedSpot : s)));
+      updatedSpotsList = updatedSpotsList.map((s) => (s.id === existingSameSpot.id ? updatedSpot : s));
       if (supabase) {
         try {
           await supabase.from('spots').update({ 
@@ -1632,7 +1644,7 @@ export default function WapApp() {
           console.error('DB update exception:', dbErr);
         }
       }
-      showToast(`📸 同じ場所のピンにメディアを追加してまとめました！`);
+      showToast(`📸 同じ場所のピンにメディアを追加しました！`);
     } else {
       const newSpot: Spot = {
         id: current.id,
@@ -1661,7 +1673,7 @@ export default function WapApp() {
         createdAt: new Date().toLocaleDateString(),
       };
 
-      setSpots((prev) => [newSpot, ...prev.filter((s) => s.id !== newSpot.id)]);
+      updatedSpotsList = [newSpot, ...updatedSpotsList.filter((s) => s.id !== newSpot.id)];
 
       if (supabase) {
         try {
@@ -1695,12 +1707,11 @@ export default function WapApp() {
         }
       }
 
-      if (isFirstExplorer && selectedScopes.includes('world')) {
-        showToast(`🎉 初代発見者！未開拓エリアにピンを共有しました！🗺️`);
-      } else {
-        showToast(`📍 マップにピンを反映しました！🚀`);
-      }
+      showToast(`📍 マップにピンを反映しました！🚀`);
     }
+
+    setSpots(updatedSpotsList);
+    localStorage.setItem('wap_local_spots_v2', JSON.stringify(updatedSpotsList));
 
     setIsSubmitting(false);
 
@@ -2324,8 +2335,8 @@ export default function WapApp() {
           </button>
         </header>
 
-        {/* ── メインビュー（ボトムバーの上部配置に合わせて十分に高さを縮小） ── */}
-        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 110px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
+        {/* ── メインビュー（さらに上へ引き上げ、下部にゆとりを確保） ── */}
+        <div style={{ flex: 1, minHeight: 0, maxHeight: 'calc(100dvh - 48px - 140px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
           
           {/* マップタブ */}
           <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none', boxSizing: 'border-box' }}>
@@ -2421,8 +2432,8 @@ export default function WapApp() {
                 onDoubleTap={handleMapDoubleTap}
               />
 
-              {/* マップ上の右側ボタン位置をさらに上へ引き上げ (bottom: 135px) */}
-              <div style={{ position: 'absolute', bottom: '135px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '10px', boxSizing: 'border-box' }}>
+              {/* マップ上の右側ボタン位置を大幅に上へ引き上げ (bottom: 160px) */}
+              <div style={{ position: 'absolute', bottom: '160px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '10px', boxSizing: 'border-box' }}>
                 <button
                   title="現在地へ移動"
                   onClick={() => {
@@ -2464,8 +2475,8 @@ export default function WapApp() {
               </div>
             </div>
 
-            {/* マップ下部のバーをさらに上へ引き上げ (height: 54px) */}
-            <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '54px', minHeight: '54px', maxHeight: '54px', flexShrink: '0', boxSizing: 'border-box' }}>
+            {/* マップ下部のバーを大幅に上へ引き上げ (height: 50px) */}
+            <div style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '8px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', zIndex: 450, touchAction: 'none', height: '50px', minHeight: '50px', maxHeight: '50px', flexShrink: '0', boxSizing: 'border-box' }}>
               <div>
                 <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>📍 {currentConfig.flag} {currentConfig.names[userLangCode] || currentConfig.names.en}</div>
                 <div style={{ fontSize: '9px', color: '#64748b' }}>{filteredSpots.length} spots</div>
@@ -2475,7 +2486,7 @@ export default function WapApp() {
                 style={{
                   flex: 1,
                   maxWidth: '220px',
-                  padding: '9px 16px',
+                  padding: '8px 16px',
                   background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
                   color: '#fff',
                   borderRadius: '30px',
@@ -2517,7 +2528,7 @@ export default function WapApp() {
                   return (
                     <div
                       key={spot.id}
-                      style={{ width: '100%', height: 'calc(100dvh - 48px - 100px - env(safe-area-inset-top, 0px))', scrollSnapAlign: 'start', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden' }}
+                      style={{ width: '100%', height: 'calc(100dvh - 48px - 120px - env(safe-area-inset-top, 0px))', scrollSnapAlign: 'start', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden' }}
                     >
                       <div
                         style={{ flex: 1, width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -2526,8 +2537,8 @@ export default function WapApp() {
                         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)' }}></div>
                       </div>
 
-                      {/* タイムラインのテキスト位置をさらに上に引き上げ (bottom: 80px) */}
-                      <div style={{ position: 'absolute', bottom: '80px', left: '16px', right: '70px', color: '#fff', pointerEvents: 'auto' }}>
+                      {/* タイムラインのテキスト位置をさらに上へ引き上げ (bottom: 100px) */}
+                      <div style={{ position: 'absolute', bottom: '100px', left: '16px', right: '70px', color: '#fff', pointerEvents: 'auto' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                           <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
                             {spot.userName.charAt(0)}
@@ -2575,8 +2586,8 @@ export default function WapApp() {
                         )}
                       </div>
 
-                      {/* 右側のインタラクションボタン位置をさらに上へ引き上げ (bottom: 160px) */}
-                      <div style={{ position: 'absolute', right: '16px', bottom: '160px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }}>
+                      {/* 右側のインタラクションボタン位置をさらに上へ引き上げ (bottom: 180px) */}
+                      <div style={{ position: 'absolute', right: '16px', bottom: '180px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }}>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleToggleLike(spot.id); }}
                           style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
@@ -2779,8 +2790,8 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ボトムナビゲーションをさらに上に引き上げてフローティング配置 (bottom: 20px) */}
-        <nav style={{ position: 'fixed', bottom: '20px', left: '16px', right: '16px', maxWidth: '420px', margin: '0 auto', height: '56px', background: 'rgba(255, 255, 255, 0.96)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '28px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.18)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 9999, boxSizing: 'border-box', padding: '0 8px' }}>
+        {/* ボトムナビゲーションをさらに上に引き上げてフローティング配置 (bottom: 24px) */}
+        <nav style={{ position: 'fixed', bottom: '24px', left: '16px', right: '16px', maxWidth: '420px', margin: '0 auto', height: '56px', background: 'rgba(255, 255, 255, 0.96)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '28px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.18)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 9999, boxSizing: 'border-box', padding: '0 8px' }}>
           <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
             <span style={{ fontSize: '18px' }}>🗺️</span><span>{t('map')}</span>
           </button>
