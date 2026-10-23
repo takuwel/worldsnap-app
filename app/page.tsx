@@ -2312,7 +2312,7 @@ export default function WapApp() {
           </button>
         </header>
 
-        {/* ── メインビュー（下部の無駄な余白を完全に無くし、マップ範囲をめいっぱい広く拡張） ── */}
+        {/* ── メインビュー（下部の余白を完全に無くし、高さをフルに拡張） ── */}
         <div style={{ flex: 1, minHeight: 0, height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
           
           {/* マップタブ */}
@@ -2409,8 +2409,8 @@ export default function WapApp() {
                 onDoubleTap={handleMapDoubleTap}
               />
 
-              {/* マップ右側のコントロールボタン（フローティングナビの上部に綺麗に収まる位置） */}
-              <div style={{ position: 'absolute', bottom: '90px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
+              {/* マップ上の右側ボタン位置（フローティングナビと被らない位置に調整） */}
+              <div style={{ position: 'absolute', bottom: '85px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
                 <button
                   title="現在地へ移動"
                   onClick={() => {
@@ -2452,11 +2452,11 @@ export default function WapApp() {
               </div>
             </div>
 
-            {/* 写真追加ボタンを右上に重ねて配置するか、ボトムバーの上部に一体化して白い余白を完全消去 */}
-            <div style={{ position: 'absolute', bottom: '85px', right: '16px', zIndex: 450, boxSizing: 'border-box' }}>
+            {/* 写真/動画を追加ボタン（右下から浮かせ、他のボタンやナビと被らない位置に配置） */}
+            <div style={{ position: 'absolute', bottom: '85px', left: '16px', zIndex: 450, boxSizing: 'border-box' }}>
               <label
                 style={{
-                  padding: '10px 20px',
+                  padding: '10px 18px',
                   background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
                   color: '#fff',
                   borderRadius: '30px',
@@ -2498,7 +2498,7 @@ export default function WapApp() {
                   return (
                     <div
                       key={spot.id}
-                      style={{ width: '100%', height: 'calc(100dvh - 48px - 75px - env(safe-area-inset-top, 0px))', scrollSnapAlign: 'start', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden' }}
+                      style={{ width: '100%', height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0px))', scrollSnapAlign: 'start', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden' }}
                     >
                       <div
                         style={{ flex: 1, width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -2507,7 +2507,7 @@ export default function WapApp() {
                         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)' }}></div>
                       </div>
 
-                      <div style={{ position: 'absolute', bottom: '80px', left: '16px', right: '70px', color: '#fff', pointerEvents: 'auto' }}>
+                      <div style={{ position: 'absolute', bottom: '90px', left: '16px', right: '70px', color: '#fff', pointerEvents: 'auto' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                           <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
                             {spot.userName.charAt(0)}
@@ -2554,7 +2554,7 @@ export default function WapApp() {
                         )}
                       </div>
 
-                      <div style={{ position: 'absolute', right: '16px', bottom: '140px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }}>
+                      <div style={{ position: 'absolute', right: '16px', bottom: '100px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }}>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleToggleLike(spot.id); }}
                           style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
@@ -2757,19 +2757,19 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ボトムナビゲーションを一番下にスッキリ配置し、マップ範囲を拡大 */}
-        <nav style={{ position: 'fixed', bottom: '10px', left: '16px', right: '16px', maxWidth: '420px', margin: '0 auto', height: '54px', background: 'rgba(255, 255, 255, 0.96)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '28px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.18)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 9999, boxSizing: 'border-box', padding: '0 8px' }}>
-          <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
-            <span style={{ fontSize: '18px' }}>🗺️</span><span>{t('map')}</span>
+        {/* ボトムナビゲーションを大きくして押しやすくフローティング配置 (bottom: 12px, height: 60px) */}
+        <nav style={{ position: 'fixed', bottom: '12px', left: '16px', right: '16px', maxWidth: '420px', margin: '0 auto', height: '60px', background: 'rgba(255, 255, 255, 0.98)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '30px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 9999, boxSizing: 'border-box', padding: '0 8px' }}>
+          <button onClick={() => setCurrentTab('map')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
+            <span style={{ fontSize: '20px' }}>🗺️</span><span>{t('map')}</span>
           </button>
-          <button onClick={() => setCurrentTab('timeline')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'timeline' ? 'bold' : 'normal', color: currentTab === 'timeline' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
-            <span style={{ fontSize: '18px' }}>🗓️</span><span>{t('feed')}</span>
+          <button onClick={() => setCurrentTab('timeline')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'timeline' ? 'bold' : 'normal', color: currentTab === 'timeline' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
+            <span style={{ fontSize: '20px' }}>🗓️</span><span>{t('feed')}</span>
           </button>
-          <button onClick={() => setCurrentTab('ranking')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal', color: currentTab === 'ranking' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
-            <span style={{ fontSize: '18px' }}>🏆</span><span>{t('ranking')}</span>
+          <button onClick={() => setCurrentTab('ranking')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal', color: currentTab === 'ranking' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
+            <span style={{ fontSize: '20px' }}>🏆</span><span>{t('ranking')}</span>
           </button>
-          <button onClick={() => setCurrentTab('profile')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal', color: currentTab === 'profile' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
-            <span style={{ fontSize: '18px' }}>👤</span><span>{t('profile')}</span>
+          <button onClick={() => setCurrentTab('profile')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal', color: currentTab === 'profile' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1 }}>
+            <span style={{ fontSize: '20px' }}>👤</span><span>{t('profile')}</span>
           </button>
         </nav>
 
