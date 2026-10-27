@@ -266,12 +266,12 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 2️⃣ **すてきな写真や動画をマップに投稿する（カンタン！）**
 - マップ画面の左下にある「📷＋ 写真/動画を追加」ボタンを押してね。
 - スマホの中にある写真や動画を選ぶと、自動的に場所（位置情報）がマップにセットされるよ！（※場所が違うときは「地名・住所検索」で正しい場所をえらんでね）
-- プレビュー画面の「＋」「−」「リセット」ボタンや、画像を指でスワイプして好きな大きさに微調整できるよ！
+- プレビュー画面で、iPhoneの写真アプリと同じように**「二本指で広げたり縮めたり（ピンチイン・アウト）」**して大きさを自由に変えたり、指でスワイプして位置を微調整できるよ！
 - タイトルや思い出メモを入力して、「マップに反映する 🚀」を押すだけ！
 
 3️⃣ **みんなの投稿を見る（タイムライン）**
 - 下のメニューの「🗓️ タイムライン」を押すと、みんなが投稿した写真や動画がTikTokみたいに縦に流れてくるよ！
-- 音声つきの動画もその場で再生されるよ！お気に入りの投稿には「❤️ いいね」をしたり、コメントで会話を楽しもう！
+- 動画は音が出る状態でスムーズに再生されるよ。上下にスワイプして次の投稿へサクサク進もう！
 
 4️⃣ **ランキングと自分のページ**
 - 「🏆 ランキング」では、みんなに大人気のスポットがわかるよ。
@@ -521,7 +521,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   DE: { names: { ja: 'ドイツ', en: 'Germany', ko: '독일', zh: '德国' }, flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
   TR: { names: { ja: 'トルコ', en: 'Turkey', ko: '터키', zh: '土耳其' }, flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
   GR: { names: { ja: 'ギリシャ', en: 'Greece', ko: '그리스', zh: '希腊' }, flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
-  AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트リア', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
+  AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
   PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
   CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
@@ -536,9 +536,9 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
-  LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
+  LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: 'ラトビア', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
   LU: { names: { ja: 'ルクセンブルク', en: 'Luxembourg', ko: '룩셈부르크', zh: '卢森堡' }, flag: '🇱🇺', region: '🇪🇺 ヨーロッパ', lat: 49.8153, lon: 6.1296, zoom: 10 },
   MC: { names: { ja: 'モナコ', en: 'Monaco', ko: '모나코', zh: '摩纳哥' }, flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lat: 43.7384, lon: 7.4246, zoom: 14 },
@@ -550,9 +550,9 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
   BA: { names: { ja: 'ボスニア・ヘルツェゴビナ', en: 'Bosnia and Herzegovina', ko: '보스니아 헤르체고비나', zh: '波黑' }, flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lat: 43.9159, lon: 17.6791, zoom: 7 },
-  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네그로', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
+  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네グロ', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
   MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케도니아', zh: '北马其顿' }, flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lat: 41.6086, lon: 21.7453, zoom: 8 },
-  MD: { names: { ja: 'モルド바', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
+  MD: { names: { ja: 'モルドバ', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
   RU: { names: { ja: 'ロシア', en: 'Russia', ko: '러시아', zh: '俄罗斯' }, flag: '🇷🇺', region: '🇪🇺 ヨーロッパ', lat: 61.5240, lon: 105.3188, zoom: 3 },
   SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
@@ -592,7 +592,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AG: { names: { ja: 'アンティグア・バーブーダ', en: 'Antigua and Barbuda', ko: '앤티가 바부다', zh: '安提瓜和巴布达' }, flag: '🇦🇬', region: '🗽 中南米', lat: 17.0608, lon: -61.7964, zoom: 9 },
   BB: { names: { ja: 'バルバドス', en: 'Barbados', ko: '바베이도스', zh: '巴巴多斯' }, flag: '🇧🇧', region: '🗽 中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
   DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
-  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나ダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
+  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레ナダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
   LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루시아', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
@@ -618,7 +618,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MA: { names: { ja: 'モロッコ', en: 'Morocco', ko: '모로코', zh: '摩洛哥' }, flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
   TN: { names: { ja: 'チュニジア', en: 'Tunisia', ko: '튀니지', zh: '突尼斯' }, flag: '🇹🇳', region: '🦁 アフリカ', lat: 33.8869, lon: 9.5375, zoom: 6 },
   KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: 'ケニア' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
-  TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: 'タンザニア' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
+  TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: '坦桑尼亚' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
   MU: { names: { ja: 'モーリシャス', en: 'Mauritius', ko: '모리셔스', zh: 'モーリシャス' }, flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
   SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: 'セーシェル' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
   GH: { names: { ja: 'ガーナ', en: 'Ghana', ko: '가나', zh: '加纳' }, flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
@@ -638,7 +638,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   CI: { names: { ja: 'コートジボワール', en: 'Ivory Coast', ko: '코트디부아르', zh: 'コートジボワール' }, flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
   MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모ザンビーク', zh: 'モザンビーク' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
   SD: { names: { ja: 'スーダン', en: 'Sudan', ko: '수단', zh: 'スーダン' }, flag: '🇸🇩', region: '🦁 アフリカ', lat: 12.8628, lon: 30.2176, zoom: 5 },
-  LY: { names: { ja: 'リビア', en: 'Libya', ko: '리비아', zh: 'リビア' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
+  LY: { names: { ja: 'リビア', en: 'Libya', ko: 'リビア', zh: 'リビア' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
   ML: { names: { ja: 'マリ', en: 'Mali', ko: '말리', zh: 'マリ' }, flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 5 },
   NE: { names: { ja: 'ニジェール', en: 'Niger', ko: '니제르', zh: 'ニジェール' }, flag: '🇳🇪', region: '🦁 アフリカ', lat: 17.6078, lon: 8.0817, zoom: 5 },
   SO: { names: { ja: 'ソマリア', en: 'Somalia', ko: '소말리아', zh: 'ソマリア' }, flag: '🇸🇴', region: '🦁 アフリカ', lat: 5.1521, lon: 46.1996, zoom: 6 },
@@ -651,7 +651,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   KM: { names: { ja: 'コモロ', en: 'Comoros', ko: '코모로', zh: 'コモロ' }, flag: '🇰🇲', region: '🦁 アフリカ', lat: -11.8750, lon: 43.8722, zoom: 9 },
   CG: { names: { ja: 'コンゴ共和国', en: 'Republic of the Congo', ko: '콩고공화국', zh: '刚果共和国' }, flag: '🇨🇬', region: '🦁 アフリカ', lat: -0.2280, lon: 15.8277, zoom: 6 },
   CD: { names: { ja: 'コンゴ民主共和国', en: 'Democratic Republic of the Congo', ko: '콩고민주공화국', zh: '刚果民主共和国' }, flag: '🇨🇩', region: '🦁 アフリカ', lat: -4.0383, lon: 21.7587, zoom: 5 },
-  DJ: { names: { ja: 'ジブチ', en: 'Djibouti', ko: '지부티', zh: 'ジブチ' }, flag: '🇩🇯', region: '🦁 アフリカ', lat: 11.8251, lon: 42.5903, zoom: 8 },
+  DJ: { names: { ja: 'ジブチ', en: 'Djibouti', ko: '지부티', zh: '吉布提' }, flag: '🇩🇯', region: '🦁 アフリカ', lat: 11.8251, lon: 42.5903, zoom: 8 },
   GQ: { names: { ja: '赤道ギニア', en: 'Equatorial Guinea', ko: '적도 기니', zh: '赤道几内亚' }, flag: '🇬🇶', region: '🦁 アフリカ', lat: 1.6508, lon: 10.2679, zoom: 8 },
   ER: { names: { ja: 'エリトリア', en: 'Eritrea', ko: '에리트레아', zh: '厄立特里亚' }, flag: '🇪🇷', region: '🦁 アフリカ', lat: 15.1794, lon: 39.7823, zoom: 7 },
   GA: { names: { ja: 'ガボン', en: 'Gabon', ko: '가봉', zh: '加蓬' }, flag: '🇬🇦', region: '🦁 アフリカ', lat: -0.8037, lon: 11.6094, zoom: 6 },
@@ -1045,11 +1045,13 @@ export default function WapApp() {
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // 投稿プレビューでのボタン操作・ドラッグ移動用ステート
+  // 投稿プレビューでのiPhone風ピンチイン・ドラッグ操作用ステート
   const [previewScale, setPreviewScale] = useState<number>(1);
   const [previewOffset, setPreviewOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const isDraggingRef = useRef<boolean>(false);
   const dragStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const initialPinchDistRef = useRef<number | null>(null);
+  const initialScaleRef = useRef<number>(1);
 
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
@@ -1403,7 +1405,7 @@ export default function WapApp() {
   const rankingSpots = useMemo(() => {
     return [...spots]
       .filter(s => !blockedUsers.includes(s.userId))
-      .sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
+      .sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (b.viewsCount || 0)));
   }, [spots, blockedUsers]);
 
   const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
@@ -2558,7 +2560,7 @@ export default function WapApp() {
             </div>
           </div>
 
-          {/* タイムライン（フィード）タブ：TikTok風縦スクロール ＆ タップで詳細画面へジャンプ */}
+          {/* タイムライン（フィード）タブ：動画音声対応 ＆ スムーズな縦スクロール */}
           {currentTab === 'timeline' && (
             <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%', touchAction: 'pan-y' }}>
               <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
@@ -2584,11 +2586,15 @@ export default function WapApp() {
                         style={{ flex: 1, width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
                         {spot.fileType === 'video' ? (
-                          <video src={spot.fileUrl} autoPlay loop muted={false} playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+                            <video src={spot.fileUrl} autoPlay loop muted={false} playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            {/* 動画の上でも縦方向のスクロールを有効にするための透過オーバーレイ */}
+                            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}></div>
+                          </div>
                         ) : (
                           <img src={spot.fileUrl || spot.thumbUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                         )}
-                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)' }}></div>
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)', pointerEvents: 'none' }}></div>
                       </div>
 
                       {/* タイムラインのテキスト情報 */}
@@ -3203,7 +3209,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 投稿作成モーダル（タップ微調整・動画コントロール非表示） ── */}
+        {/* ── 投稿作成モーダル（iPhone風ピンチ＆ドラッグ操作対応） ── */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box' }}>
@@ -3211,7 +3217,7 @@ export default function WapApp() {
                 📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
               </h3>
 
-              {/* ドラッグ移動 ＆ タップ調整対応プレビュー（動画はコントロール非表示） */}
+              {/* iPhone風ピンチイン・ピンチアウト ＆ ドラッグ微調整対応プレビュー */}
               <div
                 onMouseDown={(e) => {
                   isDraggingRef.current = true;
@@ -3227,14 +3233,31 @@ export default function WapApp() {
                   if (e.touches.length === 1) {
                     isDraggingRef.current = true;
                     dragStartRef.current = { x: e.touches[0].clientX - previewOffset.x, y: e.touches[0].clientY - previewOffset.y };
+                    initialPinchDistRef.current = null;
+                  } else if (e.touches.length === 2) {
+                    isDraggingRef.current = false;
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    initialPinchDistRef.current = Math.sqrt(dx * dx + dy * dy);
+                    initialScaleRef.current = previewScale;
                   }
                 }}
                 onTouchMove={(e) => {
-                  if (!isDraggingRef.current || e.touches.length !== 1) return;
-                  setPreviewOffset({ x: e.touches[0].clientX - dragStartRef.current.x, y: e.touches[0].clientY - dragStartRef.current.y });
+                  if (e.touches.length === 2 && initialPinchDistRef.current !== null) {
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const newScale = Math.max(0.5, Math.min(3.5, initialScaleRef.current * (dist / initialPinchDistRef.current)));
+                    setPreviewScale(newScale);
+                  } else if (isDraggingRef.current && e.touches.length === 1) {
+                    setPreviewOffset({ x: e.touches[0].clientX - dragStartRef.current.x, y: e.touches[0].clientY - dragStartRef.current.y });
+                  }
                 }}
-                onTouchEnd={() => { isDraggingRef.current = false; }}
-                style={{ width: '100%', height: '180px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '8px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'grab' }}
+                onTouchEnd={() => {
+                  isDraggingRef.current = false;
+                  initialPinchDistRef.current = null;
+                }}
+                style={{ width: '100%', height: '180px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '8px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'grab', touchAction: 'none' }}
               >
                 {pendingUploads[currentUploadIndex].fileType === 'image' ? (
                   <img
@@ -3267,20 +3290,20 @@ export default function WapApp() {
                 )}
               </div>
 
-              {/* タップ操作型 ズーム・微調整ボタンコントロール */}
+              {/* タップ微調整ボタンコントロール */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '12px', background: '#f8fafc', padding: '6px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 タップ調整</span>
+                <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 ズーム調整（二本指ピンチ対応）</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
                   <button
                     type="button"
-                    onClick={() => setPreviewScale((prev) => Math.max(0.8, prev - 0.15))}
+                    onClick={() => setPreviewScale((prev) => Math.max(0.5, prev - 0.15))}
                     style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', width: '28px', height: '28px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     −
                   </button>
                   <button
                     type="button"
-                    onClick={() => setPreviewScale((prev) => Math.min(2.5, prev + 0.15))}
+                    onClick={() => setPreviewScale((prev) => Math.min(3.5, prev + 0.15))}
                     style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', width: '28px', height: '28px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     ＋
