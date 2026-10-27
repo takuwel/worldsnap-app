@@ -13,7 +13,7 @@ const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, su
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 
 // ==========================================
-// 1. 型定義 & 拡充された多言語コンプラNGワード辞書 & 196カ国マスターデータ
+// 1. 型定義 & 多言語マスターデータ
 // ==========================================
 export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
@@ -92,7 +92,6 @@ export interface PlaceSuggestion {
   lon: string;
 }
 
-// 15言語以上の多言語コンプライアンス・NGワード（暴言・差別・ヘイト等）
 const NG_PATTERNS = [
   '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
   'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
@@ -451,9 +450,6 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
   }
 };
 
-// ==========================================
-// 全世界「全196カ国」完全網羅マスターデータ（地域別に整理）
-// ==========================================
 export const COUNTRIES: Record<string, { names: Record<string, string>; flag: string; region: string; lat: number; lon: number; zoom: number }> = {
   JP: { names: { ja: '日本', en: 'Japan', ko: '일본', zh: '日本' }, flag: '🇯🇵', region: '🌏 アジア', lat: 36.2048, lon: 138.2529, zoom: 5 },
   CN: { names: { ja: '中国', en: 'China', ko: '중국', zh: '中国' }, flag: '🇨🇳', region: '🌏 アジア', lat: 35.8617, lon: 104.1954, zoom: 4 },
@@ -510,7 +506,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   DE: { names: { ja: 'ドイツ', en: 'Germany', ko: '독일', zh: '德国' }, flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
   TR: { names: { ja: 'トルコ', en: 'Turkey', ko: '터키', zh: '土耳其' }, flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
   GR: { names: { ja: 'ギリシャ', en: 'Greece', ko: '그리스', zh: '希腊' }, flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
-  AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: 'オーストリア' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
+  AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
   PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
   CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
@@ -524,7 +520,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
-  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바キア', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
+  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
   SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
@@ -539,7 +535,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
   BA: { names: { ja: 'ボスニア・ヘルツェゴビナ', en: 'Bosnia and Herzegovina', ko: '보스니아 헤르체고비나', zh: '波黑' }, flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lat: 43.9159, lon: 17.6791, zoom: 7 },
-  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네그로', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
+  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네グロ', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
   MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케도니아', zh: '北马其顿' }, flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lat: 41.6086, lon: 21.7453, zoom: 8 },
   MD: { names: { ja: 'モルドバ', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
@@ -583,7 +579,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
   GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나ダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
-  LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루시아', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
+  LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루シア', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
   AU: { names: { ja: 'オーストラリア', en: 'Australia', ko: '호주', zh: '澳大利亚' }, flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
   NZ: { names: { ja: 'ニュージーランド', en: 'New Zealand', ko: '뉴질랜드', zh: '新西兰' }, flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
@@ -625,7 +621,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: '安哥拉' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
   CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: '喀麦隆' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
   CI: { names: { ja: 'コートジボワール', en: 'Ivory Coast', ko: '코트디부아르', zh: '科特迪瓦' }, flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
-  MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모잠비크', zh: '莫桑比克' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
+  MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모ザンビーク', zh: '莫桑比克' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
   SD: { names: { ja: 'スーダン', en: 'Sudan', ko: '수단', zh: '苏丹' }, flag: '🇸🇩', region: '🦁 アフリカ', lat: 12.8628, lon: 30.2176, zoom: 5 },
   LY: { names: { ja: 'リビア', en: 'Libya', ko: '리비아', zh: '利比亚' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
   ML: { names: { ja: 'マリ', en: 'Mali', ko: '말리', zh: '马里' }, flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 5 },
@@ -1546,6 +1542,7 @@ export default function WapApp() {
     showToast('💬 コメントを投稿しました！');
   };
 
+  // 複数一括投稿時にそれぞれのEXIF等から正確な個別位置情報を抽出する完全修正版
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -1885,7 +1882,7 @@ export default function WapApp() {
       </head>
 
       {/* アプリ全体の高さを画面ぴったりに固定、マップ以外はタッチ操作（拡大・縮小等）を完全に固定 */}
-      <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', touchAction: 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', touchAction: currentTab === 'map' ? 'auto' : 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         
         {warningMessage && (
           <div style={{ position: 'fixed', top: 0, insetInline: 0, background: '#ef4444', color: '#fff', padding: '12px 16px', zIndex: 999999, fontSize: '13px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 4px 16px rgba(239,68,68,0.4)' }}>
@@ -1904,8 +1901,8 @@ export default function WapApp() {
 
         {/* 初回オンボーディング画面（設定中は下のバナーなどが絶対に透けないように zIndex を最上位に） */}
         {isOnboarding && (
-          <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'manipulation' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center', touchAction: 'manipulation' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
               <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
               <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
@@ -1921,7 +1918,7 @@ export default function WapApp() {
                 <div style={{ textAlign: 'left' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step1Title')}</h3>
                   <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t('step1Desc')}</p>
-                  <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+                  <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px', touchAction: 'manipulation' }}>
                     {Object.entries(LANGUAGES).map(([code, lang]) => (
                       <div
                         key={code}
@@ -1949,7 +1946,7 @@ export default function WapApp() {
               )}
 
               {onboardingStep === 2 && (
-                <div style={{ textAlign: 'left' }}>
+                <div style={{ textAlign: 'left', touchAction: 'manipulation' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 4px 0' }}>{t('step2Title')}</h3>
                   <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 10px 0' }}>{t('step2Desc')}</p>
                   
@@ -1958,10 +1955,10 @@ export default function WapApp() {
                     placeholder={t('countrySearchPlaceholder')}
                     value={countrySearchQuery}
                     onChange={(e) => setCountrySearchQuery(e.target.value)}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', marginBottom: '8px', boxSizing: 'border-box' }}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', marginBottom: '8px', boxSizing: 'border-box', touchAction: 'manipulation' }}
                   />
 
-                  <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', paddingRight: '4px' }}>
+                  <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', paddingRight: '4px', touchAction: 'manipulation' }}>
                     {Object.entries(filteredCountries).map(([region, countries]) => (
                       <div key={region}>
                         <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '4px', borderBottom: '1px solid #e2e8f0', paddingBottom: '2px' }}>
@@ -2009,7 +2006,7 @@ export default function WapApp() {
               )}
 
               {onboardingStep === 3 && (
-                <div style={{ textAlign: 'left' }}>
+                <div style={{ textAlign: 'left', touchAction: 'manipulation' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t('step3Title')}</h3>
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
                     <div
@@ -2034,14 +2031,14 @@ export default function WapApp() {
                     maxLength={20}
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
-                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '16px', fontWeight: 'bold' }}
+                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '16px', fontWeight: 'bold', touchAction: 'manipulation' }}
                   />
                   <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>自己紹介</label>
                   <input
                     type="text"
                     value={userBio}
                     onChange={(e) => setUserBio(e.target.value)}
-                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '16px' }}
+                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation' }}
                   />
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
@@ -2055,7 +2052,7 @@ export default function WapApp() {
               )}
 
               {onboardingStep === 4 && (
-                <div style={{ textAlign: 'left' }}>
+                <div style={{ textAlign: 'left', touchAction: 'manipulation' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step3TitleEula')}</h3>
                   <div
                     onScroll={(e) => {
@@ -2064,7 +2061,7 @@ export default function WapApp() {
                         setHasScrolledToBottom(true);
                       }
                     }}
-                    style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px' }}
+                    style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', touchAction: 'pan-y' }}
                   >
                     {t('eulaFullText')}
                     <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ ここまでお読みください</div>
@@ -2160,7 +2157,7 @@ export default function WapApp() {
                 maxLength={20}
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
-                style={{ width: '100%', padding: '10px', marginTop: '4px', marginBottom: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', fontWeight: 'bold' }}
+                style={{ width: '100%', padding: '10px', marginTop: '4px', marginBottom: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', fontWeight: 'bold', touchAction: 'manipulation' }}
               />
 
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>自己紹介</label>
@@ -2168,7 +2165,7 @@ export default function WapApp() {
                 type="text"
                 value={userBio}
                 onChange={(e) => setUserBio(e.target.value)}
-                style={{ width: '100%', padding: '10px', marginTop: '4px', marginBottom: '20px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px' }}
+                style={{ width: '100%', padding: '10px', marginTop: '4px', marginBottom: '20px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation' }}
               />
 
               <button
@@ -2539,14 +2536,14 @@ export default function WapApp() {
 
           {/* タイムライン（フィード）タブ：TikTok風縦スクロール ＆ タップで詳細画面へジャンプ */}
           {currentTab === 'timeline' && (
-            <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%' }}>
+            <div style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%', touchAction: 'pan-y' }}>
               <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
                 <input
                   type="text"
                   placeholder="🔍 タグやワードで検索 (例: #絶景, 東京)"
                   value={timelineSearchKeyword}
                   onChange={(e) => setTimelineSearchKeyword(e.target.value)}
-                  style={{ flex: 1, padding: '8px 12px', borderRadius: '20px', border: '1px solid #334155', background: '#1e293b', color: '#fff', fontSize: '16px', outline: 'none' }}
+                  style={{ flex: 1, padding: '8px 12px', borderRadius: '20px', border: '1px solid #334155', background: '#1e293b', color: '#fff', fontSize: '16px', outline: 'none', touchAction: 'manipulation' }}
                 />
               </div>
 
@@ -2562,7 +2559,11 @@ export default function WapApp() {
                       <div
                         style={{ flex: 1, width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
-                        <img src={spot.fileUrl || spot.thumbUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                        {spot.fileType === 'video' ? (
+                          <video src={spot.fileUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <img src={spot.fileUrl || spot.thumbUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                        )}
                         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)' }}></div>
                       </div>
 
@@ -2581,7 +2582,7 @@ export default function WapApp() {
                         <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
 
                         {isCommentsOpen && (
-                          <div style={{ maxHeight: '150px', overflowY: 'auto', background: 'rgba(0,0,0,0.9)', padding: '10px', borderRadius: '12px', marginBottom: '8px', fontSize: '11px', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.15)' }}>
+                          <div style={{ maxHeight: '180px', overflowY: 'auto', background: 'rgba(0,0,0,0.92)', padding: '10px', borderRadius: '12px', marginBottom: '8px', fontSize: '11px', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.15)', touchAction: 'pan-y' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                               <span style={{ fontWeight: 'bold', color: '#38bdf8' }}>💬 コメント一覧 (タップして返信)</span>
                               {replyTargetUser && (
@@ -2589,21 +2590,23 @@ export default function WapApp() {
                               )}
                             </div>
 
-                            {spot.comments && spot.comments.length > 0 ? (
-                              spot.comments.map(c => (
-                                <div
-                                  key={c.id}
-                                  onClick={() => setReplyTargetUser(c.userName)}
-                                  style={{ marginBottom: '6px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '4px', cursor: 'pointer', background: replyTargetUser === c.userName ? 'rgba(2,132,199,0.3)' : 'transparent', borderRadius: '4px' }}
-                                >
-                                  <b>{c.userName}:</b> {c.text}
-                                </div>
-                              ))
-                            ) : (
-                              <div style={{ color: '#94a3b8', textAlign: 'center', padding: '6px 0' }}>コメントはまだありません</div>
-                            )}
+                            <div style={{ maxHeight: '100px', overflowY: 'auto', marginBottom: '6px', touchAction: 'pan-y' }}>
+                              {spot.comments && spot.comments.length > 0 ? (
+                                spot.comments.map(c => (
+                                  <div
+                                    key={c.id}
+                                    onClick={() => setReplyTargetUser(c.userName)}
+                                    style={{ marginBottom: '6px', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '4px', cursor: 'pointer', background: replyTargetUser === c.userName ? 'rgba(2,132,199,0.3)' : 'transparent', borderRadius: '4px' }}
+                                  >
+                                    <b>{c.userName}:</b> {c.text}
+                                  </div>
+                                ))
+                              ) : (
+                                <div style={{ color: '#94a3b8', textAlign: 'center', padding: '6px 0' }}>コメントはまだありません</div>
+                              )}
+                            </div>
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '8px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
                               {replyTargetUser && (
                                 <div style={{ fontSize: '10px', color: '#38bdf8', fontWeight: 'bold' }}>
                                   @{replyTargetUser} さんへ返信中...
@@ -2615,7 +2618,7 @@ export default function WapApp() {
                                   placeholder={replyTargetUser ? `@${replyTargetUser} への返信...` : "💬 コメントを入力..."}
                                   value={newCommentText}
                                   onChange={(e) => setNewCommentText(e.target.value)}
-                                  style={{ flex: 1, padding: '6px 10px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '16px', outline: 'none' }}
+                                  style={{ flex: 1, padding: '6px 10px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: '16px', outline: 'none', touchAction: 'manipulation' }}
                                 />
                                 <button
                                   onClick={() => {
@@ -2665,13 +2668,17 @@ export default function WapApp() {
 
           {/* ランキングタブ */}
           {currentTab === 'ranking' && (
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff', touchAction: 'pan-y' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '12px' }}>🏆 {t('ranking')}</h2>
               {rankingSpots.map((s, i) => (
                 <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ padding: '12px', borderBottom: '1px solid #e2e8f0', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}>
                   <span style={{ fontSize: '16px', fontWeight: 'bold', width: '24px' }}>#{i + 1}</span>
                   <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
-                    <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    {s.fileType === 'video' ? (
+                      <video src={s.fileUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    )}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{s.title}</div>
@@ -2684,7 +2691,7 @@ export default function WapApp() {
 
           {/* マイページタブ */}
           {currentTab === 'profile' && (
-            <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff', touchAction: 'pan-y' }}>
               <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '20px', border: '1px solid #e2e8f0', textAlign: 'center', boxSizing: 'border-box', marginBottom: '12px' }}>
                 <div
                   onClick={() => profileAvatarInputRef.current?.click()}
@@ -2761,7 +2768,11 @@ export default function WapApp() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
                   {mySpots.map((s) => (
                     <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
-                      <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                      {s.fileType === 'video' ? (
+                        <video src={s.fileUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                      )}
                     </div>
                   ))}
                   {mySpots.length === 0 && (
@@ -2782,7 +2793,11 @@ export default function WapApp() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
                   {savedSpots.map((s) => (
                     <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ height: '100px', borderRadius: '10px', overflow: 'hidden', cursor: 'pointer', background: '#000', position: 'relative' }}>
-                      <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                      {s.fileType === 'video' ? (
+                        <video src={s.fileUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                      )}
                     </div>
                   ))}
                   {savedSpots.length === 0 && (
@@ -2852,8 +2867,8 @@ export default function WapApp() {
 
         {/* 設定メニューモーダル */}
         {isSettingsOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'manipulation' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '400px', width: '100%', maxHeight: '85vh', overflowY: 'auto', touchAction: 'pan-y' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900' }}>{t('settings')}</h3>
                 <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
@@ -2882,10 +2897,10 @@ export default function WapApp() {
                   placeholder={t('countrySearchPlaceholder')}
                   value={countrySearchQuery}
                   onChange={(e) => setCountrySearchQuery(e.target.value)}
-                  style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', marginBottom: '6px', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', marginBottom: '6px', boxSizing: 'border-box', touchAction: 'manipulation' }}
                 />
 
-                <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '6px' }}>
+                <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '6px', touchAction: 'pan-y' }}>
                   {Object.entries(filteredCountries).map(([region, countries]) => (
                     <div key={region}>
                       <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#0284c7', margin: '4px 0' }}>{region}</div>
@@ -2979,8 +2994,8 @@ export default function WapApp() {
 
         {/* 利用規約モーダル */}
         {isEulaModalOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'manipulation' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto', touchAction: 'pan-y' }}>
               <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('eulaTitle')}</h3>
               <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
                 {t('eulaFullText')}
@@ -2994,8 +3009,8 @@ export default function WapApp() {
 
         {/* 使い方ガイドモーダル */}
         {isGuideModalOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'manipulation' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto', touchAction: 'pan-y' }}>
               <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('guideTitle')}</h3>
               <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
                 {t('guideFullText')}
@@ -3009,7 +3024,7 @@ export default function WapApp() {
 
         {/* ── 詳細モーダル ── */}
         {selectedSpot && (
-          <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box' }}>
+          <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box', touchAction: 'pan-y' }}>
             <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
               <button onClick={() => setSelectedSpot(null)} style={{ background: 'transparent', border: 'none', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer' }}>
                 ← 戻る
@@ -3047,7 +3062,7 @@ export default function WapApp() {
                     : { fileUrl: selectedSpot.fileUrl, fileType: selectedSpot.fileType };
                   
                   return currentMedia.fileType === 'video' ? (
-                    <video src={currentMedia.fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    <video src={currentMedia.fileUrl} controls autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                   ) : (
                     <img src={currentMedia.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   );
@@ -3132,7 +3147,7 @@ export default function WapApp() {
                   )}
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+                <div style={{ maxHeight: '140px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px', touchAction: 'pan-y' }}>
                   {selectedSpot.comments?.map((c) => (
                     <div
                       key={c.id}
@@ -3153,7 +3168,7 @@ export default function WapApp() {
                     placeholder={replyTargetUser ? `@${replyTargetUser} への返信...` : t('commentPlaceholder')}
                     value={newCommentText}
                     onChange={(e) => setNewCommentText(e.target.value)}
-                    style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px' }}
+                    style={{ flex: 1, padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation' }}
                   />
                   <button
                     onClick={() => handleAddComment(selectedSpot.id)}
@@ -3169,8 +3184,8 @@ export default function WapApp() {
 
         {/* ── 投稿作成モーダル ── */}
         {pendingUploads.length > 0 && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'pan-y' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto', touchAction: 'pan-y' }}>
               <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 'bold' }}>
                 📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
               </h3>
@@ -3179,7 +3194,7 @@ export default function WapApp() {
                 {pendingUploads[currentUploadIndex].fileType === 'image' ? (
                   <img src={pendingUploads[currentUploadIndex].fileUrl} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
-                  <video src={pendingUploads[currentUploadIndex].fileUrl} controls playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <video src={pendingUploads[currentUploadIndex].fileUrl} controls autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 )}
               </div>
 
@@ -3247,7 +3262,7 @@ export default function WapApp() {
                 type="text"
                 value={postTitle}
                 onChange={(e) => setPostTitle(e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px' }}
+                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation' }}
               />
 
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグ)</label>
@@ -3255,7 +3270,7 @@ export default function WapApp() {
                 rows={2}
                 value={postDesc}
                 onChange={(e) => setPostDesc(e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px' }}
+                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation' }}
               />
 
               <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative' }}>
@@ -3267,7 +3282,7 @@ export default function WapApp() {
                   placeholder="地名・住所・場所名を入力"
                   value={addressSearchQuery}
                   onChange={(e) => setAddressSearchQuery(e.target.value)}
-                  style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', marginBottom: '4px' }}
+                  style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', marginBottom: '4px', touchAction: 'manipulation' }}
                 />
 
                 {addressSuggestions.length > 0 && (
@@ -3286,8 +3301,8 @@ export default function WapApp() {
                 )}
 
                 <div style={{ display: 'flex', gap: '6px' }}>
-                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff' }} />
-                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff' }} />
+                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', touchAction: 'manipulation' }} />
+                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', touchAction: 'manipulation' }} />
                 </div>
               </div>
 
