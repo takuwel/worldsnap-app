@@ -266,11 +266,12 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 2️⃣ **すてきな写真や動画をマップに投稿する（カンタン！）**
 - マップ画面の左下にある「📷＋ 写真/動画を追加」ボタンを押してね。
 - スマホの中にある写真や動画を選ぶと、自動的に場所（位置情報）がマップにセットされるよ！（※場所が違うときは「地名・住所検索」で正しい場所をえらんでね）
+- プレビュー画面の「＋」「−」「リセット」ボタンや、画像を指でスワイプして好きな大きさに微調整できるよ！
 - タイトルや思い出メモを入力して、「マップに反映する 🚀」を押すだけ！
 
 3️⃣ **みんなの投稿を見る（タイムライン）**
-- 下のメニューの「🗓️ タイムライン」を押すと、みんなが投稿したす写真や動画がTikTokみたいに縦に流れてくるよ！
-- 気に入った投稿には「❤️ いいね」をしたり、コメントで会話を楽しもう！
+- 下のメニューの「🗓️ タイムライン」を押すと、みんなが投稿した写真や動画がTikTokみたいに縦に流れてくるよ！
+- 音声つきの動画もその場で再生されるよ！お気に入りの投稿には「❤️ いいね」をしたり、コメントで会話を楽しもう！
 
 4️⃣ **ランキングと自分のページ**
 - 「🏆 ランキング」では、みんなに大人気のスポットがわかるよ。
@@ -488,7 +489,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   PK: { names: { ja: 'パキスタン', en: 'Pakistan', ko: '파키스탄', zh: '巴基斯坦' }, flag: '🇵🇰', region: '🍛 南・中央アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
   BD: { names: { ja: 'バングラデシュ', en: 'Bangladesh', ko: '방글라데시', zh: '孟加拉国' }, flag: '🇧🇩', region: '🍛 南・中央アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
   LK: { names: { ja: 'スリランカ', en: 'Sri Lanka', ko: '스리랑카', zh: '斯里兰卡' }, flag: '🇱🇰', region: '🍛 南・中央アジア', lat: 7.8731, lon: 80.7718, zoom: 7 },
-  NP: { names: { ja: 'ネパール', en: 'Nepal', ko: '네パール', zh: '尼泊尔' }, flag: '🇳🇵', region: '🍛 南・中央アジア', lat: 28.3949, lon: 84.1240, zoom: 6 },
+  NP: { names: { ja: 'ネパール', en: 'Nepal', ko: '네팔', zh: '尼泊尔' }, flag: '🇳🇵', region: '🍛 南・中央アジア', lat: 28.3949, lon: 84.1240, zoom: 6 },
   BT: { names: { ja: 'ブータン', en: 'Bhutan', ko: '부탄', zh: '不丹' }, flag: '🇧🇹', region: '🍛 南・中央アジア', lat: 27.5142, lon: 90.4336, zoom: 8 },
   MV: { names: { ja: 'モルディブ', en: 'Maldives', ko: '몰디브', zh: '马尔代夫' }, flag: '🇲🇻', region: '🍛 南・中央アジア', lat: 3.2028, lon: 73.2207, zoom: 7 },
   AF: { names: { ja: 'アフガニスタン', en: 'Afghanistan', ko: '아프가니스탄', zh: '阿富汗' }, flag: '🇦🇫', region: '🍛 南・中央アジア', lat: 33.9391, lon: 67.7100, zoom: 6 },
@@ -520,29 +521,29 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   DE: { names: { ja: 'ドイツ', en: 'Germany', ko: '독일', zh: '德国' }, flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
   TR: { names: { ja: 'トルコ', en: 'Turkey', ko: '터키', zh: '土耳其' }, flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
   GR: { names: { ja: 'ギリシャ', en: 'Greece', ko: '그리스', zh: '希腊' }, flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
-  AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
-  PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: 'ポルトガル' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
+  AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트リア', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
+  PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
-  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: 'ス위스', zh: 'スイス' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
+  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
   PL: { names: { ja: 'ポーランド', en: 'Poland', ko: '폴란드', zh: '波兰' }, flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
-  CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: 'チェコ' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
-  HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: 'ハンガリー' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
+  CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: '捷克' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
+  HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: '匈牙利' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
   IE: { names: { ja: 'アイルランド', en: 'Ireland', ko: '아이슬란드', zh: '爱尔兰' }, flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
-  BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: 'ベルギー' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
+  BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: '比利时' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: 'クロアチア' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
-  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: 'ルーマニア', zh: 'ルーマニア' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
-  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
+  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: 'ルーマニア', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
+  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: 'ウクライナ', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
-  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바キア', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
   LU: { names: { ja: 'ルクセンブルク', en: 'Luxembourg', ko: '룩셈부르크', zh: '卢森堡' }, flag: '🇱🇺', region: '🇪🇺 ヨーロッパ', lat: 49.8153, lon: 6.1296, zoom: 10 },
   MC: { names: { ja: 'モナコ', en: 'Monaco', ko: '모나코', zh: '摩纳哥' }, flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lat: 43.7384, lon: 7.4246, zoom: 14 },
   VA: { names: { ja: 'バチカン市国', en: 'Vatican City', ko: '바티칸', zh: '梵蒂冈' }, flag: '🇻🇦', region: '🇪🇺 ヨーロッパ', lat: 41.9029, lon: 12.4534, zoom: 15 },
-  SM: { names: { ja: 'サンマリノ', en: 'San Marino', ko: '산마리노', zh: '圣马力诺' }, flag: '🇸🇲', region: '🇪🇺 ヨーロッパ', lat: 43.9424, lon: 12.4578, zoom: 12 },
+  SM: { names: { ja: 'サンマリノ', en: 'San Marino', ko: '산마리노', zh: '聖馬力諾' }, flag: '🇸🇲', region: '🇪🇺 ヨーロッパ', lat: 43.9424, lon: 12.4578, zoom: 12 },
   AD: { names: { ja: 'アンドラ', en: 'Andorra', ko: '안도라', zh: '安道尔' }, flag: '🇦🇩', region: '🇪🇺 ヨーロッパ', lat: 42.5063, lon: 1.5218, zoom: 10 },
   LI: { names: { ja: 'リヒテンシュタイン', en: 'Liechtenstein', ko: '리혼슈타인', zh: '列支敦士登' }, flag: '🇱🇮', region: '🇪🇺 ヨーロッパ', lat: 47.1660, lon: 9.5550, zoom: 11 },
   CY: { names: { ja: 'キプロス', en: 'Cyprus', ko: '키프로스', zh: '塞浦路斯' }, flag: '🇨🇾', region: '🇪🇺 ヨーロッパ', lat: 35.1264, lon: 33.4299, zoom: 8 },
@@ -572,15 +573,15 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   DO: { names: { ja: 'ドミニカ共和国', en: 'Dominican Republic', ko: '도미니카 공화국', zh: '多米尼加' }, flag: '🇩🇴', region: '🗽 中南米', lat: 18.7357, lon: -70.1627, zoom: 8 },
   PA: { names: { ja: 'パナマ', en: 'Panama', ko: '파나마', zh: '巴拿马' }, flag: '🇵🇦', region: '🗽 中南米', lat: 8.5380, lon: -80.7821, zoom: 8 },
   JM: { names: { ja: 'ジャマイカ', en: 'Jamaica', ko: '자메이카', zh: '牙买加' }, flag: '🇯🇲', region: '🗽 中南米', lat: 18.1096, lon: -77.2975, zoom: 9 },
-  UY: { names: { ja: 'ウルグアイ', en: 'Uruguay', ko: '우루과이', zh: 'ウルグアイ' }, flag: '🇺🇾', region: '🗽 中南米', lat: -32.5228, lon: -55.7658, zoom: 7 },
-  EC: { names: { ja: 'エクアドル', en: 'Ecuador', ko: '에콰도르', zh: 'エクアドル' }, flag: '🇪🇨', region: '🗽 中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
-  VE: { names: { ja: 'ベネズエラ', en: 'Venezuela', ko: '베네수엘라', zh: 'ベネズエラ' }, flag: '🇻🇪', region: '🗽 中南米', lat: 6.4238, lon: -66.5897, zoom: 5 },
-  BO: { names: { ja: 'ボリビア', en: 'Bolivia', ko: '볼리비아', zh: 'ボリビア' }, flag: '🇧🇴', region: '🗽 中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
-  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '파ラグアイ' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
+  UY: { names: { ja: 'ウルグアイ', en: 'Uruguay', ko: '우루과이', zh: '乌拉圭' }, flag: '🇺🇾', region: '🗽 中南米', lat: -32.5228, lon: -55.7658, zoom: 7 },
+  EC: { names: { ja: 'エクアドル', en: 'Ecuador', ko: '에콰도르', zh: '厄瓜多尔' }, flag: '🇪🇨', region: '🗽 中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
+  VE: { names: { ja: 'ベネズエラ', en: 'Venezuela', ko: '베네수엘라', zh: '委内瑞拉' }, flag: '🇻🇪', region: '🗽 中南米', lat: 6.4238, lon: -66.5897, zoom: 5 },
+  BO: { names: { ja: 'ボリビア', en: 'Bolivia', ko: '볼리비아', zh: '玻利维亚' }, flag: '🇧🇴', region: '🗽 中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
+  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: 'パラグアイ' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
   GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: 'グアテマラ' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
   HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: 'ホンジュラス' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
   NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: 'ニカラグア' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
-  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘サルバドル', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
+  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘살바도르', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
   BS: { names: { ja: 'バハマ', en: 'Bahamas', ko: '바하마', zh: 'バハマ' }, flag: '🇧🇸', region: '🗽 中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
   PR: { names: { ja: 'プエルトリコ', en: 'Puerto Rico', ko: '푸에르토리코', zh: 'プエルトリコ' }, flag: '🇵🇷', region: '🗽 中南米', lat: 18.2208, lon: -66.5901, zoom: 9 },
   BZ: { names: { ja: 'ベリーズ', en: 'Belize', ko: '벨리즈', zh: 'ベリーズ' }, flag: '🇧🇿', region: '🗽 中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
@@ -591,7 +592,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AG: { names: { ja: 'アンティグア・バーブーダ', en: 'Antigua and Barbuda', ko: '앤티가 바부다', zh: '安提瓜和巴布达' }, flag: '🇦🇬', region: '🗽 中南米', lat: 17.0608, lon: -61.7964, zoom: 9 },
   BB: { names: { ja: 'バルバドス', en: 'Barbados', ko: '바베이도스', zh: '巴巴多斯' }, flag: '🇧🇧', region: '🗽 中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
   DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
-  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레ナダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
+  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나ダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
   LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루시아', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
@@ -624,7 +625,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
   ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '埃塞俄比亚' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
   SN: { names: { ja: 'セネガル', en: 'Senegal', ko: '세네갈', zh: 'セネガル' }, flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
-  MG: { names: { ja: 'マダガスカル', en: 'Madagascar', ko: 'マ다가스カル', zh: 'マダガスカル' }, flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
+  MG: { names: { ja: 'マダガスカル', en: 'Madagascar', ko: '마다가스카르', zh: 'マダガスカル' }, flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
   RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: 'ルワンダ' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
   UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: 'ウガンダ' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
   ZM: { names: { ja: 'ザンビア', en: 'Zambia', ko: '잠비아', zh: 'ザンビア' }, flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
@@ -650,7 +651,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   KM: { names: { ja: 'コモロ', en: 'Comoros', ko: '코모로', zh: 'コモロ' }, flag: '🇰🇲', region: '🦁 アフリカ', lat: -11.8750, lon: 43.8722, zoom: 9 },
   CG: { names: { ja: 'コンゴ共和国', en: 'Republic of the Congo', ko: '콩고공화국', zh: '刚果共和国' }, flag: '🇨🇬', region: '🦁 アフリカ', lat: -0.2280, lon: 15.8277, zoom: 6 },
   CD: { names: { ja: 'コンゴ民主共和国', en: 'Democratic Republic of the Congo', ko: '콩고민주공화국', zh: '刚果民主共和国' }, flag: '🇨🇩', region: '🦁 アフリカ', lat: -4.0383, lon: 21.7587, zoom: 5 },
-  DJ: { names: { ja: 'ジブチ', en: 'Djibouti', ko: '지부티', zh: '吉布提' }, flag: '🇩🇯', region: '🦁 アフリカ', lat: 11.8251, lon: 42.5903, zoom: 8 },
+  DJ: { names: { ja: 'ジブチ', en: 'Djibouti', ko: '지부티', zh: 'ジブチ' }, flag: '🇩🇯', region: '🦁 アフリカ', lat: 11.8251, lon: 42.5903, zoom: 8 },
   GQ: { names: { ja: '赤道ギニア', en: 'Equatorial Guinea', ko: '적도 기니', zh: '赤道几内亚' }, flag: '🇬🇶', region: '🦁 アフリカ', lat: 1.6508, lon: 10.2679, zoom: 8 },
   ER: { names: { ja: 'エリトリア', en: 'Eritrea', ko: '에리트레아', zh: '厄立特里亚' }, flag: '🇪🇷', region: '🦁 アフリカ', lat: 15.1794, lon: 39.7823, zoom: 7 },
   GA: { names: { ja: 'ガボン', en: 'Gabon', ko: '가봉', zh: '加蓬' }, flag: '🇬🇦', region: '🦁 アフリカ', lat: -0.8037, lon: 11.6094, zoom: 6 },
@@ -1044,7 +1045,7 @@ export default function WapApp() {
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // 投稿プレビューでの自由微調整（スケール・オフセット）用ステート
+  // 投稿プレビューでのボタン操作・ドラッグ移動用ステート
   const [previewScale, setPreviewScale] = useState<number>(1);
   const [previewOffset, setPreviewOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const isDraggingRef = useRef<boolean>(false);
@@ -2583,7 +2584,7 @@ export default function WapApp() {
                         style={{ flex: 1, width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
                         {spot.fileType === 'video' ? (
-                          <video src={spot.fileUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          <video src={spot.fileUrl} autoPlay loop muted={false} playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
                           <img src={spot.fileUrl || spot.thumbUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
                         )}
@@ -3082,7 +3083,7 @@ export default function WapApp() {
                     : { fileUrl: selectedSpot.fileUrl, fileType: selectedSpot.fileType };
                   
                   return currentMedia.fileType === 'video' ? (
-                    <video src={currentMedia.fileUrl} controls autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                    <video src={currentMedia.fileUrl} controls autoPlay loop muted={false} playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                   ) : (
                     <img src={currentMedia.fileUrl} alt={selectedSpot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   );
@@ -3202,15 +3203,15 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 投稿作成モーダル（自由微調整・タッチ対応） ── */}
+        {/* ── 投稿作成モーダル（タップ微調整・動画コントロール非表示） ── */}
         {pendingUploads.length > 0 && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'pan-y' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box' }}>
               <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 'bold' }}>
                 📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
               </h3>
 
-              {/* タッチ＆ドラッグ・スライダーで自由に微調整できるプレビュー */}
+              {/* ドラッグ移動 ＆ タップ調整対応プレビュー（動画はコントロール非表示） */}
               <div
                 onMouseDown={(e) => {
                   isDraggingRef.current = true;
@@ -3250,7 +3251,7 @@ export default function WapApp() {
                 ) : (
                   <video
                     src={pendingUploads[currentUploadIndex].fileUrl}
-                    controls
+                    controls={false}
                     autoPlay
                     loop
                     muted
@@ -3258,7 +3259,7 @@ export default function WapApp() {
                     style={{
                       width: '100%',
                       height: '100%',
-                      objectFit: 'contain',
+                      objectFit: 'cover',
                       transform: `scale(${previewScale}) translate(${previewOffset.x / previewScale}px, ${previewOffset.y / previewScale}px)`,
                       transition: isDraggingRef.current ? 'none' : 'transform 0.1s ease-out'
                     }}
@@ -3266,25 +3267,32 @@ export default function WapApp() {
                 )}
               </div>
 
-              {/* 微調整スライダーコントロール */}
+              {/* タップ操作型 ズーム・微調整ボタンコントロール */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '12px', background: '#f8fafc', padding: '6px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 ズーム調整</span>
-                <input
-                  type="range"
-                  min="1"
-                  max="2.5"
-                  step="0.05"
-                  value={previewScale}
-                  onChange={(e) => setPreviewScale(parseFloat(e.target.value))}
-                  style={{ flex: 1, cursor: 'pointer' }}
-                />
-                <button
-                  type="button"
-                  onClick={() => { setPreviewScale(1); setPreviewOffset({ x: 0, y: 0 }); }}
-                  style={{ background: '#e2e8f0', border: 'none', borderRadius: '4px', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold', cursor: 'pointer' }}
-                >
-                  リセット
-                </button>
+                <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 タップ調整</span>
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewScale((prev) => Math.max(0.8, prev - 0.15))}
+                    style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', width: '28px', height: '28px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    −
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewScale((prev) => Math.min(2.5, prev + 0.15))}
+                    style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', width: '28px', height: '28px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    ＋
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setPreviewScale(1); setPreviewOffset({ x: 0, y: 0 }); }}
+                    style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', padding: '0 8px', height: '28px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                  >
+                    リセット
+                  </button>
+                </div>
               </div>
 
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
