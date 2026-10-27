@@ -256,11 +256,25 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現などの不適切な投稿を厳禁としています。
 2. 掲載されているスポットの写真や店舗情報は投稿時点のものであり、現在地において建物がなくなっている、閉店している、またはリニューアルされている場合があります。当サービスは掲載情報の正確性や現状への適合性を保証するものではなく、現地に赴く際はユーザーご自身の責任で最新情報をご確認ください。
 3. 各投稿やコメントには応援機能および悪質ユーザーの「ブロック（🚫）」機能、ならびにお問い合わせ窓口（wap.support.official@gmail.com）を完備しています。`,
-    guideFullText: `[wap 操作ガイド]
-1. 現在地への移動（🎯ボタン）
-2. マップ操作とズーム
-3. メディアの投稿
-4. 交流・安全機能`
+    guideFullText: `📖【wap（ワップ）のわかりやすい使い方ガイド】
+
+1️⃣ **マップ画面で地図を見る・探す**
+- 下のメニューの「🗺️ マップ」を押すと、世界地図や日本地図が開くよ！
+- 画面の上にある🔍「検索バー」に、行きたい場所の名前（例: 京都）やハッシュタグ（例: #絶景）を入力して虫眼鏡ボタンを押すと、その場所へビューンと飛べるよ。
+- 左上の「☰」ボタンを押すと、言語の変更や設定ができるよ。
+
+2️⃣ **すてきな写真や動画をマップに投稿する（カンタン！）**
+- マップ画面の左下にある「📷＋ 写真/動画を追加」ボタンを押してね。
+- スマホの中にある写真や動画を選ぶと、自動的に場所（位置情報）がマップにセットされるよ！（※場所が違うときは「地名・住所検索」で正しい場所をえらんでね）
+- タイトルや思い出メモを入力して、「マップに反映する 🚀」を押すだけ！
+
+3️⃣ **みんなの投稿を見る（タイムライン）**
+- 下のメニューの「🗓️ タイムライン」を押すと、みんなが投稿したす写真や動画がTikTokみたいに縦に流れてくるよ！
+- 気に入った投稿には「❤️ いいね」をしたり、コメントで会話を楽しもう！
+
+4️⃣ **ランキングと自分のページ**
+- 「🏆 ランキング」では、みんなに大人気のスポットがわかるよ。
+- 「👤 マイページ」では、自分の投稿した数や、訪問した国の数、自分だけの「QRコード」を確認して友達とフレンドになれるよ！`
   },
   en: {
     step1Title: 'Step 1: Select Language',
@@ -474,7 +488,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   PK: { names: { ja: 'パキスタン', en: 'Pakistan', ko: '파키스탄', zh: '巴基斯坦' }, flag: '🇵🇰', region: '🍛 南・中央アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
   BD: { names: { ja: 'バングラデシュ', en: 'Bangladesh', ko: '방글라데시', zh: '孟加拉国' }, flag: '🇧🇩', region: '🍛 南・中央アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
   LK: { names: { ja: 'スリランカ', en: 'Sri Lanka', ko: '스리랑카', zh: '斯里兰卡' }, flag: '🇱🇰', region: '🍛 南・中央アジア', lat: 7.8731, lon: 80.7718, zoom: 7 },
-  NP: { names: { ja: 'ネパール', en: 'Nepal', ko: '네팔', zh: '尼泊尔' }, flag: '🇳🇵', region: '🍛 南・中央アジア', lat: 28.3949, lon: 84.1240, zoom: 6 },
+  NP: { names: { ja: 'ネパール', en: 'Nepal', ko: '네パール', zh: '尼泊尔' }, flag: '🇳🇵', region: '🍛 南・中央アジア', lat: 28.3949, lon: 84.1240, zoom: 6 },
   BT: { names: { ja: 'ブータン', en: 'Bhutan', ko: '부탄', zh: '不丹' }, flag: '🇧🇹', region: '🍛 南・中央アジア', lat: 27.5142, lon: 90.4336, zoom: 8 },
   MV: { names: { ja: 'モルディブ', en: 'Maldives', ko: '몰디브', zh: '马尔代夫' }, flag: '🇲🇻', region: '🍛 南・中央アジア', lat: 3.2028, lon: 73.2207, zoom: 7 },
   AF: { names: { ja: 'アフガニスタン', en: 'Afghanistan', ko: '아프가니스탄', zh: '阿富汗' }, flag: '🇦🇫', region: '🍛 南・中央アジア', lat: 33.9391, lon: 67.7100, zoom: 6 },
@@ -507,21 +521,21 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   TR: { names: { ja: 'トルコ', en: 'Turkey', ko: '터키', zh: '土耳其' }, flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
   GR: { names: { ja: 'ギリシャ', en: 'Greece', ko: '그리스', zh: '希腊' }, flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
   AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
-  PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
+  PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: 'ポルトガル' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
-  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
+  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: 'ス위스', zh: 'スイス' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
   PL: { names: { ja: 'ポーランド', en: 'Poland', ko: '폴란드', zh: '波兰' }, flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
-  CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: '捷克' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
-  HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: '匈牙利' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
+  CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: 'チェコ' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
+  HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: 'ハンガリー' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
   IE: { names: { ja: 'アイルランド', en: 'Ireland', ko: '아이슬란드', zh: '爱尔兰' }, flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
-  BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: '比利时' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
+  BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: 'ベルギー' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: 'クロアチア' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
-  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: 'ルーマニア', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
+  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: 'ルーマニア', zh: 'ルーマニア' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
   UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
-  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바キア', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -535,14 +549,14 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
   BA: { names: { ja: 'ボスニア・ヘルツェゴビナ', en: 'Bosnia and Herzegovina', ko: '보스니아 헤르체고비나', zh: '波黑' }, flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lat: 43.9159, lon: 17.6791, zoom: 7 },
-  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테ネグロ', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
+  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네그로', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
   MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케도니아', zh: '北马其顿' }, flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lat: 41.6086, lon: 21.7453, zoom: 8 },
   MD: { names: { ja: 'モルド바', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
   RU: { names: { ja: 'ロシア', en: 'Russia', ko: '러시아', zh: '俄罗斯' }, flag: '🇷🇺', region: '🇪🇺 ヨーロッパ', lat: 61.5240, lon: 105.3188, zoom: 3 },
   SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
   NO: { names: { ja: 'ノルウェー', en: 'Norway', ko: '노르웨이', zh: '挪威' }, flag: '🇳🇴', region: '🇪🇺 北欧', lat: 60.4720, lon: 8.4689, zoom: 5 },
-  DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: '덴마크' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
+  DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: 'デンマーク' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
   FI: { names: { ja: 'フィンランド', en: 'Finland', ko: '핀란드', zh: '芬兰' }, flag: '🇫🇮', region: '🇪🇺 北欧', lat: 61.9241, lon: 25.7482, zoom: 5 },
   IS: { names: { ja: 'アイスランド', en: 'Iceland', ko: '아이슬란드', zh: '冰岛' }, flag: '🇮🇸', region: '🇪🇺 北欧', lat: 64.9631, lon: -19.0208, zoom: 6 },
   US: { names: { ja: 'アメリカ', en: 'USA', ko: '미국', zh: '미국' }, flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
@@ -558,15 +572,15 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   DO: { names: { ja: 'ドミニカ共和国', en: 'Dominican Republic', ko: '도미니카 공화국', zh: '多米尼加' }, flag: '🇩🇴', region: '🗽 中南米', lat: 18.7357, lon: -70.1627, zoom: 8 },
   PA: { names: { ja: 'パナマ', en: 'Panama', ko: '파나마', zh: '巴拿马' }, flag: '🇵🇦', region: '🗽 中南米', lat: 8.5380, lon: -80.7821, zoom: 8 },
   JM: { names: { ja: 'ジャマイカ', en: 'Jamaica', ko: '자메이카', zh: '牙买加' }, flag: '🇯🇲', region: '🗽 中南米', lat: 18.1096, lon: -77.2975, zoom: 9 },
-  UY: { names: { ja: 'ウルグアイ', en: 'Uruguay', ko: '우루과이', zh: '乌拉圭' }, flag: '🇺🇾', region: '🗽 中南米', lat: -32.5228, lon: -55.7658, zoom: 7 },
-  EC: { names: { ja: 'エクアドル', en: 'Ecuador', ko: '에콰도르', zh: '厄瓜多尔' }, flag: '🇪🇨', region: '🗽 中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
-  VE: { names: { ja: 'ベネズエラ', en: 'Venezuela', ko: '베네수엘라', zh: '委内瑞拉' }, flag: '🇻🇪', region: '🗽 中南米', lat: 6.4238, lon: -66.5897, zoom: 5 },
-  BO: { names: { ja: 'ボリビア', en: 'Bolivia', ko: '볼리비아', zh: '玻利维亚' }, flag: '🇧🇴', region: '🗽 中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
-  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '파라과이' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
-  GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '危地马拉' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
-  HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: '洪都拉斯' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
+  UY: { names: { ja: 'ウルグアイ', en: 'Uruguay', ko: '우루과이', zh: 'ウルグアイ' }, flag: '🇺🇾', region: '🗽 中南米', lat: -32.5228, lon: -55.7658, zoom: 7 },
+  EC: { names: { ja: 'エクアドル', en: 'Ecuador', ko: '에콰도르', zh: 'エクアドル' }, flag: '🇪🇨', region: '🗽 中南米', lat: -1.8312, lon: -78.1834, zoom: 6 },
+  VE: { names: { ja: 'ベネズエラ', en: 'Venezuela', ko: '베네수엘라', zh: 'ベネズエラ' }, flag: '🇻🇪', region: '🗽 中南米', lat: 6.4238, lon: -66.5897, zoom: 5 },
+  BO: { names: { ja: 'ボリビア', en: 'Bolivia', ko: '볼리비아', zh: 'ボリビア' }, flag: '🇧🇴', region: '🗽 中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
+  PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '파ラグアイ' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
+  GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: 'グアテマラ' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
+  HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: 'ホンジュラス' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
   NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: 'ニカラグア' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
-  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘살바도르', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
+  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘サルバドル', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
   BS: { names: { ja: 'バハマ', en: 'Bahamas', ko: '바하마', zh: 'バハマ' }, flag: '🇧🇸', region: '🗽 中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
   PR: { names: { ja: 'プエルトリコ', en: 'Puerto Rico', ko: '푸에르토리코', zh: 'プエルトリコ' }, flag: '🇵🇷', region: '🗽 中南米', lat: 18.2208, lon: -66.5901, zoom: 9 },
   BZ: { names: { ja: 'ベリーズ', en: 'Belize', ko: '벨리즈', zh: 'ベリーズ' }, flag: '🇧🇿', region: '🗽 中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
@@ -577,9 +591,9 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AG: { names: { ja: 'アンティグア・バーブーダ', en: 'Antigua and Barbuda', ko: '앤티가 바부다', zh: '安提瓜和巴布达' }, flag: '🇦🇬', region: '🗽 中南米', lat: 17.0608, lon: -61.7964, zoom: 9 },
   BB: { names: { ja: 'バルバドス', en: 'Barbados', ko: '바베이도스', zh: '巴巴多斯' }, flag: '🇧🇧', region: '🗽 中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
   DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
-  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나ダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
+  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레ナダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
-  LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루シア', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
+  LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루시아', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
   AU: { names: { ja: 'オーストラリア', en: 'Australia', ko: '호주', zh: '澳大利亚' }, flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
   NZ: { names: { ja: 'ニュージーランド', en: 'New Zealand', ko: '뉴질랜드', zh: '新西兰' }, flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
@@ -600,7 +614,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   TV: { names: { ja: 'ツバル', en: 'Tuvalu', ko: '투발루', zh: '图瓦卢' }, flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
   ZA: { names: { ja: '南アフリカ', en: 'South Africa', ko: '남아프리카', zh: '南非' }, flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
   EG: { names: { ja: 'エジプト', en: 'Egypt', ko: '이집트', zh: '埃及' }, flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
-  MA: { names: { ja: 'モロッコ', en: 'Morocco', ko: '모로코', zh: 'モロッコ' }, flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
+  MA: { names: { ja: 'モロッコ', en: 'Morocco', ko: '모로코', zh: '摩洛哥' }, flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
   TN: { names: { ja: 'チュニジア', en: 'Tunisia', ko: '튀니지', zh: '突尼斯' }, flag: '🇹🇳', region: '🦁 アフリカ', lat: 33.8869, lon: 9.5375, zoom: 6 },
   KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: 'ケニア' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
   TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: 'タンザニア' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
@@ -610,13 +624,13 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
   ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '埃塞俄比亚' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
   SN: { names: { ja: 'セネガル', en: 'Senegal', ko: '세네갈', zh: 'セネガル' }, flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
-  MG: { names: { ja: 'マダガスカル', en: 'Madagascar', ko: '마다가스카르', zh: 'マダガスカル' }, flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
+  MG: { names: { ja: 'マダガスカル', en: 'Madagascar', ko: 'マ다가스カル', zh: 'マダガスカル' }, flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
   RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: 'ルワンダ' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
   UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: 'ウガンダ' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
   ZM: { names: { ja: 'ザンビア', en: 'Zambia', ko: '잠비아', zh: 'ザンビア' }, flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
-  ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바ブウェ', zh: 'ジンバブエ' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
+  ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바브웨', zh: 'ジンバブエ' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
   BW: { names: { ja: 'ボツワナ', en: 'Botswana', ko: '보츠와나', zh: 'ボツワナ' }, flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
-  NA: { names: { ja: 'ナミビア', en: 'Namibia', ko: 'ナ미비아', zh: 'ナミビア' }, flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
+  NA: { names: { ja: 'ナミビア', en: 'Namibia', ko: '나미비아', zh: 'ナミビア' }, flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
   DZ: { names: { ja: 'アルジェリア', en: 'Algeria', ko: '알제리', zh: 'アルジェリア' }, flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
   AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: 'アンゴラ' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
   CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: 'カメルーン' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
@@ -636,7 +650,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   KM: { names: { ja: 'コモロ', en: 'Comoros', ko: '코모로', zh: 'コモロ' }, flag: '🇰🇲', region: '🦁 アフリカ', lat: -11.8750, lon: 43.8722, zoom: 9 },
   CG: { names: { ja: 'コンゴ共和国', en: 'Republic of the Congo', ko: '콩고공화국', zh: '刚果共和国' }, flag: '🇨🇬', region: '🦁 アフリカ', lat: -0.2280, lon: 15.8277, zoom: 6 },
   CD: { names: { ja: 'コンゴ民主共和国', en: 'Democratic Republic of the Congo', ko: '콩고민주공화국', zh: '刚果民主共和国' }, flag: '🇨🇩', region: '🦁 アフリカ', lat: -4.0383, lon: 21.7587, zoom: 5 },
-  DJ: { names: { ja: 'ジブチ', en: 'Djibouti', ko: '지부티', zh: 'ジブチ' }, flag: '🇩🇯', region: '🦁 アフリカ', lat: 11.8251, lon: 42.5903, zoom: 8 },
+  DJ: { names: { ja: 'ジブチ', en: 'Djibouti', ko: '지부티', zh: '吉布提' }, flag: '🇩🇯', region: '🦁 アフリカ', lat: 11.8251, lon: 42.5903, zoom: 8 },
   GQ: { names: { ja: '赤道ギニア', en: 'Equatorial Guinea', ko: '적도 기니', zh: '赤道几内亚' }, flag: '🇬🇶', region: '🦁 アフリカ', lat: 1.6508, lon: 10.2679, zoom: 8 },
   ER: { names: { ja: 'エリトリア', en: 'Eritrea', ko: '에리트레아', zh: '厄立特里亚' }, flag: '🇪🇷', region: '🦁 アフリカ', lat: 15.1794, lon: 39.7823, zoom: 7 },
   GA: { names: { ja: 'ガボン', en: 'Gabon', ko: '가봉', zh: '加蓬' }, flag: '🇬🇦', region: '🦁 アフリカ', lat: -0.8037, lon: 11.6094, zoom: 6 },
@@ -896,17 +910,17 @@ const GoogleMapComponent = ({
         title: spot.title,
         icon: {
           url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="52" viewBox="0 0 48 52">
+            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="48" viewBox="0 0 44 48">
               <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
                 <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.3)" />
               </filter>
-              <path d="M22 50 C22 50 40 31 40 20 C40 9 31 1 22 1 C13 1 4 9 4 20 C4 31 22 50 22 50 Z" fill="#ffffff" stroke="#0284c7" stroke-width="3" filter="url(#shadow)" />
-              <image href="${imgUrl}" x="2" y="2" width="40" height="40" clip-path="circle(20px at 20px 20px)" preserveAspectRatio="xMidYMid slice" />
+              <path d="M22 48 C22 48 38 30 38 19 C38 8 30 0 22 0 C14 0 6 8 6 19 C6 30 22 48 22 48 Z" fill="#ffffff" stroke="#0284c7" stroke-width="3" filter="url(#shadow)" />
+              <image href="${imgUrl}" x="3" y="3" width="38" height="38" clip-path="circle(19px at 19px 19px)" preserveAspectRatio="xMidYMid slice" />
               ${badgeSvg}
             </svg>
           `)}`,
-          scaledSize: new window.google.maps.Size(48, 52),
-          anchor: new window.google.maps.Point(22, 52),
+          scaledSize: new window.google.maps.Size(44, 48),
+          anchor: new window.google.maps.Point(22, 48),
         }
       });
 
@@ -1029,7 +1043,12 @@ export default function WapApp() {
   const [manualLat, setManualLat] = useState<string>('');
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [mediaFitMode, setMediaFitMode] = useState<'cover' | 'contain'>('cover');
+
+  // 投稿プレビューでの自由微調整（スケール・オフセット）用ステート
+  const [previewScale, setPreviewScale] = useState<number>(1);
+  const [previewOffset, setPreviewOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const isDraggingRef = useRef<boolean>(false);
+  const dragStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState<boolean>(false);
@@ -1593,6 +1612,8 @@ export default function WapApp() {
     if (pendingList.length > 0) {
       setPendingUploads(pendingList);
       setCurrentUploadIndex(0);
+      setPreviewScale(1);
+      setPreviewOffset({ x: 0, y: 0 });
       const first = pendingList[0];
       setPostTitle(first.file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
@@ -1614,7 +1635,7 @@ export default function WapApp() {
   const toggleScopeSelection = (scope: DisplayScope) => {
     if (selectedScopes.includes(scope)) {
       if (selectedScopes.length === 1) {
-        showToast('⚠️ 最低1つの反映先を選択する必要があります');
+        showToast('⚠️ 最低1つの反映先を選択してください');
         return;
       }
       setSelectedScopes((prev) => prev.filter((s) => s !== scope));
@@ -1623,7 +1644,6 @@ export default function WapApp() {
     }
   };
 
-  // タイムアウト付きで絶対に保存中でフリーズしない安全な投稿処理
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -1749,11 +1769,12 @@ export default function WapApp() {
     if (currentUploadIndex + 1 < pendingUploads.length) {
       const nextIndex = currentUploadIndex + 1;
       setCurrentUploadIndex(nextIndex);
+      setPreviewScale(1);
+      setPreviewOffset({ x: 0, y: 0 });
       const nextItem = pendingUploads[nextIndex];
       setPostTitle(nextItem.file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
       
-      // ループ内で各ファイルの個別位置情報（EXIF）を確実に反映
       if (nextItem.hasGps && nextItem.lat !== undefined && nextItem.lon !== undefined) {
         setManualLat(nextItem.lat.toString());
         setManualLon(nextItem.lon.toString());
@@ -3012,12 +3033,9 @@ export default function WapApp() {
         {/* 使い方ガイドモーダル */}
         {isGuideModalOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 7000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'manipulation' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto', touchAction: 'pan-y' }}>
-              <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>{t('guideTitle')}</h3>
-              <div style={{ fontSize: '12px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '16px' }}>
-                {t('guideFullText')}
-              </div>
-              <button onClick={() => setIsGuideModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', padding: '24px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '80vh', overflowY: 'auto', touchAction: 'pan-y', whiteSpace: 'pre-line', fontSize: '13px', lineHeight: '1.6' }}>
+              {t('guideFullText')}
+              <button onClick={() => setIsGuideModalOpen(false)} style={{ width: '100%', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', marginTop: '16px' }}>
                 {t('close')}
               </button>
             </div>
@@ -3184,7 +3202,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 投稿作成モーダル ── */}
+        {/* ── 投稿作成モーダル（自由微調整・タッチ対応） ── */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'pan-y' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box' }}>
@@ -3192,21 +3210,80 @@ export default function WapApp() {
                 📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
               </h3>
 
-              {/* プレビュー画像／動画と大きさ調整（cover / contain 切り替え） */}
-              <div style={{ width: '100%', height: '180px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '8px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {/* タッチ＆ドラッグ・スライダーで自由に微調整できるプレビュー */}
+              <div
+                onMouseDown={(e) => {
+                  isDraggingRef.current = true;
+                  dragStartRef.current = { x: e.clientX - previewOffset.x, y: e.clientY - previewOffset.y };
+                }}
+                onMouseMove={(e) => {
+                  if (!isDraggingRef.current) return;
+                  setPreviewOffset({ x: e.clientX - dragStartRef.current.x, y: e.clientY - dragStartRef.current.y });
+                }}
+                onMouseUp={() => { isDraggingRef.current = false; }}
+                onMouseLeave={() => { isDraggingRef.current = false; }}
+                onTouchStart={(e) => {
+                  if (e.touches.length === 1) {
+                    isDraggingRef.current = true;
+                    dragStartRef.current = { x: e.touches[0].clientX - previewOffset.x, y: e.touches[0].clientY - previewOffset.y };
+                  }
+                }}
+                onTouchMove={(e) => {
+                  if (!isDraggingRef.current || e.touches.length !== 1) return;
+                  setPreviewOffset({ x: e.touches[0].clientX - dragStartRef.current.x, y: e.touches[0].clientY - dragStartRef.current.y });
+                }}
+                onTouchEnd={() => { isDraggingRef.current = false; }}
+                style={{ width: '100%', height: '180px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '8px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'grab' }}
+              >
                 {pendingUploads[currentUploadIndex].fileType === 'image' ? (
-                  <img src={pendingUploads[currentUploadIndex].fileUrl} alt="preview" style={{ width: '100%', height: '100%', objectFit: mediaFitMode }} />
+                  <img
+                    src={pendingUploads[currentUploadIndex].fileUrl}
+                    alt="preview"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transform: `scale(${previewScale}) translate(${previewOffset.x / previewScale}px, ${previewOffset.y / previewScale}px)`,
+                      transition: isDraggingRef.current ? 'none' : 'transform 0.1s ease-out'
+                    }}
+                  />
                 ) : (
-                  <video src={pendingUploads[currentUploadIndex].fileUrl} controls autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: mediaFitMode }} />
+                  <video
+                    src={pendingUploads[currentUploadIndex].fileUrl}
+                    controls
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                      transform: `scale(${previewScale}) translate(${previewOffset.x / previewScale}px, ${previewOffset.y / previewScale}px)`,
+                      transition: isDraggingRef.current ? 'none' : 'transform 0.1s ease-out'
+                    }}
+                  />
                 )}
               </div>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px', marginBottom: '12px' }}>
+
+              {/* 微調整スライダーコントロール */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '12px', background: '#f8fafc', padding: '6px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 ズーム調整</span>
+                <input
+                  type="range"
+                  min="1"
+                  max="2.5"
+                  step="0.05"
+                  value={previewScale}
+                  onChange={(e) => setPreviewScale(parseFloat(e.target.value))}
+                  style={{ flex: 1, cursor: 'pointer' }}
+                />
                 <button
                   type="button"
-                  onClick={() => setMediaFitMode(mediaFitMode === 'cover' ? 'contain' : 'cover')}
-                  style={{ background: '#f1f5f9', color: '#0f172a', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '3px 8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                  onClick={() => { setPreviewScale(1); setPreviewOffset({ x: 0, y: 0 }); }}
+                  style={{ background: '#e2e8f0', border: 'none', borderRadius: '4px', padding: '2px 6px', fontSize: '10px', fontWeight: 'bold', cursor: 'pointer' }}
                 >
-                  🖼️ 表示調整: {mediaFitMode === 'cover' ? 'トリミング(埋める)' : '全体表示(収める)'}
+                  リセット
                 </button>
               </div>
 
