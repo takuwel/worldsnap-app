@@ -520,7 +520,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
-  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
+  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바キア', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
   SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
@@ -535,7 +535,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
   BA: { names: { ja: 'ボスニア・ヘルツェゴビナ', en: 'Bosnia and Herzegovina', ko: '보스니아 헤르체고비나', zh: '波黑' }, flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lat: 43.9159, lon: 17.6791, zoom: 7 },
-  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네グロ', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
+  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네그로', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
   MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케도니아', zh: '北马其顿' }, flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lat: 41.6086, lon: 21.7453, zoom: 8 },
   MD: { names: { ja: 'モルドバ', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
@@ -564,12 +564,12 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BO: { names: { ja: 'ボリビア', en: 'Bolivia', ko: '볼리비아', zh: '玻利维亚' }, flag: '🇧🇴', region: '🗽 中南米', lat: -16.2902, lon: -63.5887, zoom: 5 },
   PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '파라과이' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
   GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '危地马拉' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
-  HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: '洪都拉斯' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
-  NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: '尼加拉瓜' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
-  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘살바도르', zh: '萨尔瓦多' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
-  BS: { names: { ja: 'バハマ', en: 'Bahamas', ko: '바하마', zh: '巴哈马' }, flag: '🇧🇸', region: '🗽 中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
-  PR: { names: { ja: 'プエルトリコ', en: 'Puerto Rico', ko: '푸에르토리코', zh: '波多黎各' }, flag: '🇵🇷', region: '🗽 中南米', lat: 18.2208, lon: -66.5901, zoom: 9 },
-  BZ: { names: { ja: 'ベリーズ', en: 'Belize', ko: '벨리즈', zh: '伯利兹' }, flag: '🇧🇿', region: '🗽 中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
+  HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: 'ホンジュラス' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
+  NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: 'ニカラグア' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
+  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘살바도르', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
+  BS: { names: { ja: 'バハマ', en: 'Bahamas', ko: '바하마', zh: 'バハマ' }, flag: '🇧🇸', region: '🗽 中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
+  PR: { names: { ja: 'プエルトリコ', en: 'Puerto Rico', ko: '푸에르토리코', zh: '푸エルトリコ' }, flag: '🇵🇷', region: '🗽 中南米', lat: 18.2208, lon: -66.5901, zoom: 9 },
+  BZ: { names: { ja: 'ベリーズ', en: 'Belize', ko: '벨리즈', zh: 'ベリーズ' }, flag: '🇧🇿', region: '🗽 中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
   TT: { names: { ja: 'トリニダード・トバゴ', en: 'Trinidad and Tobago', ko: '트리니다드 토바고', zh: '特立尼达和多巴哥' }, flag: '🇹🇹', region: '🗽 中南米', lat: 10.6918, lon: -61.2225, zoom: 9 },
   HT: { names: { ja: 'ハイチ', en: 'Haiti', ko: '아이티', zh: '海地' }, flag: '🇭🇹', region: '🗽 中南米', lat: 18.9712, lon: -72.2852, zoom: 8 },
   GY: { names: { ja: 'ガイアナ', en: 'Guyana', ko: '가이아나', zh: '圭亚那' }, flag: '🇬🇾', region: '🗽 中南米', lat: 4.8604, lon: -58.9302, zoom: 6 },
@@ -577,7 +577,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AG: { names: { ja: 'アンティグア・バーブーダ', en: 'Antigua and Barbuda', ko: '앤티가 바부다', zh: '安提瓜和巴布达' }, flag: '🇦🇬', region: '🗽 中南米', lat: 17.0608, lon: -61.7964, zoom: 9 },
   BB: { names: { ja: 'バルバドス', en: 'Barbados', ko: '바베이도스', zh: '巴巴多斯' }, flag: '🇧🇧', region: '🗽 中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
   DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
-  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나ダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
+  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레ナダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
   LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루シア', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
@@ -602,54 +602,54 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   EG: { names: { ja: 'エジプト', en: 'Egypt', ko: '이집트', zh: '埃及' }, flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
   MA: { names: { ja: 'モロッコ', en: 'Morocco', ko: '모로코', zh: '摩洛哥' }, flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
   TN: { names: { ja: 'チュニジア', en: 'Tunisia', ko: '튀니지', zh: '突尼斯' }, flag: '🇹🇳', region: '🦁 アフリカ', lat: 33.8869, lon: 9.5375, zoom: 6 },
-  KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: '肯尼亚' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
+  KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: 'ケニア' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
   TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: '坦桑尼亚' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
   MU: { names: { ja: 'モーリシャス', en: 'Mauritius', ko: '모리셔스', zh: '毛里求斯' }, flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
   SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: 'セーシェル' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
   GH: { names: { ja: 'ガーナ', en: 'Ghana', ko: '가나', zh: '加纳' }, flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
   NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
   ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '埃塞俄比亚' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
-  SN: { names: { ja: 'セネガル', en: 'Senegal', ko: '세네갈', zh: '塞内加尔' }, flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
+  SN: { names: { ja: 'セネガル', en: 'Senegal', ko: '세네갈', zh: 'セネガル' }, flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
   MG: { names: { ja: 'マダガスカル', en: 'Madagascar', ko: '마다가스카르', zh: 'マダガスカル' }, flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
-  RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: '卢旺达' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
-  UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: '乌干达' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
-  ZM: { names: { ja: 'ザンビア', en: 'Zambia', ko: '잠비아', zh: '赞比亚' }, flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
+  RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: 'ルワンダ' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
+  UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: 'ウガンダ' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
+  ZM: { names: { ja: 'ザンビア', en: 'Zambia', ko: '잠비아', zh: 'ザンビア' }, flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
   ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바브웨', zh: 'ジンバブエ' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
-  BW: { names: { ja: 'ボツワナ', en: 'Botswana', ko: '보츠와나', zh: '博茨瓦纳' }, flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
-  NA: { names: { ja: 'ナミビア', en: 'Namibia', ko: '나미비아', zh: '纳米比亚' }, flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
-  DZ: { names: { ja: 'アルジェリア', en: 'Algeria', ko: '알제리', zh: '阿尔及利亚' }, flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
-  AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: '安哥拉' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
-  CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: '喀麦隆' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
-  CI: { names: { ja: 'コートジボワール', en: 'Ivory Coast', ko: '코트디부아르', zh: '科特迪瓦' }, flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
-  MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모ザンビーク', zh: '莫桑比克' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
-  SD: { names: { ja: 'スーダン', en: 'Sudan', ko: '수단', zh: '苏丹' }, flag: '🇸🇩', region: '🦁 アフリカ', lat: 12.8628, lon: 30.2176, zoom: 5 },
-  LY: { names: { ja: 'リビア', en: 'Libya', ko: '리비아', zh: '利比亚' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
-  ML: { names: { ja: 'マリ', en: 'Mali', ko: '말리', zh: '马里' }, flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 5 },
-  NE: { names: { ja: 'ニジェール', en: 'Niger', ko: '니제르', zh: '尼日尔' }, flag: '🇳🇪', region: '🦁 アフリカ', lat: 17.6078, lon: 8.0817, zoom: 5 },
-  SO: { names: { ja: 'ソマリア', en: 'Somalia', ko: '소말리아', zh: '索马里' }, flag: '🇸🇴', region: '🦁 アフリカ', lat: 5.1521, lon: 46.1996, zoom: 6 },
-  BJ: { names: { ja: 'ベナン', en: 'Benin', ko: '베닌', zh: '贝宁' }, flag: '🇧🇯', region: '🦁 アフリカ', lat: 9.3077, lon: 2.3158, zoom: 7 },
-  BF: { names: { ja: 'ブルキナファソ', en: 'Burkina Faso', ko: '부르키나파소', zh: '布基纳法索' }, flag: '🇧🇫', region: '🦁 アフリカ', lat: 12.2383, lon: -1.5616, zoom: 6 },
-  BI: { names: { ja: 'ブルンジ', en: 'Burundi', ko: '부룬디', zh: '布隆迪' }, flag: '🇧🇮', region: '🦁 アフリカ', lat: -3.3731, lon: 29.9189, zoom: 8 },
-  CV: { names: { ja: 'カーボベルデ', en: 'Cape Verde', ko: '카보베르데', zh: '佛得角' }, flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 },
+  BW: { names: { ja: 'ボツワナ', en: 'Botswana', ko: '보츠와나', zh: 'ボツワナ' }, flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
+  NA: { names: { ja: 'ナミビア', en: 'Namibia', ko: '나미비아', zh: 'ナミビア' }, flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
+  DZ: { names: { ja: 'アルジェリア', en: 'Algeria', ko: '알제리', zh: 'アルジェリア' }, flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
+  AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: 'アンゴラ' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
+  CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: 'カメルーン' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
+  CI: { names: { ja: 'コートジボワール', en: 'Ivory Coast', ko: '코트디부아르', zh: 'コートジボワール' }, flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
+  MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모ザンビーク', zh: 'モザンビーク' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
+  SD: { names: { ja: 'スーダン', en: 'Sudan', ko: '수단', zh: 'スーダン' }, flag: '🇸🇩', region: '🦁 アフリカ', lat: 12.8628, lon: 30.2176, zoom: 5 },
+  LY: { names: { ja: 'リビア', en: 'Libya', ko: '리비아', zh: 'リビア' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
+  ML: { names: { ja: 'マリ', en: 'Mali', ko: '말리', zh: 'マリ' }, flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 5 },
+  NE: { names: { ja: 'ニジェール', en: 'Niger', ko: '니제르', zh: 'ニジェール' }, flag: '🇳🇪', region: '🦁 アフリカ', lat: 17.6078, lon: 8.0817, zoom: 5 },
+  SO: { names: { ja: 'ソマリア', en: 'Somalia', ko: '소말리아', zh: 'ソマリア' }, flag: '🇸🇴', region: '🦁 アフリカ', lat: 5.1521, lon: 46.1996, zoom: 6 },
+  BJ: { names: { ja: 'ベナン', en: 'Benin', ko: '베닌', zh: 'ベナン' }, flag: '🇧🇯', region: '🦁 アフリカ', lat: 9.3077, lon: 2.3158, zoom: 7 },
+  BF: { names: { ja: 'ブルキナファソ', en: 'Burkina Faso', ko: '부르키나파소', zh: 'ブルキナファソ' }, flag: '🇧🇫', region: '🦁 アフリカ', lat: 12.2383, lon: -1.5616, zoom: 6 },
+  BI: { names: { ja: 'ブルンジ', en: 'Burundi', ko: '부룬디', zh: 'ブルンジ' }, flag: '🇧🇮', region: '🦁 アフリカ', lat: -3.3731, lon: 29.9189, zoom: 8 },
+  CV: { names: { ja: 'カーボベルデ', en: 'Cape Verde', ko: '카보베르데', zh: 'カーボベルデ' }, flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 },
   CF: { names: { ja: '中央アフリカ共和国', en: 'Central African Republic', ko: '중앙아프리카 공화국', zh: '中非共和国' }, flag: '🇨🇫', region: '🦁 アフリカ', lat: 6.6111, lon: 20.9394, zoom: 6 },
-  TD: { names: { ja: 'チャド', en: 'Chad', ko: '차드', zh: '乍得' }, flag: '🇹🇩', region: '🦁 アフリカ', lat: 15.4542, lon: 18.7322, zoom: 5 },
-  KM: { names: { ja: 'コモロ', en: 'Comoros', ko: '코모로', zh: '科摩罗' }, flag: '🇰🇲', region: '🦁 アフリカ', lat: -11.8750, lon: 43.8722, zoom: 9 },
+  TD: { names: { ja: 'チャド', en: 'Chad', ko: '차드', zh: 'チャド' }, flag: '🇹🇩', region: '🦁 アフリカ', lat: 15.4542, lon: 18.7322, zoom: 5 },
+  KM: { names: { ja: 'コモロ', en: 'Comoros', ko: '코모로', zh: 'コモロ' }, flag: '🇰🇲', region: '🦁 アフリカ', lat: -11.8750, lon: 43.8722, zoom: 9 },
   CG: { names: { ja: 'コンゴ共和国', en: 'Republic of the Congo', ko: '콩고공화국', zh: '刚果共和国' }, flag: '🇨🇬', region: '🦁 アフリカ', lat: -0.2280, lon: 15.8277, zoom: 6 },
   CD: { names: { ja: 'コンゴ民主共和国', en: 'Democratic Republic of the Congo', ko: '콩고민주공화국', zh: '刚果民主共和国' }, flag: '🇨🇩', region: '🦁 アフリカ', lat: -4.0383, lon: 21.7587, zoom: 5 },
   DJ: { names: { ja: 'ジブチ', en: 'Djibouti', ko: '지부티', zh: '吉布提' }, flag: '🇩🇯', region: '🦁 アフリカ', lat: 11.8251, lon: 42.5903, zoom: 8 },
   GQ: { names: { ja: '赤道ギニア', en: 'Equatorial Guinea', ko: '적도 기니', zh: '赤道几内亚' }, flag: '🇬🇶', region: '🦁 アフリカ', lat: 1.6508, lon: 10.2679, zoom: 8 },
   ER: { names: { ja: 'エリトリア', en: 'Eritrea', ko: '에리트레아', zh: '厄立特里亚' }, flag: '🇪🇷', region: '🦁 アフリカ', lat: 15.1794, lon: 39.7823, zoom: 7 },
   GA: { names: { ja: 'ガボン', en: 'Gabon', ko: '가봉', zh: '加蓬' }, flag: '🇬🇦', region: '🦁 アフリカ', lat: -0.8037, lon: 11.6094, zoom: 6 },
-  GM: { names: { ja: 'ガンビア', en: 'Gambia', ko: '감비아', zh: '冈比亚' }, flag: '🇬🇲', region: '🦁 アフリカ', lat: 13.4432, lon: -15.3101, zoom: 8 },
-  GN: { names: { ja: 'ギニア', en: 'Guinea', ko: '기니', zh: '几内亚' }, flag: '🇬🇳', region: '🦁 アフリカ', lat: 9.9456, lon: -9.6966, zoom: 7 },
-  GW: { names: { ja: 'ギニアビサウ', en: 'Guinea-Bissau', ko: '기니비사우', zh: '几内亚比绍' }, flag: '🇬🇼', region: '🦁 アフリカ', lat: 11.8037, lon: -15.1804, zoom: 8 },
-  LS: { names: { ja: 'レソト', en: 'Lesotho', ko: '레소토', zh: '莱索托' }, flag: '🇱🇸', region: '🦁 アフリカ', lat: -29.6100, lon: 28.2336, zoom: 8 },
-  LR: { names: { ja: 'リベリア', en: 'Liberia', ko: '라이베리아', zh: '利比里亚' }, flag: '🇱🇷', region: '🦁 アフリカ', lat: 6.4281, lon: -9.4295, zoom: 7 },
-  MW: { names: { ja: 'マラウイ', en: 'Malawi', ko: '말라위', zh: '马拉维' }, flag: '🇲🇼', region: '🦁 アフリカ', lat: -13.2543, lon: 34.3015, zoom: 6 },
-  MR: { names: { ja: 'モーリタニア', en: 'Mauritania', ko: '모리타니', zh: '毛里塔尼亚' }, flag: '🇲🇷', region: '🦁 アフリカ', lat: 21.0079, lon: -10.9408, zoom: 5 },
+  GM: { names: { ja: 'ガンビア', en: 'Gambia', ko: '감비아', zh: 'ガンビア' }, flag: '🇬🇲', region: '🦁 アフリカ', lat: 13.4432, lon: -15.3101, zoom: 8 },
+  GN: { names: { ja: 'ギニア', en: 'Guinea', ko: '기니', zh: 'ギニア' }, flag: '🇬🇳', region: '🦁 アフリカ', lat: 9.9456, lon: -9.6966, zoom: 7 },
+  GW: { names: { ja: 'ギニアビサウ', en: 'Guinea-Bissau', ko: '기니비사우', zh: 'ギニアビサウ' }, flag: '🇬🇼', region: '🦁 アフリカ', lat: 11.8037, lon: -15.1804, zoom: 8 },
+  LS: { names: { ja: 'レソト', en: 'Lesotho', ko: '레소토', zh: 'レソト' }, flag: '🇱🇸', region: '🦁 アフリカ', lat: -29.6100, lon: 28.2336, zoom: 8 },
+  LR: { names: { ja: 'リベリア', en: 'Liberia', ko: '라이베리아', zh: 'リベリア' }, flag: '🇱🇷', region: '🦁 アフリカ', lat: 6.4281, lon: -9.4295, zoom: 7 },
+  MW: { names: { ja: 'マラウイ', en: 'Malawi', ko: '말라위', zh: 'マラウイ' }, flag: '🇲🇼', region: '🦁 アフリカ', lat: -13.2543, lon: 34.3015, zoom: 6 },
+  MR: { names: { ja: 'モーリタニア', en: 'Mauritania', ko: '모리타니', zh: 'モーリタニア' }, flag: '🇲🇷', region: '🦁 アフリカ', lat: 21.0079, lon: -10.9408, zoom: 5 },
   ST: { names: { ja: 'サントメ・プリンシペ', en: 'Sao Tome and Principe', ko: '상투메 프린시페', zh: '圣多美和普林西比' }, flag: '🇸🇹', region: '🦁 アフリカ', lat: 0.1864, lon: 6.6131, zoom: 9 },
-  SL: { names: { ja: 'シエラレオネ', en: 'Sierra Leone', ko: '시에라리온', zh: '塞拉利昂' }, flag: '🇸🇱', region: '🦁 アフリカ', lat: 8.4606, lon: -11.7799, zoom: 7 },
-  SS: { names: { ja: '南スーダン', en: 'South Sudan', ko: '남수단', zh: '南苏丹' }, flag: '🇸🇸', region: '🦁 アフリカ', lat: 6.8770, lon: 31.3070, zoom: 6 },
+  SL: { names: { ja: 'シエラレオネ', en: 'Sierra Leone', ko: '시에라리온', zh: 'シエラレオネ' }, flag: '🇸🇱', region: '🦁 アフリカ', lat: 8.4606, lon: -11.7799, zoom: 7 },
+  SS: { names: { ja: '南スーダン', en: 'South Sudan', ko: '남수단', zh: '南苏ダン' }, flag: '🇸🇸', region: '🦁 アフリカ', lat: 6.8770, lon: 31.3070, zoom: 6 },
   TG: { names: { ja: 'トーゴ', en: 'Togo', ko: '토고', zh: '多哥' }, flag: '🇹🇬', region: '🦁 アフリカ', lat: 8.6195, lon: 0.8248, zoom: 7 }
 };
 
@@ -1542,7 +1542,6 @@ export default function WapApp() {
     showToast('💬 コメントを投稿しました！');
   };
 
-  // 複数一括投稿時にそれぞれのEXIF等から正確な個別位置情報を抽出する完全修正版
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -1623,7 +1622,7 @@ export default function WapApp() {
     }
   };
 
-  // タイムアウト付きで絶対に保存中でフリーズしない安全な投稿処理
+  // 各メディアアイテム（写真・動画）ごとの正しい位置情報を適用して保存する完全修正処理
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -1752,6 +1751,8 @@ export default function WapApp() {
       const nextItem = pendingUploads[nextIndex];
       setPostTitle(nextItem.file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
+      
+      // 次のファイルの個別EXIF位置情報があれば自動セット、なければ空欄
       if (nextItem.hasGps && nextItem.lat !== undefined && nextItem.lon !== undefined) {
         setManualLat(nextItem.lat.toString());
         setManualLon(nextItem.lon.toString());
@@ -1901,8 +1902,8 @@ export default function WapApp() {
 
         {/* 初回オンボーディング画面（設定中は下のバナーなどが絶対に透けないように zIndex を最上位に） */}
         {isOnboarding && (
-          <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'manipulation' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center', touchAction: 'manipulation' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center', touchAction: 'pan-y' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
               <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
               <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
@@ -1918,7 +1919,7 @@ export default function WapApp() {
                 <div style={{ textAlign: 'left' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step1Title')}</h3>
                   <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t('step1Desc')}</p>
-                  <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px', touchAction: 'manipulation' }}>
+                  <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px', touchAction: 'pan-y' }}>
                     {Object.entries(LANGUAGES).map(([code, lang]) => (
                       <div
                         key={code}
@@ -1946,7 +1947,7 @@ export default function WapApp() {
               )}
 
               {onboardingStep === 2 && (
-                <div style={{ textAlign: 'left', touchAction: 'manipulation' }}>
+                <div style={{ textAlign: 'left', touchAction: 'pan-y' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 4px 0' }}>{t('step2Title')}</h3>
                   <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 10px 0' }}>{t('step2Desc')}</p>
                   
@@ -1958,7 +1959,7 @@ export default function WapApp() {
                     style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', marginBottom: '8px', boxSizing: 'border-box', touchAction: 'manipulation' }}
                   />
 
-                  <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', paddingRight: '4px', touchAction: 'manipulation' }}>
+                  <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', paddingRight: '4px', touchAction: 'pan-y' }}>
                     {Object.entries(filteredCountries).map(([region, countries]) => (
                       <div key={region}>
                         <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '4px', borderBottom: '1px solid #e2e8f0', paddingBottom: '2px' }}>
@@ -2006,7 +2007,7 @@ export default function WapApp() {
               )}
 
               {onboardingStep === 3 && (
-                <div style={{ textAlign: 'left', touchAction: 'manipulation' }}>
+                <div style={{ textAlign: 'left', touchAction: 'pan-y' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t('step3Title')}</h3>
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
                     <div
@@ -2052,7 +2053,7 @@ export default function WapApp() {
               )}
 
               {onboardingStep === 4 && (
-                <div style={{ textAlign: 'left', touchAction: 'manipulation' }}>
+                <div style={{ textAlign: 'left', touchAction: 'pan-y' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step3TitleEula')}</h3>
                   <div
                     onScroll={(e) => {
