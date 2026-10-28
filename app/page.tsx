@@ -42,7 +42,7 @@ export interface MediaItem {
   thumbUrl: string;
   fileType: 'image' | 'video';
   fileName: string;
-  comments?: CommentItem[];
+  comments?: CommentItem[]; // メディアごとの独立したコメント
 }
 
 export interface Spot {
@@ -271,7 +271,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 - タイトルや思い出メモを入力して、「マップに反映する 🚀」を押すだけ！
 
 3️⃣ **みんなの投稿を見る（タイムライン）**
-- 下のメニューの「🗓️ タイムライン」を押すと、みんなが投稿した写真や動画がTikTokみたいに縦に流れてくるよ！
+- 下のメニューの「🗓️ タイムライン」を押すと、あなたのベース国の投稿が優先されて、みんなの写真や動画がTikTokみたいに縦に流れてくるよ！
 - 動画は音声つきでスムーズに再生されるよ。画面のどこを上下にスワイプしても次の投稿へサクサク進むよ！投稿をタップすれば詳しい情報が見られるよ。
 
 4️⃣ **ランキングと自分のページ**
@@ -385,7 +385,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     close: '닫기',
     tabPosts: '📸 게시물',
     tabTimeline: '📅 로그',
-    tabSaved: '💛 저장',
+    tabSaved: '❤️ 저장',
     tabBadges: '🏅 배지',
     tabFriends: '👥 친구',
     reportSpot: '🚨 신고',
@@ -527,13 +527,13 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
   CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
   PL: { names: { ja: 'ポーランド', en: 'Poland', ko: '폴란드', zh: '波兰' }, flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
-  CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: 'チェコ' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
+  CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: '捷克' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
   HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: '匈牙利' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
   IE: { names: { ja: 'アイルランド', en: 'Ireland', ko: '아이슬란드', zh: '爱尔兰' }, flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
   BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: '比利时' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: 'クロアチア' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
   RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: 'ルーマニア', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
-  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
+  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: 'ウクライナ', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
@@ -551,14 +551,14 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
   BA: { names: { ja: 'ボスニア・ヘルツェゴビナ', en: 'Bosnia and Herzegovina', ko: '보스니아 헤르체고비나', zh: '波黑' }, flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lat: 43.9159, lon: 17.6791, zoom: 7 },
-  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네グロ', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
+  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테ネ그로', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
   MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케도니아', zh: '北马其顿' }, flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lat: 41.6086, lon: 21.7453, zoom: 8 },
   MD: { names: { ja: 'モルド바', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
   RU: { names: { ja: 'ロシア', en: 'Russia', ko: '러시아', zh: '俄罗斯' }, flag: '🇷🇺', region: '🇪🇺 ヨーロッパ', lat: 61.5240, lon: 105.3188, zoom: 3 },
   SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
   NO: { names: { ja: 'ノルウェー', en: 'Norway', ko: '노르웨이', zh: '挪威' }, flag: '🇳🇴', region: '🇪🇺 北欧', lat: 60.4720, lon: 8.4689, zoom: 5 },
-  DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: 'デンマーク' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
+  DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: '덴마크' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
   FI: { names: { ja: 'フィンランド', en: 'Finland', ko: '핀란드', zh: '芬兰' }, flag: '🇫🇮', region: '🇪🇺 北欧', lat: 61.9241, lon: 25.7482, zoom: 5 },
   IS: { names: { ja: 'アイスランド', en: 'Iceland', ko: '아이슬란드', zh: '冰岛' }, flag: '🇮🇸', region: '🇪🇺 北欧', lat: 64.9631, lon: -19.0208, zoom: 6 },
   US: { names: { ja: 'アメリカ', en: 'USA', ko: '미국', zh: '미국' }, flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
@@ -595,7 +595,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
   GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레ナダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
-  LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루시아', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
+  LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루シア', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
   AU: { names: { ja: 'オーストラリア', en: 'Australia', ko: '호주', zh: '澳大利亚' }, flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
   NZ: { names: { ja: 'ニュージーランド', en: 'New Zealand', ko: '뉴질랜드', zh: '新西兰' }, flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
@@ -620,7 +620,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   TN: { names: { ja: 'チュニジア', en: 'Tunisia', ko: '튀니지', zh: 'チュニジア' }, flag: '🇹🇳', region: '🦁 アフリカ', lat: 33.8869, lon: 9.5375, zoom: 6 },
   KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: 'ケニア' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
   TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: 'タンザニア' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
-  MU: { names: { ja: 'モーリシャス', en: 'Mauritius', ko: '모리셔스', zh: 'モーリシャス' }, flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
+  MU: { names: { ja: 'モーリシャス', en: 'Mauritius', ko: '모리셔스', zh: '毛里求斯' }, flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
   SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: 'セーシェル' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
   GH: { names: { ja: 'ガーナ', en: 'Ghana', ko: '가나', zh: '加纳' }, flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
   NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
@@ -632,7 +632,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   ZM: { names: { ja: 'ザンビア', en: 'Zambia', ko: '잠비아', zh: 'ザンビア' }, flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
   ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바브웨', zh: 'ジンバブエ' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
   BW: { names: { ja: 'ボツワナ', en: 'Botswana', ko: '보츠와나', zh: 'ボツワナ' }, flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
-  NA: { names: { ja: 'ナミビア', en: 'Namibia', ko: '나미비아', zh: 'ナミビア' }, flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
+  NA: { names: { ja: 'ナミビア', en: 'Namibia', ko: 'ナ미비아', zh: 'ナミビア' }, flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
   DZ: { names: { ja: 'アルジェリア', en: 'Algeria', ko: '알제리', zh: 'アルジェリア' }, flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
   AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: 'アンゴラ' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
   CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: 'カメルーン' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
@@ -749,7 +749,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント
+// 2. Google Maps API コンポーネント（広角時の自動クラスタリング＋右上バッジ）
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -887,10 +887,14 @@ const GoogleMapComponent = ({
     markersRef.current = [];
 
     const map = mapInstanceRef.current;
+    const currentZoom = map.getZoom() || 5;
+
+    // 広角時のクラスタリング（ズームアウトに応じて近くのピンをまとめるグリッド精度を動的に変更）
+    const precision = currentZoom < 6 ? 1 : currentZoom < 9 ? 2 : 3;
 
     const locationMap = new Map<string, Spot[]>();
     spots.forEach(spot => {
-      const key = `${spot.lat.toFixed(3)},${spot.lon.toFixed(3)}`;
+      const key = `${spot.lat.toFixed(precision)},${spot.lon.toFixed(precision)}`;
       if (!locationMap.has(key)) locationMap.set(key, []);
       locationMap.get(key)!.push(spot);
     });
@@ -901,9 +905,10 @@ const GoogleMapComponent = ({
       const rawUrl = spot.thumbUrl || spot.fileUrl || '';
       const imgUrl = thumbCache[rawUrl] || rawUrl;
 
+      // ピンの右上に数字バッジを表示（+2 以上の場合）
       const badgeSvg = count > 1 ? `
-        <circle cx="36" cy="10" r="10" fill="#10b981" stroke="#ffffff" stroke-width="2" />
-        <text x="36" y="14" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
+        <circle cx="38" cy="10" r="11" fill="#10b981" stroke="#ffffff" stroke-width="2" />
+        <text x="38" y="14" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
       ` : '';
 
       const marker = new window.google.maps.Marker({
@@ -912,7 +917,7 @@ const GoogleMapComponent = ({
         title: spot.title,
         icon: {
           url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-            <svg xmlns="http://www.w3.org/2000/svg" width="46" height="50" viewBox="0 0 46 50">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="50" viewBox="0 0 48 50">
               <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
                 <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(0,0,0,0.35)" />
               </filter>
@@ -921,7 +926,7 @@ const GoogleMapComponent = ({
               ${badgeSvg}
             </svg>
           `)}`,
-          scaledSize: new window.google.maps.Size(46, 50),
+          scaledSize: new window.google.maps.Size(48, 50),
           anchor: new window.google.maps.Point(23, 50),
         }
       });
@@ -932,13 +937,13 @@ const GoogleMapComponent = ({
 
       markersRef.current.push(marker);
     });
-  }, [spots, thumbCache]);
+  }, [spots, thumbCache, currentMapZoom]);
 
   return <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: '#ffffff', touchAction: 'auto' }} />;
 };
 
 // ==========================================
-// 3. メインコンポーネント
+// 4. メインコンポーネント
 // ==========================================
 export default function WapApp() {
   const [isOnboarding, setIsOnboarding] = useState<boolean>(true);
@@ -1390,18 +1395,25 @@ export default function WapApp() {
     });
   }, [spots, blockedUsers, selectedCategories, displayScope, friendsList, mapSearchKeyword]);
 
+  // タイムライン：ベースマップの国（userCountry）の投稿を最優先にしつつフィルター＆キーワード検索
   const timelineSpots = useMemo(() => {
     const validSpots = spots.filter(s => !blockedUsers.includes(s.userId));
-    if (!timelineSearchKeyword.trim()) return validSpots;
+    
+    // ベース国の投稿とその他の投稿に分ける
+    const baseCountrySpots = validSpots.filter(s => s.countryCode === userCountry);
+    const otherCountrySpots = validSpots.filter(s => s.countryCode !== userCountry);
+    const sortedSpots = [...baseCountrySpots, ...otherCountrySpots];
+
+    if (!timelineSearchKeyword.trim()) return sortedSpots;
     const kw = timelineSearchKeyword.toLowerCase();
-    return validSpots.filter(s => {
+    return sortedSpots.filter(s => {
       if (kw.startsWith('#')) {
         const rawTag = kw.replace('#', '');
         return s.tags?.some(t => t.toLowerCase().includes(rawTag)) || s.description.toLowerCase().includes(kw);
       }
       return s.title.toLowerCase().includes(kw) || s.description.toLowerCase().includes(kw) || s.cityName.toLowerCase().includes(kw);
     });
-  }, [spots, blockedUsers, timelineSearchKeyword]);
+  }, [spots, blockedUsers, timelineSearchKeyword, userCountry]);
 
   const rankingSpots = useMemo(() => {
     return [...spots]
@@ -1524,7 +1536,7 @@ export default function WapApp() {
     showToast(`🌐 (${langName}) に翻訳しました！`);
   };
 
-  // メディア個別またはスポットごとのコメント追加処理
+  // メディア個別ごとのコメント追加処理
   const handleAddComment = (spotId: string, customText?: string) => {
     const textToUse = customText !== undefined ? customText : newCommentText;
     const trimmedText = textToUse.trim();
@@ -1550,18 +1562,13 @@ export default function WapApp() {
     setSpots((prev) =>
       prev.map((s) => {
         if (s.id === spotId) {
-          let updatedMediaList = s.mediaList ? [...s.mediaList] : undefined;
-          let updatedComments = s.comments ? [...s.comments] : [];
-
-          if (updatedMediaList && updatedMediaList.length > 0) {
+          let updatedMediaList = s.mediaList ? [...s.mediaList] : [];
+          if (updatedMediaList.length > 0) {
             const currentMedia = updatedMediaList[activeMediaIndex] || updatedMediaList[0];
             const mediaComments = currentMedia.comments ? [...currentMedia.comments, newComment] : [newComment];
             updatedMediaList[activeMediaIndex] = { ...currentMedia, comments: mediaComments };
-          } else {
-            updatedComments = [...updatedComments, newComment];
           }
-
-          const target = { ...s, mediaList: updatedMediaList, comments: updatedComments };
+          const target = { ...s, mediaList: updatedMediaList };
           if (selectedSpot && selectedSpot.id === spotId) {
             setSelectedSpot(target);
           }
@@ -1659,7 +1666,7 @@ export default function WapApp() {
     }
   };
 
-  // 複数一括投稿時、同じ場所でも各メディアごとの位置情報を確実に独立して反映する修正版
+  // 複数一括投稿時の位置情報消失修正 ＆ 投稿完了後のキーボード自動格納
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -1676,6 +1683,11 @@ export default function WapApp() {
     if (checkTitle.isViolating || checkDesc.isViolating) {
       showWarning('⚠️ 暴言・差別発言・不適切な表現が含まれているため投稿できません。');
       return;
+    }
+
+    // 投稿完了時にスマホのキーボードを自動的に閉じる（フォーカスを外す）
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
     }
 
     setIsSubmitting(true);
@@ -1721,7 +1733,7 @@ export default function WapApp() {
       comments: [],
     };
 
-    // 同じ場所（緯度・経度がほぼ同じ）の既存スポットを探す
+    // 同じ場所（近距離）の既存スポットを探す
     const existingSameSpot = spots.find(
       (s) => s.userId === 'me' && Math.abs(s.lat - finalLat) < 0.005 && Math.abs(s.lon - finalLon) < 0.005
     );
@@ -1732,10 +1744,15 @@ export default function WapApp() {
 
     let updatedSpotsList = [...spots];
 
-    if (existingSameSpot && Math.abs(existingSameSpot.lat - finalLat) < 0.005 && Math.abs(existingSameSpot.lon - finalLon) < 0.005) {
+    if (existingSameSpot) {
+      // 既存の場所であればメディアを追加しつつ、位置情報やタイトルを確実に保持
       const updatedMediaList = [...(existingSameSpot.mediaList || [{ fileUrl: existingSameSpot.fileUrl, thumbUrl: existingSameSpot.thumbUrl, fileType: existingSameSpot.fileType, fileName: existingSameSpot.fileName, comments: existingSameSpot.comments || [] }]), newMediaItem];
       const updatedSpot: Spot = {
         ...existingSameSpot,
+        lat: finalLat,
+        lon: finalLon,
+        countryCode: userCountry,
+        cityName: currentConfig.names[userLangCode] || currentConfig.names.en,
         thumbUrl: finalThumbUrl,
         fileUrl: uploadedUrl,
         mediaList: updatedMediaList,
@@ -1793,7 +1810,6 @@ export default function WapApp() {
       setPostTitle(nextItem.file.name.replace(/\.[^/.]+$/, ''));
       setPostDesc('');
       
-      // 次のファイルに固有のEXIF位置情報があればセット、なければ空欄
       if (nextItem.hasGps && nextItem.lat !== undefined && nextItem.lon !== undefined) {
         setManualLat(nextItem.lat.toString());
         setManualLon(nextItem.lon.toString());
@@ -1923,7 +1939,7 @@ export default function WapApp() {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
 
-      {/* アプリ全体の高さを画面ぴったりに固定、マップ以外はタッチ操作を完全固定、テキスト選択・長押しコピー禁止 */}
+      {/* アプリ全体の高さを画面ぴったりに固定、マップ以外はタッチ操作を完全固定、テキスト選択禁止 */}
       <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', WebkitUserSelect: 'none', touchAction: currentTab === 'map' ? 'auto' : 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         
         {warningMessage && (
@@ -2576,7 +2592,7 @@ export default function WapApp() {
             </div>
           </div>
 
-          {/* タイムライン（フィード）タブ：TikTok風完全スムーズ縦スクロール（スクロール不具合解消版） */}
+          {/* タイムライン（フィード）タブ：ベース国優先 ＆ スムーズな縦スクロール */}
           {currentTab === 'timeline' && (
             <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
               <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
@@ -3238,7 +3254,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 投稿作成モーダル（ピンチ操作対応） ── */}
+        {/* ── 投稿作成モーダル（ピンチ操作対応・ファイル名非表示） ── */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
             <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box' }}>
@@ -3246,7 +3262,7 @@ export default function WapApp() {
                 📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
               </h3>
 
-              {/* ピンチイン・アウト ＆ ドラッグ微調整対応プレビュー */}
+              {/* ピンチイン・アウト ＆ ドラッグ微調整対応プレビュー（ファイル名テキストは完全削除） */}
               <div
                 onMouseDown={(e) => {
                   isDraggingRef.current = true;
