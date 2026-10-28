@@ -42,6 +42,7 @@ export interface MediaItem {
   thumbUrl: string;
   fileType: 'image' | 'video';
   fileName: string;
+  comments?: CommentItem[]; // 投稿内のメディア個別コメント
 }
 
 export interface Spot {
@@ -68,7 +69,7 @@ export interface Spot {
   category: ViewCategory;
   scopes: DisplayScope[];
   tags?: string[];
-  comments?: CommentItem[];
+  comments?: CommentItem[]; // レガシー互換用
   reportCount?: number;
   createdAt: string;
 }
@@ -532,11 +533,11 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: '比利时' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: 'クロアチア' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
   RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: 'ルーマニア', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
-  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
+  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: 'ウクライナ', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베니아' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -550,14 +551,14 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MT: { names: { ja: 'マルタ', en: 'Malta', ko: '몰타', zh: '马耳他' }, flag: '🇲🇹', region: '🇪🇺 ヨーロッパ', lat: 35.9375, lon: 14.3754, zoom: 11 },
   AL: { names: { ja: 'アルバニア', en: 'Albania', ko: '알바니아', zh: '阿尔巴尼亚' }, flag: '🇦🇱', region: '🇪🇺 ヨーロッパ', lat: 41.1533, lon: 20.1683, zoom: 7 },
   BA: { names: { ja: 'ボスニア・ヘルツェゴビナ', en: 'Bosnia and Herzegovina', ko: '보스니아 헤르체고비나', zh: '波黑' }, flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lat: 43.9159, lon: 17.6791, zoom: 7 },
-  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테ネグロ', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
+  ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네グロ', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
   MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케도니아', zh: '北马其顿' }, flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lat: 41.6086, lon: 21.7453, zoom: 8 },
   MD: { names: { ja: 'モルド바', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
   RU: { names: { ja: 'ロシア', en: 'Russia', ko: '러시아', zh: '俄罗斯' }, flag: '🇷🇺', region: '🇪🇺 ヨーロッパ', lat: 61.5240, lon: 105.3188, zoom: 3 },
   SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
   NO: { names: { ja: 'ノルウェー', en: 'Norway', ko: '노르웨이', zh: '挪威' }, flag: '🇳🇴', region: '🇪🇺 北欧', lat: 60.4720, lon: 8.4689, zoom: 5 },
-  DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: 'デンマーク' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
+  DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: '덴마크' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
   FI: { names: { ja: 'フィンランド', en: 'Finland', ko: '핀란드', zh: '芬兰' }, flag: '🇫🇮', region: '🇪🇺 北欧', lat: 61.9241, lon: 25.7482, zoom: 5 },
   IS: { names: { ja: 'アイスランド', en: 'Iceland', ko: '아이슬란드', zh: '冰岛' }, flag: '🇮🇸', region: '🇪🇺 北欧', lat: 64.9631, lon: -19.0208, zoom: 6 },
   US: { names: { ja: 'アメリカ', en: 'USA', ko: '미국', zh: '미국' }, flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
@@ -569,7 +570,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   PE: { names: { ja: 'ペルー', en: 'Peru', ko: '페루', zh: '秘鲁' }, flag: '🇵🇪', region: '🗽 中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
   CO: { names: { ja: 'コロンビア', en: 'Colombia', ko: '콜롬비아', zh: '哥伦比亚' }, flag: '🇨🇴', region: '🗽 中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
   CU: { names: { ja: 'キューバ', en: 'Cuba', ko: '쿠바', zh: '古巴' }, flag: '🇨🇺', region: '🗽 中南米', lat: 21.5218, lon: -77.7812, zoom: 7 },
-  CR: { names: { ja: 'コスタリカ', en: 'Costa Rica', ko: '코스타リカ', zh: '哥斯达黎加' }, flag: '🇨🇷', region: '🗽 中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
+  CR: { names: { ja: 'コスタリカ', en: 'Costa Rica', ko: '코스타리카', zh: '哥斯达黎加' }, flag: '🇨🇷', region: '🗽 中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
   DO: { names: { ja: 'ドミニカ共和国', en: 'Dominican Republic', ko: '도미니카 공화국', zh: '多米尼加' }, flag: '🇩🇴', region: '🗽 中南米', lat: 18.7357, lon: -70.1627, zoom: 8 },
   PA: { names: { ja: 'パナマ', en: 'Panama', ko: '파나마', zh: '巴拿马' }, flag: '🇵🇦', region: '🗽 中南米', lat: 8.5380, lon: -80.7821, zoom: 8 },
   JM: { names: { ja: 'ジャマイカ', en: 'Jamaica', ko: '자메이카', zh: '牙买加' }, flag: '🇯🇲', region: '🗽 中南米', lat: 18.1096, lon: -77.2975, zoom: 9 },
@@ -592,7 +593,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AG: { names: { ja: 'アンティグア・バーブーダ', en: 'Antigua and Barbuda', ko: '앤티가 바부다', zh: '安提瓜和巴布达' }, flag: '🇦🇬', region: '🗽 中南米', lat: 17.0608, lon: -61.7964, zoom: 9 },
   BB: { names: { ja: 'バルバドス', en: 'Barbados', ko: '바베이도스', zh: '巴巴多斯' }, flag: '🇧🇧', region: '🗽 中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
   DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
-  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나ダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
+  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레ナダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
   LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루シア', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
@@ -615,11 +616,11 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   TV: { names: { ja: 'ツバル', en: 'Tuvalu', ko: '투발루', zh: '图瓦卢' }, flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
   ZA: { names: { ja: '南アフリカ', en: 'South Africa', ko: '남아프리카', zh: '南非' }, flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
   EG: { names: { ja: 'エジプト', en: 'Egypt', ko: '이집트', zh: '埃及' }, flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
-  MA: { names: { ja: 'モロッコ', en: 'Morocco', ko: '모로코', zh: '摩洛哥' }, flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
+  MA: { names: { ja: 'モロッコ', en: 'Morocco', ko: '모로코', zh: 'モロッコ' }, flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
   TN: { names: { ja: 'チュニジア', en: 'Tunisia', ko: '튀니지', zh: '突尼斯' }, flag: '🇹🇳', region: '🦁 アフリカ', lat: 33.8869, lon: 9.5375, zoom: 6 },
   KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: 'ケニア' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
-  TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: '坦ザニア' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
-  MU: { names: { ja: 'モーリシャス', en: 'Mauritius', ko: '모리셔스', zh: '毛里求斯' }, flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
+  TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: 'タンザニア' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
+  MU: { names: { ja: 'モーリシャス', en: 'Mauritius', ko: '모리셔스', zh: 'モーリシャス' }, flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
   SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: 'セーシェル' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
   GH: { names: { ja: 'ガーナ', en: 'Ghana', ko: '가나', zh: '加纳' }, flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
   NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
@@ -630,15 +631,15 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: 'ウガンダ' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
   ZM: { names: { ja: 'ザンビア', en: 'Zambia', ko: '잠비아', zh: 'ザンビア' }, flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
   ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바브웨', zh: 'ジンバブエ' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
-  BW: { names: { ja: 'ボツワナ', en: 'Botswana', ko: '보츠와나', zh: '博茨瓦纳' }, flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
+  BW: { names: { ja: 'ボツワナ', en: 'Botswana', ko: '보츠와나', zh: 'ボツワナ' }, flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
   NA: { names: { ja: 'ナミビア', en: 'Namibia', ko: '나미비아', zh: 'ナミビア' }, flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
   DZ: { names: { ja: 'アルジェリア', en: 'Algeria', ko: '알제리', zh: 'アルジェリア' }, flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
-  AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: '安哥拉' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
+  AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: 'アンゴラ' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
   CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: 'カメルーン' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
   CI: { names: { ja: 'コートジボワール', en: 'Ivory Coast', ko: '코트디부아르', zh: 'コートジボワール' }, flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
   MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모잠비크', zh: 'モザンビーク' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
   SD: { names: { ja: 'スーダン', en: 'Sudan', ko: '수단', zh: 'スーダン' }, flag: '🇸🇩', region: '🦁 アフリカ', lat: 12.8628, lon: 30.2176, zoom: 5 },
-  LY: { names: { ja: 'リビア', en: 'Libya', ko: '리비아', zh: 'リビア' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
+  LY: { names: { ja: 'リビア', en: 'Libya', ko: 'リビア', zh: 'リビア' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
   ML: { names: { ja: 'マリ', en: 'Mali', ko: '말리', zh: 'マリ' }, flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 5 },
   NE: { names: { ja: 'ニジェール', en: 'Niger', ko: '니제르', zh: 'ニジェール' }, flag: '🇳🇪', region: '🦁 アフリカ', lat: 17.6078, lon: 8.0817, zoom: 5 },
   SO: { names: { ja: 'ソマリア', en: 'Somalia', ko: '소말리아', zh: 'ソマリア' }, flag: '🇸🇴', region: '🦁 アフリカ', lat: 5.1521, lon: 46.1996, zoom: 6 },
@@ -748,7 +749,7 @@ function generateVideoThumbnail(file: File): Promise<string> {
 }
 
 // ==========================================
-// 2. Google Maps API コンポーネント（洗練された美しいピンデザイン）
+// 2. Google Maps API コンポーネント
 // ==========================================
 const GoogleMapComponent = ({
   spots,
@@ -905,7 +906,6 @@ const GoogleMapComponent = ({
         <text x="36" y="14" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
       ` : '';
 
-      // 洗練されたすっきりとした美しいピンデザイン（影と綺麗なフレーム）
       const marker = new window.google.maps.Marker({
         position: { lat: spot.lat, lng: spot.lon },
         map: map,
@@ -1524,6 +1524,7 @@ export default function WapApp() {
     showToast(`🌐 (${langName}) に翻訳しました！`);
   };
 
+  // メディア個別またはスポットごとのコメント追加処理
   const handleAddComment = (spotId: string, customText?: string) => {
     const textToUse = customText !== undefined ? customText : newCommentText;
     const trimmedText = textToUse.trim();
@@ -1549,8 +1550,18 @@ export default function WapApp() {
     setSpots((prev) =>
       prev.map((s) => {
         if (s.id === spotId) {
-          const updatedComments = [...(s.comments || []), newComment];
-          const target = { ...s, comments: updatedComments };
+          let updatedMediaList = s.mediaList ? [...s.mediaList] : undefined;
+          let updatedComments = s.comments ? [...s.comments] : [];
+
+          if (updatedMediaList && updatedMediaList.length > 0) {
+            const currentMedia = updatedMediaList[activeMediaIndex] || updatedMediaList[0];
+            const mediaComments = currentMedia.comments ? [...currentMedia.comments, newComment] : [newComment];
+            updatedMediaList[activeMediaIndex] = { ...currentMedia, comments: mediaComments };
+          } else {
+            updatedComments = [...updatedComments, newComment];
+          }
+
+          const target = { ...s, mediaList: updatedMediaList, comments: updatedComments };
           if (selectedSpot && selectedSpot.id === spotId) {
             setSelectedSpot(target);
           }
@@ -1706,6 +1717,7 @@ export default function WapApp() {
       thumbUrl: finalThumbUrl,
       fileType: current.fileType,
       fileName: current.file.name,
+      comments: [],
     };
 
     const existingSameSpot = spots.find(
@@ -1719,7 +1731,7 @@ export default function WapApp() {
     let updatedSpotsList = [...spots];
 
     if (existingSameSpot) {
-      const updatedMediaList = [...(existingSameSpot.mediaList || [{ fileUrl: existingSameSpot.fileUrl, thumbUrl: existingSameSpot.thumbUrl, fileType: existingSameSpot.fileType, fileName: existingSameSpot.fileName }]), newMediaItem];
+      const updatedMediaList = [...(existingSameSpot.mediaList || [{ fileUrl: existingSameSpot.fileUrl, thumbUrl: existingSameSpot.thumbUrl, fileType: existingSameSpot.fileType, fileName: existingSameSpot.fileName, comments: existingSameSpot.comments || [] }]), newMediaItem];
       const updatedSpot: Spot = {
         ...existingSameSpot,
         thumbUrl: finalThumbUrl,
@@ -3049,7 +3061,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 詳細モーダル ── */}
+        {/* ── 詳細モーダル（メディアごとの個別コメント対応） ── */}
         {selectedSpot && (
           <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box', touchAction: 'pan-y' }}>
             <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
@@ -3165,29 +3177,43 @@ export default function WapApp() {
                 {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
               </p>
 
-              {/* コメントセクション */}
+              {/* メディア個別コメントセクション */}
               <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <h3 style={{ fontSize: '14px', fontWeight: 'bold', margin: 0 }}>💬 コメント ({selectedSpot.comments?.length || 0})</h3>
+                  <h3 style={{ fontSize: '14px', fontWeight: 'bold', margin: 0 }}>
+                    💬 このメディアのコメント ({(() => {
+                      const curMed = selectedSpot.mediaList && selectedSpot.mediaList[activeMediaIndex];
+                      return curMed?.comments?.length || selectedSpot.comments?.length || 0;
+                    })()})
+                  </h3>
                   {replyTargetUser && (
                     <span onClick={() => setReplyTargetUser(null)} style={{ color: '#ef4444', fontSize: '11px', cursor: 'pointer' }}>返信先: @{replyTargetUser} (解除 ✕)</span>
                   )}
                 </div>
 
                 <div style={{ maxHeight: '140px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px', touchAction: 'pan-y' }}>
-                  {selectedSpot.comments?.map((c) => (
-                    <div
-                      key={c.id}
-                      onClick={() => setReplyTargetUser(c.userName)}
-                      style={{ background: replyTargetUser === c.userName ? '#e0f2fe' : '#f8fafc', padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', cursor: 'pointer' }}
-                    >
-                      <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '2px' }}>{c.userName} (タップして返信)</div>
-                      <div style={{ fontSize: '12px', color: '#334155' }}>{c.text}</div>
-                    </div>
-                  ))}
-                  {(!selectedSpot.comments || selectedSpot.comments.length === 0) && (
-                    <div style={{ fontSize: '11px', color: '#64748b' }}>まだコメントはありません</div>
-                  )}
+                  {(() => {
+                    const curMed = selectedSpot.mediaList && selectedSpot.mediaList[activeMediaIndex];
+                    const activeComments = curMed?.comments || selectedSpot.comments || [];
+                    return activeComments.map((c) => (
+                      <div
+                        key={c.id}
+                        onClick={() => setReplyTargetUser(c.userName)}
+                        style={{ background: replyTargetUser === c.userName ? '#e0f2fe' : '#f8fafc', padding: '8px 12px', borderRadius: '8px', border: '1px solid #e2e8f0', cursor: 'pointer' }}
+                      >
+                        <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '2px' }}>{c.userName} (タップして返信)</div>
+                        <div style={{ fontSize: '12px', color: '#334155' }}>{c.text}</div>
+                      </div>
+                    ));
+                  })()}
+                  {(() => {
+                    const curMed = selectedSpot.mediaList && selectedSpot.mediaList[activeMediaIndex];
+                    const activeComments = curMed?.comments || selectedSpot.comments || [];
+                    if (activeComments.length === 0) {
+                      return <div style={{ fontSize: '11px', color: '#64748b' }}>この画像/動画に対するコメントはまだありません</div>;
+                    }
+                    return null;
+                  })()}
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input
