@@ -537,7 +537,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -593,7 +593,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AG: { names: { ja: 'アンティグア・バーブーダ', en: 'Antigua and Barbuda', ko: '앤티가 바부다', zh: '安提瓜和巴布达' }, flag: '🇦🇬', region: '🗽 中南米', lat: 17.0608, lon: -61.7964, zoom: 9 },
   BB: { names: { ja: 'バルバドス', en: 'Barbados', ko: '바베이도스', zh: '巴巴多斯' }, flag: '🇧🇧', region: '🗽 中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
   DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
-  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나ダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
+  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레ナダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
   LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루시아', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
@@ -1920,7 +1920,6 @@ export default function WapApp() {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content={isOnboarding ? 'black-translucent' : 'default'} />
         <meta name="apple-mobile-web-app-title" content="wap" />
-        {/* ▼▼▼【変更】初期設定の時と通常時でステータスバーの色（theme-color）を動的に切り替え ▼▼▼ */}
         <meta name="theme-color" content={isOnboarding ? '#070d1e' : '#ffffff'} />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
@@ -1942,7 +1941,6 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-        {/* ▼▼▼【変更】初期設定の画面全体。バッテリー残量等のステータスバー部分も紺・黒っぽい色(#070d1e)に完全に馴染むように設計 ▼▼▼ */}
         {isOnboarding && (
           <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', paddingTop: 'env(safe-area-inset-top, 20px)', touchAction: 'none' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center', touchAction: 'pan-y' }}>
@@ -2404,6 +2402,7 @@ export default function WapApp() {
           </button>
         </header>
 
+        {/* ▼▼▼【変更】すべてのビュー（マップ・タイムライン・ランキング・プロフィール）の下部に paddingBottom: '90px' を追加し、ボトムバナーとコンテンツが絶対に重ならないように完全分離 ▼▼▼ */}
         <div style={{ flex: 1, minHeight: 0, height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
           
           <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none', boxSizing: 'border-box' }}>
@@ -2499,7 +2498,7 @@ export default function WapApp() {
                 onDoubleTap={handleMapDoubleTap}
               />
 
-              {/* ▼▼▼【変更】下のボトムメニューバー(height:60px, bottom:12px)と絶対に被らないよう、bottom を '95px' に安全確保 ▼▼▼ */}
+              {/* マップ画面の右側コントロールボタン（ナビバーと絶対に被らないよう bottom: 95px） */}
               <div style={{ position: 'absolute', bottom: '95px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
                 <button
                   title="現在地へ移動"
@@ -2542,7 +2541,7 @@ export default function WapApp() {
               </div>
             </div>
 
-            {/* ▼▼▼【変更】写真追加ボタンも bottom を '95px' にしてナビバーとの干渉を完全防止 ▼▼▼ */}
+            {/* 写真/動画を追加ボタン（ナビバーと絶対に被らないよう bottom: 95px） */}
             <div style={{ position: 'absolute', bottom: '95px', left: '16px', zIndex: 450, boxSizing: 'border-box' }}>
               <label
                 style={{
@@ -2581,7 +2580,7 @@ export default function WapApp() {
                 />
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', width: '100%', paddingBottom: '90px' }}>
                 {timelineSpots.map((spot) => {
                   const isCommentsOpen = openCommentsForSpot[spot.id] || false;
                   return (
@@ -2702,7 +2701,7 @@ export default function WapApp() {
           )}
 
           {currentTab === 'ranking' && (
-            <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff', touchAction: 'pan-y' }}>
+            <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', padding: '16px', paddingBottom: '90px', background: '#ffffff', touchAction: 'pan-y' }}>
               <h2 style={{ fontSize: '16px', fontWeight: 'bold', marginBottom: '12px' }}>🏆 {t('ranking')}</h2>
               {rankingSpots.map((s, i) => (
                 <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ padding: '12px', borderBottom: '1px solid #e2e8f0', display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}>
@@ -2724,7 +2723,7 @@ export default function WapApp() {
           )}
 
           {currentTab === 'profile' && (
-            <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', padding: '16px', background: '#ffffff', touchAction: 'pan-y' }}>
+            <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', padding: '16px', paddingBottom: '90px', background: '#ffffff', touchAction: 'pan-y' }}>
               <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '20px', border: '1px solid #e2e8f0', textAlign: 'center', boxSizing: 'border-box', marginBottom: '12px' }}>
                 <div
                   onClick={() => profileAvatarInputRef.current?.click()}
@@ -2814,9 +2813,30 @@ export default function WapApp() {
                 </div>
               )}
 
+              {/* ▼▼▼【改善】マイページの「旅のログ」サブタブで、実際のユーザー自身の投稿履歴をタイムライン形式で表示できるように機能実装 ▼▼▼ */}
               {profileSubTab === 'timeline' && (
-                <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', textAlign: 'center', color: '#64748b', fontSize: '12px', border: '1px solid #e2e8f0' }}>
-                  📅 旅のログタイムライン
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', marginBottom: '2px' }}>📅 あなたの旅の足跡・ログ ({mySpots.length}件)</div>
+                  {mySpots.map((s) => (
+                    <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ display: 'flex', gap: '12px', background: '#f8fafc', padding: '10px 12px', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer', alignItems: 'center' }}>
+                      <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
+                        {s.fileType === 'video' ? (
+                          <video src={s.fileUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        )}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.title}</div>
+                        <div style={{ fontSize: '11px', color: '#64748b' }}>📍 {s.cityName} | 🗓️ {s.createdAt}</div>
+                      </div>
+                    </div>
+                  ))}
+                  {mySpots.length === 0 && (
+                    <div style={{ textAlign: 'center', padding: '30px', color: '#64748b', fontSize: '12px' }}>
+                      旅のログがありません。写真や動画を投稿しよう！ ✈️
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -2880,6 +2900,7 @@ export default function WapApp() {
           )}
         </div>
 
+        {/* ボトムナビゲーションバー（position: fixed, zIndex: 99999 で絶対に隠れないように最前面固定） */}
         <nav style={{ position: 'fixed', bottom: '12px', left: '16px', right: '16px', maxWidth: '420px', margin: '0 auto', height: '60px', background: 'rgba(255, 255, 255, 0.98)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '30px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 99999, boxSizing: 'border-box', padding: '0 8px', touchAction: 'none' }}>
           <button onClick={() => { setSelectedSpot(null); setCurrentTab('map'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1, touchAction: 'manipulation' }}>
             <span style={{ fontSize: '20px' }}>🗺️</span><span>{t('map')}</span>
@@ -3218,7 +3239,6 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 投稿作成モーダル（▼【変更】引きの縮小制限を導入し、黒い余白ができるのを完全にブロック） ── */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
             <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '92vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box' }}>
@@ -3255,7 +3275,6 @@ export default function WapApp() {
                     const dx = e.touches[0].clientX - e.touches[1].clientX;
                     const dy = e.touches[0].clientY - e.touches[1].clientY;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    // ▼▼▼【変更】引きすぎによる黒い余白が出ないよう最小スケールを 1.0 (または適正値) に制限 ▼▼▼
                     const newScale = Math.max(1.0, Math.min(3.5, initialScaleRef.current * (dist / initialPinchDistRef.current)));
                     setPreviewScale(newScale);
                   } else if (isDraggingRef.current && e.touches.length === 1) {
