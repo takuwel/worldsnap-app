@@ -72,6 +72,7 @@ export interface Spot {
   comments?: CommentItem[];
   reportCount?: number;
   createdAt: string;
+  captureDate?: string; // 撮影日
 }
 
 export interface PendingUpload {
@@ -486,7 +487,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MM: { names: { ja: 'ミャンマー', en: 'Myanmar', ko: '미얀마', zh: '缅甸' }, flag: '🇲🇲', region: '🌴 東南アジア', lat: 21.9162, lon: 95.9560, zoom: 5 },
   BN: { names: { ja: 'ブルネイ', en: 'Brunei', ko: '브루네이', zh: '文莱' }, flag: '🇧🇳', region: '🌴 東南アジア', lat: 4.5353, lon: 114.7277, zoom: 9 },
   TL: { names: { ja: '東ティモール', en: 'East Timor', ko: '동티모르', zh: '东帝汶' }, flag: '🇹🇱', region: '🌴 東南アジア', lat: -8.8742, lon: 125.7275, zoom: 9 },
-  IN: { names: { ja: 'インド', en: 'India', ko: '인도', zh: '印度' }, flag: '🇮🇳', region: '🍛 南・中央アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
+  IN: { names: { ja: 'インド', en: 'India', ko: '인도', zh: '인도' }, flag: '🇮🇳', region: '🍛 南・中央アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
   PK: { names: { ja: 'パキスタン', en: 'Pakistan', ko: '파키스탄', zh: '巴基斯坦' }, flag: '🇵🇰', region: '🍛 南・中央アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
   BD: { names: { ja: 'バングラデシュ', en: 'Bangladesh', ko: '방글라데시', zh: '孟加拉国' }, flag: '🇧🇩', region: '🍛 南・中央アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
   LK: { names: { ja: 'スリランカ', en: 'Sri Lanka', ko: '스리랑카', zh: '斯里兰卡' }, flag: '🇱🇰', region: '🍛 南・中央アジア', lat: 7.8731, lon: 80.7718, zoom: 7 },
@@ -536,7 +537,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우クライナ', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
-  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
+  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바キ아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
   SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
@@ -614,18 +615,18 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   NR: { names: { ja: 'ナウル', en: 'Nauru', ko: '나우루', zh: '瑙鲁' }, flag: '🇳🇷', region: '🦘 オセアニア', lat: -0.5228, lon: 166.9315, zoom: 13 },
   PW: { names: { ja: 'パラオ', en: 'Palau', ko: '팔라우', zh: '帕劳' }, flag: '🇵🇼', region: '🦘 オセアニア', lat: 7.5150, lon: 134.5825, zoom: 9 },
   TV: { names: { ja: 'ツバル', en: 'Tuvalu', ko: '투발루', zh: '图瓦卢' }, flag: '🇹🇻', region: '🦘 オセアニア', lat: -7.1095, lon: 177.6493, zoom: 11 },
-  ZA: { names: { ja: '南アフリカ', en: 'South Africa', ko: '남아프리카', zh: '南非' }, flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
-  EG: { names: { ja: 'エジプト', en: 'Egypt', ko: '이집트', zh: '埃及' }, flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
+  ZA: { names: { ja: '南アフリカ', en: 'South Africa', ko: '남아프리카', zh: '남아프리카' }, flag: '🇿🇦', region: '🦁 アフリカ', lat: -30.5595, lon: 22.9375, zoom: 5 },
+  EG: { names: { ja: 'エジプト', en: 'Egypt', ko: '이집트', zh: '이집트' }, flag: '🇪🇬', region: '🦁 アフリカ', lat: 26.8206, lon: 30.8025, zoom: 6 },
   MA: { names: { ja: 'モロッコ', en: 'Morocco', ko: '모로코', zh: '摩洛哥' }, flag: '🇲🇦', region: '🦁 アフリカ', lat: 31.7917, lon: -7.0926, zoom: 6 },
   TN: { names: { ja: 'チュニジア', en: 'Tunisia', ko: '튀니지', zh: '突尼斯' }, flag: '🇹🇳', region: '🦁 アフリカ', lat: 33.8869, lon: 9.5375, zoom: 6 },
-  KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: 'ケニア' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
-  TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: '坦桑尼亚' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
-  MU: { names: { ja: 'モーリシャス', en: 'Mauritius', ko: '모리셔스', zh: '毛里求斯' }, flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
-  SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: 'セーシェル' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
-  GH: { names: { ja: 'ガーナ', en: 'Ghana', ko: '가나', zh: '加纳' }, flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
-  NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
-  ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '埃塞俄比亚' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
-  SN: { names: { ja: 'セネガル', en: 'Senegal', ko: '세네갈', zh: 'セーシェル' }, flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
+  KE: { names: { ja: 'ケニア', en: 'Kenya', ko: '케냐', zh: '케냐' }, flag: '🇰🇪', region: '🦁 アフリカ', lat: -0.0236, lon: 37.9062, zoom: 6 },
+  TZ: { names: { ja: 'タンザニア', en: 'Tanzania', ko: '탄자니아', zh: '탄자니아' }, flag: '🇹🇿', region: '🦁 アフリカ', lat: -6.3690, lon: 34.8888, zoom: 6 },
+  MU: { names: { ja: 'モーリシャス', en: 'Mauritius', ko: '모리셔스', zh: '모리셔스' }, flag: '🇲🇺', region: '🦁 アフリカ', lat: -20.3484, lon: 57.5522, zoom: 9 },
+  SC: { names: { ja: 'セーシェル', en: 'Seychelles', ko: '세이셸', zh: '세이셸' }, flag: '🇸🇨', region: '🦁 アフリカ', lat: -4.6796, lon: 55.4920, zoom: 10 },
+  GH: { names: { ja: 'ガーナ', en: 'Ghana', ko: '가나', zh: '가나' }, flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
+  NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '나이지리아' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
+  ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '에티오피아' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
+  SN: { names: { ja: 'セネガル', en: 'Senegal', ko: '세네갈', zh: '세네갈' }, flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
   MG: { names: { ja: 'マダガスカル', en: 'Madagascar', ko: 'マ다가스카르', zh: 'マダガスカル' }, flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
   RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: 'ルワンダ' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
   UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: 'ウガンダ' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
@@ -698,6 +699,7 @@ const INITIAL_SPOTS: Spot[] = [
     comments: [],
     reportCount: 0,
     createdAt: '2026/08/12',
+    captureDate: '2026-08-12',
   },
 ];
 
@@ -979,6 +981,12 @@ export default function WapApp() {
   const [openCommentsForSpot, setOpenCommentsForSpot] = useState<Record<string, boolean>>({});
   const [replyTargetUser, setReplyTargetUser] = useState<string | null>(null);
 
+  // カレンダー形式のログ用ステート
+  const [calendarYearMonth, setCalendarYearMonth] = useState<{ year: number; month: number }>(() => {
+    const d = new Date();
+    return { year: d.getFullYear(), month: d.getMonth() };
+  });
+
   const scannerRef = useRef<HTMLDivElement>(null);
   const html5QrCodeRef = useRef<any>(null);
 
@@ -1170,6 +1178,7 @@ export default function WapApp() {
           comments: d.comments || [],
           reportCount: d.report_count || 0,
           createdAt: d.created_at ? new Date(d.created_at).toLocaleDateString() : new Date().toLocaleDateString(),
+          captureDate: d.created_at ? new Date(d.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
         }));
 
         setSpots((prev) => {
@@ -1723,6 +1732,7 @@ export default function WapApp() {
     const isNearbyExists = spots.some((s) => Math.abs(s.lat - finalLat) < 0.05 && Math.abs(s.lon - finalLon) < 0.05);
     const isFirstExplorer = !isNearbyExists;
     const extractedTags = extractHashtags(postDesc);
+    const todayDateStr = new Date().toISOString().split('T')[0];
 
     let updatedSpotsList = [...spots];
 
@@ -1769,6 +1779,7 @@ export default function WapApp() {
         comments: [],
         reportCount: 0,
         createdAt: new Date().toLocaleDateString(),
+        captureDate: todayDateStr,
       };
 
       updatedSpotsList = [newSpot, ...updatedSpotsList.filter((s) => s.id !== newSpot.id)];
@@ -1907,7 +1918,7 @@ export default function WapApp() {
   const navBarText = '#0f172a';
 
   if (!isClient) {
-    return <div style={{ background: '#ffffff', width: '100vw', height: '100dvh' }}></div>;
+    return <div style={{ background: '#070d1e', width: '100vw', height: '100dvh' }}></div>;
   }
 
   return (
@@ -1924,7 +1935,8 @@ export default function WapApp() {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
 
-      <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', WebkitUserSelect: 'none', touchAction: currentTab === 'map' ? 'auto' : 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      {/* ▼▼▼【改善】アプリ全体の背景を初期から黒系に統一し、初期設定時のラグや白色のチラつきを完全に排除 ▼▼▼ */}
+      <div style={{ background: isOnboarding ? '#070d1e' : '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', WebkitUserSelect: 'none', touchAction: currentTab === 'map' ? 'auto' : 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         
         {warningMessage && (
           <div style={{ position: 'fixed', top: 0, insetInline: 0, background: '#ef4444', color: '#fff', padding: '12px 16px', zIndex: 999999, fontSize: '13px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 4px 16px rgba(239,68,68,0.4)' }}>
@@ -1942,7 +1954,7 @@ export default function WapApp() {
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
         {isOnboarding && (
-          <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', paddingTop: 'env(safe-area-inset-top, 20px)', touchAction: 'none' }}>
+          <div style={{ position: 'fixed', inset: 0, background: '#070d1e', color: '#fff', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', paddingTop: 'env(safe-area-inset-top, 20px)', touchAction: 'none' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center', touchAction: 'pan-y' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
               <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
@@ -2402,7 +2414,7 @@ export default function WapApp() {
           </button>
         </header>
 
-        {/* ▼▼▼【変更】すべてのビュー（マップ・タイムライン・ランキング・プロフィール）の下部に paddingBottom: '90px' を追加し、ボトムバナーとコンテンツが絶対に重ならないように完全分離 ▼▼▼ */}
+        {/* ▼▼▼【改善】ホーム画面下の白余白を完全に埋めるため、コンテナに背景色白を指定し、各タブの下部に充分な余白(paddingBottom: '90px')を設定してバナーと被らないように最適化 ▼▼▼ */}
         <div style={{ flex: 1, minHeight: 0, height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
           
           <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: '#ffffff', border: 'none', boxSizing: 'border-box' }}>
@@ -2498,7 +2510,7 @@ export default function WapApp() {
                 onDoubleTap={handleMapDoubleTap}
               />
 
-              {/* マップ画面の右側コントロールボタン（ナビバーと絶対に被らないよう bottom: 95px） */}
+              {/* マップ画面の右側コントロールボタン（バナーと被らないよう bottom: 95px） */}
               <div style={{ position: 'absolute', bottom: '95px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
                 <button
                   title="現在地へ移動"
@@ -2541,7 +2553,7 @@ export default function WapApp() {
               </div>
             </div>
 
-            {/* 写真/動画を追加ボタン（ナビバーと絶対に被らないよう bottom: 95px） */}
+            {/* 写真追加ボタン（バナーと絶対に被らないよう bottom: 95px で安全確保） */}
             <div style={{ position: 'absolute', bottom: '95px', left: '16px', zIndex: 450, boxSizing: 'border-box' }}>
               <label
                 style={{
@@ -2610,7 +2622,8 @@ export default function WapApp() {
                           </div>
                           <div>
                             <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{spot.userName}</div>
-                            <div style={{ fontSize: '11px', color: '#94a3b8' }}>📍 {spot.cityName}</div>
+                            {/* ▼▼▼【追加】撮影日を表示 ▼▼▼ */}
+                            <div style={{ fontSize: '11px', color: '#94a3b8' }}>📍 {spot.cityName} {spot.captureDate ? `| 📅 ${spot.captureDate}` : ''}</div>
                           </div>
                         </div>
                         <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
@@ -2680,7 +2693,7 @@ export default function WapApp() {
 
                         <button
                           onClick={() => {
-                            setOpenCommentsForSpot(prev => ({ ...prev, [spot.id]: !prev[spot.id] }));
+                            setOpenCommentsForSpot(prev => ({ ...prev, [spot.id]: !prev[spot.id] }))
                           }}
                           style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
                         >
@@ -2715,7 +2728,7 @@ export default function WapApp() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{s.title}</div>
-                    <div style={{ fontSize: '11px', color: '#64748b' }}>📍 {s.cityName} | 👀 {s.viewsCount} | ❤️ {s.savedCount}</div>
+                    <div style={{ fontSize: '11px', color: '#64748b' }}>📍 {s.cityName} {s.captureDate ? `| 📅 ${s.captureDate}` : ''} | 👀 {s.viewsCount} | ❤️ {s.savedCount}</div>
                   </div>
                 </div>
               ))}
@@ -2813,32 +2826,109 @@ export default function WapApp() {
                 </div>
               )}
 
-              {/* ▼▼▼【改善】マイページの「旅のログ」サブタブで、実際のユーザー自身の投稿履歴をタイムライン形式で表示できるように機能実装 ▼▼▼ */}
-              {profileSubTab === 'timeline' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', marginBottom: '2px' }}>📅 あなたの旅の足跡・ログ ({mySpots.length}件)</div>
-                  {mySpots.map((s) => (
-                    <div key={s.id} onClick={() => handleOpenSpot(s)} style={{ display: 'flex', gap: '12px', background: '#f8fafc', padding: '10px 12px', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer', alignItems: 'center' }}>
-                      <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
-                        {s.fileType === 'video' ? (
-                          <video src={s.fileUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                          <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        )}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.title}</div>
-                        <div style={{ fontSize: '11px', color: '#64748b' }}>📍 {s.cityName} | 🗓️ {s.createdAt}</div>
-                      </div>
+              {/* ▼▼▼【改善】旅のログ（timeline）をフル機能のカレンダー形式として実装。日付をタップするとその日の撮影画像・投稿詳細へジャンプ！ ▼▼▼ */}
+              {profileSubTab === 'timeline' && (() => {
+                const year = calendarYearMonth.year;
+                const month = calendarYearMonth.month;
+                const firstDayIndex = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                const spotsByDate: Record<string, Spot[]> = {};
+                mySpots.forEach(s => {
+                  const dStr = s.captureDate || s.createdAt;
+                  if (!spotsByDate[dStr]) spotsByDate[dStr] = [];
+                  spotsByDate[dStr].push(s);
+                });
+
+                const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+
+                return (
+                  <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '16px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                      <button
+                        onClick={() => {
+                          if (month === 0) setCalendarYearMonth({ year: year - 1, month: 11 });
+                          else setCalendarYearMonth({ year, month: month - 1 });
+                        }}
+                        style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '4px 10px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+                      >
+                        ◀ 前月
+                      </button>
+                      <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#0f172a' }}>
+                        {year}年 {monthNames[month]}
+                      </span>
+                      <button
+                        onClick={() => {
+                          if (month === 11) setCalendarYearMonth({ year: year + 1, month: 0 });
+                          else setCalendarYearMonth({ year, month: month + 1 });
+                        }}
+                        style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '4px 10px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer' }}
+                      >
+                        次月 ▶
+                      </button>
                     </div>
-                  ))}
-                  {mySpots.length === 0 && (
-                    <div style={{ textAlign: 'center', padding: '30px', color: '#64748b', fontSize: '12px' }}>
-                      旅のログがありません。写真や動画を投稿しよう！ ✈️
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', marginBottom: '6px', fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>
+                      <span style={{ color: '#ef4444' }}>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span style={{ color: '#3b82f6' }}>土</span>
                     </div>
-                  )}
-                </div>
-              )}
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
+                      {Array.from({ length: firstDayIndex }).map((_, i) => (
+                        <div key={`empty-${i}`} style={{ height: '48px' }}></div>
+                      ))}
+
+                      {Array.from({ length: daysInMonth }).map((_, i) => {
+                        const dayNum = i + 1;
+                        const mStr = String(month + 1).padStart(2, '0');
+                        const dStr = String(dayNum).padStart(2, '0');
+                        const dateKey = `${year}-${mStr}-${dStr}`;
+                        const daySpots = spotsByDate[dateKey] || [];
+                        const hasPosts = daySpots.length > 0;
+
+                        return (
+                          <div
+                            key={`day-${dayNum}`}
+                            onClick={() => {
+                              if (hasPosts) {
+                                handleOpenSpot(daySpots[0]);
+                                showToast(`📅 ${year}/${mStr}/${dStr} の投稿を表示します`);
+                              }
+                            }}
+                            style={{
+                              height: '52px',
+                              background: hasPosts ? '#e0f2fe' : '#ffffff',
+                              border: `1px solid ${hasPosts ? '#0284c7' : '#e2e8f0'}`,
+                              borderRadius: '8px',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              justifyContent: 'flex-start',
+                              padding: '3px 2px',
+                              cursor: hasPosts ? 'pointer' : 'default',
+                              position: 'relative',
+                              boxSizing: 'border-box',
+                              overflow: 'hidden'
+                            }}
+                          >
+                            <span style={{ fontSize: '11px', fontWeight: hasPosts ? 'bold' : 'normal', color: hasPosts ? '#0284c7' : '#334155' }}>
+                              {dayNum}
+                            </span>
+                            {hasPosts && (
+                              <div style={{ width: '100%', height: '26px', marginTop: '2px', borderRadius: '4px', overflow: 'hidden', background: '#000' }}>
+                                {daySpots[0].fileType === 'video' ? (
+                                  <video src={daySpots[0].fileUrl} muted style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                  <img src={daySpots[0].thumbUrl || daySpots[0].fileUrl} alt="post" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {profileSubTab === 'saved' && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '6px' }}>
@@ -2900,7 +2990,7 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ボトムナビゲーションバー（position: fixed, zIndex: 99999 で絶対に隠れないように最前面固定） */}
+        {/* ボトムナビゲーションバー（position: fixed, zIndex: 99999 で最前面固定） */}
         <nav style={{ position: 'fixed', bottom: '12px', left: '16px', right: '16px', maxWidth: '420px', margin: '0 auto', height: '60px', background: 'rgba(255, 255, 255, 0.98)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '30px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 99999, boxSizing: 'border-box', padding: '0 8px', touchAction: 'none' }}>
           <button onClick={() => { setSelectedSpot(null); setCurrentTab('map'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1, touchAction: 'manipulation' }}>
             <span style={{ fontSize: '20px' }}>🗺️</span><span>{t('map')}</span>
@@ -3169,7 +3259,10 @@ export default function WapApp() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-                <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
+                <div>
+                  <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
+                  <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>📅 撮影日: {selectedSpot.captureDate || selectedSpot.createdAt}</div>
+                </div>
                 <button
                   onClick={() => handleTranslateDescription(selectedSpot.id, selectedSpot.description)}
                   style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '16px', padding: '6px 14px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
