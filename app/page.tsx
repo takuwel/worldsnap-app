@@ -525,7 +525,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
   PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
-  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
+  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: 'ス위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
   PL: { names: { ja: 'ポーランド', en: 'Poland', ko: '폴란드', zh: '波兰' }, flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
   CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: '捷克' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
   HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: '匈牙利' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
@@ -625,7 +625,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   GH: { names: { ja: 'ガーナ', en: 'Ghana', ko: '가나', zh: '加纳' }, flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
   NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
   ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '埃塞俄比亚' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
-  SN: { names: { ja: 'セネガル', en: 'Senegal', ko: '세네갈', zh: 'セネガル' }, flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
+  SN: { names: { ja: 'セネガル', en: 'Senegal', ko: '세네갈', zh: 'セーシェル' }, flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
   MG: { names: { ja: 'マダガスカル', en: 'Madagascar', ko: 'マ다가스카르', zh: 'マダガスカル' }, flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
   RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: 'ルワンダ' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
   UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: 'ウガンダ' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
@@ -1622,7 +1622,6 @@ export default function WapApp() {
       setPreviewOffset({ x: 0, y: 0 });
       const first = pendingList[0];
       
-      // ▼▼▼【変更】ファイル名を自動入力させず空欄（''）にする ▼▼▼
       setPostTitle('');
       setPostDesc('');
       setPostCategory(selectedCategories[0] || 'view');
@@ -1919,9 +1918,10 @@ export default function WapApp() {
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-status-bar-style" content={isOnboarding ? 'black-translucent' : 'default'} />
         <meta name="apple-mobile-web-app-title" content="wap" />
-        <meta name="theme-color" content="#ffffff" />
+        {/* ▼▼▼【変更】初期設定の時と通常時でステータスバーの色（theme-color）を動的に切り替え ▼▼▼ */}
+        <meta name="theme-color" content={isOnboarding ? '#070d1e' : '#ffffff'} />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
 
@@ -1942,8 +1942,9 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
+        {/* ▼▼▼【変更】初期設定の画面全体。バッテリー残量等のステータスバー部分も紺・黒っぽい色(#070d1e)に完全に馴染むように設計 ▼▼▼ */}
         {isOnboarding && (
-          <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', paddingTop: 'env(safe-area-inset-top, 20px)', touchAction: 'none' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center', touchAction: 'pan-y' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
               <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
@@ -2498,7 +2499,7 @@ export default function WapApp() {
                 onDoubleTap={handleMapDoubleTap}
               />
 
-              {/* ▼▼▼【変更】ボトムナビゲーションとかぶらないように bottom を '95px' に引き上げ ▼▼▼ */}
+              {/* ▼▼▼【変更】下のボトムメニューバー(height:60px, bottom:12px)と絶対に被らないよう、bottom を '95px' に安全確保 ▼▼▼ */}
               <div style={{ position: 'absolute', bottom: '95px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
                 <button
                   title="現在地へ移動"
@@ -2541,7 +2542,7 @@ export default function WapApp() {
               </div>
             </div>
 
-            {/* ▼▼▼【変更】写真/動画を追加ボタンも bottom を '95px' に引き上げ、メニューと被らないように調整 ▼▼▼ */}
+            {/* ▼▼▼【変更】写真追加ボタンも bottom を '95px' にしてナビバーとの干渉を完全防止 ▼▼▼ */}
             <div style={{ position: 'absolute', bottom: '95px', left: '16px', zIndex: 450, boxSizing: 'border-box' }}>
               <label
                 style={{
@@ -3217,7 +3218,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 投稿作成モーダル（▼【変更】プレビュー領域を縦に広く拡大しました） ── */}
+        {/* ── 投稿作成モーダル（▼【変更】引きの縮小制限を導入し、黒い余白ができるのを完全にブロック） ── */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
             <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '92vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box' }}>
@@ -3225,7 +3226,6 @@ export default function WapApp() {
                 📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
               </h3>
 
-              {/* ▼▼▼【変更】プレビュー領域の高さを 240px に拡大して写真の表示面積を広げました ▼▼▼ */}
               <div
                 onMouseDown={(e) => {
                   isDraggingRef.current = true;
@@ -3255,7 +3255,8 @@ export default function WapApp() {
                     const dx = e.touches[0].clientX - e.touches[1].clientX;
                     const dy = e.touches[0].clientY - e.touches[1].clientY;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    const newScale = Math.max(0.5, Math.min(3.5, initialScaleRef.current * (dist / initialPinchDistRef.current)));
+                    // ▼▼▼【変更】引きすぎによる黒い余白が出ないよう最小スケールを 1.0 (または適正値) に制限 ▼▼▼
+                    const newScale = Math.max(1.0, Math.min(3.5, initialScaleRef.current * (dist / initialPinchDistRef.current)));
                     setPreviewScale(newScale);
                   } else if (isDraggingRef.current && e.touches.length === 1) {
                     setPreviewOffset({ x: e.touches[0].clientX - dragStartRef.current.x, y: e.touches[0].clientY - dragStartRef.current.y });
@@ -3303,7 +3304,7 @@ export default function WapApp() {
                 <div style={{ display: 'flex', gap: '4px' }}>
                   <button
                     type="button"
-                    onClick={() => setPreviewScale((prev) => Math.max(0.5, prev - 0.15))}
+                    onClick={() => setPreviewScale((prev) => Math.max(1.0, prev - 0.15))}
                     style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', width: '28px', height: '28px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     −
