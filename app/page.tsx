@@ -544,17 +544,17 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   IE: { names: { ja: 'アイルランド', en: 'Ireland', ko: '아이슬란드', zh: '爱尔兰' }, flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
   BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: '比利时' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: '克罗地亚' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
-  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: 'ルーマニア', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
-  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: 'ウクライナ', zh: '乌克兰' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
-  BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: 'ブルガリア', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
-  RS: { names: { ja: 'セルビア', en: 'Serbia', ko: 'セルビア', zh: '塞尔维亚' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
+  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루마니아', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
+  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: '乌克兰' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
+  BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
+  RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: '塞尔维亚' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯洛文尼亚' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
-  EE: { names: { ja: 'エストニア', en: 'Estonia', ko: 'エストニア', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯洛文尼亚' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
   LU: { names: { ja: 'ルクセンブルク', en: 'Luxembourg', ko: '룩셈부르크', zh: '卢森堡' }, flag: '🇱🇺', region: '🇪🇺 ヨーロッパ', lat: 49.8153, lon: 6.1296, zoom: 10 },
-  MC: { names: { ja: 'モナコ', en: 'Monaco', ko: 'モナコ', zh: '摩纳哥' }, flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lat: 43.7384, lon: 7.4246, zoom: 14 },
+  MC: { names: { ja: 'モナコ', en: 'Monaco', ko: '모나코', zh: '摩纳哥' }, flag: '🇲🇨', region: '🇪🇺 ヨーロッパ', lat: 43.7384, lon: 7.4246, zoom: 14 },
   VA: { names: { ja: 'バチカン市国', en: 'Vatican City', ko: '바티칸', zh: '梵蒂冈' }, flag: '🇻🇦', region: '🇪🇺 ヨーロッパ', lat: 41.9029, lon: 12.4534, zoom: 15 },
   SM: { names: { ja: 'サンマリノ', en: 'San Marino', ko: '산마리노', zh: '圣马力诺' }, flag: '🇸🇲', region: '🇪🇺 ヨーロッパ', lat: 43.9424, lon: 12.4578, zoom: 12 },
   AD: { names: { ja: 'アンドラ', en: 'Andorra', ko: '안도라', zh: '安道尔' }, flag: '🇦🇩', region: '🇪🇺 ヨーロッパ', lat: 42.5063, lon: 1.5218, zoom: 10 },
@@ -649,7 +649,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: '安哥拉' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
   CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: '喀麦隆' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
   CI: { names: { ja: 'コートジボワール', en: 'Ivory Coast', ko: '코트디부아르', zh: '科特迪瓦' }, flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
-  MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모잠비크', zh: '莫桑比克' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
+  MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모ザンビーク', zh: '莫桑比克' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
   SD: { names: { ja: 'スーダン', en: 'Sudan', ko: '수단', zh: '苏丹' }, flag: '🇸🇩', region: '🦁 アフリカ', lat: 12.8628, lon: 30.2176, zoom: 5 },
   LY: { names: { ja: 'リビア', en: 'Libya', ko: '리비아', zh: '利比亚' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
   ML: { names: { ja: 'マリ', en: 'Mali', ko: '말리', zh: '马里' }, flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 5 },
@@ -1122,7 +1122,7 @@ export default function WapApp() {
     } catch {}
   }, [friendsList]);
 
-  // ▼▼▼【抜本的修正】オンボーディング中はグローバルなタッチブロックを一切行わず、フリーズや誤反応を完全に防止 ▼▼▼
+  // ▼▼▼【抜本的修正】オンボーディング中はグローバルなタッチブロックを行わず、フリーズや誤反応を完全に防止 ▼▼▼
   useEffect(() => {
     if (typeof window === 'undefined' || isOnboarding) return;
 
@@ -1947,8 +1947,8 @@ export default function WapApp() {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
 
-      {/* ▼▼▼【改善】アプリ全体が画面中央にジャストフィットし、上下の詰まりや余白を完全解消 ▼▼▼ */}
-      <div style={{ background: isOnboarding ? '#070d1e' : '#ffffff', color: '#0f172a', height: '100dvh', width: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', WebkitUserSelect: 'none', touchAction: currentTab === 'map' ? 'auto' : 'none' }}>
+      {/* ▼▼▼【改善】上下のズレや余白を無くし、スマホ画面全体に完璧にフィットするコンテナ構造 ▼▼▼ */}
+      <div style={{ background: isOnboarding ? '#070d1e' : '#ffffff', color: '#0f172a', height: '100dvh', width: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', WebkitUserSelect: 'none', touchAction: currentTab === 'map' ? 'auto' : 'none', boxSizing: 'border-box' }}>
         
         {warningMessage && (
           <div style={{ position: 'fixed', top: 0, insetInline: 0, background: '#ef4444', color: '#fff', padding: '12px 16px', zIndex: 999999, fontSize: '13px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 4px 16px rgba(239,68,68,0.4)' }}>
@@ -1989,7 +1989,7 @@ export default function WapApp() {
                         key={code}
                         onClick={() => setUserLangCode(code)}
                         style={{
-                          padding: '10px 12px',
+                          padding: '12px 14px',
                           borderRadius: '10px',
                           border: `2px solid ${userLangCode === code ? '#0284c7' : '#e2e8f0'}`,
                           background: userLangCode === code ? '#f0f9ff' : '#ffffff',
@@ -2021,7 +2021,7 @@ export default function WapApp() {
                     placeholder={t('countrySearchPlaceholder')}
                     value={countrySearchQuery}
                     onChange={(e) => setCountrySearchQuery(e.target.value)}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', marginBottom: '8px', boxSizing: 'border-box', touchAction: 'manipulation' }}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', marginBottom: '8px', boxSizing: 'border-box', touchAction: 'manipulation' }}
                   />
 
                   <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px', paddingRight: '4px', touchAction: 'pan-y' }}>
@@ -2038,7 +2038,7 @@ export default function WapApp() {
                                 key={code}
                                 onClick={() => setUserCountry(code)}
                                 style={{
-                                  padding: '8px 10px',
+                                  padding: '10px 12px',
                                   borderRadius: '8px',
                                   border: `2px solid ${isSelected ? '#0284c7' : '#e2e8f0'}`,
                                   background: isSelected ? '#f0f9ff' : '#ffffff',
@@ -2098,14 +2098,14 @@ export default function WapApp() {
                     maxLength={20}
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
-                    style={{ width: '100%', padding: '9px 10px', marginTop: '3px', marginBottom: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', fontWeight: 'bold', touchAction: 'manipulation' }}
+                    style={{ width: '100%', padding: '10px 12px', marginTop: '3px', marginBottom: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', fontWeight: 'bold', touchAction: 'manipulation' }}
                   />
                   <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>自己紹介</label>
                   <input
                     type="text"
                     value={userBio}
                     onChange={(e) => setUserBio(e.target.value)}
-                    style={{ width: '100%', padding: '9px 10px', marginTop: '3px', marginBottom: '16px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', touchAction: 'manipulation' }}
+                    style={{ width: '100%', padding: '10px 12px', marginTop: '3px', marginBottom: '16px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '15px', touchAction: 'manipulation' }}
                   />
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer', touchAction: 'manipulation' }}>
