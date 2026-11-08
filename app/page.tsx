@@ -544,13 +544,13 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   IE: { names: { ja: 'アイルランド', en: 'Ireland', ko: '아이슬란드', zh: '爱尔兰' }, flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
   BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: '比利时' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: '克罗地亚' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
-  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루마니아', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
-  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우크라이나', zh: '乌克兰' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
-  BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
-  RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: '塞尔维亚' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
+  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: 'ルーマニア', zh: '罗马尼亚' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
+  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: 'ウクライナ', zh: '乌克兰' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
+  BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: 'ブルガリア', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
+  RS: { names: { ja: 'セルビア', en: 'Serbia', ko: 'セルビア', zh: '塞尔维亚' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯洛文尼亚' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
-  EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯洛文尼亚' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  EE: { names: { ja: 'エストニア', en: 'Estonia', ko: 'エストニア', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
   LU: { names: { ja: 'ルクセンブルク', en: 'Luxembourg', ko: '룩셈부르크', zh: '卢森堡' }, flag: '🇱🇺', region: '🇪🇺 ヨーロッパ', lat: 49.8153, lon: 6.1296, zoom: 10 },
@@ -594,7 +594,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '危地马拉' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
   HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: '洪都拉斯' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
   NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: '尼加拉瓜' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
-  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘サル바ドル', zh: '萨尔瓦多' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
+  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘サルバドル', zh: '萨尔瓦多' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
   BS: { names: { ja: 'バハマ', en: 'Bahamas', ko: '바하마', zh: '巴哈马' }, flag: '🇧🇸', region: '🗽 中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
   PR: { names: { ja: 'プエルトリコ', en: 'Puerto Rico', ko: '푸에르토리코', zh: '波多黎各' }, flag: '🇵🇷', region: '🗽 中南米', lat: 18.2208, lon: -66.5901, zoom: 9 },
   BZ: { names: { ja: 'ベリーズ', en: 'Belize', ko: '벨리즈', zh: '伯利兹' }, flag: '🇧🇿', region: '🗽 中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
@@ -607,7 +607,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
   GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나ダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
-  LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루シア', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
+  LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루시아', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
   AU: { names: { ja: 'オーストラリア', en: 'Australia', ko: '호주', zh: '澳大利亚' }, flag: '🇦🇺', region: '🦘 オセアニア', lat: -25.2744, lon: 133.7751, zoom: 4 },
   NZ: { names: { ja: 'ニュージーランド', en: 'New Zealand', ko: '뉴질랜드', zh: '新西兰' }, flag: '🇳🇿', region: '🦘 オセアニア', lat: -40.9006, lon: 174.8860, zoom: 5 },
@@ -1122,7 +1122,7 @@ export default function WapApp() {
     } catch {}
   }, [friendsList]);
 
-  // ▼▼▼【改善】オンボーディング中はタッチイベントを一切ブロックせず、フリーズを完全に防止 ▼▼▼
+  // ▼▼▼【抜本的修正】オンボーディング中はグローバルなタッチブロックを一切行わず、フリーズや誤反応を完全に防止 ▼▼▼
   useEffect(() => {
     if (typeof window === 'undefined' || isOnboarding) return;
 
@@ -1947,7 +1947,8 @@ export default function WapApp() {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
 
-      <div style={{ background: isOnboarding ? '#070d1e' : '#ffffff', color: '#0f172a', height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', WebkitUserSelect: 'none', touchAction: currentTab === 'map' ? 'auto' : 'none' }}>
+      {/* ▼▼▼【改善】アプリ全体が画面中央にジャストフィットし、上下の詰まりや余白を完全解消 ▼▼▼ */}
+      <div style={{ background: isOnboarding ? '#070d1e' : '#ffffff', color: '#0f172a', height: '100dvh', width: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', WebkitUserSelect: 'none', touchAction: currentTab === 'map' ? 'auto' : 'none' }}>
         
         {warningMessage && (
           <div style={{ position: 'fixed', top: 0, insetInline: 0, background: '#ef4444', color: '#fff', padding: '12px 16px', zIndex: 999999, fontSize: '13px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 4px 16px rgba(239,68,68,0.4)' }}>
@@ -3003,18 +3004,18 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ▼▼▼【改善】ホーム画面追加（PWA）時も確実にボタンが押せるよう zIndex とパディング・下部マージンを最適化したボトムバナー ▼▼▼ */}
-        <nav style={{ position: 'fixed', bottom: '10px', left: '12px', right: '12px', maxWidth: '420px', margin: '0 auto', height: '56px', background: 'rgba(255, 255, 255, 0.98)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '28px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 99999, boxSizing: 'border-box', padding: '0 6px', touchAction: 'none' }}>
-          <button onClick={() => { setSelectedSpot(null); setCurrentTab('map'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#64748b', padding: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1, touchAction: 'manipulation' }}>
+        {/* ボトムナビゲーションバー（position: fixed, bottom: 8px で最下部に完全固定） */}
+        <nav style={{ position: 'fixed', bottom: '8px', left: '12px', right: '12px', maxWidth: '420px', margin: '0 auto', height: '56px', background: 'rgba(255, 255, 255, 0.98)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '28px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 99999, boxSizing: 'border-box', padding: '0 6px', touchAction: 'none' }}>
+          <button onClick={() => { setSelectedSpot(null); setCurrentTab('map'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#64748b', padding: '4px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1, touchAction: 'manipulation' }}>
             <span style={{ fontSize: '18px' }}>🗺️</span><span>{t('map')}</span>
           </button>
-          <button onClick={() => { setSelectedSpot(null); setCurrentTab('timeline'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'timeline' ? 'bold' : 'normal', color: currentTab === 'timeline' ? themeAccent : '#64748b', padding: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1, touchAction: 'manipulation' }}>
+          <button onClick={() => { setSelectedSpot(null); setCurrentTab('timeline'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'timeline' ? 'bold' : 'normal', color: currentTab === 'timeline' ? themeAccent : '#64748b', padding: '4px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1, touchAction: 'manipulation' }}>
             <span style={{ fontSize: '18px' }}>🗓️</span><span>{t('feed')}</span>
           </button>
-          <button onClick={() => { setSelectedSpot(null); setCurrentTab('ranking'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal', color: currentTab === 'ranking' ? themeAccent : '#64748b', padding: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1, touchAction: 'manipulation' }}>
+          <button onClick={() => { setSelectedSpot(null); setCurrentTab('ranking'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'ranking' ? 'bold' : 'normal', color: currentTab === 'ranking' ? themeAccent : '#64748b', padding: '4px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1, touchAction: 'manipulation' }}>
             <span style={{ fontSize: '18px' }}>🏆</span><span>{t('ranking')}</span>
           </button>
-          <button onClick={() => { setSelectedSpot(null); setCurrentTab('profile'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal', color: currentTab === 'profile' ? themeAccent : '#64748b', padding: '8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1, touchAction: 'manipulation' }}>
+          <button onClick={() => { setSelectedSpot(null); setCurrentTab('profile'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '11px', fontWeight: currentTab === 'profile' ? 'bold' : 'normal', color: currentTab === 'profile' ? themeAccent : '#64748b', padding: '4px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1, touchAction: 'manipulation' }}>
             <span style={{ fontSize: '18px' }}>👤</span><span>{t('profile')}</span>
           </button>
         </nav>
