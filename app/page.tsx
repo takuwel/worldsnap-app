@@ -71,7 +71,7 @@ export interface Spot {
   tags?: string[];
   comments?: CommentItem[];
   reportCount?: number;
-  createdAt: string;
+  createdAt: string; // YYYY/MM/DD or similar
 }
 
 export interface PendingUpload {
@@ -525,19 +525,19 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
   PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
-  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: 'ス위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
+  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
   PL: { names: { ja: 'ポーランド', en: 'Poland', ko: '폴란드', zh: '波兰' }, flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
   CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: '捷克' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
   HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: '匈牙利' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
   IE: { names: { ja: 'アイルランド', en: 'Ireland', ko: '아이슬란드', zh: '爱尔兰' }, flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
   BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: 'ベルギー' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: 'クロアチア' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
-  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: 'ルーマニア', zh: 'ルーマニア' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
+  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루마니아', zh: 'ルーマニア' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
   UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우クライナ', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바キ아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -582,7 +582,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '危地马拉' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
   HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: 'ホンジュラス' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
   NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: 'ニカラグア' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
-  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘サルバドル', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
+  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘サル바ドル', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
   BS: { names: { ja: 'バハマ', en: 'Bahamas', ko: '바하마', zh: 'バハマ' }, flag: '🇧🇸', region: '🗽 中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
   PR: { names: { ja: 'プエルトリコ', en: 'Puerto Rico', ko: '푸에르토리코', zh: 'プエルトリコ' }, flag: '🇵🇷', region: '🗽 中南米', lat: 18.2208, lon: -66.5901, zoom: 9 },
   BZ: { names: { ja: 'ベリーズ', en: 'Belize', ko: '벨리즈', zh: 'ベリーズ' }, flag: '🇧🇿', region: '🗽 中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
@@ -593,7 +593,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AG: { names: { ja: 'アンティグア・バーブーダ', en: 'Antigua and Barbuda', ko: '앤티가 바부다', zh: '安提瓜和巴布达' }, flag: '🇦🇬', region: '🗽 中南米', lat: 17.0608, lon: -61.7964, zoom: 9 },
   BB: { names: { ja: 'バルバドス', en: 'Barbados', ko: '바베이도스', zh: '巴巴多斯' }, flag: '🇧🇧', region: '🗽 中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
   DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
-  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레ナダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
+  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나ダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
   LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루시아', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
@@ -984,6 +984,13 @@ export default function WapApp() {
 
   // どのコメントに対する返信かを保持するステート
   const [replyTargetUser, setReplyTargetUser] = useState<string | null>(null);
+
+  // ログ（カレンダー）用の選択中日付・年月ステート
+  const [calendarYearMonth, setCalendarYearMonth] = useState<{ year: number; month: number }>(() => {
+    const now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() + 1 };
+  });
+  const [selectedLogDateStr, setSelectedLogDateStr] = useState<string | null>(null);
 
   const scannerRef = useRef<HTMLDivElement>(null);
   const html5QrCodeRef = useRef<any>(null);
@@ -1784,7 +1791,7 @@ export default function WapApp() {
         tags: extractedTags,
         comments: [],
         reportCount: 0,
-        createdAt: new Date().toLocaleDateString(),
+        createdAt: new Date().toLocaleDateString(), // YYYY/MM/DD
       };
 
       updatedSpotsList = [newSpot, ...updatedSpotsList.filter((s) => s.id !== newSpot.id)];
@@ -1958,10 +1965,10 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-        {/* 初回オンボーディング画面 */}
+        {/* 初回オンボーディング画面（背景色を統一：#ffffff） */}
         {isOnboarding && (
-          <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(135deg, #070d1e 0%, #0f172a 100%)', color: '#fff', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.4)', textAlign: 'center', touchAction: 'pan-y' }}>
+          <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.1)', textAlign: 'center', touchAction: 'pan-y', border: '1px solid #e2e8f0' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
               <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
               <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
@@ -2637,7 +2644,7 @@ export default function WapApp() {
                           </div>
                           <div>
                             <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{spot.userName}</div>
-                            <div style={{ fontSize: '11px', color: '#94a3b8' }}>📍 {spot.cityName}</div>
+                            <div style={{ fontSize: '11px', color: '#94a3b8' }}>📍 {spot.cityName} ({spot.createdAt})</div>
                           </div>
                         </div>
                         <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
@@ -2846,8 +2853,157 @@ export default function WapApp() {
               )}
 
               {profileSubTab === 'timeline' && (
-                <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', textAlign: 'center', color: '#64748b', fontSize: '12px', border: '1px solid #e2e8f0' }}>
-                  📅 旅のログタイムライン
+                <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '16px', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                    <button
+                      onClick={() => {
+                        setCalendarYearMonth(prev => {
+                          if (prev.month === 1) return { year: prev.year - 1, month: 12 };
+                          return { year: prev.year, month: prev.month - 1 };
+                        });
+                        setSelectedLogDateStr(null);
+                      }}
+                      style={{ background: '#e2e8f0', border: 'none', borderRadius: '8px', padding: '4px 10px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}
+                    >
+                      ◀ 前月
+                    </button>
+                    <span style={{ fontSize: '14px', fontWeight: '900', color: '#0f172a' }}>
+                      {calendarYearMonth.year}年 {calendarYearMonth.month}月
+                    </span>
+                    <button
+                      onClick={() => {
+                        setCalendarYearMonth(prev => {
+                          if (prev.month === 12) return { year: prev.year + 1, month: 1 };
+                          return { year: prev.year, month: prev.month + 1 };
+                        });
+                        setSelectedLogDateStr(null);
+                      }}
+                      style={{ background: '#e2e8f0', border: 'none', borderRadius: '8px', padding: '4px 10px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}
+                    >
+                      次月 ▶
+                    </button>
+                  </div>
+
+                  {/* カレンダーグリッド */}
+                  {(() => {
+                    const year = calendarYearMonth.year;
+                    const month = calendarYearMonth.month;
+                    const firstDayIndex = new Date(year, month - 1, 1).getDay();
+                    const daysInMonth = new Date(year, month, 0).getDate();
+
+                    // 自分の投稿を日付ごとにマッピング (YYYY/MM/DD 形式)
+                    const postsByDate: Record<string, Spot[]> = {};
+                    mySpots.forEach(s => {
+                      if (!s.createdAt) return;
+                      // スポットのcreatedAtが標準的なフォーマットであることを想定、あるいはISO
+                      let dStr = s.createdAt.replace(/-/g, '/');
+                      // パース確認
+                      const d = new Date(s.createdAt);
+                      if (!isNaN(d.getTime())) {
+                        const y = d.getFullYear();
+                        const m = d.getMonth() + 1;
+                        const day = d.getDate();
+                        const formatted = `${y}/${String(m).padStart(2, '0')}/${String(day).padStart(2, '0')}`;
+                        if (!postsByDate[formatted]) postsByDate[formatted] = [];
+                        postsByDate[formatted].push(s);
+                      }
+                    });
+
+                    const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
+                    const cells = [];
+                    for (let i = 0; i < firstDayIndex; i++) {
+                      cells.push(<div key={`empty-${i}`} style={{ padding: '8px' }}></div>);
+                    }
+
+                    for (let day = 1; day <= daysInMonth; day++) {
+                      const mStr = String(month).padStart(2, '0');
+                      const dStr = String(day).padStart(2, '0');
+                      const fullDateStr = `${year}/${mStr}/${dStr}`;
+                      const dayPosts = postsByDate[fullDateStr] || [];
+                      const hasPosts = dayPosts.length > 0;
+                      const isSelected = selectedLogDateStr === fullDateStr;
+
+                      cells.push(
+                        <div
+                          key={fullDateStr}
+                          onClick={() => {
+                            if (hasPosts) {
+                              setSelectedLogDateStr(isSelected ? null : fullDateStr);
+                            } else {
+                              setSelectedLogDateStr(null);
+                            }
+                          }}
+                          style={{
+                            aspectRatio: '1',
+                            background: isSelected ? '#0284c7' : hasPosts ? '#e0f2fe' : '#ffffff',
+                            color: isSelected ? '#ffffff' : hasPosts ? '#0284c7' : '#334155',
+                            borderRadius: '8px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            border: `1px solid ${isSelected ? '#0284c7' : hasPosts ? '#bae6fd' : '#e2e8f0'}`,
+                            cursor: hasPosts ? 'pointer' : 'default',
+                            position: 'relative',
+                            fontWeight: hasPosts ? 'bold' : 'normal',
+                            fontSize: '12px'
+                          }}
+                        >
+                          <span>{day}</span>
+                          {hasPosts && (
+                            <div style={{ display: 'flex', gap: '2px', marginTop: '2px' }}>
+                              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: isSelected ? '#fff' : '#0284c7' }}></span>
+                              {dayPosts.length > 1 && <span style={{ fontSize: '9px', lineHeight: '1', color: isSelected ? '#fff' : '#0284c7' }}>+{dayPosts.length - 1}</span>}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', textAlign: 'center', fontWeight: 'bold', fontSize: '11px', color: '#64748b', marginBottom: '6px' }}>
+                          {weekDays.map(w => <div key={w}>{w}</div>)}
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
+                          {cells}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* 選択した日付の投稿リスト表示 */}
+                  {selectedLogDateStr && (
+                    <div style={{ marginTop: '16px', borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px', color: '#0f172a' }}>
+                        📅 {selectedLogDateStr} の投稿
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {mySpots
+                          .filter(s => {
+                            const d = new Date(s.createdAt);
+                            if (isNaN(d.getTime())) return false;
+                            const formatted = `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`;
+                            return formatted === selectedLogDateStr;
+                          })
+                          .map(spot => (
+                            <div
+                              key={spot.id}
+                              onClick={() => handleOpenSpot(spot)}
+                              style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#ffffff', padding: '8px 12px', borderRadius: '10px', border: '1px solid #cbd5e1', cursor: 'pointer' }}
+                            >
+                              <div style={{ width: '40px', height: '40px', borderRadius: '6px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
+                                <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              </div>
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
+                                <div style={{ fontSize: '11px', color: '#64748b' }}>📍 {spot.cityName}</div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
