@@ -71,7 +71,7 @@ export interface Spot {
   tags?: string[];
   comments?: CommentItem[];
   reportCount?: number;
-  createdAt: string; // YYYY/MM/DD or similar
+  createdAt: string;
 }
 
 export interface PendingUpload {
@@ -93,29 +93,40 @@ export interface PlaceSuggestion {
   lon: string;
 }
 
+// 🌐 各言語・各国の不適切なコンテンツ（NGワード）を大幅に強化
 const NG_PATTERNS = [
-  '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
-  'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
-  'ブス', 'ぶす', 'デブ', 'でぶ', 'キモい', 'きもい', 'きもちわるい', 'ブサイク', 'うざい',
-  'レイプ', 'れいぷ', '強姦', '売春', 'ばいしゅん', '買春', '援交', 'パパ活', '児童ポルノ',
-  'ドラッグ', 'どらっぐ', '覚醒剤', '大麻', 'たいま', 'コカイン', 'ヘロイン', '違法薬物',
-  '暴力', '暴行', '殴る', '蹴る', 'いじめ', 'いじめる', '自殺', 'じさつ', '死にたい',
-  'ホモ', 'ほも', 'オカマ', 'おかま', '差別', 'さべつ', '中国人差別', '韓国人差別', '外国人差別',
-  'セックス', 'せっくす', 'エロ', 'えろ', 'ちんこ', 'まんこ', 'おっぱい', 'オナニー', 'おなにー',
+  // 日本語
+  '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ', 'ばか', 'あほ', 'くず', 'かす', 'ごみ', 'くそ',
+  'ぶす', 'でぶ', 'きもい', 'うざい', 'レイプ', '強姦', '売春', '買春', '援交', 'パパ活', '覚醒剤', '大麻', 'コカイン', 'ヘロイン',
+  '暴力', '暴行', '殴る', '蹴る', 'いじめ', 'いじめる', '自殺', '死にたい', '差別', 'レイシスト', 'せっくす', 'ちんこ', 'まんこ',
+  // 英語
   'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy', 'whore', 'slut',
   'nigger', 'faggot', 'retard', 'suicide', 'kill', 'rape', 'cocaine', 'heroin', 'nazi', 'hitler', 'bastard', 'suck',
-  '시발', '새끼', '개새끼', '병신', '지랄', '미친', '죽여', '꺼져', '창녀', '호구', '쓰레기',
-  '操', '傻逼', '去死', '混蛋', '废物', '滚', '贱人', '妓女', '白痴', '死', '毒品',
-  'puta', 'mierda', 'cabrón', 'estúpido', 'idiota', 'pendejo', 'imbécil', 'maricón',
-  'merde', 'connard', 'salope', 'putain', 'enculé', 'fdp', 'imbécile',
-  'scheisse', 'arschloch', 'hurensohn', 'verdammt', 'schlampe', 'idiot',
-  'caralho', 'filho da puta', 'merda', 'porra', 'puta', 'idiota',
-  'stronzo', 'merda', 'vaffanculo', 'cazzo', 'cretino', 'puttana',
-  'сука', 'блять', 'ебать', 'хуй', 'пизда', 'мудак',
-  'كلب', 'حمار', 'متناك', 'منيوك', 'قحبة',
-  'Hia', 'E-dok', 'Kwai', 'Sat',
-  'địt', 'đụ', 'mẹ mày', 'chó', 'khốn nạn',
-  'anjing', 'babi', 'kampret', 'bangsat', 'kontol', 'memek'
+  'crap', 'bastard', 'motherfucker', 'cocksucker', 'ass', 'bollocks', 'wanker',
+  // 韓国語
+  '시발', '새끼', '개새끼', '병신', '지랄', '미친', '죽여', '꺼져', '창녀', '호구', '쓰레기', '지랄', '개판', '등신',
+  // 中国語
+  '操', '傻逼', '去死', '混蛋', '废物', '滚', '贱人', '妓女', '白痴', '死', '毒品', '神经病', '王八蛋',
+  // スペイン語
+  'puta', 'mierda', 'cabrón', 'estúpido', 'idiota', 'pendejo', 'imbécil', 'maricón', 'puto',
+  // フランス語
+  'merde', 'connard', 'salope', 'putain', 'enculé', 'fdp', 'imbécile', 'cretin',
+  // ドイツ語
+  'scheisse', 'arschloch', 'hurensohn', 'verdammt', 'schlampe', 'idiot', 'fotze',
+  // ポルトガル語
+  'caralho', 'filho da puta', 'merda', 'porra', 'puta', 'idiota', 'otario',
+  // イタリア語
+  'stronzo', 'merda', 'vaffanculo', 'cazzo', 'cretino', 'puttana', 'minchia',
+  // ロシア語
+  'сука', 'блять', 'ебать', 'хуй', 'пизда', 'мудак', 'залупа',
+  // アラビア語
+  'كلب', 'حمار', 'متناك', 'منيوك', 'قحبة', 'عاهرة',
+  // タイ語
+  'Hia', 'E-dok', 'Kwai', 'Sat', 'Gu', 'Mueng',
+  // ベトナム語
+  'địt', 'đụ', 'mẹ mày', 'chó', 'khốn nạn', 'cứt',
+  // インドネシア語・マレー語
+  'anjing', 'babi', 'kampret', 'bangsat', 'kontol', 'memek', 'sialan'
 ];
 
 function checkInappropriateContent(text: string): { isViolating: boolean; matchedWord: string } {
@@ -223,7 +234,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     langSetting: '🌐 表示言語 (Language)',
     baseCountrySetting: '📍 ベースの国 (初期マップ)',
     blockListTitle: '🚫 ブロック中ユーザー管理',
-    eulaTitle: '📜 利用規約 (EULA)',
+    eulaTitle: '📜 利用規約 (EULA) & ライセンス',
     guideTitle: '📖 アプリの操作説明',
     translate: '🌐 翻訳する',
     close: '閉じる',
@@ -243,40 +254,44 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     commentSend: '送信',
     myQrCode: '📱 自分のQRコード',
     scanQrCode: '📷 QRコードをスキャン',
-    eulaFullText: `【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
+    eulaFullText: `【wap 利用規約・位置情報ポリシー & サードパーティライセンス（Apple審査対応版）】
 
 第1条（目的および同意）
 本規約は、マップ共有アプリ「wap」の利用条件を定めるものです。すべてのユーザーは、本規約および位置情報の取得・利用に同意した上で本サービスを利用するものとします。
 
-第2条（位置情報の取得・利用について・パーミッション目的）
+第2条（位置情報の取得・利用について）
 1. 当サービスは、ユーザーがマップ画面の「現在地ボタン（🎯）」をタップした際に、デバイスのGPS等の位置情報を一時的に取得します。
-2. 取得した位置情報は、「周辺の旅のスポットを検索・表示するため」「現在地を中心にマップを表示するため」にのみ使用されます。
-3. 当サービスは、ユーザーの明示的な許可なしにバックグラウンドでの位置情報追跡を行わず、位置情報を第三者に販売・提供することはありません。
+2. 取得した位置情報は、「周辺の旅のスポットを検索・表示するため」「現在地を中心にマップを表示するため」にのみ使用され、第三者への販売・提供は一切行いません。
 
-第3条（コンテンツの安全性と免責事項・情報の正確性について）
-1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現などの不適切な投稿を厳禁としています。
-2. 掲載されているスポットの写真や店舗情報は投稿時点のものであり、現在地において建物がなくなっている、閉店している、またはリニューアルされている場合があります。当サービスは掲載情報の正確性や現状への適合性を保証するものではなく、現地に赴く際はユーザーご自身の責任で最新情報をご確認ください。
-3. 各投稿やコメントには応援機能および悪質ユーザーの「ブロック（🚫）」機能、ならびにお問い合わせ窓口（wap.support.official@gmail.com）を完備しています。`,
-    guideFullText: `📖【wap（ワップ）のわかりやすい使い方ガイド】
+第3条（コンテンツの安全性とモデレーション）
+1. 本アプリでは、各言語に完全対応した強力なNGワードシステムを導入し、不適切な投稿やコメントを厳格に自動ブロックしています。
+2. 各投稿の通報機能、ユーザーブロック機能、および24時間以内の運営削除対応体制を完備しています。
 
-1️⃣ **マップ画面で地図を見る・探す**
-- 下のメニューの「🗺️ マップ」を押すと、世界地図や日本地図が開くよ！
-- 画面の上にある🔍「検索バー」に、行きたい場所の名前（例: 京都）やハッシュタグ（例: #絶景）を入力して虫眼鏡ボタンを押すと、その場所へビューンと飛べるよ。
-- 左上の「☰」ボタンを押すと、言語の変更や設定ができるよ。
+【Third-Party Licenses】
+- html5-qrcode (Apache License 2.0)
+- exif-js (MIT License)`,
+    // 📖 アップデートされたわかりやすい使い方ガイド
+    guideFullText: `📖【wap（ワップ）の最新かんたん使い方ガイド】
 
-2️⃣ **すてきな写真や動画をマップに投稿する（カンタン！）**
+1️⃣ **マップで世界中の旅を探そう！**
+- 下のメニューの「🗺️ マップ」を開くと、あなたのベース国や世界地図が表示されるよ。
+- 上の検索バーに都市名や「#絶景」などのハッシュタグを入力して虫眼鏡を押すと、その場所へ一瞬でジャンプできるよ！
+- ピンをタップすると、投稿された綺麗な写真や動画が見られるよ。
+
+2️⃣ **写真や動画をマップに投稿する（共有機能つき✨）**
 - マップ画面の左下にある「📷＋ 写真/動画を追加」ボタンを押してね。
-- スマホの中にある写真や動画を選ぶと、自動的に場所（位置情報）がマップにセットされるよ！（※場所が違うときは「地名・住所検索」で正しい場所をえらんでね）
-- プレビュー画面で、iPhoneの写真アプリと同じように**「二本指で広げたり縮めたり（ピンチイン・アウト）」**して大きさを自由に変えたり、指でスワイプして位置を微調整できるよ！
-- タイトルや思い出メモを入力して、「マップに反映する 🚀」を押すだけ！
+- スマホから思い出の写真や動画を選ぶと、Supabaseを通じて他のユーザーにも自動で共有されるよ！
+- プレビュー画面では**「二本指で広げたり縮めたり（ピンチイン・アウト）」**して写真を自由に拡大・縮小したり、ドラッグして位置を微調整できるよ。
+- 丁寧なNGワードチェック機能がついているから、安全に楽しく投稿してね！
 
-3️⃣ **みんなの投稿を見る（タイムライン）**
-- 下のメニューの「🗓️ タイムライン」を押すと、あなたのベース国の投稿が優先されて、みんなの写真や動画がTikTokみたいに縦に流れてくるよ！
-- 動画は音声つきでスムーズに再生されるよ。画面のどこを上下にスワイプしても次の投稿へサクサク進むよ！投稿をタップすれば詳しい情報が見られるよ。
+3️⃣ **縦スクロールのサクサクタイムライン**
+- 下のメニューの「🗓️ タイムライン」を押すと、あなたのベース国の投稿が一番上に優先表示されて、TikTokみたいに上下にスワイプするだけでサクサク次の旅を見られるよ！
+- 動画には音声もついていて、コメント欄でほかの旅人と会話もできるよ。
 
-4️⃣ **ランキングと自分のページ**
-- 「🏆 ランキング」では、みんなに大人気のスポットがわかるよ。
-- 「👤 マイページ」では、自分の投稿した数や、訪問した国の数、自分だけの「QRコード」を確認して友達とフレンドになれるよ！マイページの「投稿」や「保存」にある写真を押すと、いつでも投稿の詳細を確認できるよ。`
+4️⃣ **月別カレンダー形式の「旅のログ」**
+- 「👤 マイページ」の中にある「📅 ログ」タブをひらいてみてね！
+- 月ごとのカレンダーに、あなたが投稿した日がサムネイル付きで一目でわかるようにハイライトされるよ。
+- 日付をポチッと押すと、その日にどんな旅をしたか一覧ですぐに振り返ることができるよ！`
   },
   en: {
     step1Title: 'Step 1: Select Language',
@@ -317,7 +332,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     langSetting: '🌐 Language',
     baseCountrySetting: '📍 Base Country',
     blockListTitle: '🚫 Blocked Users',
-    eulaTitle: '📜 Terms of Service & Support',
+    eulaTitle: '📜 Terms of Service & Licenses',
     guideTitle: '📖 App Guide',
     translate: '🌐 Translate',
     close: 'Close',
@@ -337,7 +352,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     commentSend: 'Send',
     myQrCode: '📱 My QR Code',
     scanQrCode: '📷 Scan QR Code',
-    eulaFullText: `[wap Terms of Service & Location Policy]\nContact: wap.support.official@gmail.com`,
+    eulaFullText: `[wap Terms of Service, Location Policy & Licenses]\nContact: wap.support.official@gmail.com`,
     guideFullText: `[wap Guide]`
   },
   ko: {
@@ -399,7 +414,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     commentSend: '전송',
     myQrCode: '📱 QR',
     scanQrCode: '📷 스캔',
-    eulaFullText: `[이용약관]\n문의: wap.support.official@gmail.com`,
+    eulaFullText: `[이용약관 및 라이선스]\n문의: wap.support.official@gmail.com`,
     guideFullText: `[가이드]`
   },
   zh: {
@@ -461,7 +476,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     commentSend: '发送',
     myQrCode: '📱 二维码',
     scanQrCode: '📷 扫描',
-    eulaFullText: `[服务条款]\n联系邮箱: wap.support.official@gmail.com`,
+    eulaFullText: `[服务条款与开源许可]\n联系邮箱: wap.support.official@gmail.com`,
     guideFullText: `[指南]`
   }
 };
@@ -518,7 +533,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   FR: { names: { ja: 'フランス', en: 'France', ko: '프랑스', zh: '法国' }, flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
   ES: { names: { ja: 'スペイン', en: 'Spain', ko: '스페인', zh: '西班牙' }, flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
   IT: { names: { ja: 'イタリア', en: 'Italy', ko: '이탈리아', zh: '意大利' }, flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
-  GB: { names: { ja: 'イギリス', en: 'UK', ko: '영국', zh: '英国' }, flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
+  GB: { names: { ja: 'イギリス', en: 'UK', ko: '영국', zh: '영국' }, flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
   DE: { names: { ja: 'ドイツ', en: 'Germany', ko: '독일', zh: '德国' }, flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
   TR: { names: { ja: 'トルコ', en: 'Turkey', ko: '터키', zh: '土耳其' }, flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
   GR: { names: { ja: 'ギリシャ', en: 'Greece', ko: '그리스', zh: '希腊' }, flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
@@ -537,7 +552,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바キ아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -1153,7 +1168,7 @@ export default function WapApp() {
     };
   }, [currentTab]);
 
-  // Supabaseからのデータ取得（タイムアウト付きでフリーズ完全防止）
+  // Supabaseからのデータ取得（リアルタイム同期対応）
   const fetchSpots = async () => {
     if (!supabase) return;
     try {
@@ -1207,6 +1222,53 @@ export default function WapApp() {
 
   useEffect(() => {
     fetchSpots();
+
+    // Supabase Realtime購読（他のユーザーが投稿した際にリロードなしで自動反映）
+    if (supabase) {
+      const channel = supabase
+        .channel('public:spots')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'spots' }, (payload) => {
+          const d = payload.new;
+          const newSpot: Spot = {
+            id: d.id,
+            userId: d.user_id,
+            userName: d.user_name,
+            userAvatar: d.user_avatar,
+            isOfficial: d.is_official,
+            isFeatured: d.is_featured,
+            isFirstExplorer: d.is_first_explorer,
+            viewsCount: d.views_count || 1,
+            savedCount: d.saved_count || 0,
+            title: d.title,
+            description: d.description || '',
+            fileName: d.file_name || 'image.jpg',
+            fileUrl: d.file_url,
+            thumbUrl: d.thumb_url || d.file_url,
+            fileType: d.file_type || 'image',
+            mediaList: d.media_list || [],
+            lat: Number(d.lat),
+            lon: Number(d.lon),
+            countryCode: d.country_code || 'JP',
+            cityName: d.city_name || '日本',
+            category: d.category || 'view',
+            scopes: d.scopes || ['world', 'friends', 'my'],
+            tags: d.tags || [],
+            comments: d.comments || [],
+            reportCount: d.report_count || 0,
+            createdAt: d.created_at ? new Date(d.created_at).toLocaleDateString() : new Date().toLocaleDateString(),
+          };
+          setSpots(prev => {
+            if (prev.some(s => s.id === newSpot.id)) return prev;
+            showToast('✨ 新しいスポットが投稿されました！');
+            return [newSpot, ...prev];
+          });
+        })
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
   }, []);
 
   // 実機カメラを使ったQRコードスキャン制御
@@ -1542,7 +1604,7 @@ export default function WapApp() {
     showToast(`🌐 (${langName}) に翻訳しました！`);
   };
 
-  // メディア個別ごとのコメント追加処理
+  // メディア個別ごとのコメント追加処理（厳格なNGワードチェック適用）
   const handleAddComment = (spotId: string, customText?: string) => {
     const textToUse = customText !== undefined ? customText : newCommentText;
     const trimmedText = textToUse.trim();
@@ -1550,7 +1612,7 @@ export default function WapApp() {
 
     const check = checkInappropriateContent(trimmedText);
     if (check.isViolating) {
-      showWarning('⚠️ 暴言・差別発言・不適切な表現が含まれているため、コメントを送信できません。');
+      showWarning('⚠️ 不適切な表現が含まれているため、コメントを送信できません。');
       return;
     }
 
@@ -1672,7 +1734,7 @@ export default function WapApp() {
     }
   };
 
-  // 複数投稿時の位置情報維持 ＆ 投稿完了後のキーボード自動格納
+  // 複数投稿時の位置情報維持 ＆ 投稿完了後のキーボード自動格納 ＆ Supabaseへのクラウド保存処理
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -1687,11 +1749,10 @@ export default function WapApp() {
     const checkTitle = checkInappropriateContent(postTitle);
     const checkDesc = checkInappropriateContent(postDesc);
     if (checkTitle.isViolating || checkDesc.isViolating) {
-      showWarning('⚠️ 暴言・差別発言・不適切な表現が含まれているため投稿できません。');
+      showWarning('⚠️ 不適切な表現が含まれているため投稿できません。');
       return;
     }
 
-    // 投稿完了時にキーボードを自動的に閉じる
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
@@ -1747,6 +1808,39 @@ export default function WapApp() {
     const isFirstExplorer = !isNearbyExists;
     const extractedTags = extractHashtags(postDesc);
 
+    const spotTitleFinal = postTitle || current.file.name;
+    const spotDescFinal = postDesc || '旅の思い出';
+    const cityNameFinal = currentConfig.names[userLangCode] || currentConfig.names.en;
+
+    if (supabase) {
+      try {
+        await supabase.from('spots').insert({
+          id: current.id,
+          user_id: 'me',
+          user_name: userName,
+          user_avatar: userAvatar,
+          title: spotTitleFinal,
+          description: spotDescFinal,
+          file_url: uploadedUrl,
+          thumb_url: finalThumbUrl,
+          file_type: current.fileType,
+          media_list: [newMediaItem],
+          lat: finalLat,
+          lon: finalLon,
+          country_code: userCountry,
+          city_name: cityNameFinal,
+          category: postCategory,
+          scopes: selectedScopes,
+          tags: extractedTags,
+          comments: [],
+          views_count: 1,
+          saved_count: 0,
+        });
+      } catch (err) {
+        console.error('Supabase DB insert error:', err);
+      }
+    }
+
     let updatedSpotsList = [...spots];
 
     if (existingSameSpot) {
@@ -1756,7 +1850,7 @@ export default function WapApp() {
         lat: finalLat,
         lon: finalLon,
         countryCode: userCountry,
-        cityName: currentConfig.names[userLangCode] || currentConfig.names.en,
+        cityName: cityNameFinal,
         thumbUrl: finalThumbUrl,
         fileUrl: uploadedUrl,
         mediaList: updatedMediaList,
@@ -1775,8 +1869,8 @@ export default function WapApp() {
         isFirstExplorer,
         viewsCount: 1,
         savedCount: 0,
-        title: postTitle || current.file.name,
-        description: postDesc || '旅の思い出',
+        title: spotTitleFinal,
+        description: spotDescFinal,
         fileName: current.file.name,
         fileUrl: uploadedUrl,
         thumbUrl: finalThumbUrl,
@@ -1785,13 +1879,13 @@ export default function WapApp() {
         lat: finalLat,
         lon: finalLon,
         countryCode: userCountry,
-        cityName: currentConfig.names[userLangCode] || currentConfig.names.en,
+        cityName: cityNameFinal,
         category: postCategory,
         scopes: selectedScopes,
         tags: extractedTags,
         comments: [],
         reportCount: 0,
-        createdAt: new Date().toLocaleDateString(), // YYYY/MM/DD
+        createdAt: new Date().toLocaleDateString(),
       };
 
       updatedSpotsList = [newSpot, ...updatedSpotsList.filter((s) => s.id !== newSpot.id)];
@@ -1930,7 +2024,7 @@ export default function WapApp() {
   const navBarText = '#0f172a';
 
   if (!isClient) {
-    return <div style={{ background: '#ffffff', width: '100vw', height: '100dvh' }}></div>;
+    return <div style={{ background: '#000000', width: '100vw', height: '100dvh' }}></div>;
   }
 
   return (
@@ -1943,7 +2037,7 @@ export default function WapApp() {
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="wap" />
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#000000" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
 
@@ -1965,25 +2059,25 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-        {/* 初回オンボーディング画面（背景色を統一：#ffffff） */}
+        {/* 初回オンボーディング画面（ご要望通り背景色を全体的に黒：#000000 に統一） */}
         {isOnboarding && (
-          <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.1)', textAlign: 'center', touchAction: 'pan-y', border: '1px solid #e2e8f0' }}>
+          <div style={{ position: 'fixed', inset: 0, background: '#000000', color: '#ffffff', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
+            <div style={{ background: '#0f172a', color: '#ffffff', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', textAlign: 'center', touchAction: 'pan-y', border: '1px solid #334155' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
-              <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
-              <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
+              <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#38bdf8' }}>wap</h1>
+              <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#94a3b8' }}>世界中を旅して、思い出をつなごう</p>
 
               <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
-                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 1 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
-                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 2 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
-                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 3 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
-                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 4 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
+                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 1 ? '#38bdf8' : '#334155', transition: '0.3s' }}></span>
+                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 2 ? '#38bdf8' : '#334155', transition: '0.3s' }}></span>
+                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 3 ? '#38bdf8' : '#334155', transition: '0.3s' }}></span>
+                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 4 ? '#38bdf8' : '#334155', transition: '0.3s' }}></span>
               </div>
 
               {onboardingStep === 1 && (
                 <div style={{ textAlign: 'left' }}>
-                  <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step1Title')}</h3>
-                  <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t('step1Desc')}</p>
+                  <h3 style={{ fontSize: '15px', margin: '0 0 8px 0', color: '#fff' }}>{t('step1Title')}</h3>
+                  <p style={{ fontSize: '12px', color: '#94a3b8', margin: '0 0 14px 0' }}>{t('step1Desc')}</p>
                   <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px', touchAction: 'pan-y' }}>
                     {Object.entries(LANGUAGES).map(([code, lang]) => (
                       <div
@@ -1992,20 +2086,21 @@ export default function WapApp() {
                         style={{
                           padding: '10px 14px',
                           borderRadius: '10px',
-                          border: `2px solid ${userLangCode === code ? '#0284c7' : '#e2e8f0'}`,
-                          background: userLangCode === code ? '#f0f9ff' : '#ffffff',
+                          border: `2px solid ${userLangCode === code ? '#38bdf8' : '#334155'}`,
+                          background: userLangCode === code ? '#1e293b' : '#0f172a',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
                           cursor: 'pointer',
+                          color: '#fff'
                         }}
                       >
                         <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{lang.flag} {lang.nativeName} ({lang.name})</span>
-                        {userLangCode === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
+                        {userLangCode === code && <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>✓</span>}
                       </div>
                     ))}
                   </div>
-                  <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                  <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '12px', background: '#38bdf8', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                     {t('next')}
                   </button>
                 </div>
@@ -2013,21 +2108,21 @@ export default function WapApp() {
 
               {onboardingStep === 2 && (
                 <div style={{ textAlign: 'left', touchAction: 'pan-y' }}>
-                  <h3 style={{ fontSize: '15px', margin: '0 0 4px 0' }}>{t('step2Title')}</h3>
-                  <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 10px 0' }}>{t('step2Desc')}</p>
+                  <h3 style={{ fontSize: '15px', margin: '0 0 4px 0', color: '#fff' }}>{t('step2Title')}</h3>
+                  <p style={{ fontSize: '12px', color: '#94a3b8', margin: '0 0 10px 0' }}>{t('step2Desc')}</p>
                   
                   <input
                     type="text"
                     placeholder={t('countrySearchPlaceholder')}
                     value={countrySearchQuery}
                     onChange={(e) => setCountrySearchQuery(e.target.value)}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', marginBottom: '8px', boxSizing: 'border-box', touchAction: 'manipulation' }}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #334155', background: '#1e293b', color: '#fff', fontSize: '16px', marginBottom: '8px', boxSizing: 'border-box', touchAction: 'manipulation' }}
                   />
 
                   <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', paddingRight: '4px', touchAction: 'pan-y' }}>
                     {Object.entries(filteredCountries).map(([region, countries]) => (
                       <div key={region}>
-                        <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '4px', borderBottom: '1px solid #e2e8f0', paddingBottom: '2px' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#38bdf8', marginBottom: '4px', borderBottom: '1px solid #334155', paddingBottom: '2px' }}>
                           {region}
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -2040,18 +2135,19 @@ export default function WapApp() {
                                 style={{
                                   padding: '8px 12px',
                                   borderRadius: '8px',
-                                  border: `2px solid ${isSelected ? '#0284c7' : '#e2e8f0'}`,
-                                  background: isSelected ? '#f0f9ff' : '#ffffff',
+                                  border: `2px solid ${isSelected ? '#38bdf8' : '#334155'}`,
+                                  background: isSelected ? '#1e293b' : '#0f172a',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'space-between',
                                   cursor: 'pointer',
+                                  color: '#fff'
                                 }}
                               >
-                                <span style={{ fontSize: '13px', fontWeight: isSelected ? '900' : 'bold', color: isSelected ? '#0284c7' : '#0f172a' }}>
+                                <span style={{ fontSize: '13px', fontWeight: isSelected ? '900' : 'bold', color: isSelected ? '#38bdf8' : '#f8fafc' }}>
                                   {c.flag} {c.names[userLangCode] || c.names.en}
                                 </span>
-                                {isSelected && <span style={{ color: '#0284c7', fontWeight: 'bold', fontSize: '12px' }}>✓ 選択中</span>}
+                                {isSelected && <span style={{ color: '#38bdf8', fontWeight: 'bold', fontSize: '12px' }}>✓ 選択中</span>}
                               </div>
                             );
                           })}
@@ -2061,10 +2157,10 @@ export default function WapApp() {
                   </div>
 
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '12px', background: '#334155', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                       {t('back')}
                     </button>
-                    <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '12px', background: '#38bdf8', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                       {t('next')}
                     </button>
                   </div>
@@ -2073,44 +2169,44 @@ export default function WapApp() {
 
               {onboardingStep === 3 && (
                 <div style={{ textAlign: 'left', touchAction: 'pan-y' }}>
-                  <h3 style={{ fontSize: '15px', margin: '0 0 14px 0' }}>{t('step3Title')}</h3>
+                  <h3 style={{ fontSize: '15px', margin: '0 0 14px 0', color: '#fff' }}>{t('step3Title')}</h3>
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
                     <div
                       onClick={() => onboardingAvatarInputRef.current?.click()}
                       style={{
                         width: '76px', height: '76px', borderRadius: '50%',
-                        background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
+                        background: userAvatar ? `url(${userAvatar}) center/cover` : '#38bdf8',
                         color: '#fff', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: '0 6px 16px rgba(2,132,199,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden'
+                        boxShadow: '0 6px 16px rgba(56,189,248,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden'
                       }}
                     >
                       {!userAvatar && <span>👤</span>}
-                      <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '10px', color: '#fff', textAlign: 'center', padding: '2px 0' }}>
+                      <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.6)', fontSize: '10px', color: '#fff', textAlign: 'center', padding: '2px 0' }}>
                         📷 変更
                       </div>
                     </div>
                   </div>
 
-                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>ユーザー名</label>
+                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#94a3b8' }}>ユーザー名</label>
                   <input
                     type="text"
                     maxLength={20}
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
-                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '16px', fontWeight: 'bold', touchAction: 'manipulation' }}
+                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '14px', borderRadius: '10px', border: '1px solid #334155', background: '#1e293b', color: '#fff', fontSize: '16px', fontWeight: 'bold', touchAction: 'manipulation' }}
                   />
-                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>自己紹介</label>
+                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#94a3b8' }}>自己紹介</label>
                   <input
                     type="text"
                     value={userBio}
                     onChange={(e) => setUserBio(e.target.value)}
-                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation' }}
+                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #334155', background: '#1e293b', color: '#fff', fontSize: '16px', touchAction: 'manipulation' }}
                   />
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#334155', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                       {t('back')}
                     </button>
-                    <button onClick={() => setOnboardingStep(4)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(4)} style={{ flex: 2, padding: '12px', background: '#38bdf8', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                       {t('next')}
                     </button>
                   </div>
@@ -2119,7 +2215,7 @@ export default function WapApp() {
 
               {onboardingStep === 4 && (
                 <div style={{ textAlign: 'left', touchAction: 'pan-y' }}>
-                  <h3 style={{ fontSize: '15px', margin: '0 0 8px 0' }}>{t('step3TitleEula')}</h3>
+                  <h3 style={{ fontSize: '15px', margin: '0 0 8px 0', color: '#fff' }}>{t('step3TitleEula')}</h3>
                   <div
                     onScroll={(e) => {
                       const target = e.currentTarget;
@@ -2127,10 +2223,10 @@ export default function WapApp() {
                         setHasScrolledToBottom(true);
                       }
                     }}
-                    style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', touchAction: 'pan-y' }}
+                    style={{ maxHeight: '180px', overflowY: 'auto', background: '#1e293b', padding: '12px', borderRadius: '10px', border: '1px solid #334155', fontSize: '11px', color: '#cbd5e1', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', touchAction: 'pan-y' }}
                   >
                     {t('eulaFullText')}
-                    <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ ここまでお読みください</div>
+                    <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#38bdf8', marginTop: '10px' }}>▼ ここまでお読みください</div>
                   </div>
 
                   {!hasScrolledToBottom && (
@@ -2139,12 +2235,12 @@ export default function WapApp() {
                     </div>
                   )}
 
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#0284c7' : '#94a3b8', marginBottom: '16px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#38bdf8' : '#64748b', marginBottom: '16px' }}>
                     <input type="checkbox" disabled={!hasScrolledToBottom} checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
                     <span>{t('eulaAgree')}</span>
                   </label>
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => setOnboardingStep(3)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(3)} style={{ flex: 1, padding: '12px', background: '#334155', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                       {t('back')}
                     </button>
                     <button
@@ -2153,8 +2249,8 @@ export default function WapApp() {
                       style={{
                         flex: 2,
                         padding: '12px',
-                        background: (eulaChecked && hasScrolledToBottom) ? '#0284c7' : '#94a3b8',
-                        color: '#fff',
+                        background: (eulaChecked && hasScrolledToBottom) ? '#38bdf8' : '#334155',
+                        color: (eulaChecked && hasScrolledToBottom) ? '#0f172a' : '#94a3b8',
                         fontWeight: 'bold',
                         border: 'none',
                         borderRadius: '12px',
@@ -2891,13 +2987,9 @@ export default function WapApp() {
                     const firstDayIndex = new Date(year, month - 1, 1).getDay();
                     const daysInMonth = new Date(year, month, 0).getDate();
 
-                    // 自分の投稿を日付ごとにマッピング (YYYY/MM/DD 形式)
                     const postsByDate: Record<string, Spot[]> = {};
                     mySpots.forEach(s => {
                       if (!s.createdAt) return;
-                      // スポットのcreatedAtが標準的なフォーマットであることを想定、あるいはISO
-                      let dStr = s.createdAt.replace(/-/g, '/');
-                      // パース確認
                       const d = new Date(s.createdAt);
                       if (!isNaN(d.getTime())) {
                         const y = d.getFullYear();
