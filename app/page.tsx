@@ -93,40 +93,25 @@ export interface PlaceSuggestion {
   lon: string;
 }
 
-// 🌐 各言語・各国の不適切なコンテンツ（NGワード）を大幅に強化
+// 🌐 各言語・各国の不適切なコンテンツ（NGワード）強化版
 const NG_PATTERNS = [
-  // 日本語
   '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ', 'ばか', 'あほ', 'くず', 'かす', 'ごみ', 'くそ',
   'ぶす', 'でぶ', 'きもい', 'うざい', 'レイプ', '強姦', '売春', '買春', '援交', 'パパ活', '覚醒剤', '大麻', 'コカイン', 'ヘロイン',
   '暴力', '暴行', '殴る', '蹴る', 'いじめ', 'いじめる', '自殺', '死にたい', '差別', 'レイシスト', 'せっくす', 'ちんこ', 'まんこ',
-  // 英語
   'fuck', 'shit', 'bitch', 'asshole', 'idiot', 'stupid', 'cunt', 'dick', 'pussy', 'whore', 'slut',
   'nigger', 'faggot', 'retard', 'suicide', 'kill', 'rape', 'cocaine', 'heroin', 'nazi', 'hitler', 'bastard', 'suck',
-  'crap', 'bastard', 'motherfucker', 'cocksucker', 'ass', 'bollocks', 'wanker',
-  // 韓国語
-  '시발', '새끼', '개새끼', '병신', '지랄', '미친', '죽여', '꺼져', '창녀', '호구', '쓰레기', '지랄', '개판', '등신',
-  // 中国語
-  '操', '傻逼', '去死', '混蛋', '废物', '滚', '贱人', '妓女', '白痴', '死', '毒品', '神经病', '王八蛋',
-  // スペイン語
-  'puta', 'mierda', 'cabrón', 'estúpido', 'idiota', 'pendejo', 'imbécil', 'maricón', 'puto',
-  // フランス語
-  'merde', 'connard', 'salope', 'putain', 'enculé', 'fdp', 'imbécile', 'cretin',
-  // ドイツ語
-  'scheisse', 'arschloch', 'hurensohn', 'verdammt', 'schlampe', 'idiot', 'fotze',
-  // ポルトガル語
-  'caralho', 'filho da puta', 'merda', 'porra', 'puta', 'idiota', 'otario',
-  // イタリア語
-  'stronzo', 'merda', 'vaffanculo', 'cazzo', 'cretino', 'puttana', 'minchia',
-  // ロシア語
-  'сука', 'блять', 'ебать', 'хуй', 'пизда', 'мудак', 'залупа',
-  // アラビア語
-  'كلب', 'حمار', 'متناك', 'منيوك', 'قحبة', 'عاهرة',
-  // タイ語
-  'Hia', 'E-dok', 'Kwai', 'Sat', 'Gu', 'Mueng',
-  // ベトナム語
-  'địt', 'đụ', 'mẹ mày', 'chó', 'khốn nạn', 'cứt',
-  // インドネシア語・マレー語
-  'anjing', 'babi', 'kampret', 'bangsat', 'kontol', 'memek', 'sialan'
+  '시발', '새끼', '개새끼', '병신', '지랄', '미친', '죽여', '꺼져', '창녀', '호구', '쓰레기',
+  '操', '傻逼', '去死', '混蛋', '废物', '滚', '贱人', '妓女', '白痴', '死', '毒品',
+  'puta', 'mierda', 'cabrón', 'estúpido', 'idiota', 'pendejo', 'imbécil', 'maricón',
+  'merde', 'connard', 'salope', 'putain', 'enculé', 'fdp', 'imbécile',
+  'scheisse', 'arschloch', 'hurensohn', 'verdammt', 'schlampe', 'idiot',
+  'caralho', 'filho da puta', 'merda', 'porra', 'puta', 'idiota',
+  'stronzo', 'merda', 'vaffanculo', 'cazzo', 'cretino', 'puttana',
+  'сука', 'блять', 'ебать', 'хуй', 'пизда', 'мудак',
+  'كلب', 'حمار', 'متناك', 'منيوك', 'قحبة',
+  'Hia', 'E-dok', 'Kwai', 'Sat',
+  'địt', 'đụ', 'mẹ mày', 'chó', 'khốn nạn',
+  'anjing', 'babi', 'kampret', 'bangsat', 'kontol', 'memek'
 ];
 
 function checkInappropriateContent(text: string): { isViolating: boolean; matchedWord: string } {
@@ -270,7 +255,6 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 【Third-Party Licenses】
 - html5-qrcode (Apache License 2.0)
 - exif-js (MIT License)`,
-    // 📖 アップデートされたわかりやすい使い方ガイド
     guideFullText: `📖【wap（ワップ）の最新かんたん使い方ガイド】
 
 1️⃣ **マップで世界中の旅を探そう！**
@@ -533,14 +517,14 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   FR: { names: { ja: 'フランス', en: 'France', ko: '프랑스', zh: '法国' }, flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
   ES: { names: { ja: 'スペイン', en: 'Spain', ko: '스페인', zh: '西班牙' }, flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
   IT: { names: { ja: 'イタリア', en: 'Italy', ko: '이탈리아', zh: '意大利' }, flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
-  GB: { names: { ja: 'イギリス', en: 'UK', ko: '영국', zh: '영국' }, flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
+  GB: { names: { ja: 'イギリス', en: 'UK', ko: '영국', zh: '英国' }, flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
   DE: { names: { ja: 'ドイツ', en: 'Germany', ko: '독일', zh: '德国' }, flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
   TR: { names: { ja: 'トルコ', en: 'Turkey', ko: '터키', zh: '土耳其' }, flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
   GR: { names: { ja: 'ギリシャ', en: 'Greece', ko: '그리스', zh: '希腊' }, flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
   AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
   PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
-  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
+  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: 'ス위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
   PL: { names: { ja: 'ポーランド', en: 'Poland', ko: '폴란드', zh: '波兰' }, flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
   CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: '捷克' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
   HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: '匈牙利' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
@@ -585,7 +569,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   PE: { names: { ja: 'ペルー', en: 'Peru', ko: '페루', zh: '秘鲁' }, flag: '🇵🇪', region: '🗽 中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
   CO: { names: { ja: 'コロンビア', en: 'Colombia', ko: '콜롬비아', zh: '哥伦比亚' }, flag: '🇨🇴', region: '🗽 中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
   CU: { names: { ja: 'キューバ', en: 'Cuba', ko: '쿠바', zh: '古巴' }, flag: '🇨🇺', region: '🗽 中南米', lat: 21.5218, lon: -77.7812, zoom: 7 },
-  CR: { names: { ja: 'コスタリカ', en: 'Costa Rica', ko: '코스타리카', zh: '哥斯达黎加' }, flag: '🇨🇷', region: '🗽 中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
+  CR: { names: { ja: 'コスタリカ', en: 'Costa Rica', ko: '코스타リカ', zh: '哥斯达黎加' }, flag: '🇨🇷', region: '🗽 中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
   DO: { names: { ja: 'ドミニカ共和国', en: 'Dominican Republic', ko: '도미니카 공화국', zh: '多米尼加' }, flag: '🇩🇴', region: '🗽 中南米', lat: 18.7357, lon: -70.1627, zoom: 8 },
   PA: { names: { ja: 'パナマ', en: 'Panama', ko: '파나마', zh: '巴拿马' }, flag: '🇵🇦', region: '🗽 中南米', lat: 8.5380, lon: -80.7821, zoom: 8 },
   JM: { names: { ja: 'ジャマイカ', en: 'Jamaica', ko: '자메이카', zh: '牙买加' }, flag: '🇯🇲', region: '🗽 中南米', lat: 18.1096, lon: -77.2975, zoom: 9 },
@@ -597,7 +581,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '危地马拉' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
   HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: 'ホンジュラス' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
   NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: 'ニカラグア' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
-  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘サル바ドル', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
+  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘サルバドル', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
   BS: { names: { ja: 'バハマ', en: 'Bahamas', ko: '바하마', zh: 'バハマ' }, flag: '🇧🇸', region: '🗽 中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
   PR: { names: { ja: 'プエルトリコ', en: 'Puerto Rico', ko: '푸에르토리코', zh: 'プエルトリコ' }, flag: '🇵🇷', region: '🗽 中南米', lat: 18.2208, lon: -66.5901, zoom: 9 },
   BZ: { names: { ja: 'ベリーズ', en: 'Belize', ko: '벨리즈', zh: 'ベリーズ' }, flag: '🇧🇿', region: '🗽 中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
@@ -2059,25 +2043,25 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-        {/* 初回オンボーディング画面（ご要望通り背景色を全体的に黒：#000000 に統一） */}
+        {/* 初回オンボーディング画面（背景：全体を紺色 #070d1e にし、中央の操作カード：白ベース #ffffff に統一） */}
         {isOnboarding && (
-          <div style={{ position: 'fixed', inset: 0, background: '#000000', color: '#ffffff', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
-            <div style={{ background: '#0f172a', color: '#ffffff', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', textAlign: 'center', touchAction: 'pan-y', border: '1px solid #334155' }}>
+          <div style={{ position: 'fixed', inset: 0, background: '#070d1e', color: '#0f172a', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', textAlign: 'center', touchAction: 'pan-y', border: '1px solid #e2e8f0' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
-              <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#38bdf8' }}>wap</h1>
-              <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#94a3b8' }}>世界中を旅して、思い出をつなごう</p>
+              <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
+              <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
 
               <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
-                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 1 ? '#38bdf8' : '#334155', transition: '0.3s' }}></span>
-                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 2 ? '#38bdf8' : '#334155', transition: '0.3s' }}></span>
-                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 3 ? '#38bdf8' : '#334155', transition: '0.3s' }}></span>
-                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 4 ? '#38bdf8' : '#334155', transition: '0.3s' }}></span>
+                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 1 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
+                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 2 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
+                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep >= 3 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
+                <span style={{ width: '24px', height: '6px', borderRadius: '3px', background: onboardingStep === 4 ? '#0284c7' : '#e2e8f0', transition: '0.3s' }}></span>
               </div>
 
               {onboardingStep === 1 && (
                 <div style={{ textAlign: 'left' }}>
-                  <h3 style={{ fontSize: '15px', margin: '0 0 8px 0', color: '#fff' }}>{t('step1Title')}</h3>
-                  <p style={{ fontSize: '12px', color: '#94a3b8', margin: '0 0 14px 0' }}>{t('step1Desc')}</p>
+                  <h3 style={{ fontSize: '15px', margin: '0 0 8px 0', color: '#0f172a' }}>{t('step1Title')}</h3>
+                  <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 14px 0' }}>{t('step1Desc')}</p>
                   <div style={{ maxHeight: '220px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px', touchAction: 'pan-y' }}>
                     {Object.entries(LANGUAGES).map(([code, lang]) => (
                       <div
@@ -2086,21 +2070,20 @@ export default function WapApp() {
                         style={{
                           padding: '10px 14px',
                           borderRadius: '10px',
-                          border: `2px solid ${userLangCode === code ? '#38bdf8' : '#334155'}`,
-                          background: userLangCode === code ? '#1e293b' : '#0f172a',
+                          border: `2px solid ${userLangCode === code ? '#0284c7' : '#e2e8f0'}`,
+                          background: userLangCode === code ? '#f0f9ff' : '#ffffff',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
                           cursor: 'pointer',
-                          color: '#fff'
                         }}
                       >
                         <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{lang.flag} {lang.nativeName} ({lang.name})</span>
-                        {userLangCode === code && <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>✓</span>}
+                        {userLangCode === code && <span style={{ color: '#0284c7', fontWeight: 'bold' }}>✓</span>}
                       </div>
                     ))}
                   </div>
-                  <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '12px', background: '#38bdf8', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                  <button onClick={() => setOnboardingStep(2)} style={{ width: '100%', padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                     {t('next')}
                   </button>
                 </div>
@@ -2108,21 +2091,21 @@ export default function WapApp() {
 
               {onboardingStep === 2 && (
                 <div style={{ textAlign: 'left', touchAction: 'pan-y' }}>
-                  <h3 style={{ fontSize: '15px', margin: '0 0 4px 0', color: '#fff' }}>{t('step2Title')}</h3>
-                  <p style={{ fontSize: '12px', color: '#94a3b8', margin: '0 0 10px 0' }}>{t('step2Desc')}</p>
+                  <h3 style={{ fontSize: '15px', margin: '0 0 4px 0', color: '#0f172a' }}>{t('step2Title')}</h3>
+                  <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 10px 0' }}>{t('step2Desc')}</p>
                   
                   <input
                     type="text"
                     placeholder={t('countrySearchPlaceholder')}
                     value={countrySearchQuery}
                     onChange={(e) => setCountrySearchQuery(e.target.value)}
-                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #334155', background: '#1e293b', color: '#fff', fontSize: '16px', marginBottom: '8px', boxSizing: 'border-box', touchAction: 'manipulation' }}
+                    style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', marginBottom: '8px', boxSizing: 'border-box', touchAction: 'manipulation' }}
                   />
 
                   <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px', paddingRight: '4px', touchAction: 'pan-y' }}>
                     {Object.entries(filteredCountries).map(([region, countries]) => (
                       <div key={region}>
-                        <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#38bdf8', marginBottom: '4px', borderBottom: '1px solid #334155', paddingBottom: '2px' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '4px', borderBottom: '1px solid #e2e8f0', paddingBottom: '2px' }}>
                           {region}
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -2135,19 +2118,18 @@ export default function WapApp() {
                                 style={{
                                   padding: '8px 12px',
                                   borderRadius: '8px',
-                                  border: `2px solid ${isSelected ? '#38bdf8' : '#334155'}`,
-                                  background: isSelected ? '#1e293b' : '#0f172a',
+                                  border: `2px solid ${isSelected ? '#0284c7' : '#e2e8f0'}`,
+                                  background: isSelected ? '#f0f9ff' : '#ffffff',
                                   display: 'flex',
                                   alignItems: 'center',
                                   justifyContent: 'space-between',
                                   cursor: 'pointer',
-                                  color: '#fff'
                                 }}
                               >
-                                <span style={{ fontSize: '13px', fontWeight: isSelected ? '900' : 'bold', color: isSelected ? '#38bdf8' : '#f8fafc' }}>
+                                <span style={{ fontSize: '13px', fontWeight: isSelected ? '900' : 'bold', color: isSelected ? '#0284c7' : '#0f172a' }}>
                                   {c.flag} {c.names[userLangCode] || c.names.en}
                                 </span>
-                                {isSelected && <span style={{ color: '#38bdf8', fontWeight: 'bold', fontSize: '12px' }}>✓ 選択中</span>}
+                                {isSelected && <span style={{ color: '#0284c7', fontWeight: 'bold', fontSize: '12px' }}>✓ 選択中</span>}
                               </div>
                             );
                           })}
@@ -2157,10 +2139,10 @@ export default function WapApp() {
                   </div>
 
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '12px', background: '#334155', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(1)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                       {t('back')}
                     </button>
-                    <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '12px', background: '#38bdf8', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(3)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                       {t('next')}
                     </button>
                   </div>
@@ -2169,44 +2151,44 @@ export default function WapApp() {
 
               {onboardingStep === 3 && (
                 <div style={{ textAlign: 'left', touchAction: 'pan-y' }}>
-                  <h3 style={{ fontSize: '15px', margin: '0 0 14px 0', color: '#fff' }}>{t('step3Title')}</h3>
+                  <h3 style={{ fontSize: '15px', margin: '0 0 14px 0', color: '#0f172a' }}>{t('step3Title')}</h3>
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
                     <div
                       onClick={() => onboardingAvatarInputRef.current?.click()}
                       style={{
                         width: '76px', height: '76px', borderRadius: '50%',
-                        background: userAvatar ? `url(${userAvatar}) center/cover` : '#38bdf8',
+                        background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent,
                         color: '#fff', fontSize: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: '0 6px 16px rgba(56,189,248,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden'
+                        boxShadow: '0 6px 16px rgba(2,132,199,0.3)', cursor: 'pointer', position: 'relative', overflow: 'hidden'
                       }}
                     >
                       {!userAvatar && <span>👤</span>}
-                      <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.6)', fontSize: '10px', color: '#fff', textAlign: 'center', padding: '2px 0' }}>
+                      <div style={{ position: 'absolute', bottom: 0, insetInline: 0, background: 'rgba(0,0,0,0.4)', fontSize: '10px', color: '#fff', textAlign: 'center', padding: '2px 0' }}>
                         📷 変更
                       </div>
                     </div>
                   </div>
 
-                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#94a3b8' }}>ユーザー名</label>
+                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>ユーザー名</label>
                   <input
                     type="text"
                     maxLength={20}
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
-                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '14px', borderRadius: '10px', border: '1px solid #334155', background: '#1e293b', color: '#fff', fontSize: '16px', fontWeight: 'bold', touchAction: 'manipulation' }}
+                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '14px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '16px', fontWeight: 'bold', touchAction: 'manipulation' }}
                   />
-                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#94a3b8' }}>自己紹介</label>
+                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>自己紹介</label>
                   <input
                     type="text"
                     value={userBio}
                     onChange={(e) => setUserBio(e.target.value)}
-                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #334155', background: '#1e293b', color: '#fff', fontSize: '16px', touchAction: 'manipulation' }}
+                    style={{ width: '100%', padding: '10px 12px', marginTop: '4px', marginBottom: '20px', borderRadius: '10px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation' }}
                   />
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#334155', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(2)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                       {t('back')}
                     </button>
-                    <button onClick={() => setOnboardingStep(4)} style={{ flex: 2, padding: '12px', background: '#38bdf8', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(4)} style={{ flex: 2, padding: '12px', background: '#0284c7', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                       {t('next')}
                     </button>
                   </div>
@@ -2215,7 +2197,7 @@ export default function WapApp() {
 
               {onboardingStep === 4 && (
                 <div style={{ textAlign: 'left', touchAction: 'pan-y' }}>
-                  <h3 style={{ fontSize: '15px', margin: '0 0 8px 0', color: '#fff' }}>{t('step3TitleEula')}</h3>
+                  <h3 style={{ fontSize: '15px', margin: '0 0 8px 0', color: '#0f172a' }}>{t('step3TitleEula')}</h3>
                   <div
                     onScroll={(e) => {
                       const target = e.currentTarget;
@@ -2223,10 +2205,10 @@ export default function WapApp() {
                         setHasScrolledToBottom(true);
                       }
                     }}
-                    style={{ maxHeight: '180px', overflowY: 'auto', background: '#1e293b', padding: '12px', borderRadius: '10px', border: '1px solid #334155', fontSize: '11px', color: '#cbd5e1', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', touchAction: 'pan-y' }}
+                    style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', touchAction: 'pan-y' }}
                   >
                     {t('eulaFullText')}
-                    <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#38bdf8', marginTop: '10px' }}>▼ ここまでお読みください</div>
+                    <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ ここまでお読みください</div>
                   </div>
 
                   {!hasScrolledToBottom && (
@@ -2235,12 +2217,12 @@ export default function WapApp() {
                     </div>
                   )}
 
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#38bdf8' : '#64748b', marginBottom: '16px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', cursor: hasScrolledToBottom ? 'pointer' : 'not-allowed', color: hasScrolledToBottom ? '#0284c7' : '#94a3b8', marginBottom: '16px' }}>
                     <input type="checkbox" disabled={!hasScrolledToBottom} checked={eulaChecked} onChange={(e) => setEulaChecked(e.target.checked)} />
                     <span>{t('eulaAgree')}</span>
                   </label>
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <button onClick={() => setOnboardingStep(3)} style={{ flex: 1, padding: '12px', background: '#334155', color: '#fff', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
+                    <button onClick={() => setOnboardingStep(3)} style={{ flex: 1, padding: '12px', background: '#f1f5f9', color: '#0f172a', fontWeight: 'bold', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
                       {t('back')}
                     </button>
                     <button
@@ -2249,8 +2231,8 @@ export default function WapApp() {
                       style={{
                         flex: 2,
                         padding: '12px',
-                        background: (eulaChecked && hasScrolledToBottom) ? '#38bdf8' : '#334155',
-                        color: (eulaChecked && hasScrolledToBottom) ? '#0f172a' : '#94a3b8',
+                        background: (eulaChecked && hasScrolledToBottom) ? '#0284c7' : '#94a3b8',
+                        color: '#fff',
                         fontWeight: 'bold',
                         border: 'none',
                         borderRadius: '12px',
