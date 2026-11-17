@@ -68,6 +68,7 @@ export interface Spot {
   cityName: string;
   category: ViewCategory;
   scopes: DisplayScope[];
+  hasParking?: boolean; // 🅿️ 駐車場有無
   tags?: string[];
   comments?: CommentItem[];
   reportCount?: number;
@@ -486,7 +487,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BN: { names: { ja: 'ブルネイ', en: 'Brunei', ko: '브루네이', zh: '文莱' }, flag: '🇧🇳', region: '🌴 東南アジア', lat: 4.5353, lon: 114.7277, zoom: 9 },
   TL: { names: { ja: '東ティモール', en: 'East Timor', ko: '동티모르', zh: '东帝汶' }, flag: '🇹🇱', region: '🌴 東南アジア', lat: -8.8742, lon: 125.7275, zoom: 9 },
   IN: { names: { ja: 'インド', en: 'India', ko: '인도', zh: '印度' }, flag: '🇮🇳', region: '🍛 南・中央アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
-  PK: { names: { ja: 'パキスタン', en: 'Pakistan', ko: '파키스탄', zh: '巴基斯坦' }, flag: '🇵🇰', region: '🍛 南・中央アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
+  PK: { names: { ja: 'パキスタン', en: 'Pakistan', ko: '파키스탄', zh: '파키스탄' }, flag: '🇵🇰', region: '🍛 南・中央アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
   BD: { names: { ja: 'バングラデシュ', en: 'Bangladesh', ko: '방글라데시', zh: '孟加拉国' }, flag: '🇧🇩', region: '🍛 南・中央アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
   LK: { names: { ja: 'スリランカ', en: 'Sri Lanka', ko: '스리랑카', zh: '斯里兰卡' }, flag: '🇱🇰', region: '🍛 南・中央アジア', lat: 7.8731, lon: 80.7718, zoom: 7 },
   NP: { names: { ja: 'ネパール', en: 'Nepal', ko: '네팔', zh: '尼泊尔' }, flag: '🇳🇵', region: '🍛 南・中央アジア', lat: 28.3949, lon: 84.1240, zoom: 6 },
@@ -517,14 +518,14 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   FR: { names: { ja: 'フランス', en: 'France', ko: '프랑스', zh: '法国' }, flag: '🇫🇷', region: '🇪🇺 ヨーロッパ', lat: 46.6034, lon: 1.8883, zoom: 5 },
   ES: { names: { ja: 'スペイン', en: 'Spain', ko: '스페인', zh: '西班牙' }, flag: '🇪🇸', region: '🇪🇺 ヨーロッパ', lat: 40.4637, lon: -3.7492, zoom: 6 },
   IT: { names: { ja: 'イタリア', en: 'Italy', ko: '이탈리아', zh: '意大利' }, flag: '🇮🇹', region: '🇪🇺 ヨーロッパ', lat: 41.8719, lon: 12.5674, zoom: 6 },
-  GB: { names: { ja: 'イギリス', en: 'UK', ko: '영국', zh: '英国' }, flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
+  GB: { names: { ja: 'イギリス', en: 'UK', ko: '영국', zh: '영국' }, flag: '🇬🇧', region: '🇪🇺 ヨーロッパ', lat: 55.3781, lon: -3.4360, zoom: 5 },
   DE: { names: { ja: 'ドイツ', en: 'Germany', ko: '독일', zh: '德国' }, flag: '🇩🇪', region: '🇪🇺 ヨーロッパ', lat: 51.1657, lon: 10.4515, zoom: 5 },
   TR: { names: { ja: 'トルコ', en: 'Turkey', ko: '터키', zh: '土耳其' }, flag: '🇹🇷', region: '🇪🇺 ヨーロッパ', lat: 38.9637, lon: 35.2433, zoom: 6 },
   GR: { names: { ja: 'ギリシャ', en: 'Greece', ko: '그리스', zh: '希腊' }, flag: '🇬🇷', region: '🇪🇺 ヨーロッパ', lat: 39.0742, lon: 21.8243, zoom: 7 },
   AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '奥地利' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
   PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '葡萄牙' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
   NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '荷兰' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
-  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: 'ス위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
+  CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '瑞士' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
   PL: { names: { ja: 'ポーランド', en: 'Poland', ko: '폴란드', zh: '波兰' }, flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
   CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: '捷克' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
   HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: '匈牙利' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
@@ -569,7 +570,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   PE: { names: { ja: 'ペルー', en: 'Peru', ko: '페루', zh: '秘鲁' }, flag: '🇵🇪', region: '🗽 中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
   CO: { names: { ja: 'コロンビア', en: 'Colombia', ko: '콜롬비아', zh: '哥伦比亚' }, flag: '🇨🇴', region: '🗽 中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
   CU: { names: { ja: 'キューバ', en: 'Cuba', ko: '쿠바', zh: '古巴' }, flag: '🇨🇺', region: '🗽 中南米', lat: 21.5218, lon: -77.7812, zoom: 7 },
-  CR: { names: { ja: 'コスタリカ', en: 'Costa Rica', ko: '코스타リカ', zh: '哥斯达黎加' }, flag: '🇨🇷', region: '🗽 中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
+  CR: { names: { ja: 'コスタリカ', en: 'Costa Rica', ko: '코스타리카', zh: '哥斯达黎加' }, flag: '🇨🇷', region: '🗽 中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
   DO: { names: { ja: 'ドミニカ共和国', en: 'Dominican Republic', ko: '도미니카 공화국', zh: '多米尼加' }, flag: '🇩🇴', region: '🗽 中南米', lat: 18.7357, lon: -70.1627, zoom: 8 },
   PA: { names: { ja: 'パナマ', en: 'Panama', ko: '파나마', zh: '巴拿马' }, flag: '🇵🇦', region: '🗽 中南米', lat: 8.5380, lon: -80.7821, zoom: 8 },
   JM: { names: { ja: 'ジャマイカ', en: 'Jamaica', ko: '자메이카', zh: '牙买加' }, flag: '🇯🇲', region: '🗽 中南米', lat: 18.1096, lon: -77.2975, zoom: 9 },
@@ -581,7 +582,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '危地马拉' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
   HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: 'ホンジュラス' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
   NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: 'ニカラグア' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
-  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘サルバドル', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
+  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘サル바ドル', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
   BS: { names: { ja: 'バハマ', en: 'Bahamas', ko: '바하마', zh: 'バハマ' }, flag: '🇧🇸', region: '🗽 中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
   PR: { names: { ja: 'プエルトリコ', en: 'Puerto Rico', ko: '푸에르토리코', zh: 'プエルトリコ' }, flag: '🇵🇷', region: '🗽 中南米', lat: 18.2208, lon: -66.5901, zoom: 9 },
   BZ: { names: { ja: 'ベリーズ', en: 'Belize', ko: '벨리즈', zh: 'ベリーズ' }, flag: '🇧🇿', region: '🗽 中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
@@ -693,6 +694,7 @@ const INITIAL_SPOTS: Spot[] = [
     cityName: '東京',
     category: 'view',
     scopes: ['world', 'friends', 'my'],
+    hasParking: true,
     tags: ['東京', '公式スポット'],
     comments: [],
     reportCount: 0,
@@ -1031,7 +1033,7 @@ export default function WapApp() {
   const [spots, setSpots] = useState<Spot[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const saved = localStorage.getItem('wap_local_spots_v13');
+        const saved = localStorage.getItem('wap_local_spots_v14');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -1057,6 +1059,7 @@ export default function WapApp() {
   const [postDesc, setPostDesc] = useState<string>('');
   const [postCategory, setPostCategory] = useState<ViewCategory>('view');
   const [selectedScopes, setSelectedScopes] = useState<DisplayScope[]>(['world', 'friends', 'my']);
+  const [postHasParking, setPostHasParking] = useState<boolean>(false); // 🅿️ 駐車場有無チェック
   
   const [addressSearchQuery, setAddressSearchQuery] = useState<string>('');
   const [addressSuggestions, setAddressSuggestions] = useState<PlaceSuggestion[]>([]);
@@ -1108,7 +1111,7 @@ export default function WapApp() {
   useEffect(() => {
     if (spots.length > 0) {
       try {
-        localStorage.setItem('wap_local_spots_v13', JSON.stringify(spots));
+        localStorage.setItem('wap_local_spots_v14', JSON.stringify(spots));
       } catch {}
     }
   }, [spots]);
@@ -1184,6 +1187,7 @@ export default function WapApp() {
           cityName: d.city_name || '日本',
           category: d.category || 'view',
           scopes: d.scopes || ['world', 'friends', 'my'],
+          hasParking: d.has_parking || false,
           tags: d.tags || extractHashtags(d.description || ''),
           comments: d.comments || [],
           reportCount: d.report_count || 0,
@@ -1236,6 +1240,7 @@ export default function WapApp() {
             cityName: d.city_name || '日本',
             category: d.category || 'view',
             scopes: d.scopes || ['world', 'friends', 'my'],
+            hasParking: d.has_parking || false,
             tags: d.tags || [],
             comments: d.comments || [],
             reportCount: d.report_count || 0,
@@ -1689,10 +1694,11 @@ export default function WapApp() {
       setPreviewScale(1);
       setPreviewOffset({ x: 0, y: 0 });
       const first = pendingList[0];
-      setPostTitle(first.file.name.replace(/\.[^/.]+$/, ''));
+      setPostTitle(''); // ファイル名の自動入力をなしに維持
       setPostDesc('');
       setPostCategory(selectedCategories[0] || 'view');
       setSelectedScopes(['world', 'friends', 'my']);
+      setPostHasParking(false);
       
       if (first.hasGps && first.lat !== undefined && first.lon !== undefined) {
         setManualLat(first.lat.toString());
@@ -1792,7 +1798,7 @@ export default function WapApp() {
     const isFirstExplorer = !isNearbyExists;
     const extractedTags = extractHashtags(postDesc);
 
-    const spotTitleFinal = postTitle || current.file.name;
+    const spotTitleFinal = postTitle || '旅のスポット';
     const spotDescFinal = postDesc || '旅の思い出';
     const cityNameFinal = currentConfig.names[userLangCode] || currentConfig.names.en;
 
@@ -1815,6 +1821,7 @@ export default function WapApp() {
           city_name: cityNameFinal,
           category: postCategory,
           scopes: selectedScopes,
+          has_parking: postHasParking,
           tags: extractedTags,
           comments: [],
           views_count: 1,
@@ -1838,6 +1845,7 @@ export default function WapApp() {
         thumbUrl: finalThumbUrl,
         fileUrl: uploadedUrl,
         mediaList: updatedMediaList,
+        hasParking: existingSameSpot.hasParking || postHasParking,
         title: postTitle ? `${existingSameSpot.title} & ${postTitle}` : existingSameSpot.title,
         description: postDesc ? `${existingSameSpot.description}\n${postDesc}` : existingSameSpot.description,
       };
@@ -1866,6 +1874,7 @@ export default function WapApp() {
         cityName: cityNameFinal,
         category: postCategory,
         scopes: selectedScopes,
+        hasParking: postHasParking,
         tags: extractedTags,
         comments: [],
         reportCount: 0,
@@ -1878,7 +1887,7 @@ export default function WapApp() {
 
     setSpots(updatedSpotsList);
     try {
-      localStorage.setItem('wap_local_spots_v13', JSON.stringify(updatedSpotsList));
+      localStorage.setItem('wap_local_spots_v14', JSON.stringify(updatedSpotsList));
     } catch {}
 
     setIsSubmitting(false);
@@ -1889,8 +1898,9 @@ export default function WapApp() {
       setPreviewScale(1);
       setPreviewOffset({ x: 0, y: 0 });
       const nextItem = pendingUploads[nextIndex];
-      setPostTitle(nextItem.file.name.replace(/\.[^/.]+$/, ''));
+      setPostTitle('');
       setPostDesc('');
+      setPostHasParking(false);
       
       if (nextItem.hasGps && nextItem.lat !== undefined && nextItem.lon !== undefined) {
         setManualLat(nextItem.lat.toString());
@@ -2722,7 +2732,7 @@ export default function WapApp() {
                           </div>
                           <div>
                             <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{spot.userName}</div>
-                            <div style={{ fontSize: '11px', color: '#94a3b8' }}>📍 {spot.cityName} ({spot.createdAt})</div>
+                            <div style={{ fontSize: '11px', color: '#94a3b8' }}>📍 {spot.cityName} ({spot.createdAt}) {spot.hasParking && '🅿️ 駐車場あり'}</div>
                           </div>
                         </div>
                         <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
@@ -2828,7 +2838,7 @@ export default function WapApp() {
                     )}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{s.title}</div>
+                    <div style={{ fontSize: '14px', fontWeight: 'bold' }}>{s.title} {s.hasParking && '🅿️'}</div>
                     <div style={{ fontSize: '11px', color: '#64748b' }}>📍 {s.cityName} | 👀 {s.viewsCount} | ❤️ {s.savedCount}</div>
                   </div>
                 </div>
@@ -3414,7 +3424,7 @@ export default function WapApp() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
-                <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title}</h2>
+                <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>{selectedSpot.title} {selectedSpot.hasParking && <span style={{ fontSize: '13px', background: '#e0f2fe', color: '#0284c7', padding: '2px 8px', borderRadius: '6px' }}>🅿️ 駐車場あり</span>}</h2>
                 <button
                   onClick={() => handleTranslateDescription(selectedSpot.id, selectedSpot.description)}
                   style={{ background: '#e0f2fe', color: '#0284c7', border: 'none', borderRadius: '16px', padding: '6px 14px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
@@ -3485,15 +3495,15 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 投稿作成モーダル（ピンチ操作対応・ファイル名非表示） ── */}
+        {/* ── 投稿作成モーダル（プレビュー高さ240px拡大・ファイル名なし・駐車場追加） ── */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
-            <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '85vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box' }}>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 'bold' }}>
+            <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '88vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box' }}>
+              <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>
                 📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
               </h3>
 
-              {/* プレビューエリア */}
+              {/* プレビューエリア（面積拡大：高さ240px） */}
               <div
                 onMouseDown={(e) => {
                   isDraggingRef.current = true;
@@ -3533,7 +3543,7 @@ export default function WapApp() {
                   isDraggingRef.current = false;
                   initialPinchDistRef.current = null;
                 }}
-                style={{ width: '100%', height: '180px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '8px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'grab', touchAction: 'none' }}
+                style={{ width: '100%', height: '240px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '6px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'grab', touchAction: 'none' }}
               >
                 {pendingUploads[currentUploadIndex].fileType === 'image' ? (
                   <img
@@ -3567,37 +3577,37 @@ export default function WapApp() {
               </div>
 
               {/* ズーム調整コントロール */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '12px', background: '#f8fafc', padding: '6px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '10px', background: '#f8fafc', padding: '4px 8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                 <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 ズーム調整（二本指ピンチ対応）</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
                   <button
                     type="button"
                     onClick={() => setPreviewScale((prev) => Math.max(0.5, prev - 0.15))}
-                    style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', width: '28px', height: '28px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', width: '26px', height: '26px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     −
                   </button>
                   <button
                     type="button"
                     onClick={() => setPreviewScale((prev) => Math.min(3.5, prev + 0.15))}
-                    style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', width: '28px', height: '28px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', width: '26px', height: '26px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     ＋
                   </button>
                   <button
                     type="button"
                     onClick={() => { setPreviewScale(1); setPreviewOffset({ x: 0, y: 0 }); }}
-                    style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', padding: '0 8px', height: '28px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                    style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', padding: '0 6px', height: '26px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
                   >
                     リセット
                   </button>
                 </div>
               </div>
 
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '3px' }}>
                 🏷️ スポットのカテゴリを選択
               </label>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '10px' }}>
                 {(['view', 'gourmet', 'rain'] as const).map((cat) => {
                   const isSelected = postCategory === cat;
                   return (
@@ -3606,7 +3616,7 @@ export default function WapApp() {
                       type="button"
                       onClick={() => setPostCategory(cat)}
                       style={{
-                        padding: '8px 4px',
+                        padding: '6px 4px',
                         borderRadius: '10px',
                         border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
                         background: isSelected ? '#f0f9ff' : '#ffffff',
@@ -3622,72 +3632,70 @@ export default function WapApp() {
                 })}
               </div>
 
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
-                🌐 反映させるマップモードを選択
-              </label>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
-                {(['world', 'friends', 'my'] as const).map((scope) => {
-                  const isSelected = selectedScopes.includes(scope);
-                  return (
-                    <div
-                      key={scope}
-                      onClick={() => toggleScopeSelection(scope)}
-                      style={{
-                        padding: '10px 12px',
-                        borderRadius: '10px',
-                        border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
-                        background: isSelected ? '#f0f9ff' : '#ffffff',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        color: isSelected ? themeAccent : '#0f172a',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between'
-                      }}
-                    >
-                      <span>{scope === 'world' ? `🌎 ${t('world')}` : scope === 'friends' ? `👥 ${t('friends')}` : `📍 ${t('myMap')}`}</span>
-                      <span>{isSelected ? '☑️' : '☐'}</span>
-                    </div>
-                  );
-                })}
+              {/* 🅿️ 駐車場有無のチェック項目（いいねされやすくなる案内付き） */}
+              <div
+                onClick={() => setPostHasParking(!postHasParking)}
+                style={{
+                  background: postHasParking ? '#f0fdf4' : '#f8fafc',
+                  border: `2px solid ${postHasParking ? '#22c55e' : '#e2e8f0'}`,
+                  borderRadius: '10px',
+                  padding: '8px 12px',
+                  marginBottom: '10px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 'bold', color: postHasParking ? '#15803d' : '#0f172a' }}>
+                    🅿️ 駐車場あり
+                  </span>
+                  <span style={{ fontSize: '10px', color: '#64748b', marginTop: '1px' }}>
+                    💡 車旅・ドライブユーザーにシェアすると「いいね」されやすくなります！
+                  </span>
+                </div>
+                <span style={{ fontSize: '16px' }}>{postHasParking ? '✅' : '☑️'}</span>
               </div>
 
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名</label>
               <input
                 type="text"
+                placeholder="例: 美しい展望台"
                 value={postTitle}
                 onChange={(e) => setPostTitle(e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '8px 10px', marginTop: '2px', marginBottom: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation', boxSizing: 'border-box' }}
               />
 
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグ)</label>
               <textarea
                 rows={2}
+                placeholder="例: 夕日がとても綺麗でした！ #絶景 #ドライブ"
                 value={postDesc}
                 onChange={(e) => setPostDesc(e.target.value)}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '8px 10px', marginTop: '2px', marginBottom: '8px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation', boxSizing: 'border-box' }}
               />
 
-              <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative', boxSizing: 'border-box' }}>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
-                  📍 撮影場所を選択（長い文字は自動省略）
+              <div style={{ background: '#f0fdf4', padding: '8px 10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '10px', position: 'relative', boxSizing: 'border-box' }}>
+                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '4px' }}>
+                  📍 撮影場所を選択
                 </div>
                 <input
                   type="text"
                   placeholder="地名・住所・場所名を入力"
                   value={addressSearchQuery}
                   onChange={(e) => setAddressSearchQuery(e.target.value)}
-                  style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', touchAction: 'manipulation', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', touchAction: 'manipulation', boxSizing: 'border-box' }}
                 />
 
                 {addressSuggestions.length > 0 && (
-                  <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
+                  <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '4px', border: '1px solid #cbd5e1', zIndex: 700 }}>
                     {addressSuggestions.map((item) => (
                       <div
                         key={item.place_id}
                         onClick={() => handleSelectAddressSuggestion(item)}
-                        style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                        style={{ padding: '6px 8px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
                       >
                         <span>📍</span>
                         <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
@@ -3697,8 +3705,8 @@ export default function WapApp() {
                 )}
 
                 <div style={{ display: 'flex', gap: '6px' }}>
-                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, width: '50%', padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', touchAction: 'manipulation', boxSizing: 'border-box' }} />
-                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, width: '50%', padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', touchAction: 'manipulation', boxSizing: 'border-box' }} />
+                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, width: '50%', padding: '4px 6px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', touchAction: 'manipulation', boxSizing: 'border-box' }} />
+                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, width: '50%', padding: '4px 6px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', touchAction: 'manipulation', boxSizing: 'border-box' }} />
                 </div>
               </div>
 
