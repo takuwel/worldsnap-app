@@ -532,7 +532,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   IE: { names: { ja: 'アイルランド', en: 'Ireland', ko: '아이슬란드', zh: '爱尔兰' }, flag: '🇮🇪', region: '🇪🇺 ヨーロッパ', lat: 53.1424, lon: -7.6921, zoom: 7 },
   BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: 'ベルギー' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: 'クロアチア' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
-  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: '루마니아', zh: 'ルーマニア' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
+  RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: 'ルーマニア', zh: 'ルーマニア' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
   UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우クライナ', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
@@ -625,7 +625,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   GH: { names: { ja: 'ガーナ', en: 'Ghana', ko: '가나', zh: '加纳' }, flag: '🇬🇭', region: '🦁 アフリカ', lat: 7.9465, lon: -1.0232, zoom: 7 },
   NG: { names: { ja: 'ナイジェリア', en: 'Nigeria', ko: '나이지리아', zh: '尼日利亚' }, flag: '🇳🇬', region: '🦁 アフリカ', lat: 9.0820, lon: 8.6753, zoom: 6 },
   ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '埃塞俄比亚' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
-  SN: { names: { ja: 'セネガル', en: 'Senegal', ko: '세네갈', zh: 'セネガル' }, flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
+  SN: { names: { ja: 'セネガル', en: 'Senegal', ko: '세네갈', zh: 'セーガル' }, flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
   MG: { names: { ja: 'マダガスカル', en: 'Madagascar', ko: 'マ다가스카르', zh: 'マダガスカル' }, flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
   RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: 'ルワンダ' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
   UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: 'ウガンダ' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
@@ -1694,7 +1694,7 @@ export default function WapApp() {
       setPreviewScale(1);
       setPreviewOffset({ x: 0, y: 0 });
       const first = pendingList[0];
-      setPostTitle(''); // ファイル名の自動入力をなしに維持
+      setPostTitle('');
       setPostDesc('');
       setPostCategory(selectedCategories[0] || 'view');
       setSelectedScopes(['world', 'friends', 'my']);
@@ -1724,7 +1724,6 @@ export default function WapApp() {
     }
   };
 
-  // 複数投稿時の位置情報維持 ＆ 投稿完了後のキーボード自動格納 ＆ Supabaseへのクラウド保存処理
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -2208,6 +2207,12 @@ export default function WapApp() {
               {onboardingStep === 4 && (
                 <div style={{ textAlign: 'left', touchAction: 'pan-y' }}>
                   <h3 style={{ fontSize: '15px', margin: '0 0 8px 0', color: '#0f172a' }}>{t('step3TitleEula')}</h3>
+                  
+                  {/* 利用規約のタイトル表記を元の形式に戻しました */}
+                  <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284c7', marginBottom: '6px', textAlign: 'center' }}>
+                    【wap 利用規約および位置情報ポリシー（Apple審査対応版）】
+                  </div>
+
                   <div
                     onScroll={(e) => {
                       const target = e.currentTarget;
@@ -2215,7 +2220,7 @@ export default function WapApp() {
                         setHasScrolledToBottom(true);
                       }
                     }}
-                    style={{ maxHeight: '180px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', touchAction: 'pan-y' }}
+                    style={{ maxHeight: '160px', overflowY: 'auto', background: '#f8fafc', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '11px', color: '#475569', lineHeight: '1.6', whiteSpace: 'pre-line', marginBottom: '10px', touchAction: 'pan-y' }}
                   >
                     {t('eulaFullText')}
                     <div style={{ textAlign: 'center', fontWeight: 'bold', color: '#0284c7', marginTop: '10px' }}>▼ ここまでお読みください</div>
@@ -2618,8 +2623,8 @@ export default function WapApp() {
                 onDoubleTap={handleMapDoubleTap}
               />
 
-              {/* マップ右側のコントロールボタン */}
-              <div style={{ position: 'absolute', bottom: '90px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
+              {/* マップ右側のコントロールボタン（メニューバーと被らないよう bottom を 95px に調整） */}
+              <div style={{ position: 'absolute', bottom: '95px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
                 <button
                   title="現在地へ移動"
                   onClick={() => {
@@ -2661,8 +2666,8 @@ export default function WapApp() {
               </div>
             </div>
 
-            {/* 写真/動画を追加ボタン（左下配置） */}
-            <div style={{ position: 'absolute', bottom: '85px', left: '16px', zIndex: 450, boxSizing: 'border-box' }}>
+            {/* 写真/動画を追加ボタン（左下配置：メニューバーと被らないよう bottom を 95px に調整） */}
+            <div style={{ position: 'absolute', bottom: '95px', left: '16px', zIndex: 450, boxSizing: 'border-box' }}>
               <label
                 style={{
                   padding: '10px 18px',
@@ -3495,10 +3500,10 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 投稿作成モーダル（プレビュー高さ240px拡大・ファイル名なし・駐車場追加） ── */}
+        {/* ── 投稿作成モーダル（プレビュー高さ240px拡大・ファイル名なし・駐車場追加・下部余白確保） ── */}
         {pendingUploads.length > 0 && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
-            <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '88vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box' }}>
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', paddingBottom: '80px', touchAction: 'none', boxSizing: 'border-box' }}>
+            <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '82vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box' }}>
               <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', fontWeight: 'bold' }}>
                 📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
               </h3>
@@ -3632,7 +3637,7 @@ export default function WapApp() {
                 })}
               </div>
 
-              {/* 🅿️ 駐車場有無のチェック項目（いいねされやすくなる案内付き） */}
+              {/* 🅿️ 駐車場有無のチェック項目 */}
               <div
                 onClick={() => setPostHasParking(!postHasParking)}
                 style={{
