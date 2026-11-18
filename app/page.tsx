@@ -644,7 +644,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: '安哥拉' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
   CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: 'カメルーン' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
   CI: { names: { ja: 'コートジボワール', en: 'Ivory Coast', ko: '코트디부아르', zh: '科特迪瓦' }, flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
-  MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모잠비크', zh: '莫ザンビーク' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
+  MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모잠비크', zh: 'モザンビーク' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
   SD: { names: { ja: 'スーダン', en: 'Sudan', ko: '수단', zh: '苏丹' }, flag: '🇸🇩', region: '🦁 アフリカ', lat: 12.8628, lon: 30.2176, zoom: 5 },
   LY: { names: { ja: 'リビア', en: 'Libya', ko: '리비아', zh: '利比亚' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
   ML: { names: { ja: 'マリ', en: 'Mali', ko: '말리', zh: '马里' }, flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 5 },
@@ -652,7 +652,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   SO: { names: { ja: 'ソマリア', en: 'Somalia', ko: '소말리아', zh: '索马里' }, flag: '🇸🇴', region: '🦁 アフリカ', lat: 5.1521, lon: 46.1996, zoom: 6 },
   BJ: { names: { ja: 'ベナン', en: 'Benin', ko: '베닌', zh: '贝宁' }, flag: '🇧🇯', region: '🦁 アフリカ', lat: 9.3077, lon: 2.3158, zoom: 7 },
   BF: { names: { ja: 'ブルキナファソ', en: 'Burkina Faso', ko: '부르키나파소', zh: '布基纳法索' }, flag: '🇧🇫', region: '🦁 アフリカ', lat: 12.2383, lon: -1.5616, zoom: 6 },
-  BI: { names: { ja: 'ブルンジ', en: 'Burundi', ko: '부룬디', zh: '布隆迪' }, flag: '🇧🇮', region: '🦁 アフリカ', lat: -3.3731, lon: 29.9189, zoom: 8 },
+  BI: { names: { ja: 'ブルンジ', en: 'Burundi', ko: '부룬디', zh: 'ブルンジ' }, flag: '🇧🇮', region: '🦁 アフリカ', lat: -3.3731, lon: 29.9189, zoom: 8 },
   CV: { names: { ja: 'カーボベルデ', en: 'Cape Verde', ko: '카보베르데', zh: '佛得角' }, flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 },
   CF: { names: { ja: '中央アフリカ共和国', en: 'Central African Republic', ko: '중앙아프리카 공화국', zh: '中非共和国' }, flag: '🇨🇫', region: '🦁 アフリカ', lat: 6.6111, lon: 20.9394, zoom: 6 },
   TD: { names: { ja: 'チャド', en: 'Chad', ko: '차드', zh: '乍得' }, flag: '🇹🇩', region: '🦁 アフリカ', lat: 15.4542, lon: 18.7322, zoom: 5 },
@@ -917,7 +917,6 @@ const GoogleMapComponent = ({
         <text x="38" y="14" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
       ` : '';
 
-      // 白い余白・空白を完全除去したピンSVG定義
       const marker = new window.google.maps.Marker({
         position: { lat: spot.lat, lng: spot.lon },
         map: map,
@@ -1064,7 +1063,7 @@ export default function WapApp() {
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // プレビュー操作用ステート（画像固定＆自動中央復帰対応）
+  // プレビュー操作用ステート（2本指での完全な拡大縮小・移動・自動中央復帰）
   const [previewScale, setPreviewScale] = useState<number>(1);
   const [previewOffset, setPreviewOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const isDraggingRef = useRef<boolean>(false);
@@ -1574,10 +1573,9 @@ export default function WapApp() {
         return s;
       })
     );
-    if (customText === undefined) {
-      setNewCommentText('');
-      setReplyTargetUser(null);
-    }
+    // 送信完了後にテキストを完全にクリア
+    setNewCommentText('');
+    setReplyTargetUser(null);
     showToast('💬 コメントを投稿しました！');
   };
 
@@ -2373,7 +2371,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* カレンダーログ押下時の詳細モーダル */}
+        {/* カレンダーログの特定日付押下時モーダル */}
         {selectedCalendarDate && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 8500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '380px', width: '100%', maxHeight: '80vh', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
@@ -2773,7 +2771,7 @@ export default function WapApp() {
             </div>
           )}
 
-          {/* マイページタブ（カレンダー形式ログ対応） */}
+          {/* マイページタブ（カレンダーサムネイル表示対応） */}
           {currentTab === 'profile' && (
             <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', padding: '16px', paddingBottom: '90px', background: '#ffffff', touchAction: 'pan-y', boxSizing: 'border-box' }}>
               <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '20px', border: '1px solid #e2e8f0', textAlign: 'center', boxSizing: 'border-box', marginBottom: '12px' }}>
@@ -2866,7 +2864,7 @@ export default function WapApp() {
 
               {profileSubTab === 'timeline' && (
                 <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '16px', border: '1px solid #e2e8f0' }}>
-                  <h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>🗓️ 月別カレンダーログ (タップでその日の投稿を表示)</h3>
+                  <h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>🗓️ 月別カレンダーログ (サムネイル表示・タップで詳細)</h3>
                   {(() => {
                     const now = new Date();
                     const year = now.getFullYear();
@@ -2874,11 +2872,11 @@ export default function WapApp() {
                     const firstDayIndex = new Date(year, month, 1).getDay();
                     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-                    const postDatesMap = new Set<string>();
+                    const postMap = new Map<string, Spot>();
                     mySpots.forEach(s => {
-                      if (s.createdAt) postDatesMap.add(s.createdAt);
+                      if (s.createdAt) postMap.set(s.createdAt, s);
                       s.mediaList?.forEach(m => {
-                        if (m.createdAt) postDatesMap.add(m.createdAt);
+                        if (m.createdAt) postMap.set(m.createdAt, s);
                       });
                     });
 
@@ -2894,8 +2892,15 @@ export default function WapApp() {
                       const dateKey3 = `${year}-${mStr}-${dStr}`;
                       const dateKeyJP = `${year}年${Number(mStr)}月${Number(dStr)}日`;
                       
-                      const hasPost = Array.from(postDatesMap).some(dt => dt.includes(`${month + 1}/${d}/${year}`) || dt.includes(`${year}/${mStr}/${dStr}`) || dt === dateKey3 || dt === dateKeyJP);
-                      daysArray.push({ day: d, dateStr: `${year}/${mStr}/${dStr}`, hasPost });
+                      let foundSpot: Spot | undefined = undefined;
+                      for (const [k, v] of postMap.entries()) {
+                        if (k.includes(`${month + 1}/${d}/${year}`) || k.includes(`${year}/${mStr}/${dStr}`) || k === dateKey3 || k === dateKeyJP) {
+                          foundSpot = v;
+                          break;
+                        }
+                      }
+
+                      daysArray.push({ day: d, dateStr: `${year}/${mStr}/${dStr}`, spot: foundSpot });
                     }
 
                     return (
@@ -2908,34 +2913,42 @@ export default function WapApp() {
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
                           {daysArray.map((item, idx) => {
-                            if (!item) return <div key={idx} style={{ height: '36px' }}></div>;
+                            if (!item) return <div key={idx} style={{ height: '44px' }}></div>;
                             return (
                               <div
                                 key={idx}
                                 onClick={() => {
-                                  if (item.hasPost) {
+                                  if (item.spot) {
                                     setSelectedCalendarDate(item.dateStr);
                                   } else {
                                     showToast('この日の投稿はありません');
                                   }
                                 }}
                                 style={{
-                                  height: '36px',
+                                  height: '44px',
                                   borderRadius: '8px',
-                                  background: item.hasPost ? '#0284c7' : '#ffffff',
-                                  color: item.hasPost ? '#ffffff' : '#334155',
-                                  border: '1px solid #e2e8f0',
+                                  background: item.spot ? '#ffffff' : '#ffffff',
+                                  color: '#334155',
+                                  border: `2px solid ${item.spot ? '#0284c7' : '#e2e8f0'}`,
                                   display: 'flex',
                                   flexDirection: 'column',
                                   alignItems: 'center',
                                   justifyContent: 'center',
-                                  cursor: item.hasPost ? 'pointer' : 'default',
-                                  fontWeight: item.hasPost ? 'bold' : 'normal',
-                                  boxShadow: item.hasPost ? '0 2px 6px rgba(2,132,199,0.3)' : 'none'
+                                  cursor: item.spot ? 'pointer' : 'default',
+                                  position: 'relative',
+                                  overflow: 'hidden'
                                 }}
                               >
-                                <span style={{ fontSize: '12px' }}>{item.day}</span>
-                                {item.hasPost && <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#fff', marginTop: '2px' }}></span>}
+                                {item.spot ? (
+                                  <>
+                                    <img src={item.spot.thumbUrl || item.spot.fileUrl} alt="thumb" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }} />
+                                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                      <span style={{ fontSize: '11px', fontWeight: '900', color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,0.8)' }}>{item.day}</span>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <span style={{ fontSize: '11px', color: '#94a3b8' }}>{item.day}</span>
+                                )}
                               </div>
                             );
                           })}
@@ -3352,13 +3365,23 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 投稿作成モーダル（写真固定＆中央自動復帰対応） */}
+        {/* 投稿作成モーダル（2本指での完全な拡大縮小・移動＆黒余白完全防止対応） */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
             <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '82vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box', marginBottom: '40px' }}>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: 'bold' }}>
-                📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
-              </h3>
+              
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold' }}>
+                  📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
+                </h3>
+                {/* 投稿者情報（アイコンとユーザー名）の表示 */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#f1f5f9', padding: '4px 10px', borderRadius: '20px' }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: userAvatar ? `url(${userAvatar}) center/cover` : themeAccent, color: '#fff', fontSize: '11px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                    {!userAvatar && userName.charAt(0)}
+                  </div>
+                  <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#0f172a' }}>{userName}</span>
+                </div>
+              </div>
 
               <div
                 onMouseDown={(e) => {
@@ -3369,10 +3392,10 @@ export default function WapApp() {
                   if (!isDraggingRef.current) return;
                   const newX = e.clientX - dragStartRef.current.x;
                   const newY = e.clientY - dragStartRef.current.y;
-                  const maxOffset = 120 * previewScale;
+                  const limit = 80 * (previewScale - 1);
                   setPreviewOffset({
-                    x: Math.max(-maxOffset, Math.min(maxOffset, newX)),
-                    y: Math.max(-maxOffset, Math.min(maxOffset, newY))
+                    x: Math.max(-limit, Math.min(limit, newX)),
+                    y: Math.max(-limit, Math.min(limit, newY))
                   });
                 }}
                 onMouseUp={() => { isDraggingRef.current = false; }}
@@ -3396,15 +3419,16 @@ export default function WapApp() {
                     const dy = e.touches[0].clientY - e.touches[1].clientY;
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     const minAllowedScale = 1.0;
-                    const newScale = Math.max(minAllowedScale, Math.min(3.5, initialScaleRef.current * (dist / initialPinchDistRef.current)));
+                    const newScale = Math.max(minAllowedScale, Math.min(3.0, initialScaleRef.current * (dist / initialPinchDistRef.current)));
                     setPreviewScale(newScale);
+                    if (newScale === 1.0) setPreviewOffset({ x: 0, y: 0 });
                   } else if (isDraggingRef.current && e.touches.length === 1) {
                     const newX = e.touches[0].clientX - dragStartRef.current.x;
                     const newY = e.touches[0].clientY - dragStartRef.current.y;
-                    const maxOffset = 120 * previewScale;
+                    const limit = 80 * (previewScale - 1);
                     setPreviewOffset({
-                      x: Math.max(-maxOffset, Math.min(maxOffset, newX)),
-                      y: Math.max(-maxOffset, Math.min(maxOffset, newY))
+                      x: Math.max(-limit, Math.min(limit, newX)),
+                      y: Math.max(-limit, Math.min(limit, newY))
                     });
                   }
                 }}
@@ -3446,30 +3470,14 @@ export default function WapApp() {
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '12px', background: '#f8fafc', padding: '6px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 ズーム・位置調整（中央復帰対応）</span>
-                <div style={{ display: 'flex', gap: '4px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setPreviewScale((prev) => Math.max(1.0, prev - 0.15))}
-                    style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', width: '28px', height: '28px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  >
-                    −
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPreviewScale((prev) => Math.min(3.5, prev + 0.15))}
-                    style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', width: '28px', height: '28px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  >
-                    ＋
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { setPreviewScale(1); setPreviewOffset({ x: 0, y: 0 }); }}
-                    style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', padding: '0 8px', height: '28px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
-                  >
-                    中央に戻す
-                  </button>
-                </div>
+                <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 2本指でピンチ＆ドラッグ操作可能</span>
+                <button
+                  type="button"
+                  onClick={() => { setPreviewScale(1); setPreviewOffset({ x: 0, y: 0 }); }}
+                  style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', padding: '0 8px', height: '28px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  中央に戻す
+                </button>
               </div>
 
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
