@@ -597,7 +597,7 @@ HT: { names: { ja: 'ハイチ', en: 'Haiti', ko: '아이티', zh: '海地' }, fl
 GY: { names: { ja: 'ガイアナ', en: 'Guyana', ko: '가이아나', zh: '圭亚那' }, flag: '🇬🇾', region: '🗽 中南米', lat: 4.8604, lon: -58.9302, zoom: 6 },
 SR: { names: { ja: 'スリナム', en: 'Suriname', ko: '수리남', zh: '苏里南' }, flag: '🇸🇷', region: '🗽 中南米', lat: 3.9193, lon: -56.0278, zoom: 7 },
 AG: { names: { ja: 'アンティグア・バーブーダ', en: 'Antigua and Barbuda', ko: '앤티가 바부다', zh: '安提瓜和巴布达' }, flag: '🇦🇬', region: '🗽 中南米', lat: 17.0608, lon: -61.7964, zoom: 9 },
-BB: { names: { ja: 'バルバドス', en: 'Barbados', ko: '바베이도스', zh: '巴巴多斯' }, flag: '🇧🇧', region: '🗽 中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
+BB: { names: { ja: 'バルバドス', en: 'Barbados', ko: '바바도스', zh: '巴巴多斯' }, flag: '🇧🇧', region: '🗽 中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
 DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
 GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나ダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
 KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
@@ -988,12 +988,19 @@ const [selectedFriend, setSelectedFriend] = useState<FriendUser | null>(null);
 // カレンダーログ用モーダルステート
 const [selectedCalendarDate, setSelectedCalendarDate] = useState<string | null>(null);
 
+// カレンダー年月の遡及用ステート（追加要望1）
+const [calendarYear, setCalendarYear] = useState<number>(() => new Date().getFullYear());
+const [calendarMonth, setCalendarMonth] = useState<number>(() => new Date().getMonth() + 1);
+
 // 同一場所の複数投稿一覧グリッド用モーダルステート
 const [isMultiPostsModalOpen, setIsMultiPostsModalOpen] = useState<boolean>(false);
 const [multiPostsList, setMultiPostsList] = useState<Spot[]>([]);
 
 // どのコメントに対する返信かを保持するステート
 const [replyTargetUser, setReplyTargetUser] = useState<string | null>(null);
+
+// タイムライン上で直接コメントエリアを開閉するステート（追加要望4）
+const [openCommentsForSpot, setOpenCommentsForSpot] = useState<Record<string, boolean>>({});
 
 const scannerRef = useRef<HTMLDivElement>(null);
 const html5QrCodeRef = useRef<any>(null);
@@ -1722,15 +1729,17 @@ description: current.description,
 createdAt: todayStr,
 };
 
-const existingSameSpot = spots.find(
-(s) => s.userId === 'me' && Math.abs(s.lat - finalLat) < 0.005 && Math.abs(s.lon - finalLon) < 0.005
-);
-
 const isNearbyExists = spots.some((s) => Math.abs(s.lat - finalLat) < 0.05 && Math.abs(s.lon - finalLon) < 0.05);
 const isFirstExplorer = !isNearbyExists;
 const extractedTags = extractHashtags(current.description);
 
 let updatedSpotsList = [...spots];
+
+// 【追加要望2】複数選択時（pendingUploadsの1回の投稿内）のみメディア合体。別回の投稿時は独立した別投稿として保存！
+if (currentUploadIndex === 0 && pendingUploads.length > 1) {
+const existingSameSpot = spots.find(
+(s) => s.userId === 'me' && Math.abs(s.lat - finalLat) < 0.005 && Math.abs(s.lon - finalLon) < 0.005
+);
 
 if (existingSameSpot) {
 const updatedMediaList = [...(existingSameSpot.mediaList || [{ fileUrl: existingSameSpot.fileUrl, thumbUrl: existingSameSpot.thumbUrl, fileType: existingSameSpot.fileType, fileName: existingSameSpot.fileName, title: existingSameSpot.title, description: existingSameSpot.description, createdAt: existingSameSpot.createdAt }]), newMediaItem];
@@ -1745,9 +1754,7 @@ fileUrl: uploadedUrl,
 mediaList: updatedMediaList,
 hasParking: current.hasParking || existingSameSpot.hasParking,
 };
-
 updatedSpotsList = updatedSpotsList.map((s) => (s.id === existingSameSpot.id ? updatedSpot : s));
-showToast(`📸 同じ場所のピンに新しいメディアを追加しました！`);
 } else {
 const newSpot: Spot = {
 id: current.id,
@@ -1776,9 +1783,38 @@ comments: [],
 reportCount: 0,
 createdAt: todayStr,
 };
-
-updatedSpotsList = [newSpot, ...updatedSpotsList.filter((s) => s.id !== newSpot.id)];
-showToast(`📍 マップにピンを反映しました！🚀`);
+updatedSpotsList = [newSpot, ...updatedSpotsList];
+}
+} else {
+// 別回での投稿は常に新しい独立した別投稿として追加
+const newSpot: Spot = {
+id: current.id + '-' + Math.random().toString(36).substring(2, 5),
+userId: 'me',
+userName,
+userAvatar,
+isFirstExplorer,
+viewsCount: 1,
+savedCount: 0,
+title: current.title || '無題のスポット',
+description: current.description || '旅の思い出',
+fileName: current.file.name,
+fileUrl: uploadedUrl,
+thumbUrl: finalThumbUrl,
+fileType: current.fileType,
+mediaList: [newMediaItem],
+lat: finalLat,
+lon: finalLon,
+countryCode: userCountry,
+cityName: currentConfig.names[userLangCode] || currentConfig.names.en,
+category: postCategory,
+scopes: selectedScopes,
+hasParking: current.hasParking,
+tags: extractedTags,
+comments: [],
+reportCount: 0,
+createdAt: todayStr,
+};
+updatedSpotsList = [newSpot, ...updatedSpotsList];
 }
 
 setSpots(updatedSpotsList);
@@ -1787,6 +1823,7 @@ localStorage.setItem('wap_local_spots_v13', JSON.stringify(updatedSpotsList));
 } catch {}
 
 setIsSubmitting(false);
+showToast(`📍 マップにピンを反映しました！🚀`);
 
 if (currentUploadIndex + 1 < pendingUploads.length) {
 const nextIndex = currentUploadIndex + 1;
@@ -2373,7 +2410,8 @@ style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff',
 <button onClick={() => setIsMultiPostsModalOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
 </div>
 
-<div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', paddingRight: '4px', touchAction: 'pan-y' }}>
+{/* 【追加要望3】タップで切り替えではなく、縦スクロールで別の投稿を見られるグリッド・リスト */}
+<div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', paddingRight: '4px', touchAction: 'pan-y' }}>
 {multiPostsList.map(spot => (
 <div
 key={spot.id}
@@ -2381,14 +2419,14 @@ onClick={() => {
 setIsMultiPostsModalOpen(false);
 handleOpenSpot(spot);
 }}
-style={{ background: '#f8fafc', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
+style={{ background: '#f8fafc', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', gap: '12px', padding: '8px', alignItems: 'center' }}
 >
-<div style={{ width: '100%', height: '120px', background: '#000', position: 'relative' }}>
+<div style={{ width: '70px', height: '70px', background: '#000', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
 <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
 </div>
-<div style={{ padding: '8px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-<div style={{ fontSize: '12px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
-<div style={{ fontSize: '10px', color: '#64748b' }}>👤 {spot.userName}</div>
+<div style={{ flex: 1, minWidth: 0 }}>
+<div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
+<div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>👤 {spot.userName} | ❤️ {spot.savedCount}</div>
 </div>
 </div>
 ))}
@@ -2579,7 +2617,6 @@ theme={mapTheme}
 userLang={userLangCode}
 onMoveEnd={handleMapMoveEnd}
 onSelectSpot={(spot) => {
-// 同じ場所（近隣）に複数投稿があるかチェックして「すべての投稿を見る」ボタン用リストを作成
 const nearby = spots.filter(s => Math.abs(s.lat - spot.lat) < 0.005 && Math.abs(s.lon - spot.lon) < 0.005);
 if (nearby.length > 1) {
 setMultiPostsList(nearby);
@@ -2592,21 +2629,30 @@ onDoubleTap={handleMapDoubleTap}
 />
 
 <div style={{ position: 'absolute', bottom: '95px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
+{/* 【追加要望5】位置情報取得ボタン（1回目で確実に反応＆即時反映） */}
 <button
 title="現在地へ移動"
 onClick={() => {
 if (navigator.geolocation) {
 navigator.geolocation.getCurrentPosition(
 (pos) => {
-setTargetCenter([pos.coords.latitude, pos.coords.longitude]);
+const lat = pos.coords.latitude;
+const lon = pos.coords.longitude;
+setTargetCenter([lat, lon]);
 setTargetZoom(15);
-showToast('🎯 現在地に移動しました');
+// もし投稿モーダルが開いていれば即座に反映
+if (pendingUploads.length > 0) {
+setManualLat(lat.toString());
+setManualLon(lon.toString());
+setAddressSearchQuery('📍 現在地 (GPS)');
+}
+showToast('🎯 現在地を取得しました');
 },
 (err) => {
 console.error(err);
 setIsLocationGuideOpen(true);
 },
-{ enableHighAccuracy: false, timeout: 6000, maximumAge: 60000 }
+{ enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
 );
 } else {
 showWarning('⚠️ お使いのブラウザは位置情報に対応していません。');
@@ -2659,7 +2705,7 @@ boxSizing: 'border-box',
 </div>
 </div>
 
-{/* タイムラインタブ（TikTok風縦スクロールで他ユーザーの投稿もスムーズに閲覧） */}
+{/* タイムラインタブ（TikTok風縦スクロール ＆ 追加要望4：コメントボタンを押したその場で白いコメント欄を展開・入力） */}
 {currentTab === 'timeline' && (
 <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y', paddingBottom: '90px', boxSizing: 'border-box' }}>
 <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
@@ -2674,11 +2720,11 @@ style={{ flex: 1, padding: '8px 12px', borderRadius: '20px', border: '1px solid 
 
 <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
 {timelineSpots.map((spot) => {
+const isCommentsOpen = openCommentsForSpot[spot.id] || false;
 return (
 <div
 key={spot.id}
-onClick={() => handleOpenSpot(spot)}
-style={{ width: '100%', height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0px))', scrollSnapAlign: 'start', scrollSnapStop: 'always', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden', cursor: 'pointer', flexShrink: 0 }}
+style={{ width: '100%', height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0px))', scrollSnapAlign: 'start', scrollSnapStop: 'always', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden', flexShrink: 0 }}
 >
 <div style={{ flex: 1, width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 {spot.fileType === 'video' ? (
@@ -2692,7 +2738,7 @@ style={{ width: '100%', height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0
 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)', pointerEvents: 'none' }}></div>
 </div>
 
-<div style={{ position: 'absolute', bottom: '110px', left: '16px', right: '85px', color: '#fff', pointerEvents: 'auto' }} onClick={(e) => e.stopPropagation()}>
+<div style={{ position: 'absolute', bottom: '110px', left: '16px', right: '85px', color: '#fff', pointerEvents: 'auto' }}>
 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
 <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
 {spot.userName.charAt(0)}
@@ -2704,9 +2750,45 @@ style={{ width: '100%', height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0
 </div>
 <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 'bold' }}>{spot.title}</h3>
 <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
+
+{/* 【追加要望4】コメントボタンを押したその場で展開される「白いコメントセクション」 */}
+{isCommentsOpen && (
+<div style={{ background: '#ffffff', color: '#0f172a', padding: '12px', borderRadius: '16px', marginTop: '8px', maxHeight: '180px', overflowY: 'auto', boxShadow: '0 8px 24px rgba(0,0,0,0.3)', border: '1px solid #cbd5e1', pointerEvents: 'auto' }}>
+<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', borderBottom: '1px solid #e2e8f0', paddingBottom: '4px' }}>
+<span style={{ fontSize: '12px', fontWeight: 'bold', color: '#0284c7' }}>💬 コメント一覧</span>
+<button onClick={() => setOpenCommentsForSpot(prev => ({ ...prev, [spot.id]: false }))} style={{ background: 'transparent', border: 'none', fontSize: '14px', cursor: 'pointer', fontWeight: 'bold', color: '#64748b' }}>✕ 閉じる</button>
+</div>
+<div style={{ maxHeight: '90px', overflowY: 'auto', marginBottom: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+{spot.comments && spot.comments.length > 0 ? (
+spot.comments.map(c => (
+<div key={c.id} style={{ fontSize: '11px', background: '#f8fafc', padding: '6px 8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+<b>{c.userName}:</b> {c.text}
+</div>
+))
+) : (
+<div style={{ fontSize: '11px', color: '#94a3b8', textAlign: 'center', padding: '8px' }}>コメントはまだありません</div>
+)}
+</div>
+<div style={{ display: 'flex', gap: '6px' }}>
+<input
+type="text"
+placeholder="💬 コメントを入力..."
+value={newCommentText}
+onChange={(e) => setNewCommentText(e.target.value)}
+style={{ flex: 1, padding: '6px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a', fontSize: '14px', outline: 'none' }}
+/>
+<button
+onClick={() => handleAddComment(spot.id, newCommentText)}
+style={{ padding: '6px 12px', background: '#0284c7', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+>
+送信
+</button>
+</div>
+</div>
+)}
 </div>
 
-<div style={{ position: 'absolute', right: '16px', bottom: '140px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff' }} onClick={(e) => e.stopPropagation()}>
+<div style={{ position: 'absolute', right: '16px', bottom: '140px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff', pointerEvents: 'auto' }}>
 <button
 onClick={() => handleToggleLike(spot.id)}
 style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '26px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
@@ -2715,8 +2797,9 @@ style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '26
 <span style={{ fontSize: '11px', fontWeight: 'bold' }}>{spot.savedCount}</span>
 </button>
 
+{/* 【追加要望4】コメントボタンをクリックしたら画面遷移せずその場でコメント欄を開閉する */}
 <button
-onClick={() => handleOpenSpot(spot)}
+onClick={() => setOpenCommentsForSpot(prev => ({ ...prev, [spot.id]: !prev[spot.id] }))}
 style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
 >
 <span>💬</span>
@@ -2851,11 +2934,33 @@ textAlign: 'center',
 
 {profileSubTab === 'timeline' && (
 <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '16px', border: '1px solid #e2e8f0' }}>
-<h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>🗓️ 月別カレンダーログ (サムネイル表示・タップで詳細)</h3>
+<h3 style={{ margin: '0 0 10px 0', fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>🗓️ 旅のログ カレンダー</h3>
+
+{/* 【追加要望1】年月を選択して昔や1年前・2年前へ自由に遡れるセレクトバー */}
+<div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '14px' }}>
+<select
+value={calendarYear}
+onChange={(e) => setCalendarYear(Number(e.target.value))}
+style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff', fontWeight: 'bold', fontSize: '13px' }}
+>
+{[2024, 2025, 2026, 2027, 2028].map(y => (
+<option key={y} value={y}>{y}年</option>
+))}
+</select>
+<select
+value={calendarMonth}
+onChange={(e) => setCalendarMonth(Number(e.target.value))}
+style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#fff', fontWeight: 'bold', fontSize: '13px' }}
+>
+{Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+<option key={m} value={m}>{m}月</option>
+))}
+</select>
+</div>
+
 {(() => {
-const now = new Date();
-const year = now.getFullYear();
-const month = now.getMonth();
+const year = calendarYear;
+const month = calendarMonth - 1;
 const firstDayIndex = new Date(year, month, 1).getDay();
 const daysInMonth = new Date(year, month + 1, 0).getDate();
 
@@ -2890,9 +2995,6 @@ daysArray.push({ day: d, dateStr: `${year}/${mStr}/${dStr}`, spot: foundSpot });
 
 return (
 <div>
-<div style={{ textAlign: 'center', fontSize: '13px', fontWeight: 'bold', marginBottom: '10px', color: '#0284c7' }}>
-{year}年 {month + 1}月
-</div>
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', marginBottom: '6px', fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>
 <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
 </div>
@@ -3137,7 +3239,7 @@ onClick={() => {
 setIsSettingsOpen(false);
 showToast('⚙️ 設定を保存しました！');
 }}
-style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: '14px', cursor: 'pointer' }}
+style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
 >
 {t('close')}
 </button>
@@ -3170,7 +3272,7 @@ style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff',
 </div>
 )}
 
-{/* 詳細モーダル（複数枚投稿時のコメント一括化対応） */}
+{/* 詳細モーダル */}
 {selectedSpot && (
 <div className="scrollable-content" style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box', touchAction: 'pan-y', paddingBottom: '90px' }}>
 <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
@@ -3338,7 +3440,7 @@ style={{ padding: '8px 16px', background: themeAccent, color: '#fff', border: 'n
 </div>
 )}
 
-{/* 投稿作成モーダル（2本指でのピンチ＆縦横自由なドラッグ移動対応） */}
+{/* 投稿作成モーダル */}
 {pendingUploads.length > 0 && (
 <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
 <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '82vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box', marginBottom: '40px' }}>
