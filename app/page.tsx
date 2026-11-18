@@ -491,10 +491,10 @@ KH: { names: { ja: 'カンボジア', en: 'Cambodia', ko: '캄보디아', zh: '�
 LA: { names: { ja: 'ラオス', en: 'Laos', ko: '라오스', zh: '老挝' }, flag: '🇱🇦', region: '🌴 東南アジア', lat: 19.8563, lon: 102.4955, zoom: 6 },
 MM: { names: { ja: 'ミャンマー', en: 'Myanmar', ko: '미얀마', zh: '缅甸' }, flag: '🇲🇲', region: '🌴 東南アジア', lat: 21.9162, lon: 95.9560, zoom: 5 },
 BN: { names: { ja: 'ブルネイ', en: 'Brunei', ko: '브루네이', zh: '文莱' }, flag: '🇧🇳', region: '🌴 東南アジア', lat: 4.5353, lon: 114.7277, zoom: 9 },
-TL: { names: { ja: '東ティモール', en: 'East Timor', ko: '동티모르', zh: '동티모르' }, flag: '🇹🇱', region: '🌴 東南アジア', lat: -8.8742, lon: 125.7275, zoom: 9 },
-IN: { names: { ja: 'インド', en: 'India', ko: '인도', zh: '인도' }, flag: '🇮🇳', region: '🍛 南・中央アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
-PK: { names: { ja: '파키스탄', en: 'Pakistan', ko: '파키스탄', zh: '파키스탄' }, flag: '🇵🇰', region: '🍛 南・中央アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
-BD: { names: { ja: '방글라데시', en: 'Bangladesh', ko: '방글라데시', zh: '孟加拉国' }, flag: '🇧🇩', region: '🍛 南・中央アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
+TL: { names: { ja: '東ティモール', en: 'East Timor', ko: '동티모르', zh: '东帝汶' }, flag: '🇹🇱', region: '🌴 東南アジア', lat: -8.8742, lon: 125.7275, zoom: 9 },
+IN: { names: { ja: 'インド', en: 'India', ko: '인도', zh: '印度' }, flag: '🇮🇳', region: '🍛 南・中央アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
+PK: { names: { ja: 'パキスタン', en: 'Pakistan', ko: '파키스탄', zh: '파키스탄' }, flag: '🇵🇰', region: '🍛 南・中央アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
+BD: { names: { ja: 'バングラデシュ', en: 'Bangladesh', ko: '방글라데시', zh: '孟加拉国' }, flag: '🇧🇩', region: '🍛 南・中央アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
 LK: { names: { ja: 'スリランカ', en: 'Sri Lanka', ko: '스리랑카', zh: '斯里兰卡' }, flag: '🇱🇰', region: '🍛 南・中央アジア', lat: 7.8731, lon: 80.7718, zoom: 7 },
 NP: { names: { ja: 'ネパール', en: 'Nepal', ko: '네팔', zh: '尼泊尔' }, flag: '🇳🇵', region: '🍛 南・中央アジア', lat: 28.3949, lon: 84.1240, zoom: 6 },
 BT: { names: { ja: 'ブータン', en: 'Bhutan', ko: '부탄', zh: '不丹' }, flag: '🇧🇹', region: '🍛 南・中央アジア', lat: 27.5142, lon: 90.4336, zoom: 8 },
@@ -515,7 +515,7 @@ JO: { names: { ja: 'ヨルダン', en: 'Jordan', ko: '요르단', zh: '约旦' }
 IL: { names: { ja: 'イスラエル', en: 'Israel', ko: '이스라엘', zh: '이스라엘' }, flag: '🇮🇱', region: '🕌 中東', lat: 31.0461, lon: 34.8516, zoom: 7 },
 LB: { names: { ja: 'レバノン', en: 'Lebanon', ko: '레바논', zh: '黎巴嫩' }, flag: '🇱🇧', region: '🕌 中東', lat: 33.8547, lon: 35.8623, zoom: 8 },
 IQ: { names: { ja: 'イラク', en: 'Iraq', ko: '이라크', zh: '伊拉克' }, flag: '🇮🇶', region: '🕌 中東', lat: 33.2232, lon: 43.6793, zoom: 6 },
-IR: { names: { ja: 'イラン', en: 'Iran', ko: '이란', zh: '이란' }, flag: '🇮🇷', region: '🕌 中東', lat: 32.4279, lon: 53.6880, zoom: 5 },
+IR: { names: { ja: 'イラン', en: 'Iran', ko: '이란', zh: '伊朗' }, flag: '🇮🇷', region: '🕌 中東', lat: 32.4279, lon: 53.6880, zoom: 5 },
 SY: { names: { ja: 'シリア', en: 'Syria', ko: '시리아', zh: '叙利亚' }, flag: '🇸🇾', region: '🕌 中東', lat: 34.8021, lon: 38.9968, zoom: 7 },
 YE: { names: { ja: 'イエメン', en: 'Yemen', ko: '예멘', zh: '也门' }, flag: '🇾🇪', region: '🕌 中東', lat: 15.5527, lon: 48.5164, zoom: 6 },
 AM: { names: { ja: 'アルメニア', en: 'Armenia', ko: '아르메니아', zh: '亚美尼亚' }, flag: '🇦🇲', region: '🕌 中東', lat: 40.0691, lon: 45.0382, zoom: 8 },
@@ -531,7 +531,7 @@ GR: { names: { ja: 'ギリシャ', en: 'Greece', ko: '그리스', zh: '希腊' }
 AT: { names: { ja: 'オーストリア', en: 'Austria', ko: '오스트리아', zh: '오스트리아' }, flag: '🇦🇹', region: '🇪🇺 ヨーロッパ', lat: 47.5162, lon: 14.5501, zoom: 7 },
 PT: { names: { ja: 'ポルトガル', en: 'Portugal', ko: '포르투갈', zh: '포르투갈' }, flag: '🇵🇹', region: '🇪🇺 ヨーロッパ', lat: 39.3999, lon: -8.2245, zoom: 7 },
 NL: { names: { ja: 'オランダ', en: 'Netherlands', ko: '네덜란드', zh: '네덜란드' }, flag: '🇳🇱', region: '🇪🇺 ヨーロッパ', lat: 52.1326, lon: 5.2913, zoom: 8 },
-CH: { names: { ja: 'スイス', en: 'Switzerland', ko: 'スイス', zh: '스위스' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
+CH: { names: { ja: 'スイス', en: 'Switzerland', ko: '스위스', zh: '스위스' }, flag: '🇨🇭', region: '🇪🇺 ヨーロッパ', lat: 46.8182, lon: 8.2275, zoom: 8 },
 PL: { names: { ja: 'ポーランド', en: 'Poland', ko: '폴란드', zh: '폴란드' }, flag: '🇵🇱', region: '🇪🇺 ヨーロッパ', lat: 51.9194, lon: 19.1451, zoom: 6 },
 CZ: { names: { ja: 'チェコ', en: 'Czech Republic', ko: '체코', zh: '체코' }, flag: '🇨🇿', region: '🇪🇺 ヨーロッパ', lat: 49.8175, lon: 15.4730, zoom: 7 },
 HU: { names: { ja: 'ハンガリー', en: 'Hungary', ko: '헝가리', zh: '헝가리' }, flag: '🇭🇺', region: '🇪🇺 ヨーロッパ', lat: 47.1625, lon: 19.5033, zoom: 7 },
@@ -562,7 +562,7 @@ MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케�
 MD: { names: { ja: 'モルド바', en: 'Moldova', ko: '몰도바', zh: '몰도바' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
 BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '벨라루스' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
 RU: { names: { ja: 'ロシア', en: 'Russia', ko: '러시아', zh: '러시아' }, flag: '🇷🇺', region: '🇪🇺 ヨーロッパ', lat: 61.5240, lon: 105.3188, zoom: 3 },
-SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: '스웨덴' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
+SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: 'スウェーデン' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
 NO: { names: { ja: 'ノルウェー', en: 'Norway', ko: '노르웨이', zh: '노르웨이' }, flag: '🇳🇴', region: '🇪🇺 北欧', lat: 60.4720, lon: 8.4689, zoom: 5 },
 DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: '덴마크' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
 FI: { names: { ja: 'フィンランド', en: 'Finland', ko: '핀란드', zh: '핀란드' }, flag: '🇫🇮', region: '🇪🇺 北欧', lat: 61.9241, lon: 25.7482, zoom: 5 },
@@ -576,7 +576,7 @@ CL: { names: { ja: 'チリ', en: 'Chile', ko: '칠레', zh: '칠레' }, flag: '�
 PE: { names: { ja: 'ペルー', en: 'Peru', ko: '페루', zh: '페루' }, flag: '🇵🇪', region: '🗽 中南米', lat: -9.1900, lon: -75.0152, zoom: 5 },
 CO: { names: { ja: 'コロンビア', en: 'Colombia', ko: '콜롬비아', zh: '콜롬비아' }, flag: '🇨🇴', region: '🗽 中南米', lat: 4.5709, lon: -74.2973, zoom: 5 },
 CU: { names: { ja: 'キューバ', en: 'Cuba', ko: '쿠바', zh: '쿠바' }, flag: '🇨🇺', region: '🗽 中南米', lat: 21.5218, lon: -77.7812, zoom: 7 },
-CR: { names: { ja: 'コスタリカ', en: 'Costa Rica', ko: '코스타리카', zh: '코스타리카' }, flag: '🇨🇷', region: '🗽 中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
+CR: { names: { ja: 'コスタリカ', en: 'Costa Rica', ko: '코스타リカ', zh: '코스타リカ' }, flag: '🇨🇷', region: '🗽 中南米', lat: 9.7489, lon: -83.7534, zoom: 8 },
 DO: { names: { ja: 'ドミニカ共和国', en: 'Dominican Republic', ko: '도미니카 공화국', zh: '도미니카 공화국' }, flag: '🇩🇴', region: '🗽 中南米', lat: 18.7357, lon: -70.1627, zoom: 8 },
 PA: { names: { ja: 'パナマ', en: 'Panama', ko: '파나마', zh: '파나마' }, flag: '🇵🇦', region: '🗽 中南米', lat: 8.5380, lon: -80.7821, zoom: 8 },
 JM: { names: { ja: 'ジャマイカ', en: 'Jamaica', ko: '자메이카', zh: '자메이카' }, flag: '🇯🇲', region: '🗽 中南米', lat: 18.1096, lon: -77.2975, zoom: 9 },
@@ -587,8 +587,8 @@ BO: { names: { ja: 'ボリビア', en: 'Bolivia', ko: '볼리비아', zh: '볼�
 PY: { names: { ja: 'パラグアイ', en: 'Paraguay', ko: '파라과이', zh: '파라과이' }, flag: '🇵🇾', region: '🗽 中南米', lat: -23.4425, lon: -58.4438, zoom: 6 },
 GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '과테말라' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
 HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: '온두라스' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
-NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니カラグア', zh: '니카라과' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
-SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘살바ドル', zh: '엘살바도르' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
+NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니카라과', zh: '니카라과' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
+SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘살바도르', zh: '엘살바도르' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
 BS: { names: { ja: 'バハマ', en: 'Bahamas', ko: '바하마', zh: '바하마' }, flag: '🇧🇸', region: '🗽 中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
 PR: { names: { ja: 'プエルトリコ', en: 'Puerto Rico', ko: '푸에르토리코', zh: '푸에르토리코' }, flag: '🇵🇷', region: '🗽 中南米', lat: 18.2208, lon: -66.5901, zoom: 9 },
 BZ: { names: { ja: 'ベリーズ', en: 'Belize', ko: '벨리즈', zh: '벨리즈' }, flag: '🇧🇿', region: '🗽 中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
@@ -636,12 +636,12 @@ MG: { names: { ja: 'マダガスカル', en: 'Madagascar', ko: '마다가스카�
 RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: '르완다' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
 UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: '우간다' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
 ZM: { names: { ja: 'ザンビア', en: 'Zambia', ko: '잠비아', zh: '잠비아' }, flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
-ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바브웨', zh: '짐바브웨' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
+ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바브웨', zh: 'ジン바ブエ' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
 BW: { names: { ja: 'ボツワナ', en: 'Botswana', ko: '보츠와나', zh: '보츠와나' }, flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
 NA: { names: { ja: 'ナミビア', en: 'Namibia', ko: '나미비아', zh: '나미비아' }, flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
 DZ: { names: { ja: 'アルジェリア', en: 'Algeria', ko: '알제리', zh: '알제리' }, flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
 AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: '앙골라' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
-CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: '카메룬' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
+CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: '카멜ーン' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
 CI: { names: { ja: 'コートジボワール', en: 'Ivory Coast', ko: '코트디부아르', zh: '코트디부아르' }, flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
 MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모잠비크', zh: '모잠비크' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
 SD: { names: { ja: 'スーダン', en: 'Sudan', ko: '수단', zh: '수단' }, flag: '🇸🇩', region: '🦁 アフリカ', lat: 12.8628, lon: 30.2176, zoom: 5 },
@@ -652,27 +652,27 @@ SO: { names: { ja: 'ソマリア', en: 'Somalia', ko: '소말리아', zh: '소�
 BJ: { names: { ja: 'ベナン', en: 'Benin', ko: '베닌', zh: '베닌' }, flag: '🇧🇯', region: '🦁 アフリカ', lat: 9.3077, lon: 2.3158, zoom: 7 },
 BF: { names: { ja: 'ブルキナファソ', en: 'Burkina Faso', ko: '부르키나파소', zh: '부르키나파소' }, flag: '🇧🇫', region: '🦁 アフリカ', lat: 12.2383, lon: -1.5616, zoom: 6 },
 BI: { names: { ja: 'ブルンジ', en: 'Burundi', ko: '부룬디', zh: '부룬디' }, flag: '🇧🇮', region: '🦁 アフリカ', lat: -3.3731, lon: 29.9189, zoom: 8 },
-CV: { names: { ja: 'カーボベルデ', en: 'Cape Verde', ko: '카보베르데', zh: '카보베르데' }, flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 },
-CF: { names: { ja: '中央アフリカ共和国', en: 'Central African Republic', ko: '중앙아프리카 공화국', zh: '중앙아프리카 공화국' }, flag: '🇨🇫', region: '🦁 アフリカ', lat: 6.6111, lon: 20.9394, zoom: 6 },
-TD: { names: { ja: 'チャド', en: 'Chad', ko: '차드', zh: '차드' }, flag: '🇹🇩', region: '🦁 アフリカ', lat: 15.4542, lon: 18.7322, zoom: 5 },
-KM: { names: { ja: 'コモロ', en: 'Comoros', ko: '코모로', zh: '코모로' }, flag: '🇰🇲', region: '🦁 アフリカ', lat: -11.8750, lon: 43.8722, zoom: 9 },
-CG: { names: { ja: 'コンゴ共和国', en: 'Republic of the Congo', ko: '콩고공화국', zh: '콩고공화국' }, flag: '🇨🇬', region: '🦁 アフリカ', lat: -0.2280, lon: 15.8277, zoom: 6 },
-CD: { names: { ja: 'コンゴ民主共和国', en: 'Democratic Republic of the Congo', ko: '콩고민주공화국', zh: '콩고민주공화국' }, flag: '🇨🇩', region: '🦁 アフリカ', lat: -4.0383, lon: 21.7587, zoom: 5 },
-DJ: { names: { ja: 'ジブチ', en: 'Djibouti', ko: '지부티', zh: '지부티' }, flag: '🇩🇯', region: '🦁 アフリカ', lat: 11.8251, lon: 42.5903, zoom: 8 },
-GQ: { names: { ja: '赤道ギニア', en: 'Equatorial Guinea', ko: '적도 기니', zh: '적도 기니' }, flag: '🇬🇶', region: '🦁 アフリカ', lat: 1.6508, lon: 10.2679, zoom: 8 },
-ER: { names: { ja: 'エリトリア', en: 'Eritrea', ko: '에리트레아', zh: '에리트레아' }, flag: '🇪🇷', region: '🦁 アフリカ', lat: 15.1794, lon: 39.7823, zoom: 7 },
-GA: { names: { ja: 'ガボン', en: 'Gabon', ko: '가봉', zh: '가봉' }, flag: '🇬🇦', region: '🦁 アフリカ', lat: -0.8037, lon: 11.6094, zoom: 6 },
-GM: { names: { ja: 'ガンビア', en: 'Gambia', ko: '감비아', zh: '감비아' }, flag: '🇬🇲', region: '🦁 アフリカ', lat: 13.4432, lon: -15.3101, zoom: 8 },
-GN: { names: { ja: 'ギニア', en: 'Guinea', ko: '기니', zh: '기니' }, flag: '🇬🇳', region: '🦁 アフリカ', lat: 9.9456, lon: -9.6966, zoom: 7 },
-GW: { names: { ja: 'ギニアビサウ', en: 'Guinea-Bissau', ko: '기니비사우', zh: '기니비사우' }, flag: '🇬🇼', region: '🦁 アフリカ', lat: 11.8037, lon: -15.1804, zoom: 8 },
-LS: { names: { ja: 'レソト', en: 'Lesotho', ko: '레소토', zh: '레소토' }, flag: '🇱🇸', region: '🦁 アフリカ', lat: -29.6100, lon: 28.2336, zoom: 8 },
-LR: { names: { ja: 'リベリア', en: 'Liberia', ko: '라이베리아', zh: '라이베리아' }, flag: '🇱🇷', region: '🦁 アフリカ', lat: 6.4281, lon: -9.4295, zoom: 7 },
-MW: { names: { ja: 'マラウイ', en: 'Malawi', ko: '말라위', zh: '말라위' }, flag: '🇲🇼', region: '🦁 アフリカ', lat: -13.2543, lon: 34.3015, zoom: 6 },
-MR: { names: { ja: 'モーリタニア', en: 'Mauritania', ko: '모리타니', zh: '모리타니' }, flag: '🇲🇷', region: '🦁 アフリカ', lat: 21.0079, lon: -10.9408, zoom: 5 },
-ST: { names: { ja: 'サントメ・プリンシペ', en: 'Sao Tome and Principe', ko: '상투메 프린시페', zh: '상투메 프린시페' }, flag: '🇸🇹', region: '🦁 アフリカ', lat: 0.1864, lon: 6.6131, zoom: 9 },
-SL: { names: { ja: 'シエラレオネ', en: 'Sierra Leone', ko: '시에라리온', zh: '시에라리온' }, flag: '🇸🇱', region: '🦁 アフリカ', lat: 8.4606, lon: -11.7799, zoom: 7 },
-SS: { names: { ja: '南スーダン', en: 'South Sudan', ko: '남수단', zh: '남수단' }, flag: '🇸🇸', region: '🦁 アフリカ', lat: 6.8770, lon: 31.3070, zoom: 6 },
-TG: { names: { ja: 'トーゴ', en: 'Togo', ko: '토고', zh: '토고' }, flag: '🇹🇬', region: '🦁 アフリカ', lat: 8.6195, lon: 0.8248, zoom: 7 }
+CV: { names: { ja: 'カーボベルデ', en: 'Cape Verde', ko: '카보베르데', zh: 'カーボベルデ' }, flag: '🇨🇻', region: '🦁 アフリカ', lat: 16.5388, lon: -23.0418, zoom: 8 },
+CF: { names: { ja: '中央アフリカ共和国', en: 'Central African Republic', ko: '중앙아프리카 공화국', zh: '中央非洲共和国' }, flag: '🇨🇫', region: '🦁 アフリカ', lat: 6.6111, lon: 20.9394, zoom: 6 },
+TD: { names: { ja: 'チャド', en: 'Chad', ko: '차드', zh: '乍得' }, flag: '🇹🇩', region: '🦁 アフリカ', lat: 15.4542, lon: 18.7322, zoom: 5 },
+KM: { names: { ja: 'コモロ', en: 'Comoros', ko: '코모로', zh: '科モロ' }, flag: '🇰🇲', region: '🦁 アフリカ', lat: -11.8750, lon: 43.8722, zoom: 9 },
+CG: { names: { ja: 'コンゴ共和国', en: 'Republic of the Congo', ko: '콩고공화국', zh: '刚果共和国' }, flag: '🇨🇬', region: '🦁 アフリカ', lat: -0.2280, lon: 15.8277, zoom: 6 },
+CD: { names: { ja: 'コンゴ民主共和国', en: 'Democratic Republic of the Congo', ko: '콩고민주공화국', zh: '刚果民主共和国' }, flag: '🇨🇩', region: '🦁 アフリカ', lat: -4.0383, lon: 21.7587, zoom: 5 },
+DJ: { names: { ja: 'ジブチ', en: 'Djibouti', ko: '지부티', zh: '吉布提' }, flag: '🇩🇯', region: '🦁 アフリカ', lat: 11.8251, lon: 42.5903, zoom: 8 },
+GQ: { names: { ja: '赤道ギニア', en: 'Equatorial Guinea', ko: '적도 기니', zh: '赤道几内亚' }, flag: '🇬🇶', region: '🦁 アフリカ', lat: 1.6508, lon: 10.2679, zoom: 8 },
+ER: { names: { ja: 'エリトリア', en: 'Eritrea', ko: '에리트레아', zh: '厄立特里亚' }, flag: '🇪🇷', region: '🦁 アフリカ', lat: 15.1794, lon: 39.7823, zoom: 7 },
+GA: { names: { ja: 'ガボン', en: 'Gabon', ko: '가봉', zh: '加蓬' }, flag: '🇬🇦', region: '🦁 アフリカ', lat: -0.8037, lon: 11.6094, zoom: 6 },
+GM: { names: { ja: 'ガンビア', en: 'Gambia', ko: '감비아', zh: '冈比亚' }, flag: '🇬🇲', region: '🦁 アフリカ', lat: 13.4432, lon: -15.3101, zoom: 8 },
+GN: { names: { ja: 'ギニア', en: 'Guinea', ko: '기니', zh: '几内亚' }, flag: '🇬🇳', region: '🦁 アフリカ', lat: 9.9456, lon: -9.6966, zoom: 7 },
+GW: { names: { ja: 'ギニアビサウ', en: 'Guinea-Bissau', ko: '기니비사우', zh: '几内亚比绍' }, flag: '🇬🇼', region: '🦁 アフリカ', lat: 11.8037, lon: -15.1804, zoom: 8 },
+LS: { names: { ja: 'レソト', en: 'Lesotho', ko: '레소토', zh: '莱索托' }, flag: '🇱🇸', region: '🦁 アフリカ', lat: -29.6100, lon: 28.2336, zoom: 8 },
+LR: { names: { ja: 'リベリア', en: 'Liberia', ko: '라이베리아', zh: '利比里亚' }, flag: '🇱🇷', region: '🦁 アフリカ', lat: 6.4281, lon: -9.4295, zoom: 7 },
+MW: { names: { ja: 'マラウイ', en: 'Malawi', ko: '말라위', zh: '马拉维' }, flag: '🇲🇼', region: '🦁 アフリカ', lat: -13.2543, lon: 34.3015, zoom: 6 },
+MR: { names: { ja: 'モーリタニア', en: 'Mauritania', ko: '모리타니', zh: '毛里塔尼亚' }, flag: '🇲🇷', region: '🦁 アフリカ', lat: 21.0079, lon: -10.9408, zoom: 5 },
+ST: { names: { ja: 'サントメ・プリンシペ', en: 'Sao Tome and Principe', ko: '상투메 프린시페', zh: '圣多美和普林西比' }, flag: '🇸🇹', region: '🦁 アフリカ', lat: 0.1864, lon: 6.6131, zoom: 9 },
+SL: { names: { ja: 'シエラレオネ', en: 'Sierra Leone', ko: '시에라리온', zh: '塞拉利昂' }, flag: '🇸🇱', region: '🦁 アフリカ', lat: 8.4606, lon: -11.7799, zoom: 7 },
+SS: { names: { ja: '南スーダン', en: 'South Sudan', ko: '남수단', zh: '南苏丹' }, flag: '🇸🇸', region: '🦁 アフリカ', lat: 6.8770, lon: 31.3070, zoom: 6 },
+TG: { names: { ja: 'トーゴ', en: 'Togo', ko: '토고', zh: '多哥' }, flag: '🇹🇬', region: '🦁 アフリカ', lat: 8.6195, lon: 0.8248, zoom: 7 }
 };
 
 const INITIAL_SPOTS: Spot[] = [
@@ -992,7 +992,7 @@ const [selectedCalendarDate, setSelectedCalendarDate] = useState<string | null>(
 const [calendarYear, setCalendarYear] = useState<number>(() => new Date().getFullYear());
 const [calendarMonth, setCalendarMonth] = useState<number>(() => new Date().getMonth() + 1);
 
-// 同一場所の複数投稿一覧グリッド用モーダルステート（写真1枚目風）
+// 同一場所の複数投稿一覧グリッド用モーダルステート（写真1枚目風・大きく表示）
 const [isMultiPostsModalOpen, setIsMultiPostsModalOpen] = useState<boolean>(false);
 const [multiPostsList, setMultiPostsList] = useState<Spot[]>([]);
 
@@ -1422,7 +1422,7 @@ return s.title.toLowerCase().includes(kw) || s.description.toLowerCase().include
 const rankingSpots = useMemo(() => {
 return [...spots]
 .filter(s => !blockedUsers.includes(s.userId))
-.sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (a.viewsCount || 0)));
+.sort((a, b) => ((b.savedCount || 0) * 3 + (b.viewsCount || 0)) - ((a.savedCount || 0) * 3 + (b.viewsCount || 0)));
 }, [spots, blockedUsers]);
 
 const mySpots = useMemo(() => spots.filter((s) => s.userId === 'me'), [spots]);
@@ -1662,6 +1662,7 @@ setSelectedScopes((prev) => [...prev, scope]);
 }
 };
 
+// 【重要修正】1回の投稿で複数枚選んだ場合は1つの投稿内の mediaList にまとめて合体、別回に改めて投稿ボタンを押した場合は別の新規独立した投稿にする
 const handleConfirmPost = async () => {
 const current = pendingUploads[currentUploadIndex];
 if (!current || isSubmitting) return;
@@ -1735,7 +1736,7 @@ const extractedTags = extractHashtags(current.description);
 
 let updatedSpotsList = [...spots];
 
-// 1回の投稿で複数枚選んだ場合はまとめる（mediaListに追加）が、別回に投稿ボタンを押した場合は別の新規投稿として独立させる
+// 1回の投稿セッション内で複数枚選択されている場合は、1つ目の投稿の mediaList にまとめて合体する
 if (currentUploadIndex === 0 && pendingUploads.length > 1) {
 const existingSameSpot = spots.find(
 (s) => s.userId === 'me' && Math.abs(s.lat - finalLat) < 0.005 && Math.abs(s.lon - finalLon) < 0.005
@@ -1786,6 +1787,7 @@ createdAt: todayStr,
 updatedSpotsList = [newSpot, ...updatedSpotsList];
 }
 } else {
+// 別回で改めて投稿ボタンを押した場合は完全に別の新しい独立した投稿として追加する
 const newSpot: Spot = {
 id: current.id + '-' + Math.random().toString(36).substring(2, 5),
 userId: 'me',
@@ -2400,16 +2402,17 @@ style={{ width: '100%', padding: '12px', background: themeAccent, color: '#fff',
 </div>
 )}
 
-{/* 同一場所の複数投稿一覧グリッドモーダル（写真1枚目風） */}
+{/* 同一場所の複数投稿一覧グリッドモーダル（写真1枚目風・大きく表示・TikTok風フィード風リスト） */}
 {isMultiPostsModalOpen && (
-<div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 8500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-<div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '420px', width: '100%', maxHeight: '85vh', padding: '20px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
-<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-<h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>📍 この場所のすべての投稿 ({multiPostsList.length}件)</h3>
-<button onClick={() => setIsMultiPostsModalOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
+<div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 8500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '12px' }}>
+<div className="scrollable-content" style={{ background: '#0f172a', color: '#ffffff', borderRadius: '24px', maxWidth: '440px', width: '100%', maxHeight: '90vh', padding: '16px', boxShadow: '0 20px 50px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid #334155' }}>
+<h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#38bdf8' }}>📍 この場所のすべての投稿 ({multiPostsList.length}件)</h3>
+<button onClick={() => setIsMultiPostsModalOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#fff' }}>✕</button>
 </div>
 
-<div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', paddingRight: '4px', touchAction: 'pan-y' }}>
+{/* 写真1枚目風：大きく見やすいグリッド / 縦スクロールリスト */}
+<div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px', paddingRight: '4px', touchAction: 'pan-y' }}>
 {multiPostsList.map(spot => (
 <div
 key={spot.id}
@@ -2417,14 +2420,20 @@ onClick={() => {
 setIsMultiPostsModalOpen(false);
 handleOpenSpot(spot);
 }}
-style={{ background: '#f8fafc', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
+style={{ background: '#1e293b', borderRadius: '16px', overflow: 'hidden', border: '1px solid #334155', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
 >
-<div style={{ width: '100%', height: '140px', background: '#000', position: 'relative' }}>
+<div style={{ width: '100%', height: '240px', background: '#000', position: 'relative' }}>
 <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
 </div>
-<div style={{ padding: '8px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-<div style={{ fontSize: '12px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
-<div style={{ fontSize: '10px', color: '#64748b' }}>👤 {spot.userName}</div>
+<div style={{ padding: '12px' }}>
+<div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+<div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 'bold', color: '#fff' }}>
+{spot.userName.charAt(0)}
+</div>
+<span style={{ fontSize: '13px', fontWeight: 'bold' }}>{spot.userName}</span>
+</div>
+<div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '4px' }}>{spot.title}</div>
+<div style={{ fontSize: '12px', color: '#94a3b8' }}>{spot.description}</div>
 </div>
 </div>
 ))}
@@ -2432,7 +2441,7 @@ style={{ background: '#f8fafc', borderRadius: '12px', overflow: 'hidden', border
 
 <button
 onClick={() => setIsMultiPostsModalOpen(false)}
-style={{ width: '100%', marginTop: '14px', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+style={{ width: '100%', marginTop: '12px', padding: '12px', background: '#334155', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
 >
 閉じる
 </button>
@@ -2701,7 +2710,7 @@ boxSizing: 'border-box',
 </div>
 </div>
 
-{/* タイムラインタブ（TikTok風縦スクロール ＆ 写真2枚目風の白背景ボトムスライドコメントシート） */}
+{/* タイムラインタブ（TikTok風縦スクロール ＆ 投稿画面タップで詳細表示 ＆ 写真2枚目風コメントシート） */}
 {currentTab === 'timeline' && (
 <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y', paddingBottom: '90px', boxSizing: 'border-box' }}>
 <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
@@ -2720,7 +2729,8 @@ const isCommentsOpen = openCommentsForSpot[spot.id] || false;
 return (
 <div
 key={spot.id}
-style={{ width: '100%', height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0px))', scrollSnapAlign: 'start', scrollSnapStop: 'always', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden', flexShrink: 0 }}
+onClick={() => handleOpenSpot(spot)}
+style={{ width: '100%', height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0px))', scrollSnapAlign: 'start', scrollSnapStop: 'always', position: 'relative', display: 'flex', flexDirection: 'column', background: '#000', overflow: 'hidden', cursor: 'pointer', flexShrink: 0 }}
 >
 <div style={{ flex: 1, width: '100%', height: '100%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 {spot.fileType === 'video' ? (
@@ -2733,7 +2743,7 @@ style={{ width: '100%', height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0
 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)', pointerEvents: 'none' }}></div>
 </div>
 
-<div style={{ position: 'absolute', bottom: '110px', left: '16px', right: '85px', color: '#fff', pointerEvents: 'auto' }}>
+<div style={{ position: 'absolute', bottom: '110px', left: '16px', right: '85px', color: '#fff', pointerEvents: 'auto' }} onClick={(e) => e.stopPropagation()}>
 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
 <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#0284c7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
 {spot.userName.charAt(0)}
@@ -2747,7 +2757,7 @@ style={{ width: '100%', height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0
 <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: '#cbd5e1', lineHeight: '1.4' }}>{spot.description}</p>
 </div>
 
-<div style={{ position: 'absolute', right: '16px', bottom: '140px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff', pointerEvents: 'auto' }}>
+<div style={{ position: 'absolute', right: '16px', bottom: '140px', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center', color: '#fff', pointerEvents: 'auto' }} onClick={(e) => e.stopPropagation()}>
 <button
 onClick={() => handleToggleLike(spot.id)}
 style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '26px', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}
@@ -2765,9 +2775,9 @@ style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '24
 </button>
 </div>
 
-{/* 【写真2枚目風】白背景のボトムスライドアップ・コメントパネル */}
+{/* 【写真2枚目風】白背景のボトムスライドアップ・コメントパネル（入力・送信欄付き） */}
 {isCommentsOpen && (
-<div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 99990, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', animation: 'fadeIn 0.2s ease' }} onClick={() => setOpenCommentsForSpot(prev => ({ ...prev, [spot.id]: false }))}>
+<div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 99990, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', animation: 'fadeIn 0.2s ease' }} onClick={(e) => { e.stopPropagation(); setOpenCommentsForSpot(prev => ({ ...prev, [spot.id]: false })); }}>
 <div style={{ background: '#ffffff', color: '#0f172a', width: '100%', maxHeight: '65vh', borderTopLeftRadius: '24px', borderTopRightRadius: '24px', display: 'flex', flexDirection: 'column', boxShadow: '0 -10px 40px rgba(0,0,0,0.3)', padding: '16px', boxSizing: 'border-box' }} onClick={(e) => e.stopPropagation()}>
 <div style={{ width: '40px', height: '4px', background: '#cbd5e1', borderRadius: '2px', alignSelf: 'center', marginBottom: '12px' }}></div>
 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
@@ -2942,7 +2952,7 @@ textAlign: 'center',
 <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '16px', border: '1px solid #e2e8f0' }}>
 <h3 style={{ margin: '0 0 10px 0', fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>🗓️ 旅のログ カレンダー</h3>
 
-{/* カレンダーの年月遡及（1年前・2年前・昔の月へ自由選択） */}
+{/* 年月選択バー（1年前・2年前・昔の月へ自由選択） */}
 <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '14px' }}>
 <select
 value={calendarYear}
