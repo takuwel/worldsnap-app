@@ -44,6 +44,7 @@ export interface MediaItem {
   fileName: string;
   title?: string;
   description?: string;
+  createdAt?: string;
   comments?: CommentItem[];
 }
 
@@ -539,11 +540,11 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BE: { names: { ja: 'ベルギー', en: 'Belgium', ko: '벨기에', zh: 'ベルギー' }, flag: '🇧🇪', region: '🇪🇺 ヨーロッパ', lat: 50.5039, lon: 4.4699, zoom: 8 },
   HR: { names: { ja: 'クロアチア', en: 'Croatia', ko: '크로아티아', zh: 'クロアチア' }, flag: '🇭🇷', region: '🇪🇺 ヨーロッパ', lat: 45.1000, lon: 15.2000, zoom: 7 },
   RO: { names: { ja: 'ルーマニア', en: 'Romania', ko: 'ルーマニア', zh: 'ルーマニア' }, flag: '🇷🇴', region: '🇪🇺 ヨーロッパ', lat: 45.9432, lon: 24.9668, zoom: 6 },
-  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우クライ나', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
+  UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우クライナ', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바キ아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로ベニア', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -559,7 +560,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BA: { names: { ja: 'ボスニア・ヘルツェゴビナ', en: 'Bosnia and Herzegovina', ko: '보스니아 헤르체고비나', zh: '波黑' }, flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lat: 43.9159, lon: 17.6791, zoom: 7 },
   ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네그로', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
   MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케도니아', zh: '北马其顿' }, flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lat: 41.6086, lon: 21.7453, zoom: 8 },
-  MD: { names: { ja: 'モルドバ', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
+  MD: { names: { ja: 'モルド바', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
   RU: { names: { ja: 'ロシア', en: 'Russia', ko: '러시아', zh: '俄罗斯' }, flag: '🇷🇺', region: '🇪🇺 ヨーロッパ', lat: 61.5240, lon: 105.3188, zoom: 3 },
   SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
@@ -588,7 +589,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   GT: { names: { ja: 'グアテマラ', en: 'Guatemala', ko: '과테말라', zh: '危地马拉' }, flag: '🇬🇹', region: '🗽 中南米', lat: 15.7835, lon: -90.2308, zoom: 8 },
   HN: { names: { ja: 'ホンジュラス', en: 'Honduras', ko: '온두라스', zh: 'ホンジュラス' }, flag: '🇭🇳', region: '🗽 中南米', lat: 15.1999, lon: -86.2419, zoom: 7 },
   NI: { names: { ja: 'ニカラグア', en: 'Nicaragua', ko: '니カラグア', zh: 'ニカラグア' }, flag: '🇳🇮', region: '🗽 中南米', lat: 12.8654, lon: -85.2072, zoom: 7 },
-  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘サル바ドル', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
+  SV: { names: { ja: 'エルサルバドル', en: 'El Salvador', ko: '엘サルバドル', zh: 'エルサルバドル' }, flag: '🇸🇻', region: '🗽 中南米', lat: 13.7942, lon: -88.8965, zoom: 8 },
   BS: { names: { ja: 'バハマ', en: 'Bahamas', ko: '바하마', zh: 'バハマ' }, flag: '🇧🇸', region: '🗽 中南米', lat: 25.0343, lon: -77.3963, zoom: 7 },
   PR: { names: { ja: 'プエルトリコ', en: 'Puerto Rico', ko: '푸에르토리코', zh: 'プエルトリコ' }, flag: '🇵🇷', region: '🗽 中南米', lat: 18.2208, lon: -66.5901, zoom: 9 },
   BZ: { names: { ja: 'ベリーズ', en: 'Belize', ko: '벨리즈', zh: 'ベリーズ' }, flag: '🇧🇿', region: '🗽 中南米', lat: 17.1899, lon: -88.4976, zoom: 8 },
@@ -633,17 +634,17 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   ET: { names: { ja: 'エチオピア', en: 'Ethiopia', ko: '에티오피아', zh: '埃塞俄比亚' }, flag: '🇪🇹', region: '🦁 アフリカ', lat: 9.1450, lon: 40.4897, zoom: 6 },
   SN: { names: { ja: 'セネガル', en: 'Senegal', ko: '세네갈', zh: '塞内加尔' }, flag: '🇸🇳', region: '🦁 アフリカ', lat: 14.4974, lon: -14.4524, zoom: 7 },
   MG: { names: { ja: 'マダガスカル', en: 'Madagascar', ko: '마다가스카르', zh: '马达加斯加' }, flag: '🇲🇬', region: '🦁 アフリカ', lat: -18.7669, lon: 46.8691, zoom: 6 },
-  RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: '卢旺达' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
+  RW: { names: { ja: 'ルワンダ', en: 'Rwanda', ko: '르완다', zh: 'ルワンダ' }, flag: '🇷🇼', region: '🦁 アフリカ', lat: -1.9403, lon: 29.8739, zoom: 8 },
   UG: { names: { ja: 'ウガンダ', en: 'Uganda', ko: '우간다', zh: '乌干达' }, flag: '🇺🇬', region: '🦁 アフリカ', lat: 1.3733, lon: 32.2903, zoom: 7 },
   ZM: { names: { ja: 'ザンビア', en: 'Zambia', ko: '잠비아', zh: '赞比亚' }, flag: '🇿🇲', region: '🦁 アフリカ', lat: -13.1339, lon: 27.8493, zoom: 6 },
-  ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바브웨', zh: '津巴布韦' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
+  ZW: { names: { ja: 'ジンバブエ', en: 'Zimbabwe', ko: '짐바브웨', zh: 'ジンバブエ' }, flag: '🇿🇼', region: '🦁 アフリカ', lat: -19.0154, lon: 29.1549, zoom: 6 },
   BW: { names: { ja: 'ボツワナ', en: 'Botswana', ko: '보츠와나', zh: '博茨瓦纳' }, flag: '🇧🇼', region: '🦁 アフリカ', lat: -22.3285, lon: 24.6849, zoom: 6 },
   NA: { names: { ja: 'ナミビア', en: 'Namibia', ko: '나미비아', zh: '纳米比亚' }, flag: '🇳🇦', region: '🦁 アフリカ', lat: -22.9576, lon: 18.4904, zoom: 6 },
-  DZ: { names: { ja: 'アルジェリア', en: 'Algeria', ko: '알제리', zh: '阿尔及利亚' }, flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
+  DZ: { names: { ja: 'アルジェリア', en: 'Algeria', ko: '알제리', zh: '알제리' }, flag: '🇩🇿', region: '🦁 アフリカ', lat: 28.0339, lon: 1.6596, zoom: 5 },
   AO: { names: { ja: 'アンゴラ', en: 'Angola', ko: '앙골라', zh: '安哥拉' }, flag: '🇦🇴', region: '🦁 アフリカ', lat: -11.2027, lon: 17.8739, zoom: 5 },
-  CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: '喀麦隆' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
+  CM: { names: { ja: 'カメルーン', en: 'Cameroon', ko: '카메룬', zh: 'カメルーン' }, flag: '🇨🇲', region: '🦁 アフリカ', lat: 3.8480, lon: 11.5021, zoom: 6 },
   CI: { names: { ja: 'コートジボワール', en: 'Ivory Coast', ko: '코트디부아르', zh: '科特迪瓦' }, flag: '🇨🇮', region: '🦁 アフリカ', lat: 7.5400, lon: -5.5471, zoom: 6 },
-  MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모잠비크', zh: '莫桑比克' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
+  MZ: { names: { ja: 'モザンビーク', en: 'Mozambique', ko: '모잠비크', zh: '莫ザンビーク' }, flag: '🇲🇿', region: '🦁 アフリカ', lat: -18.6657, lon: 35.5296, zoom: 5 },
   SD: { names: { ja: 'スーダン', en: 'Sudan', ko: '수단', zh: '苏丹' }, flag: '🇸🇩', region: '🦁 アフリカ', lat: 12.8628, lon: 30.2176, zoom: 5 },
   LY: { names: { ja: 'リビア', en: 'Libya', ko: '리비아', zh: '利比亚' }, flag: '🇱🇾', region: '🦁 アフリカ', lat: 26.3351, lon: 17.2283, zoom: 5 },
   ML: { names: { ja: 'マリ', en: 'Mali', ko: '말리', zh: '马里' }, flag: '🇲🇱', region: '🦁 アフリカ', lat: 17.5707, lon: -3.9962, zoom: 5 },
@@ -692,7 +693,7 @@ const INITIAL_SPOTS: Spot[] = [
     thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=300&h=300&auto=format&fit=crop',
     fileType: 'image',
     mediaList: [
-      { fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=1200&auto=format&fit=crop', thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=300&h=300&auto=format&fit=crop', fileType: 'image', fileName: 'shibuya.jpg', comments: [] }
+      { fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=1200&auto=format&fit=crop', thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=300&h=300&auto=format&fit=crop', fileType: 'image', fileName: 'shibuya.jpg', createdAt: '2026/08/12', comments: [] }
     ],
     lat: 35.6595,
     lon: 139.7005,
@@ -916,6 +917,7 @@ const GoogleMapComponent = ({
         <text x="38" y="14" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
       ` : '';
 
+      // 白い余白・空白を完全除去したピンSVG定義
       const marker = new window.google.maps.Marker({
         position: { lat: spot.lat, lng: spot.lon },
         map: map,
@@ -984,6 +986,9 @@ export default function WapApp() {
 
   // フレンド詳細プロフィール用ステート
   const [selectedFriend, setSelectedFriend] = useState<FriendUser | null>(null);
+
+  // カレンダーログ用モーダルステート
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState<string | null>(null);
 
   // タイムライン内コメント欄の開閉管理用ステート
   const [openCommentsForSpot, setOpenCommentsForSpot] = useState<Record<string, boolean>>({});
@@ -1059,7 +1064,7 @@ export default function WapApp() {
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // プレビュー操作用ステート
+  // プレビュー操作用ステート（画像固定＆自動中央復帰対応）
   const [previewScale, setPreviewScale] = useState<number>(1);
   const [previewOffset, setPreviewOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const isDraggingRef = useRef<boolean>(false);
@@ -1169,7 +1174,7 @@ export default function WapApp() {
           fileUrl: d.file_url,
           thumbUrl: d.thumb_url || d.file_url,
           fileType: d.file_type || 'image',
-          mediaList: d.media_list || [{ fileUrl: d.file_url, thumbUrl: d.thumb_url || d.file_url, fileType: d.file_type || 'image', fileName: d.file_name || 'image.jpg', comments: [] }],
+          mediaList: d.media_list || [{ fileUrl: d.file_url, thumbUrl: d.thumb_url || d.file_url, fileType: d.file_type || 'image', fileName: d.file_name || 'image.jpg', createdAt: d.created_at ? new Date(d.created_at).toLocaleDateString() : '2026/08/12', comments: [] }],
           lat: Number(d.lat),
           lon: Number(d.lon),
           countryCode: d.country_code || 'JP',
@@ -1180,7 +1185,7 @@ export default function WapApp() {
           tags: d.tags || extractHashtags(d.description || ''),
           comments: d.comments || [],
           reportCount: d.report_count || 0,
-          createdAt: d.created_at ? new Date(d.created_at).toLocaleDateString() : new Date().toLocaleDateString(),
+          createdAt: d.created_at ? new Date(d.created_at).toLocaleDateString() : '2026/08/12',
         }));
 
         setSpots((prev) => {
@@ -1714,6 +1719,7 @@ export default function WapApp() {
       }
     }
 
+    const todayStr = new Date().toLocaleDateString();
     const newMediaItem: MediaItem = {
       fileUrl: uploadedUrl,
       thumbUrl: finalThumbUrl,
@@ -1721,6 +1727,7 @@ export default function WapApp() {
       fileName: current.file.name,
       title: current.title,
       description: current.description,
+      createdAt: todayStr,
       comments: [],
     };
 
@@ -1735,7 +1742,7 @@ export default function WapApp() {
     let updatedSpotsList = [...spots];
 
     if (existingSameSpot) {
-      const updatedMediaList = [...(existingSameSpot.mediaList || [{ fileUrl: existingSameSpot.fileUrl, thumbUrl: existingSameSpot.thumbUrl, fileType: existingSameSpot.fileType, fileName: existingSameSpot.fileName, title: existingSameSpot.title, description: existingSameSpot.description, comments: existingSameSpot.comments || [] }]), newMediaItem];
+      const updatedMediaList = [...(existingSameSpot.mediaList || [{ fileUrl: existingSameSpot.fileUrl, thumbUrl: existingSameSpot.thumbUrl, fileType: existingSameSpot.fileType, fileName: existingSameSpot.fileName, title: existingSameSpot.title, description: existingSameSpot.description, createdAt: existingSameSpot.createdAt, comments: existingSameSpot.comments || [] }]), newMediaItem];
       const updatedSpot: Spot = {
         ...existingSameSpot,
         lat: finalLat,
@@ -1746,12 +1753,10 @@ export default function WapApp() {
         fileUrl: uploadedUrl,
         mediaList: updatedMediaList,
         hasParking: current.hasParking || existingSameSpot.hasParking,
-        title: current.title ? `${existingSameSpot.title} & ${current.title}` : existingSameSpot.title,
-        description: current.description ? `${existingSameSpot.description}\n${current.description}` : existingSameSpot.description,
       };
 
       updatedSpotsList = updatedSpotsList.map((s) => (s.id === existingSameSpot.id ? updatedSpot : s));
-      showToast(`📸 同じ場所のピンにメディアを追加しました！`);
+      showToast(`📸 同じ場所のピンに個別キャプション付きでメディアを追加しました！`);
     } else {
       const newSpot: Spot = {
         id: current.id,
@@ -1778,7 +1783,7 @@ export default function WapApp() {
         tags: extractedTags,
         comments: [],
         reportCount: 0,
-        createdAt: new Date().toLocaleDateString(),
+        createdAt: todayStr,
       };
 
       updatedSpotsList = [newSpot, ...updatedSpotsList.filter((s) => s.id !== newSpot.id)];
@@ -1911,7 +1916,6 @@ export default function WapApp() {
 
   const themeAccent = mapTheme === 'dark' ? '#38bdf8' : mapTheme === 'pastel' ? '#d97706' : '#0284c7';
 
-  // オンボーディング画面も含めて背景をすべて「白色（#ffffff）」に完全統一
   const currentBackgroundColor = '#ffffff';
   const headerBgColor = '#ffffff';
   const headerTextColor = '#0f172a';
@@ -1950,7 +1954,6 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-        {/* 基本情報・オンボーディング画面（背景白に復旧） */}
         {isOnboarding && (
           <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)', textAlign: 'center', touchAction: 'pan-y', border: '1px solid #e2e8f0' }}>
@@ -2370,6 +2373,51 @@ export default function WapApp() {
           </div>
         )}
 
+        {/* カレンダーログ押下時の詳細モーダル */}
+        {selectedCalendarDate && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 8500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '380px', width: '100%', maxHeight: '80vh', padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>📅 {selectedCalendarDate} の旅のログ</h3>
+                <button onClick={() => setSelectedCalendarDate(null)} style={{ background: 'transparent', border: 'none', fontSize: '16px', cursor: 'pointer' }}>✕</button>
+              </div>
+
+              <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingRight: '4px' }}>
+                {(() => {
+                  const daySpots = mySpots.filter(s => {
+                    if (s.createdAt === selectedCalendarDate) return true;
+                    if (s.mediaList?.some(m => m.createdAt === selectedCalendarDate)) return true;
+                    return false;
+                  });
+
+                  if (daySpots.length === 0) {
+                    return <div style={{ textAlign: 'center', padding: '30px', color: '#64748b', fontSize: '12px' }}>この日の投稿はありません 📭</div>;
+                  }
+
+                  return daySpots.map(s => (
+                    <div key={s.id} onClick={() => { setSelectedCalendarDate(null); handleOpenSpot(s); }} style={{ display: 'flex', gap: '10px', background: '#f8fafc', padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer', alignItems: 'center' }}>
+                      <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
+                        <img src={s.thumbUrl || s.fileUrl} alt={s.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: '13px', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.title}</div>
+                        <div style={{ fontSize: '11px', color: '#64748b' }}>📍 {s.cityName}</div>
+                      </div>
+                    </div>
+                  ));
+                })()}
+              </div>
+
+              <button
+                onClick={() => setSelectedCalendarDate(null)}
+                style={{ width: '100%', marginTop: '12px', padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        )}
+
         <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: headerBgColor, color: headerTextColor, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
             <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: headerTextColor }}>
@@ -2503,7 +2551,6 @@ export default function WapApp() {
                 onDoubleTap={handleMapDoubleTap}
               />
 
-              {/* マップ右側のコントロールボタン（メニューバーと絶対に被らないよう bottom: 95px を確保） */}
               <div style={{ position: 'absolute', bottom: '95px', right: '16px', zIndex: 400, display: 'flex', flexDirection: 'column', gap: '8px', boxSizing: 'border-box' }}>
                 <button
                   title="現在地へ移動"
@@ -2546,7 +2593,6 @@ export default function WapApp() {
               </div>
             </div>
 
-            {/* 写真/動画を追加ボタン（メニューバーと被らないよう bottom: 95px に上方配置） */}
             <div style={{ position: 'absolute', bottom: '95px', left: '16px', zIndex: 450, boxSizing: 'border-box' }}>
               <label
                 style={{
@@ -2727,7 +2773,7 @@ export default function WapApp() {
             </div>
           )}
 
-          {/* マイページタブ */}
+          {/* マイページタブ（カレンダー形式ログ対応） */}
           {currentTab === 'profile' && (
             <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', padding: '16px', paddingBottom: '90px', background: '#ffffff', touchAction: 'pan-y', boxSizing: 'border-box' }}>
               <div style={{ background: '#f8fafc', borderRadius: '20px', padding: '20px', border: '1px solid #e2e8f0', textAlign: 'center', boxSizing: 'border-box', marginBottom: '12px' }}>
@@ -2819,8 +2865,84 @@ export default function WapApp() {
               )}
 
               {profileSubTab === 'timeline' && (
-                <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', textAlign: 'center', color: '#64748b', fontSize: '12px', border: '1px solid #e2e8f0' }}>
-                  📅 旅のログタイムライン
+                <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '16px', border: '1px solid #e2e8f0' }}>
+                  <h3 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>🗓️ 月別カレンダーログ (タップでその日の投稿を表示)</h3>
+                  {(() => {
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = now.getMonth();
+                    const firstDayIndex = new Date(year, month, 1).getDay();
+                    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                    const postDatesMap = new Set<string>();
+                    mySpots.forEach(s => {
+                      if (s.createdAt) postDatesMap.add(s.createdAt);
+                      s.mediaList?.forEach(m => {
+                        if (m.createdAt) postDatesMap.add(m.createdAt);
+                      });
+                    });
+
+                    const daysArray = [];
+                    for (let i = 0; i < firstDayIndex; i++) {
+                      daysArray.push(null);
+                    }
+                    for (let d = 1; d <= daysInMonth; d++) {
+                      const mStr = String(month + 1).padStart(2, '0');
+                      const dStr = String(d).padStart(2, '0');
+                      const dateKey1 = `${year}/${mStr}/${dStr}`;
+                      const dateKey2 = `${Number(mStr)}/${Number(dStr)}/${year}`.replace(/^0+/, '');
+                      const dateKey3 = `${year}-${mStr}-${dStr}`;
+                      const dateKeyJP = `${year}年${Number(mStr)}月${Number(dStr)}日`;
+                      
+                      const hasPost = Array.from(postDatesMap).some(dt => dt.includes(`${month + 1}/${d}/${year}`) || dt.includes(`${year}/${mStr}/${dStr}`) || dt === dateKey3 || dt === dateKeyJP);
+                      daysArray.push({ day: d, dateStr: `${year}/${mStr}/${dStr}`, hasPost });
+                    }
+
+                    return (
+                      <div>
+                        <div style={{ textAlign: 'center', fontSize: '13px', fontWeight: 'bold', marginBottom: '10px', color: '#0284c7' }}>
+                          {year}年 {month + 1}月
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', marginBottom: '6px', fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>
+                          <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
+                          {daysArray.map((item, idx) => {
+                            if (!item) return <div key={idx} style={{ height: '36px' }}></div>;
+                            return (
+                              <div
+                                key={idx}
+                                onClick={() => {
+                                  if (item.hasPost) {
+                                    setSelectedCalendarDate(item.dateStr);
+                                  } else {
+                                    showToast('この日の投稿はありません');
+                                  }
+                                }}
+                                style={{
+                                  height: '36px',
+                                  borderRadius: '8px',
+                                  background: item.hasPost ? '#0284c7' : '#ffffff',
+                                  color: item.hasPost ? '#ffffff' : '#334155',
+                                  border: '1px solid #e2e8f0',
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  cursor: item.hasPost ? 'pointer' : 'default',
+                                  fontWeight: item.hasPost ? 'bold' : 'normal',
+                                  boxShadow: item.hasPost ? '0 2px 6px rgba(2,132,199,0.3)' : 'none'
+                                }}
+                              >
+                                <span style={{ fontSize: '12px' }}>{item.day}</span>
+                                {item.hasPost && <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#fff', marginTop: '2px' }}></span>}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
 
@@ -3230,7 +3352,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 投稿作成モーダル */}
+        {/* 投稿作成モーダル（写真固定＆中央自動復帰対応） */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
             <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '82vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box', marginBottom: '40px' }}>
@@ -3245,7 +3367,13 @@ export default function WapApp() {
                 }}
                 onMouseMove={(e) => {
                   if (!isDraggingRef.current) return;
-                  setPreviewOffset({ x: e.clientX - dragStartRef.current.x, y: e.clientY - dragStartRef.current.y });
+                  const newX = e.clientX - dragStartRef.current.x;
+                  const newY = e.clientY - dragStartRef.current.y;
+                  const maxOffset = 120 * previewScale;
+                  setPreviewOffset({
+                    x: Math.max(-maxOffset, Math.min(maxOffset, newX)),
+                    y: Math.max(-maxOffset, Math.min(maxOffset, newY))
+                  });
                 }}
                 onMouseUp={() => { isDraggingRef.current = false; }}
                 onMouseLeave={() => { isDraggingRef.current = false; }}
@@ -3271,7 +3399,13 @@ export default function WapApp() {
                     const newScale = Math.max(minAllowedScale, Math.min(3.5, initialScaleRef.current * (dist / initialPinchDistRef.current)));
                     setPreviewScale(newScale);
                   } else if (isDraggingRef.current && e.touches.length === 1) {
-                    setPreviewOffset({ x: e.touches[0].clientX - dragStartRef.current.x, y: e.touches[0].clientY - dragStartRef.current.y });
+                    const newX = e.touches[0].clientX - dragStartRef.current.x;
+                    const newY = e.touches[0].clientY - dragStartRef.current.y;
+                    const maxOffset = 120 * previewScale;
+                    setPreviewOffset({
+                      x: Math.max(-maxOffset, Math.min(maxOffset, newX)),
+                      y: Math.max(-maxOffset, Math.min(maxOffset, newY))
+                    });
                   }
                 }}
                 onTouchEnd={() => {
@@ -3289,7 +3423,7 @@ export default function WapApp() {
                       height: '100%',
                       objectFit: 'cover',
                       transform: `scale(${previewScale}) translate(${previewOffset.x / previewScale}px, ${previewOffset.y / previewScale}px)`,
-                      transition: isDraggingRef.current ? 'none' : 'transform 0.1s ease-out'
+                      transition: isDraggingRef.current ? 'none' : 'transform 0.15s ease-out'
                     }}
                   />
                 ) : (
@@ -3305,14 +3439,14 @@ export default function WapApp() {
                       height: '100%',
                       objectFit: 'cover',
                       transform: `scale(${previewScale}) translate(${previewOffset.x / previewScale}px, ${previewOffset.y / previewScale}px)`,
-                      transition: isDraggingRef.current ? 'none' : 'transform 0.1s ease-out'
+                      transition: isDraggingRef.current ? 'none' : 'transform 0.15s ease-out'
                     }}
                   />
                 )}
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '12px', background: '#f8fafc', padding: '6px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 ズーム調整（余白なし制限）</span>
+                <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 ズーム・位置調整（中央復帰対応）</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
                   <button
                     type="button"
@@ -3333,7 +3467,7 @@ export default function WapApp() {
                     onClick={() => { setPreviewScale(1); setPreviewOffset({ x: 0, y: 0 }); }}
                     style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', padding: '0 8px', height: '28px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
                   >
-                    リセット
+                    中央に戻す
                   </button>
                 </div>
               </div>
