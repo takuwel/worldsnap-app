@@ -537,7 +537,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
   SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바キ아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
-  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베ニア', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
+  SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
   LT: { names: { ja: 'リトアニア', en: 'Lithuania', ko: '리투아니아', zh: '立陶宛' }, flag: '🇱🇹', region: '🇪🇺 ヨーロッパ', lat: 55.1694, lon: 23.8813, zoom: 7 },
@@ -593,7 +593,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   AG: { names: { ja: 'アンティグア・バーブーダ', en: 'Antigua and Barbuda', ko: '앤티가 바부다', zh: '安提瓜和巴布达' }, flag: '🇦🇬', region: '🗽 中南米', lat: 17.0608, lon: -61.7964, zoom: 9 },
   BB: { names: { ja: 'バルバドス', en: 'Barbados', ko: '바베이도스', zh: '巴巴多斯' }, flag: '🇧🇧', region: '🗽 中南米', lat: 13.1939, lon: -59.5432, zoom: 11 },
   DM: { names: { ja: 'ドミニカ国', en: 'Dominica', ko: '도미니카 연방', zh: '多米尼克' }, flag: '🇩🇲', region: '🗽 中南米', lat: 15.4150, lon: -61.3710, zoom: 10 },
-  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나ダ', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
+  GD: { names: { ja: 'グレナダ', en: 'Grenada', ko: '그레나다', zh: '格林纳达' }, flag: '🇬🇩', region: '🗽 中南米', lat: 12.1165, lon: -61.6790, zoom: 10 },
   KN: { names: { ja: 'セントクリストファー・ネイビス', en: 'Saint Kitts and Nevis', ko: '세인트키츠 네비스', zh: '圣基茨和尼维斯' }, flag: '🇰🇳', region: '🗽 中南米', lat: 17.3578, lon: -62.7829, zoom: 10 },
   LC: { names: { ja: 'セントルシア', en: 'Saint Lucia', ko: '세인트루시아', zh: '圣卢西亚' }, flag: '🇱🇨', region: '🗽 中南米', lat: 13.9094, lon: -60.9789, zoom: 10 },
   VC: { names: { ja: 'セントビンセントおよびグレナディーン諸島', en: 'Saint Vincent and the Grenadines', ko: '세인트빈센트 그레나딘', zh: '圣文森特和格林纳丁斯' }, flag: '🇻🇨', region: '🗽 中南米', lat: 12.9843, lon: -61.2872, zoom: 10 },
@@ -1211,7 +1211,6 @@ export default function WapApp() {
   useEffect(() => {
     fetchSpots();
 
-    // Supabase Realtime購読（他のユーザーが投稿した際にリロードなしで自動反映）
     if (supabase) {
       const channel = supabase
         .channel('public:spots')
@@ -1242,7 +1241,7 @@ export default function WapApp() {
             scopes: d.scopes || ['world', 'friends', 'my'],
             hasParking: d.has_parking || false,
             tags: d.tags || [],
-            comments: d.comments || [],
+            comments: [],
             reportCount: d.report_count || 0,
             createdAt: d.created_at ? new Date(d.created_at).toLocaleDateString() : new Date().toLocaleDateString(),
           };
@@ -1453,7 +1452,6 @@ export default function WapApp() {
     });
   }, [spots, blockedUsers, selectedCategories, displayScope, friendsList, mapSearchKeyword]);
 
-  // タイムライン：ベース国（userCountry）の投稿を最優先に表示
   const timelineSpots = useMemo(() => {
     const validSpots = spots.filter(s => !blockedUsers.includes(s.userId));
     
@@ -1593,7 +1591,6 @@ export default function WapApp() {
     showToast(`🌐 (${langName}) に翻訳しました！`);
   };
 
-  // メディア個別ごとのコメント追加処理（厳格なNGワードチェック適用）
   const handleAddComment = (spotId: string, customText?: string) => {
     const textToUse = customText !== undefined ? customText : newCommentText;
     const trimmedText = textToUse.trim();
@@ -1694,7 +1691,7 @@ export default function WapApp() {
       setPreviewScale(1);
       setPreviewOffset({ x: 0, y: 0 });
       const first = pendingList[0];
-      setPostTitle(''); // ファイル名の自動入力をなしに維持
+      setPostTitle('');
       setPostDesc('');
       setPostCategory(selectedCategories[0] || 'view');
       setSelectedScopes(['world', 'friends', 'my']);
@@ -1712,19 +1709,6 @@ export default function WapApp() {
     }
   };
 
-  const toggleScopeSelection = (scope: DisplayScope) => {
-    if (selectedScopes.includes(scope)) {
-      if (selectedScopes.length === 1) {
-        showToast('⚠️ 最低1つの反映先を選択してください');
-        return;
-      }
-      setSelectedScopes((prev) => prev.filter((s) => s !== scope));
-    } else {
-      setSelectedScopes((prev) => [...prev, scope]);
-    }
-  };
-
-  // 複数投稿時の位置情報維持 ＆ 投稿完了後のキーボード自動格納 ＆ Supabaseへのクラウド保存処理
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -2014,8 +1998,11 @@ export default function WapApp() {
   };
 
   const themeAccent = mapTheme === 'dark' ? '#38bdf8' : mapTheme === 'pastel' ? '#d97706' : '#0284c7';
-  const navBarBg = '#ffffff';
-  const navBarText = '#0f172a';
+  
+  // 🎨 デザイン連動：オンボーディング時は紺色(#070d1e)、通常ホーム画面時は白色(#ffffff)
+  const currentBackgroundColor = isOnboarding ? '#070d1e' : '#ffffff';
+  const navBarBg = isOnboarding ? '#070d1e' : '#ffffff';
+  const navBarText = isOnboarding ? '#ffffff' : '#0f172a';
 
   if (!isClient) {
     return <div style={{ background: '#000000', width: '100vw', height: '100dvh' }}></div>;
@@ -2029,14 +2016,14 @@ export default function WapApp() {
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-status-bar-style" content={isOnboarding ? 'black' : 'default'} />
         <meta name="apple-mobile-web-app-title" content="wap" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content={currentBackgroundColor} />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
 
-      {/* アプリ全体の高さを画面ぴったりに固定、マップ以外はタッチ操作を完全固定、テキスト選択禁止 */}
-      <div style={{ background: '#ffffff', color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', WebkitUserSelect: 'none', touchAction: currentTab === 'map' ? 'auto' : 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      {/* 📱 アプリ全体：オンボーディング時は紺色(#070d1e)、通常時は白色(#ffffff)を背景にして上部黒帯を完全に排除 */}
+      <div style={{ background: currentBackgroundColor, color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', WebkitUserSelect: 'none', touchAction: currentTab === 'map' ? 'auto' : 'none', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         
         {warningMessage && (
           <div style={{ position: 'fixed', top: 0, insetInline: 0, background: '#ef4444', color: '#fff', padding: '12px 16px', zIndex: 999999, fontSize: '13px', fontWeight: 'bold', textAlign: 'center', boxShadow: '0 4px 16px rgba(239,68,68,0.4)' }}>
@@ -2053,7 +2040,7 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
-        {/* 初回オンボーディング画面（背景：全体を紺色 #070d1e にし、中央の操作カード：白ベース #ffffff に統一） */}
+        {/* 初回オンボーディング画面（背景・上部ステータスバー連動：#070d1e 紺色） */}
         {isOnboarding && (
           <div style={{ position: 'fixed', inset: 0, background: '#070d1e', color: '#0f172a', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
             <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', textAlign: 'center', touchAction: 'pan-y', border: '1px solid #e2e8f0' }}>
@@ -2482,7 +2469,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ヘッダー */}
+        {/* ヘッダー（ホーム画面時は背景白・文字黒に統一） */}
         <header style={{ height: '48px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: navBarBg, color: navBarText, borderBottom: '1px solid #e2e8f0', flexShrink: 0, zIndex: 100, touchAction: 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1 }}>
             <button onClick={() => setIsSettingsOpen(true)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', padding: '4px', flexShrink: 0, color: navBarText }}>
@@ -2879,7 +2866,6 @@ export default function WapApp() {
                   </div>
                 </div>
 
-                {/* QRコード操作ボタン */}
                 <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
                   <button
                     onClick={() => setIsMyQrOpen(true)}
@@ -2898,7 +2884,6 @@ export default function WapApp() {
                 </div>
               </div>
 
-              {/* マイページのサブタブ（投稿・ログ・保存・バッジ・フレンド） */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '4px', marginBottom: '12px' }}>
                 {(['posts', 'timeline', 'saved', 'badges', 'friends'] as const).map((tab) => (
                   <button
@@ -2972,7 +2957,6 @@ export default function WapApp() {
                     </button>
                   </div>
 
-                  {/* カレンダーグリッド */}
                   {(() => {
                     const year = calendarYearMonth.year;
                     const month = calendarYearMonth.month;
@@ -3056,7 +3040,6 @@ export default function WapApp() {
                     );
                   })()}
 
-                  {/* 選択した日付の投稿リスト表示 */}
                   {selectedLogDateStr && (
                     <div style={{ marginTop: '16px', borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
                       <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: '8px', color: '#0f172a' }}>
@@ -3151,7 +3134,7 @@ export default function WapApp() {
           )}
         </div>
 
-        {/* ボトムナビゲーションを固定配置 */}
+        {/* ボトムナビゲーション固定配置 */}
         <nav style={{ position: 'fixed', bottom: '12px', left: '16px', right: '16px', maxWidth: '420px', margin: '0 auto', height: '60px', background: 'rgba(255, 255, 255, 0.98)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '30px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 99999, boxSizing: 'border-box', padding: '0 8px', touchAction: 'none' }}>
           <button onClick={() => { setSelectedSpot(null); setCurrentTab('map'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1, touchAction: 'manipulation' }}>
             <span style={{ fontSize: '20px' }}>🗺️</span><span>{t('map')}</span>
@@ -3437,7 +3420,6 @@ export default function WapApp() {
                 {translatedDescriptions[selectedSpot.id] || selectedSpot.description}
               </p>
 
-              {/* メディア個別コメントセクション */}
               <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '16px', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                   <h3 style={{ fontSize: '14px', fontWeight: 'bold', margin: 0 }}>
@@ -3495,7 +3477,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* ── 投稿作成モーダル（プレビュー高さ240px拡大・ファイル名なし・駐車場追加） ── */}
+        {/* ── 投稿作成モーダル ── */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
             <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '88vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box' }}>
@@ -3503,7 +3485,6 @@ export default function WapApp() {
                 📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
               </h3>
 
-              {/* プレビューエリア（面積拡大：高さ240px） */}
               <div
                 onMouseDown={(e) => {
                   isDraggingRef.current = true;
@@ -3576,7 +3557,6 @@ export default function WapApp() {
                 )}
               </div>
 
-              {/* ズーム調整コントロール */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '10px', background: '#f8fafc', padding: '4px 8px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                 <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 ズーム調整（二本指ピンチ対応）</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
@@ -3632,7 +3612,6 @@ export default function WapApp() {
                 })}
               </div>
 
-              {/* 🅿️ 駐車場有無のチェック項目（いいねされやすくなる案内付き） */}
               <div
                 onClick={() => setPostHasParking(!postHasParking)}
                 style={{
