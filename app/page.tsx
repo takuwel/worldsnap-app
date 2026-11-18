@@ -493,7 +493,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BN: { names: { ja: 'ブルネイ', en: 'Brunei', ko: '브루네이', zh: '文莱' }, flag: '🇧🇳', region: '🌴 東南アジア', lat: 4.5353, lon: 114.7277, zoom: 9 },
   TL: { names: { ja: '東ティモール', en: 'East Timor', ko: '동티모르', zh: '东帝汶' }, flag: '🇹🇱', region: '🌴 東南アジア', lat: -8.8742, lon: 125.7275, zoom: 9 },
   IN: { names: { ja: 'インド', en: 'India', ko: '인도', zh: '印度' }, flag: '🇮🇳', region: '🍛 南・中央アジア', lat: 20.5937, lon: 78.9629, zoom: 5 },
-  PK: { names: { ja: 'パキスタン', en: 'Pakistan', ko: '파키스탄', zh: '巴基斯坦' }, flag: '🇵🇰', region: '🍛 南・中央アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
+  PK: { names: { ja: 'パキスタン', en: 'Pakistan', ko: '파키스탄', zh: '파키스탄' }, flag: '🇵🇰', region: '🍛 南・中央アジア', lat: 30.3753, lon: 69.3451, zoom: 5 },
   BD: { names: { ja: 'バングラデシュ', en: 'Bangladesh', ko: '방글라데시', zh: '孟加拉国' }, flag: '🇧🇩', region: '🍛 南・中央アジア', lat: 23.6850, lon: 90.3563, zoom: 6 },
   LK: { names: { ja: 'スリランカ', en: 'Sri Lanka', ko: '스리랑카', zh: '斯里兰卡' }, flag: '🇱🇰', region: '🍛 南・中央アジア', lat: 7.8731, lon: 80.7718, zoom: 7 },
   NP: { names: { ja: 'ネパール', en: 'Nepal', ko: '네팔', zh: '尼泊尔' }, flag: '🇳🇵', region: '🍛 南・中央アジア', lat: 28.3949, lon: 84.1240, zoom: 6 },
@@ -542,7 +542,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   UA: { names: { ja: 'ウクライナ', en: 'Ukraine', ko: '우クライ나', zh: 'ウクライナ' }, flag: '🇺🇦', region: '🇪🇺 ヨーロッパ', lat: 48.3794, lon: 31.1656, zoom: 6 },
   BG: { names: { ja: 'ブルガリア', en: 'Bulgaria', ko: '불가리아', zh: '保加利亚' }, flag: '🇧🇬', region: '🇪🇺 ヨーロッパ', lat: 42.7339, lon: 25.4858, zoom: 7 },
   RS: { names: { ja: 'セルビア', en: 'Serbia', ko: '세르비아', zh: 'セルビア' }, flag: '🇷🇸', region: '🇪🇺 ヨーロッパ', lat: 44.0165, lon: 21.0059, zoom: 7 },
-  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바키아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
+  SK: { names: { ja: 'スロバキア', en: 'Slovakia', ko: '슬로바キ아', zh: '斯洛伐克' }, flag: '🇸🇰', region: '🇪🇺 ヨーロッパ', lat: 48.6690, lon: 19.6990, zoom: 7 },
   SI: { names: { ja: 'スロベニア', en: 'Slovenia', ko: '슬로베니아', zh: '斯ロ베ニア' }, flag: '🇸🇮', region: '🇪🇺 ヨーロッパ', lat: 46.1512, lon: 14.9955, zoom: 8 },
   EE: { names: { ja: 'エストニア', en: 'Estonia', ko: '에스토니아', zh: '爱沙尼亚' }, flag: '🇪🇪', region: '🇪🇺 ヨーロッパ', lat: 58.5953, lon: 25.0136, zoom: 7 },
   LV: { names: { ja: 'ラトビア', en: 'Latvia', ko: '라트비아', zh: '拉脱维亚' }, flag: '🇱🇻', region: '🇪🇺 ヨーロッパ', lat: 56.8796, lon: 24.6032, zoom: 7 },
@@ -567,7 +567,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: 'デンマーク' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
   FI: { names: { ja: 'フィンランド', en: 'Finland', ko: '핀란드', zh: '芬兰' }, flag: '🇫🇮', region: '🇪🇺 北欧', lat: 61.9241, lon: 25.7482, zoom: 5 },
   IS: { names: { ja: 'アイスランド', en: 'Iceland', ko: '아이슬란드', zh: '冰岛' }, flag: '🇮🇸', region: '🇪🇺 北欧', lat: 64.9631, lon: -19.0208, zoom: 6 },
-  US: { names: { ja: 'アメリカ', en: 'USA', ko: '미국', zh: '美国' }, flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
+  US: { names: { ja: 'アメリカ', en: 'USA', ko: '미국', zh: '미국' }, flag: '🇺🇸', region: '🗽 北米', lat: 37.0902, lon: -95.7129, zoom: 4 },
   CA: { names: { ja: 'カナダ', en: 'Canada', ko: '캐나다', zh: '加拿大' }, flag: '🇨🇦', region: '🗽 北米', lat: 56.1304, lon: -106.3468, zoom: 3 },
   MX: { names: { ja: 'メキシコ', en: 'Mexico', ko: '멕시코', zh: '墨西哥' }, flag: '🇲🇽', region: '🗽 北米', lat: 23.6345, lon: 102.5528, zoom: 5 },
   BR: { names: { ja: 'ブラジル', en: 'Brazil', ko: '브라질', zh: '巴西' }, flag: '🇧🇷', region: '🗽 中南米', lat: -14.2350, lon: -51.9253, zoom: 4 },
@@ -916,7 +916,6 @@ const GoogleMapComponent = ({
         <text x="38" y="14" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
       ` : '';
 
-      // 白い隙間・余白を完全除去するため、SVGパスとクリップパスを密着させて定義
       const marker = new window.google.maps.Marker({
         position: { lat: spot.lat, lng: spot.lon },
         map: map,
@@ -1060,7 +1059,7 @@ export default function WapApp() {
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // プレビュー操作用ステート（黒い余白が出ない最小スケール計算対応）
+  // プレビュー操作用ステート
   const [previewScale, setPreviewScale] = useState<number>(1);
   const [previewOffset, setPreviewOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const isDraggingRef = useRef<boolean>(false);
@@ -1577,7 +1576,6 @@ export default function WapApp() {
     showToast('💬 コメントを投稿しました！');
   };
 
-  // ファイル名自動混入を防止し、初期キャプションを空にする
   const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
 
@@ -1913,12 +1911,13 @@ export default function WapApp() {
 
   const themeAccent = mapTheme === 'dark' ? '#38bdf8' : mapTheme === 'pastel' ? '#d97706' : '#0284c7';
 
-  const currentBackgroundColor = isOnboarding ? '#070d1e' : '#ffffff';
-  const headerBgColor = isOnboarding ? '#070d1e' : '#ffffff';
-  const headerTextColor = isOnboarding ? '#ffffff' : '#0f172a';
+  // オンボーディング画面も含めて背景をすべて「白色（#ffffff）」に完全統一
+  const currentBackgroundColor = '#ffffff';
+  const headerBgColor = '#ffffff';
+  const headerTextColor = '#0f172a';
 
   if (!isClient) {
-    return <div style={{ background: '#000000', width: '100vw', height: '100dvh' }}></div>;
+    return <div style={{ background: '#ffffff', width: '100vw', height: '100dvh' }}></div>;
   }
 
   return (
@@ -1929,7 +1928,7 @@ export default function WapApp() {
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content={isOnboarding ? 'black-translucent' : 'default'} />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="wap" />
         <meta name="theme-color" content={currentBackgroundColor} />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
@@ -1951,9 +1950,10 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
 
+        {/* 基本情報・オンボーディング画面（背景白に復旧） */}
         {isOnboarding && (
-          <div style={{ position: 'fixed', inset: 0, background: '#070d1e', color: '#0f172a', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
-            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.5)', textAlign: 'center', touchAction: 'pan-y', border: '1px solid #e2e8f0' }}>
+          <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
+            <div style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', padding: '28px 24px', boxShadow: '0 20px 60px rgba(0,0,0,0.15)', textAlign: 'center', touchAction: 'pan-y', border: '1px solid #e2e8f0' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>🗺️</div>
               <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '900', color: '#0284c7' }}>wap</h1>
               <p style={{ margin: '4px 0 16px 0', fontSize: '13px', color: '#64748b' }}>世界中を旅して、思い出をつなごう</p>
@@ -2573,7 +2573,7 @@ export default function WapApp() {
             </div>
           </div>
 
-          {/* タイムラインタブ（メニューバーに被らないよう下部に空間確保） */}
+          {/* タイムラインタブ */}
           {currentTab === 'timeline' && (
             <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', background: '#0f172a', display: 'flex', flexDirection: 'column', scrollSnapType: 'y mandatory', height: '100%', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y', paddingBottom: '90px', boxSizing: 'border-box' }}>
               <div style={{ position: 'sticky', top: 0, zIndex: 500, padding: '10px 16px', background: 'rgba(15,23,42,0.9)', backdropFilter: 'blur(8px)', display: 'flex', gap: '8px' }}>
@@ -3151,7 +3151,6 @@ export default function WapApp() {
                 </button>
               </div>
 
-              {/* メディア別の個別タイトル＆説明文を表示 */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '10px' }}>
                 <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>
                   {selectedSpot.mediaList && selectedSpot.mediaList[activeMediaIndex]?.title ? selectedSpot.mediaList[activeMediaIndex].title : selectedSpot.title}
@@ -3231,7 +3230,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 投稿作成モーダル（メニューバーと被らないよう bottom マージンとスクロール性を最適化） */}
+        {/* 投稿作成モーダル */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
             <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '82vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box', marginBottom: '40px' }}>
@@ -3239,7 +3238,6 @@ export default function WapApp() {
                 📷 投稿の作成 ({currentUploadIndex + 1}/{pendingUploads.length})
               </h3>
 
-              {/* プレビューエリア：黒い余白が出ないように最小スケールを制限 */}
               <div
                 onMouseDown={(e) => {
                   isDraggingRef.current = true;
@@ -3269,7 +3267,7 @@ export default function WapApp() {
                     const dx = e.touches[0].clientX - e.touches[1].clientX;
                     const dy = e.touches[0].clientY - e.touches[1].clientY;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    const minAllowedScale = 1.0; // 黒い余白ができないよう、縮小限界を1.0以上にロック
+                    const minAllowedScale = 1.0;
                     const newScale = Math.max(minAllowedScale, Math.min(3.5, initialScaleRef.current * (dist / initialPinchDistRef.current)));
                     setPreviewScale(newScale);
                   } else if (isDraggingRef.current && e.touches.length === 1) {
@@ -3313,7 +3311,6 @@ export default function WapApp() {
                 )}
               </div>
 
-              {/* ズーム調整コントロール */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '12px', background: '#f8fafc', padding: '6px 10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                 <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 ズーム調整（余白なし制限）</span>
                 <div style={{ display: 'flex', gap: '4px' }}>
@@ -3400,7 +3397,6 @@ export default function WapApp() {
                 })}
               </div>
 
-              {/* 🅿️ 駐車場有無の選択欄 ＆ いいね促進メッセージ */}
               <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '12px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 'bold', color: '#0f172a', cursor: 'pointer' }}>
                   <input
