@@ -19,6 +19,7 @@ export type ViewCategory = 'view' | 'gourmet' | 'rain';
 export type DisplayScope = 'my' | 'friends' | 'world';
 export type TabType = 'map' | 'timeline' | 'ranking' | 'profile';
 export type MapThemeType = 'light' | 'dark' | 'pastel';
+export type MultiPostSortType = 'newest' | 'likes' | 'views';
 
 export interface CommentItem {
   id: string;
@@ -1001,9 +1002,11 @@ export default function WapApp() {
     return false;
   }, [calendarYear, calendarMonth, currentActualYear, currentActualMonth]);
 
-  // 同一場所の複数投稿一覧グリッド用モーダルステート
+  // 同一場所の複数投稿一覧フルスクリーン画面用ステート
   const [isMultiPostsModalOpen, setIsMultiPostsModalOpen] = useState<boolean>(false);
   const [multiPostsList, setMultiPostsList] = useState<Spot[]>([]);
+  const [multiPostSearchKeyword, setMultiPostSearchKeyword] = useState<string>('');
+  const [multiPostSortType, setMultiPostSortType] = useState<MultiPostSortType>('newest');
 
   // どのコメントに対する返信かを保持するステート
   const [replyTargetUser, setReplyTargetUser] = useState<string | null>(null);
@@ -1071,7 +1074,7 @@ export default function WapApp() {
   const [pendingUploads, setPendingUploads] = useState<PendingUploadItem[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
 
-  // 「キャプションを分けて入力する」スイッチ（デフォルト: false＝1枚目のキャプション・住所を引き継ぎ、2枚目以降は入力省略可能）
+  // 「キャプションを分けて入力する」スイッチ
   const [separateCaptionsMode, setSeparateCaptionsMode] = useState<boolean>(false);
 
   const [postCategory, setPostCategory] = useState<ViewCategory>('view');
@@ -1128,6 +1131,35 @@ export default function WapApp() {
     setCalendarYear(targetDate.getFullYear());
     setCalendarMonth(targetDate.getMonth() + 1);
   };
+
+  // 複数投稿一覧の検索＆並び替え（キーワード一致を上位表示）
+  const sortedAndFilteredMultiPosts = useMemo(() => {
+    const kw = multiPostSearchKeyword.trim().toLowerCase();
+
+    const baseSorted = [...multiPostsList].sort((a, b) => {
+      if (multiPostSortType === 'likes') {
+        return (b.savedCount || 0) - (a.savedCount || 0);
+      }
+      if (multiPostSortType === 'views') {
+        return (b.viewsCount || 0) - (a.viewsCount || 0);
+      }
+      return b.id.localeCompare(a.id);
+    });
+
+    if (!kw) return baseSorted;
+
+    const isMatch = (s: Spot) => {
+      const titleHit = (s.title || '').toLowerCase().includes(kw);
+      const descHit = (s.description || '').toLowerCase().includes(kw);
+      const userHit = (s.userName || '').toLowerCase().includes(kw);
+      const tagHit = (s.tags || []).some((tag) => tag.toLowerCase().includes(kw.replace(/^#/, '')));
+      return titleHit || descHit || userHit || tagHit;
+    };
+
+    const matched = baseSorted.filter(isMatch);
+    const unmatched = baseSorted.filter((s) => !isMatch(s));
+    return [...matched, ...unmatched];
+  }, [multiPostsList, multiPostSearchKeyword, multiPostSortType]);
 
   useEffect(() => {
     if (spots.length > 0) {
@@ -1711,10 +1743,6 @@ export default function WapApp() {
     }
   };
 
-  // 投稿確定処理：
-  // 1) 1回の投稿セッション内で複数枚選んだ場合は1つのスポット（mediaList）にまとめる
-  // 2) 別回に改めて投稿ボタンを押した場合は既存投稿には合体せず、完全に別の新規独立したスポットとして保存する
-  // 3) 位置情報がない写真・動画の複数投稿時、1枚目で住所・場所名を入力したら2枚目以降へ自動引き継ぎ
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -1845,43 +1873,14 @@ export default function WapApp() {
 
     setIsSubmitting(false);
 
-    // 「キャプションを分けて入力する」がONかつ残りがある場合は次の写真の入力へ進む
-    if (separateCaptionsMode && currentUploadIndex + 1 < pendingUploads.length) {
+    if (currentUploadIndex + 1 < pendingUploads.length) {
+      // キャプション別の有無にかかわらず、2枚目以降もプレビュー微調整ができるよう次のステップへ進む
       const nextIndex = currentUploadIndex + 1;
       setCurrentUploadIndex(nextIndex);
       setPreviewScale(1);
       setPreviewOffset({ x: 0, y: 0 });
       setManualLat(finalLat.toString());
       setManualLon(finalLon.toString());
-    } else if (!separateCaptionsMode && currentUploadIndex + 1 < pendingUploads.length) {
-      // キャプション分けがOFFの場合：1枚目のキャプション・住所・モードを引き継ぎ、残りのメディアもまとめて1つの投稿に保存
-      let workingSpots = [...updatedSpotsList];
-      for (let i = currentUploadIndex + 1; i < pendingUploads.length; i++) {
-        const item = pendingUploads[i];
-        const extraMedia: MediaItem = {
-          fileUrl: item.fileUrl,
-          thumbUrl: item.thumbUrl || item.fileUrl,
-          fileType: item.fileType,
-          fileName: item.file.name,
-          title: effectiveTitle,
-          description: effectiveDescription,
-          createdAt: todayStr,
-        };
-        if (workingSpots[0] && workingSpots[0].userId === 'me') {
-          workingSpots[0] = {
-            ...workingSpots[0],
-            mediaList: [...(workingSpots[0].mediaList || []), extraMedia],
-            hasParking: workingSpots[0].hasParking || item.hasParking,
-          };
-        }
-      }
-      setSpots(workingSpots);
-      try {
-        localStorage.setItem('wap_local_spots_v13', JSON.stringify(workingSpots));
-      } catch {}
-      setPendingUploads([]);
-      setCurrentUploadIndex(0);
-      showToast(`📍 ${pendingUploads.length}件を1つの投稿にまとめてマップに反映しました！🚀`);
     } else {
       setPendingUploads([]);
       setCurrentUploadIndex(0);
@@ -2449,48 +2448,77 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 同一場所の複数投稿一覧グリッド用モーダル（縦2列で並べてスクロール選択） */}
+        {/* 同一場所の複数投稿フルスクリーン一覧画面（左上戻る・上部キーワード検索・右上並び替え・縦2列表示） */}
         {isMultiPostsModalOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 8500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-            <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', maxHeight: '88vh', padding: '20px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
-                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>📍 この場所の投稿 ({multiPostsList.length}件)</h3>
-                <button onClick={() => setIsMultiPostsModalOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#0f172a' }}>✕</button>
-              </div>
-
-              <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', paddingRight: '4px', touchAction: 'pan-y' }}>
-                {multiPostsList.map(spot => (
-                  <div
-                    key={spot.id}
-                    onClick={() => {
-                      setIsMultiPostsModalOpen(false);
-                      handleOpenSpot(spot);
-                    }}
-                    style={{ background: '#f8fafc', borderRadius: '14px', overflow: 'hidden', border: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', flexDirection: 'column', boxShadow: '0 3px 10px rgba(0,0,0,0.05)' }}
-                  >
-                    <div style={{ width: '100%', height: '150px', background: '#000', position: 'relative' }}>
-                      <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                    <div style={{ padding: '8px 10px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                        <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#0284c7', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold', flexShrink: 0 }}>
-                          {spot.userName.charAt(0)}
-                        </div>
-                        <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.userName}</span>
-                      </div>
-                      <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
-                      <div style={{ fontSize: '11px', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.description}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
+          <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100dvh', background: '#ffffff', color: '#0f172a', zIndex: 9500, display: 'flex', flexDirection: 'column', boxSizing: 'border-box', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+            {/* ヘッダー：左上に戻るボタン、右上に並び替え（新着順・いいね順・閲覧順） */}
+            <div style={{ height: '52px', padding: '0 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', background: '#ffffff', flexShrink: 0, gap: '8px' }}>
               <button
-                onClick={() => setIsMultiPostsModalOpen(false)}
-                style={{ width: '100%', marginTop: '14px', padding: '12px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+                type="button"
+                onClick={() => {
+                  setIsMultiPostsModalOpen(false);
+                  setMultiPostSearchKeyword('');
+                }}
+                style={{ background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '10px', padding: '6px 12px', fontSize: '13px', fontWeight: 'bold', cursor: 'pointer', flexShrink: 0 }}
               >
-                閉じる
+                ← 戻る
               </button>
+
+              <div style={{ fontSize: '14px', fontWeight: '900', color: '#0284c7', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                📍 この場所の投稿 ({sortedAndFilteredMultiPosts.length}件)
+              </div>
+
+              <select
+                value={multiPostSortType}
+                onChange={(e) => setMultiPostSortType(e.target.value as MultiPostSortType)}
+                aria-label="並び替え"
+                style={{ padding: '6px 8px', borderRadius: '10px', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', flexShrink: 0 }}
+              >
+                <option value="newest">🕒 新着順</option>
+                <option value="likes">❤️ いいね順</option>
+                <option value="views">👀 閲覧順</option>
+              </select>
+            </div>
+
+            {/* 上部キーワード検索バー（該当投稿を上に表示） */}
+            <div style={{ padding: '10px 12px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0', flexShrink: 0 }}>
+              <input
+                type="text"
+                placeholder="🔍 キーワードで投稿を検索（ヒットした投稿が上に来ます）"
+                value={multiPostSearchKeyword}
+                onChange={(e) => setMultiPostSearchKeyword(e.target.value)}
+                style={{ width: '100%', padding: '8px 12px', borderRadius: '12px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a', fontSize: '14px', outline: 'none', boxSizing: 'border-box', touchAction: 'manipulation' }}
+              />
+            </div>
+
+            {/* 縦2列スクロールグリッド */}
+            <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', padding: '12px', paddingBottom: '28px', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', alignContent: 'start', touchAction: 'pan-y', boxSizing: 'border-box' }}>
+              {sortedAndFilteredMultiPosts.map(spot => (
+                <div
+                  key={spot.id}
+                  onClick={() => {
+                    setIsMultiPostsModalOpen(false);
+                    setMultiPostSearchKeyword('');
+                    handleOpenSpot(spot);
+                  }}
+                  style={{ background: '#f8fafc', borderRadius: '14px', overflow: 'hidden', border: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', flexDirection: 'column', boxShadow: '0 3px 10px rgba(0,0,0,0.05)' }}
+                >
+                  <div style={{ width: '100%', height: '160px', background: '#000', position: 'relative' }}>
+                    <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  <div style={{ padding: '8px 10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                      <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#0284c7', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold', flexShrink: 0 }}>
+                        {spot.userName.charAt(0)}
+                      </div>
+                      <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.userName}</span>
+                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
+                    <div style={{ fontSize: '11px', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.description}</div>
+                    <div style={{ fontSize: '10px', color: '#64748b', marginTop: '4px' }}>❤️ {spot.savedCount} ・ 👀 {spot.viewsCount}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -2673,6 +2701,8 @@ export default function WapApp() {
                   const nearby = spots.filter(s => Math.abs(s.lat - spot.lat) < 0.005 && Math.abs(s.lon - spot.lon) < 0.005);
                   if (nearby.length > 1) {
                     setMultiPostsList(nearby);
+                    setMultiPostSearchKeyword('');
+                    setMultiPostSortType('newest');
                     setIsMultiPostsModalOpen(true);
                   } else {
                     handleOpenSpot(spot);
@@ -3007,7 +3037,6 @@ export default function WapApp() {
                       ◀
                     </button>
                     <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>🗓️ 旅のログ カレンダー</h3>
-                    {/* 過去に戻った時のみ右上に矢印を表示 */}
                     {isViewingPastMonth ? (
                       <button
                         type="button"
@@ -3357,7 +3386,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 詳細モーダル（1回の投稿で複数枚選んだときはタップで次の写真へ切り替え） */}
+        {/* 詳細モーダル */}
         {selectedSpot && (
           <div className="scrollable-content" style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box', touchAction: 'pan-y', paddingBottom: '90px' }}>
             <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
@@ -3525,7 +3554,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 投稿作成モーダル */}
+        {/* 投稿作成モーダル（2枚目以降もキャプション別有無にかかわらずプレビュー微調整可能） */}
         {pendingUploads.length > 0 && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 4000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', touchAction: 'none' }}>
             <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', padding: '20px', borderRadius: '20px', maxWidth: '420px', width: '100%', maxHeight: '82vh', overflowY: 'auto', touchAction: 'pan-y', boxSizing: 'border-box', marginBottom: '40px' }}>
@@ -3667,7 +3696,6 @@ export default function WapApp() {
                 </button>
               </div>
 
-              {/* 1枚目（またはキャプション分けON時）のみカテゴリ・モード・キャプションを表示 */}
               {(currentUploadIndex === 0 || separateCaptionsMode) && (
                 <>
                   {currentUploadIndex === 0 && (
@@ -3776,7 +3804,6 @@ export default function WapApp() {
                 </>
               )}
 
-              {/* 位置情報・住所・大学名・場所名入力（1枚目のみ表示、2枚目以降は自動引き継ぎで省く） */}
               {currentUploadIndex === 0 && (
                 <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative', boxSizing: 'border-box' }}>
                   <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
@@ -3814,7 +3841,7 @@ export default function WapApp() {
 
               {currentUploadIndex > 0 && !separateCaptionsMode && (
                 <div style={{ background: '#f0fdf4', padding: '10px 12px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', fontSize: '12px', color: '#15803d', fontWeight: 'bold' }}>
-                  ✓ 1枚目の場所・キャプション・モード設定を引き継ぎます（入力不要）
+                  ✓ 1枚目の場所・キャプション・モード設定を引き継ぎます（上で2枚目以降も微調整できます）
                 </div>
               )}
 
@@ -3833,7 +3860,11 @@ export default function WapApp() {
                   onClick={handleConfirmPost}
                   style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                 >
-                  {isSubmitting ? '保存中...' : (separateCaptionsMode && currentUploadIndex + 1 < pendingUploads.length ? '次の写真のキャプションへ ➡️' : 'マップに反映する 🚀')}
+                  {isSubmitting
+                    ? '保存中...'
+                    : currentUploadIndex + 1 < pendingUploads.length
+                      ? (separateCaptionsMode ? '次の写真のキャプションへ ➡️' : '次の写真の微調整へ ➡️')
+                      : 'マップに反映する 🚀'}
                 </button>
               </div>
             </div>
