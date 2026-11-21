@@ -562,7 +562,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   MD: { names: { ja: 'モルド바', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
   RU: { names: { ja: 'ロシア', en: 'Russia', ko: '러시아', zh: '俄罗斯' }, flag: '🇷🇺', region: '🇪🇺 ヨーロッパ', lat: 61.5240, lon: 105.3188, zoom: 3 },
-  SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스웨덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
+  SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
   NO: { names: { ja: 'ノルウェー', en: 'Norway', ko: '노르웨이', zh: '挪威' }, flag: '🇳🇴', region: '🇪🇺 北欧', lat: 60.4720, lon: 8.4689, zoom: 5 },
   DK: { names: { ja: 'デンマーク', en: 'Denmark', ko: '덴마크', zh: '丹麦' }, flag: '🇩🇰', region: '🇪🇺 北欧', lat: 56.2639, lon: 9.5018, zoom: 7 },
   FI: { names: { ja: 'フィンランド', en: 'Finland', ko: '핀란드', zh: '芬兰' }, flag: '🇫🇮', region: '🇪🇺 北欧', lat: 61.9241, lon: 25.7482, zoom: 5 },
@@ -992,7 +992,7 @@ export default function WapApp() {
   const [calendarYear, setCalendarYear] = useState<number>(() => new Date().getFullYear());
   const [calendarMonth, setCalendarMonth] = useState<number>(() => new Date().getMonth() + 1);
 
-  // 同一場所の複数投稿一覧グリッド用モーダルステート
+  // 同一場所の複数投稿一覧グリッド用モーダルステート（縦2列で並べて選択）
   const [isMultiPostsModalOpen, setIsMultiPostsModalOpen] = useState<boolean>(false);
   const [multiPostsList, setMultiPostsList] = useState<Spot[]>([]);
 
@@ -1062,7 +1062,6 @@ export default function WapApp() {
   const [pendingUploads, setPendingUploads] = useState<PendingUploadItem[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
 
-  // 同じ場所の投稿を1つの投稿にまとめるか、別投稿にするかの選択ステート（デフォルト: true＝同じ場所の投稿を1つの投稿にまとめる）
   const [mergeSameLocationPost, setMergeSameLocationPost] = useState<boolean>(true);
 
   const [postCategory, setPostCategory] = useState<ViewCategory>('view');
@@ -1112,6 +1111,13 @@ export default function WapApp() {
   const showWarning = (msg: string) => {
     setWarningMessage(msg);
     setTimeout(() => setWarningMessage(null), 5000);
+  };
+
+  // カレンダーを1ヶ月前・1ヶ月後へ移動するハンドラ
+  const handleStepCalendarMonth = (delta: number) => {
+    const targetDate = new Date(calendarYear, calendarMonth - 1 + delta, 1);
+    setCalendarYear(targetDate.getFullYear());
+    setCalendarMonth(targetDate.getMonth() + 1);
   };
 
   useEffect(() => {
@@ -1661,7 +1667,6 @@ export default function WapApp() {
     }
   };
 
-  // 投稿画面内でさらに複数枚追加選択するためのハンドラ
   const handleAppendMoreMedia = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     const files = Array.from(e.target.files);
@@ -1759,7 +1764,6 @@ export default function WapApp() {
 
     let updatedSpotsList = [...spots];
 
-    // 同じ場所の投稿を1つの投稿にまとめる設定がONの場合、同一ユーザーの近隣スポットを探して mediaList に統合
     const existingSameLocationSpot = mergeSameLocationPost
       ? updatedSpotsList.find(
           (s) => s.userId === 'me' && Math.abs(s.lat - finalLat) < 0.002 && Math.abs(s.lon - finalLon) < 0.002
@@ -1819,7 +1823,6 @@ export default function WapApp() {
         updatedSpotsList = [newSpot, ...updatedSpotsList];
       }
     } else {
-      // 2枚目以降：直前に作成/合体した先頭スポットの mediaList に追加合体させる
       const targetSpot = updatedSpotsList[0];
       if (targetSpot && targetSpot.userId === 'me') {
         const updatedMediaList = [...(targetSpot.mediaList || []), newMediaItem];
@@ -2420,16 +2423,16 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 同一場所の複数投稿一覧グリッド用モーダル */}
+        {/* 同一場所の複数投稿一覧グリッド用モーダル（縦2列で並べてタップでその投稿へ遷移） */}
         {isMultiPostsModalOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 8500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
             <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', maxHeight: '88vh', padding: '20px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
-                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>📍 この場所のすべての投稿 ({multiPostsList.length}件)</h3>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '900', color: '#0284c7' }}>📍 この場所の投稿 ({multiPostsList.length}件)</h3>
                 <button onClick={() => setIsMultiPostsModalOpen(false)} style={{ background: 'transparent', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#0f172a' }}>✕</button>
               </div>
 
-              <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px', paddingRight: '4px', touchAction: 'pan-y' }}>
+              <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', paddingRight: '4px', touchAction: 'pan-y' }}>
                 {multiPostsList.map(spot => (
                   <div
                     key={spot.id}
@@ -2437,20 +2440,20 @@ export default function WapApp() {
                       setIsMultiPostsModalOpen(false);
                       handleOpenSpot(spot);
                     }}
-                    style={{ background: '#f8fafc', borderRadius: '16px', overflow: 'hidden', border: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
+                    style={{ background: '#f8fafc', borderRadius: '14px', overflow: 'hidden', border: '1px solid #e2e8f0', cursor: 'pointer', display: 'flex', flexDirection: 'column', boxShadow: '0 3px 10px rgba(0,0,0,0.05)' }}
                   >
-                    <div style={{ width: '100%', height: '260px', background: '#000', position: 'relative' }}>
+                    <div style={{ width: '100%', height: '150px', background: '#000', position: 'relative' }}>
                       <img src={spot.thumbUrl || spot.fileUrl} alt={spot.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
-                    <div style={{ padding: '12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                        <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#0284c7', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold' }}>
+                    <div style={{ padding: '8px 10px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                        <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#0284c7', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 'bold', flexShrink: 0 }}>
                           {spot.userName.charAt(0)}
                         </div>
-                        <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#0f172a' }}>{spot.userName}</span>
+                        <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#475569', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.userName}</span>
                       </div>
-                      <div style={{ fontSize: '15px', fontWeight: 'bold', marginBottom: '4px', color: '#0f172a' }}>{spot.title}</div>
-                      <div style={{ fontSize: '13px', color: '#475569', lineHeight: '1.4' }}>{spot.description}</div>
+                      <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.title}</div>
+                      <div style={{ fontSize: '11px', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{spot.description}</div>
                     </div>
                   </div>
                 ))}
@@ -2721,7 +2724,7 @@ export default function WapApp() {
                 }}
               >
                 <span>📷＋</span>
-                <span>{t('addPhoto')}（複数選択可）</span>
+                <span>{t('addPhoto')}</span>
                 <input type="file" accept="image/*,video/*" multiple onChange={handlePhotoSelect} style={{ display: 'none' }} />
               </label>
             </div>
@@ -2968,7 +2971,25 @@ export default function WapApp() {
 
               {profileSubTab === 'timeline' && (
                 <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '16px', border: '1px solid #e2e8f0' }}>
-                  <h3 style={{ margin: '0 0 10px 0', fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>🗓️ 旅のログ カレンダー</h3>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                    <button
+                      type="button"
+                      onClick={() => handleStepCalendarMonth(-1)}
+                      aria-label="前の月へ"
+                      style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0284c7', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      ◀
+                    </button>
+                    <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>🗓️ 旅のログ カレンダー</h3>
+                    <button
+                      type="button"
+                      onClick={() => handleStepCalendarMonth(1)}
+                      aria-label="次の月へ"
+                      style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0284c7', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      ▶
+                    </button>
+                  </div>
 
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '14px' }}>
                     <select
@@ -3490,18 +3511,16 @@ export default function WapApp() {
                 </div>
               </div>
 
-              {/* 複数枚追加選択ボタン */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                 <button
                   type="button"
                   onClick={() => appendMoreMediaInputRef.current?.click()}
                   style={{ flex: 1, padding: '7px 10px', background: '#f0f9ff', color: '#0284c7', border: '1px solid #bae6fd', borderRadius: '8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
                 >
-                  ＋ 写真を複数選ぶ・追加する
+                  ＋ 写真・動画を追加する
                 </button>
               </div>
 
-              {/* 同じ場所の投稿を1つの投稿にまとめるか選択 */}
               <div style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '10px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', color: '#0f172a', cursor: 'pointer' }}>
                   <input
