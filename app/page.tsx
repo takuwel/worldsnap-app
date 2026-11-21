@@ -272,7 +272,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 
 2️⃣ **すてきな写真や動画をマップに投稿する（カンタン！）**
 - マップ画面の左下にある「📷＋ 写真/動画を追加」ボタンを押してね。
-- スマホの中にある写真や動画を選ぶと、自動的に場所（位置情報）がマップにセットされるよ！（※場所が違うときは「地名・住所検索」で正しい場所をえらんでね）
+- スマホの中にある写真や動画を選ぶと、自動的に場所（位置情報）がマップにセットされるよ！（※場所が違うときは「地名・住所・施設名検索」で正しい場所をえらんでね）
 - プレビュー画面で、iPhoneの写真アプリと同じように**「二本指で広げたり縮めたり（ピンチイン・アウト）」**して大きさを自由に変えたり、指でスワイプして位置を微調整できるよ！
 - タイトルや思い出メモを入力して、「マップに反映する 🚀」を押すだけ！
 
@@ -989,10 +989,19 @@ export default function WapApp() {
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<string | null>(null);
 
   // カレンダー年月の遡及用ステート
-  const [calendarYear, setCalendarYear] = useState<number>(() => new Date().getFullYear());
-  const [calendarMonth, setCalendarMonth] = useState<number>(() => new Date().getMonth() + 1);
+  const nowDateObj = useMemo(() => new Date(), []);
+  const currentActualYear = nowDateObj.getFullYear();
+  const currentActualMonth = nowDateObj.getMonth() + 1;
+  const [calendarYear, setCalendarYear] = useState<number>(currentActualYear);
+  const [calendarMonth, setCalendarMonth] = useState<number>(currentActualMonth);
 
-  // 同一場所の複数投稿一覧グリッド用モーダルステート（縦2列で並べて選択）
+  const isViewingPastMonth = useMemo(() => {
+    if (calendarYear < currentActualYear) return true;
+    if (calendarYear === currentActualYear && calendarMonth < currentActualMonth) return true;
+    return false;
+  }, [calendarYear, calendarMonth, currentActualYear, currentActualMonth]);
+
+  // 同一場所の複数投稿一覧グリッド用モーダルステート
   const [isMultiPostsModalOpen, setIsMultiPostsModalOpen] = useState<boolean>(false);
   const [multiPostsList, setMultiPostsList] = useState<Spot[]>([]);
 
@@ -1062,7 +1071,8 @@ export default function WapApp() {
   const [pendingUploads, setPendingUploads] = useState<PendingUploadItem[]>([]);
   const [currentUploadIndex, setCurrentUploadIndex] = useState<number>(0);
 
-  const [mergeSameLocationPost, setMergeSameLocationPost] = useState<boolean>(true);
+  // 「キャプションを分けて入力する」スイッチ（デフォルト: false＝1枚目のキャプション・住所を引き継ぎ、2枚目以降は入力省略可能）
+  const [separateCaptionsMode, setSeparateCaptionsMode] = useState<boolean>(false);
 
   const [postCategory, setPostCategory] = useState<ViewCategory>('view');
   const [selectedScopes, setSelectedScopes] = useState<DisplayScope[]>(['world', 'friends', 'my']);
@@ -1113,7 +1123,6 @@ export default function WapApp() {
     setTimeout(() => setWarningMessage(null), 5000);
   };
 
-  // カレンダーを1ヶ月前・1ヶ月後へ移動するハンドラ
   const handleStepCalendarMonth = (delta: number) => {
     const targetDate = new Date(calendarYear, calendarMonth - 1 + delta, 1);
     setCalendarYear(targetDate.getFullYear());
@@ -1299,6 +1308,7 @@ export default function WapApp() {
     }
   };
 
+  // 場所名・大学名・施設名・住所検索
   useEffect(() => {
     if (!mapSearchKeyword.trim() || mapSearchKeyword.startsWith('#')) {
       setMapSearchSuggestions([]);
@@ -1306,7 +1316,7 @@ export default function WapApp() {
     }
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearchKeyword)}&limit=5`);
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearchKeyword)}&limit=6`);
         const data = await res.json();
         setMapSearchSuggestions(data || []);
       } catch {
@@ -1320,7 +1330,7 @@ export default function WapApp() {
     const lat = parseFloat(item.lat);
     const lon = parseFloat(item.lon);
     setTargetCenter([lat, lon]);
-    setTargetZoom(13);
+    setTargetZoom(14);
     setMapSearchKeyword(item.display_name.split(',')[0]);
     setMapSearchSuggestions([]);
     showToast(`📍 ${item.display_name.split(',')[0]} へ移動しました`);
@@ -1338,17 +1348,26 @@ export default function WapApp() {
 
     if (mapSearchSuggestions.length > 0) {
       handleSelectMapSuggestion(mapSearchSuggestions[0]);
+    } else {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearchKeyword)}&limit=1`);
+        const data = await res.json();
+        if (data && data[0]) {
+          handleSelectMapSuggestion(data[0]);
+        }
+      } catch {}
     }
   };
 
+  // 投稿画面の住所・場所名・大学名検索
   useEffect(() => {
-    if (!addressSearchQuery.trim()) {
+    if (!addressSearchQuery.trim() || addressSearchQuery.startsWith('📍')) {
       setAddressSuggestions([]);
       return;
     }
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressSearchQuery)}&limit=5`);
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressSearchQuery)}&limit=6`);
         const data = await res.json();
         setAddressSuggestions(data || []);
       } catch {
@@ -1359,11 +1378,12 @@ export default function WapApp() {
   }, [addressSearchQuery]);
 
   const handleSelectAddressSuggestion = (item: PlaceSuggestion) => {
+    const placeLabel = item.display_name.split(',')[0];
     setManualLat(item.lat);
     setManualLon(item.lon);
-    setAddressSearchQuery(item.display_name.split(',')[0]);
+    setAddressSearchQuery(`📍 ${placeLabel}`);
     setAddressSuggestions([]);
-    showToast(`📍 位置を「${item.display_name.split(',')[0]}」に設定しました`);
+    showToast(`📍 位置を「${placeLabel}」に設定しました`);
   };
 
   const filteredCountries = useMemo(() => {
@@ -1649,7 +1669,7 @@ export default function WapApp() {
     if (pendingList.length > 0) {
       setPendingUploads(pendingList);
       setCurrentUploadIndex(0);
-      setMergeSameLocationPost(true);
+      setSeparateCaptionsMode(false);
       setPreviewScale(1);
       setPreviewOffset({ x: 0, y: 0 });
       const first = pendingList[0];
@@ -1675,7 +1695,7 @@ export default function WapApp() {
 
     if (addedList.length > 0) {
       setPendingUploads(prev => [...prev, ...addedList]);
-      showToast(`📸 ${addedList.length}枚を追加しました（合計 ${pendingUploads.length + addedList.length}枚を1つの投稿にまとめます）`);
+      showToast(`📸 ${addedList.length}件を追加しました（合計 ${pendingUploads.length + addedList.length}件を1つの投稿にまとめます）`);
     }
   };
 
@@ -1691,6 +1711,10 @@ export default function WapApp() {
     }
   };
 
+  // 投稿確定処理：
+  // 1) 1回の投稿セッション内で複数枚選んだ場合は1つのスポット（mediaList）にまとめる
+  // 2) 別回に改めて投稿ボタンを押した場合は既存投稿には合体せず、完全に別の新規独立したスポットとして保存する
+  // 3) 位置情報がない写真・動画の複数投稿時、1枚目で住所・場所名を入力したら2枚目以降へ自動引き継ぎ
   const handleConfirmPost = async () => {
     const current = pendingUploads[currentUploadIndex];
     if (!current || isSubmitting) return;
@@ -1698,12 +1722,20 @@ export default function WapApp() {
     const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
 
     if (!hasValidManualLocation) {
-      showWarning('⚠️ 位置情報が指定されていません。「地名・住所検索」で必ず場所を選択してください。');
+      showWarning('⚠️ 位置情報が指定されていません。「地名・住所・施設名検索」で必ず場所を選択してください。');
       return;
     }
 
-    const checkTitle = checkInappropriateContent(current.title);
-    const checkDesc = checkInappropriateContent(current.description);
+    const firstItem = pendingUploads[0];
+    const effectiveTitle = separateCaptionsMode
+      ? (current.title || firstItem?.title || '無題のスポット')
+      : (firstItem?.title || current.title || '無題のスポット');
+    const effectiveDescription = separateCaptionsMode
+      ? (current.description || firstItem?.description || '旅の思い出')
+      : (firstItem?.description || current.description || '旅の思い出');
+
+    const checkTitle = checkInappropriateContent(effectiveTitle);
+    const checkDesc = checkInappropriateContent(effectiveDescription);
     if (checkTitle.isViolating || checkDesc.isViolating) {
       showWarning('⚠️ 暴言・差別発言・不適切な表現が含まれているため投稿できません。');
       return;
@@ -1753,75 +1785,46 @@ export default function WapApp() {
       thumbUrl: finalThumbUrl,
       fileType: current.fileType,
       fileName: current.file.name,
-      title: current.title,
-      description: current.description,
+      title: effectiveTitle,
+      description: effectiveDescription,
       createdAt: todayStr,
     };
 
     const isNearbyExists = spots.some((s) => Math.abs(s.lat - finalLat) < 0.05 && Math.abs(s.lon - finalLon) < 0.05);
     const isFirstExplorer = !isNearbyExists;
-    const extractedTags = extractHashtags(current.description);
+    const extractedTags = extractHashtags(effectiveDescription);
 
     let updatedSpotsList = [...spots];
 
-    const existingSameLocationSpot = mergeSameLocationPost
-      ? updatedSpotsList.find(
-          (s) => s.userId === 'me' && Math.abs(s.lat - finalLat) < 0.002 && Math.abs(s.lon - finalLon) < 0.002
-        )
-      : undefined;
-
     if (currentUploadIndex === 0) {
-      if (existingSameLocationSpot) {
-        const baseMedia = existingSameLocationSpot.mediaList && existingSameLocationSpot.mediaList.length > 0
-          ? existingSameLocationSpot.mediaList
-          : [{
-              fileUrl: existingSameLocationSpot.fileUrl,
-              thumbUrl: existingSameLocationSpot.thumbUrl,
-              fileType: existingSameLocationSpot.fileType,
-              fileName: existingSameLocationSpot.fileName,
-              title: existingSameLocationSpot.title,
-              description: existingSameLocationSpot.description,
-              createdAt: existingSameLocationSpot.createdAt,
-            }];
-        const mergedSpot: Spot = {
-          ...existingSameLocationSpot,
-          mediaList: [...baseMedia, newMediaItem],
-          hasParking: existingSameLocationSpot.hasParking || current.hasParking,
-        };
-        updatedSpotsList = [
-          mergedSpot,
-          ...updatedSpotsList.filter((s) => s.id !== existingSameLocationSpot.id),
-        ];
-      } else {
-        const newSpot: Spot = {
-          id: current.id,
-          userId: 'me',
-          userName,
-          userAvatar,
-          isFirstExplorer,
-          viewsCount: 1,
-          savedCount: 0,
-          title: current.title || '無題のスポット',
-          description: current.description || '旅の思い出',
-          fileName: current.file.name,
-          fileUrl: uploadedUrl,
-          thumbUrl: finalThumbUrl,
-          fileType: current.fileType,
-          mediaList: [newMediaItem],
-          lat: finalLat,
-          lon: finalLon,
-          countryCode: userCountry,
-          cityName: currentConfig.names[userLangCode] || currentConfig.names.en,
-          category: postCategory,
-          scopes: selectedScopes,
-          hasParking: current.hasParking,
-          tags: extractedTags,
-          comments: [],
-          reportCount: 0,
-          createdAt: todayStr,
-        };
-        updatedSpotsList = [newSpot, ...updatedSpotsList];
-      }
+      const newSpot: Spot = {
+        id: `${current.id}-${Date.now()}`,
+        userId: 'me',
+        userName,
+        userAvatar,
+        isFirstExplorer,
+        viewsCount: 1,
+        savedCount: 0,
+        title: effectiveTitle,
+        description: effectiveDescription,
+        fileName: current.file.name,
+        fileUrl: uploadedUrl,
+        thumbUrl: finalThumbUrl,
+        fileType: current.fileType,
+        mediaList: [newMediaItem],
+        lat: finalLat,
+        lon: finalLon,
+        countryCode: userCountry,
+        cityName: currentConfig.names[userLangCode] || currentConfig.names.en,
+        category: postCategory,
+        scopes: selectedScopes,
+        hasParking: current.hasParking,
+        tags: extractedTags,
+        comments: [],
+        reportCount: 0,
+        createdAt: todayStr,
+      };
+      updatedSpotsList = [newSpot, ...updatedSpotsList];
     } else {
       const targetSpot = updatedSpotsList[0];
       if (targetSpot && targetSpot.userId === 'me') {
@@ -1842,25 +1845,48 @@ export default function WapApp() {
 
     setIsSubmitting(false);
 
-    if (currentUploadIndex + 1 < pendingUploads.length) {
+    // 「キャプションを分けて入力する」がONかつ残りがある場合は次の写真の入力へ進む
+    if (separateCaptionsMode && currentUploadIndex + 1 < pendingUploads.length) {
       const nextIndex = currentUploadIndex + 1;
       setCurrentUploadIndex(nextIndex);
       setPreviewScale(1);
       setPreviewOffset({ x: 0, y: 0 });
-      const nextItem = pendingUploads[nextIndex];
-      if (nextItem.hasGps && nextItem.lat !== undefined && nextItem.lon !== undefined) {
-        setManualLat(nextItem.lat.toString());
-        setManualLon(nextItem.lon.toString());
-        setAddressSearchQuery('📍 写真のEXIF位置情報');
-      } else {
-        setManualLat(finalLat.toString());
-        setManualLon(finalLon.toString());
+      setManualLat(finalLat.toString());
+      setManualLon(finalLon.toString());
+    } else if (!separateCaptionsMode && currentUploadIndex + 1 < pendingUploads.length) {
+      // キャプション分けがOFFの場合：1枚目のキャプション・住所・モードを引き継ぎ、残りのメディアもまとめて1つの投稿に保存
+      let workingSpots = [...updatedSpotsList];
+      for (let i = currentUploadIndex + 1; i < pendingUploads.length; i++) {
+        const item = pendingUploads[i];
+        const extraMedia: MediaItem = {
+          fileUrl: item.fileUrl,
+          thumbUrl: item.thumbUrl || item.fileUrl,
+          fileType: item.fileType,
+          fileName: item.file.name,
+          title: effectiveTitle,
+          description: effectiveDescription,
+          createdAt: todayStr,
+        };
+        if (workingSpots[0] && workingSpots[0].userId === 'me') {
+          workingSpots[0] = {
+            ...workingSpots[0],
+            mediaList: [...(workingSpots[0].mediaList || []), extraMedia],
+            hasParking: workingSpots[0].hasParking || item.hasParking,
+          };
+        }
       }
+      setSpots(workingSpots);
+      try {
+        localStorage.setItem('wap_local_spots_v13', JSON.stringify(workingSpots));
+      } catch {}
+      setPendingUploads([]);
+      setCurrentUploadIndex(0);
+      showToast(`📍 ${pendingUploads.length}件を1つの投稿にまとめてマップに反映しました！🚀`);
     } else {
       setPendingUploads([]);
       setCurrentUploadIndex(0);
       showToast(
-        existingSameLocationSpot || pendingUploads.length > 1
+        pendingUploads.length > 1
           ? `📍 写真・動画を1つの投稿にまとめてマップに反映しました！🚀`
           : `📍 マップにピンを反映しました！🚀`
       );
@@ -2423,7 +2449,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 同一場所の複数投稿一覧グリッド用モーダル（縦2列で並べてタップでその投稿へ遷移） */}
+        {/* 同一場所の複数投稿一覧グリッド用モーダル（縦2列で並べてスクロール選択） */}
         {isMultiPostsModalOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 8500, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
             <div className="scrollable-content" style={{ background: '#ffffff', color: '#0f172a', borderRadius: '24px', maxWidth: '440px', width: '100%', maxHeight: '88vh', padding: '20px', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
@@ -2970,7 +2996,7 @@ export default function WapApp() {
               )}
 
               {profileSubTab === 'timeline' && (
-                <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '16px', border: '1px solid #e2e8f0' }}>
+                <div style={{ background: '#f8fafc', borderRadius: '16px', padding: '16px', border: '1px solid #e2e8f0', position: 'relative' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                     <button
                       type="button"
@@ -2981,14 +3007,19 @@ export default function WapApp() {
                       ◀
                     </button>
                     <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 'bold', textAlign: 'center' }}>🗓️ 旅のログ カレンダー</h3>
-                    <button
-                      type="button"
-                      onClick={() => handleStepCalendarMonth(1)}
-                      aria-label="次の月へ"
-                      style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0284c7', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                    >
-                      ▶
-                    </button>
+                    {/* 過去に戻った時のみ右上に矢印を表示 */}
+                    {isViewingPastMonth ? (
+                      <button
+                        type="button"
+                        onClick={() => handleStepCalendarMonth(1)}
+                        aria-label="次の月へ"
+                        style={{ width: '32px', height: '32px', borderRadius: '8px', border: '1px solid #0284c7', background: '#f0f9ff', color: '#0284c7', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                      >
+                        ▶
+                      </button>
+                    ) : (
+                      <div style={{ width: '32px', height: '32px' }} />
+                    )}
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '14px' }}>
@@ -3326,7 +3357,7 @@ export default function WapApp() {
           </div>
         )}
 
-        {/* 詳細モーダル（複数枚のときはタップで次の写真へ切り替え） */}
+        {/* 詳細モーダル（1回の投稿で複数枚選んだときはタップで次の写真へ切り替え） */}
         {selectedSpot && (
           <div className="scrollable-content" style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 2000, display: 'flex', flexDirection: 'column', overflowY: 'auto', boxSizing: 'border-box', touchAction: 'pan-y', paddingBottom: '90px' }}>
             <div style={{ height: '48px', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', position: 'sticky', top: 0, background: '#ffffff', zIndex: 10, boxSizing: 'border-box' }}>
@@ -3519,17 +3550,25 @@ export default function WapApp() {
                 >
                   ＋ 写真・動画を追加する
                 </button>
-              </div>
-
-              <div style={{ background: '#f8fafc', padding: '8px 12px', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '10px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', color: '#0f172a', cursor: 'pointer' }}>
-                  <input
-                    type="checkbox"
-                    checked={mergeSameLocationPost}
-                    onChange={(e) => setMergeSameLocationPost(e.target.checked)}
-                  />
-                  <span>📌 同じ場所の投稿を1つの投稿にまとめる</span>
-                </label>
+                {pendingUploads.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => setSeparateCaptionsMode(prev => !prev)}
+                    style={{
+                      flex: 1,
+                      padding: '7px 10px',
+                      background: separateCaptionsMode ? '#0284c7' : '#f8fafc',
+                      color: separateCaptionsMode ? '#ffffff' : '#0f172a',
+                      border: `1px solid ${separateCaptionsMode ? '#0284c7' : '#cbd5e1'}`,
+                      borderRadius: '8px',
+                      fontSize: '11px',
+                      fontWeight: 'bold',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {separateCaptionsMode ? '✓ キャプションを分けて入力中' : '✏️ キャプションを分けて入力する'}
+                  </button>
+                )}
               </div>
 
               <div
@@ -3628,142 +3667,156 @@ export default function WapApp() {
                 </button>
               </div>
 
-              {currentUploadIndex === 0 && (
+              {/* 1枚目（またはキャプション分けON時）のみカテゴリ・モード・キャプションを表示 */}
+              {(currentUploadIndex === 0 || separateCaptionsMode) && (
                 <>
-                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
-                    🏷️ スポットのカテゴリを選択
-                  </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '12px' }}>
-                    {(['view', 'gourmet', 'rain'] as const).map((cat) => {
-                      const isSelected = postCategory === cat;
-                      return (
-                        <button
-                          key={cat}
-                          type="button"
-                          onClick={() => setPostCategory(cat)}
-                          style={{
-                            padding: '8px 4px',
-                            borderRadius: '10px',
-                            border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
-                            background: isSelected ? '#f0f9ff' : '#ffffff',
-                            color: isSelected ? themeAccent : '#64748b',
-                            fontWeight: 'bold',
-                            fontSize: '11px',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          {cat === 'view' ? `🏔️ ${t('view')}` : cat === 'gourmet' ? `🍔 ${t('gourmet')}` : `🌧️ ${t('rain')}`}
-                        </button>
-                      );
-                    })}
+                  {currentUploadIndex === 0 && (
+                    <>
+                      <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                        🏷️ スポットのカテゴリを選択
+                      </label>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '12px' }}>
+                        {(['view', 'gourmet', 'rain'] as const).map((cat) => {
+                          const isSelected = postCategory === cat;
+                          return (
+                            <button
+                              key={cat}
+                              type="button"
+                              onClick={() => setPostCategory(cat)}
+                              style={{
+                                padding: '8px 4px',
+                                borderRadius: '10px',
+                                border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
+                                background: isSelected ? '#f0f9ff' : '#ffffff',
+                                color: isSelected ? themeAccent : '#64748b',
+                                fontWeight: 'bold',
+                                fontSize: '11px',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              {cat === 'view' ? `🏔️ ${t('view')}` : cat === 'gourmet' ? `🍔 ${t('gourmet')}` : `🌧️ ${t('rain')}`}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                        🌐 反映させるマップモードを選択
+                      </label>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
+                        {(['world', 'friends', 'my'] as const).map((scope) => {
+                          const isSelected = selectedScopes.includes(scope);
+                          return (
+                            <div
+                              key={scope}
+                              onClick={() => toggleScopeSelection(scope)}
+                              style={{
+                                padding: '10px 12px',
+                                borderRadius: '10px',
+                                border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
+                                background: isSelected ? '#f0f9ff' : '#ffffff',
+                                cursor: 'pointer',
+                                fontSize: '12px',
+                                fontWeight: 'bold',
+                                color: isSelected ? themeAccent : '#0f172a',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                              }}
+                            >
+                              <span>{scope === 'world' ? `🌎 ${t('world')}` : scope === 'friends' ? `👥 ${t('friends')}` : `📍 ${t('myMap')}`}</span>
+                              <span>{isSelected ? '☑️' : '☐'}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
+
+                  <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '12px' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 'bold', color: '#0f172a', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={pendingUploads[currentUploadIndex].hasParking}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setPendingUploads(prev => prev.map((item, idx) => idx === currentUploadIndex ? { ...item, hasParking: checked } : item));
+                        }}
+                      />
+                      <span>🅿️ 駐車場あり</span>
+                    </label>
+                    <div style={{ fontSize: '10px', color: '#0284c7', marginTop: '4px', fontWeight: 'bold' }}>
+                      💡 ここを記入することで、ドライブユーザーからの「いいね」がつきやすくなります！
+                    </div>
                   </div>
 
-                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b', display: 'block', marginBottom: '4px' }}>
-                    🌐 反映させるマップモードを選択
-                  </label>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
-                    {(['world', 'friends', 'my'] as const).map((scope) => {
-                      const isSelected = selectedScopes.includes(scope);
-                      return (
-                        <div
-                          key={scope}
-                          onClick={() => toggleScopeSelection(scope)}
-                          style={{
-                            padding: '10px 12px',
-                            borderRadius: '10px',
-                            border: `2px solid ${isSelected ? themeAccent : '#e2e8f0'}`,
-                            background: isSelected ? '#f0f9ff' : '#ffffff',
-                            cursor: 'pointer',
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                            color: isSelected ? themeAccent : '#0f172a',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between'
-                          }}
-                        >
-                          <span>{scope === 'world' ? `🌎 ${t('world')}` : scope === 'friends' ? `👥 ${t('friends')}` : `📍 ${t('myMap')}`}</span>
-                          <span>{isSelected ? '☑️' : '☐'}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
+                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名（タイトル）</label>
+                  <input
+                    type="text"
+                    placeholder="例: 絶景の展望台カフェ"
+                    value={pendingUploads[currentUploadIndex].title}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setPendingUploads(prev => prev.map((item, idx) => idx === currentUploadIndex ? { ...item, title: val } : item));
+                    }}
+                    style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation', boxSizing: 'border-box' }}
+                  />
+
+                  <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグ)</label>
+                  <textarea
+                    rows={2}
+                    placeholder="思い出や感想を自由に入力 (#絶景)"
+                    value={pendingUploads[currentUploadIndex].description}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setPendingUploads(prev => prev.map((item, idx) => idx === currentUploadIndex ? { ...item, description: val } : item));
+                    }}
+                    style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation', boxSizing: 'border-box' }}
+                  />
                 </>
               )}
 
-              <div style={{ background: '#f8fafc', padding: '10px 12px', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '12px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 'bold', color: '#0f172a', cursor: 'pointer' }}>
-                  <input
-                    type="checkbox"
-                    checked={pendingUploads[currentUploadIndex].hasParking}
-                    onChange={(e) => {
-                      const checked = e.target.checked;
-                      setPendingUploads(prev => prev.map((item, idx) => idx === currentUploadIndex ? { ...item, hasParking: checked } : item));
-                    }}
-                  />
-                  <span>🅿️ 駐車場あり</span>
-                </label>
-                <div style={{ fontSize: '10px', color: '#0284c7', marginTop: '4px', fontWeight: 'bold' }}>
-                  💡 ここを記入することで、ドライブユーザーからの「いいね」がつきやすくなります！
-                </div>
-              </div>
-
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>スポット名（タイトル）</label>
-              <input
-                type="text"
-                placeholder="例: 絶景の展望台カフェ"
-                value={pendingUploads[currentUploadIndex].title}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setPendingUploads(prev => prev.map((item, idx) => idx === currentUploadIndex ? { ...item, title: val } : item));
-                }}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation', boxSizing: 'border-box' }}
-              />
-
-              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>思い出・メモ (#タグ)</label>
-              <textarea
-                rows={2}
-                placeholder="思い出や感想を自由に入力 (#絶景)"
-                value={pendingUploads[currentUploadIndex].description}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setPendingUploads(prev => prev.map((item, idx) => idx === currentUploadIndex ? { ...item, description: val } : item));
-                }}
-                style={{ width: '100%', padding: '8px 10px', marginTop: '3px', marginBottom: '10px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', touchAction: 'manipulation', boxSizing: 'border-box' }}
-              />
-
-              <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative', boxSizing: 'border-box' }}>
-                <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
-                  📍 撮影場所を選択
-                </div>
-                <input
-                  type="text"
-                  placeholder="地名・住所・場所名を入力"
-                  value={addressSearchQuery}
-                  onChange={(e) => setAddressSearchQuery(e.target.value)}
-                  style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', touchAction: 'manipulation', boxSizing: 'border-box' }}
-                />
-
-                {addressSuggestions.length > 0 && (
-                  <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
-                    {addressSuggestions.map((item) => (
-                      <div
-                        key={item.place_id}
-                        onClick={() => handleSelectAddressSuggestion(item)}
-                        style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
-                      >
-                        <span>📍</span>
-                        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
-                      </div>
-                    ))}
+              {/* 位置情報・住所・大学名・場所名入力（1枚目のみ表示、2枚目以降は自動引き継ぎで省く） */}
+              {currentUploadIndex === 0 && (
+                <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative', boxSizing: 'border-box' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
+                    📍 住所・場所名・大学名などを検索
                   </div>
-                )}
+                  <input
+                    type="text"
+                    placeholder="住所・場所名・大学名を入力"
+                    value={addressSearchQuery}
+                    onChange={(e) => setAddressSearchQuery(e.target.value)}
+                    style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', touchAction: 'manipulation', boxSizing: 'border-box' }}
+                  />
 
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, width: '50%', padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', touchAction: 'manipulation', boxSizing: 'border-box' }} />
-                  <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, width: '50%', padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', touchAction: 'manipulation', boxSizing: 'border-box' }} />
+                  {addressSuggestions.length > 0 && (
+                    <div style={{ background: '#ffffff', borderRadius: '8px', boxShadow: '0 4px 16px rgba(0,0,0,0.15)', overflow: 'hidden', marginBottom: '6px', border: '1px solid #cbd5e1', zIndex: 700 }}>
+                      {addressSuggestions.map((item) => (
+                        <div
+                          key={item.place_id}
+                          onClick={() => handleSelectAddressSuggestion(item)}
+                          style={{ padding: '8px 10px', fontSize: '11px', borderBottom: '1px solid #f1f5f9', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                        >
+                          <span>📍</span>
+                          <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.display_name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <input type="number" step="any" placeholder="緯度" value={manualLat} onChange={(e) => setManualLat(e.target.value)} style={{ flex: 1, width: '50%', padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', touchAction: 'manipulation', boxSizing: 'border-box' }} />
+                    <input type="number" step="any" placeholder="経度" value={manualLon} onChange={(e) => setManualLon(e.target.value)} style={{ flex: 1, width: '50%', padding: '5px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', touchAction: 'manipulation', boxSizing: 'border-box' }} />
+                  </div>
                 </div>
-              </div>
+              )}
+
+              {currentUploadIndex > 0 && !separateCaptionsMode && (
+                <div style={{ background: '#f0fdf4', padding: '10px 12px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', fontSize: '12px', color: '#15803d', fontWeight: 'bold' }}>
+                  ✓ 1枚目の場所・キャプション・モード設定を引き継ぎます（入力不要）
+                </div>
+              )}
 
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button
@@ -3780,7 +3833,7 @@ export default function WapApp() {
                   onClick={handleConfirmPost}
                   style={{ flex: 2, padding: '10px', background: themeAccent, color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                 >
-                  {isSubmitting ? '保存中...' : (currentUploadIndex + 1 < pendingUploads.length ? '次の写真のキャプションへ ➡️' : 'マップに反映する 🚀')}
+                  {isSubmitting ? '保存中...' : (separateCaptionsMode && currentUploadIndex + 1 < pendingUploads.length ? '次の写真のキャプションへ ➡️' : 'マップに反映する 🚀')}
                 </button>
               </div>
             </div>
