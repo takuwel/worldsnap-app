@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
 // ==========================================
-// 0. Supabase クライアント初期化 & 画像永続化ヘルパー
+// 0. Supabase クライアント初期化 & メディアURLヘルパー
 // ==========================================
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -32,10 +32,10 @@ function readFileAsPersistentDataUrl(file: File): Promise<string> {
   });
 }
 
-function sanitizeImageSrc(url?: string): string {
-  if (!url) return FALLBACK_IMAGE_URL;
-  if (url.startsWith('blob:')) return FALLBACK_IMAGE_URL;
-  return url;
+function resolveMediaSrc(primary?: string, secondary?: string): string {
+  if (primary && primary.trim() !== '') return primary;
+  if (secondary && secondary.trim() !== '') return secondary;
+  return FALLBACK_IMAGE_URL;
 }
 
 // ==========================================
@@ -97,7 +97,7 @@ export interface Spot {
   cityName: string;
   category: ViewCategory;
   scopes: DisplayScope[];
-  hasParking?: boolean; // 🅿️ 駐車場有無
+  hasParking?: boolean;
   tags?: string[];
   comments?: CommentItem[];
   reportCount?: number;
@@ -586,7 +586,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BA: { names: { ja: 'ボスニア・ヘルツェゴビナ', en: 'Bosnia and Herzegovina', ko: '보스니아 헤르체고비나', zh: '波黑' }, flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lat: 43.9159, lon: 17.6791, zoom: 7 },
   ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네그로', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
   MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케도니아', zh: '北马其顿' }, flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lat: 41.6086, lon: 21.7453, zoom: 8 },
-  MD: { names: { ja: 'モルド바', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
+  MD: { names: { ja: 'モルドバ', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
   RU: { names: { ja: 'ロシア', en: 'Russia', ko: '러시아', zh: '俄罗斯' }, flag: '🇷🇺', region: '🇪🇺 ヨーロッパ', lat: 61.5240, lon: 105.3188, zoom: 3 },
   SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
@@ -815,7 +815,7 @@ const GoogleMapComponent = ({
 
   useEffect(() => {
     spots.forEach(spot => {
-      const url = sanitizeImageSrc(spot.thumbUrl || spot.fileUrl);
+      const url = resolveMediaSrc(spot.thumbUrl, spot.fileUrl);
       if (!url || thumbCache[url]) return;
 
       const img = new Image();
@@ -836,7 +836,7 @@ const GoogleMapComponent = ({
         }
       };
       img.onerror = () => {
-        setThumbCache(prev => ({ ...prev, [url]: FALLBACK_IMAGE_URL }));
+        setThumbCache(prev => ({ ...prev, [url]: url }));
       };
       img.src = url;
     });
@@ -935,7 +935,7 @@ const GoogleMapComponent = ({
     locationMap.forEach((groupSpots) => {
       const spot = groupSpots[0];
       const count = groupSpots.length;
-      const rawUrl = sanitizeImageSrc(spot.thumbUrl || spot.fileUrl);
+      const rawUrl = resolveMediaSrc(spot.thumbUrl, spot.fileUrl);
       const imgUrl = thumbCache[rawUrl] || rawUrl;
 
       const badgeSvg = count > 1 ? `
@@ -1004,18 +1004,13 @@ export default function WapApp() {
 
   const [isLocationGuideOpen, setIsLocationGuideOpen] = useState<boolean>(false);
 
-  // QRコードモーダル用ステート
   const [isMyQrOpen, setIsMyQrOpen] = useState<boolean>(false);
   const [isScanQrOpen, setIsScanQrOpen] = useState<boolean>(false);
   const [scannerError, setScannerError] = useState<string>('');
 
-  // フレンド詳細プロフィール用ステート
   const [selectedFriend, setSelectedFriend] = useState<FriendUser | null>(null);
-
-  // カレンダーログ用モーダルステート
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<string | null>(null);
 
-  // カレンダー年月の遡及用ステート
   const nowDateObj = useMemo(() => new Date(), []);
   const currentActualYear = nowDateObj.getFullYear();
   const currentActualMonth = nowDateObj.getMonth() + 1;
@@ -1028,16 +1023,12 @@ export default function WapApp() {
     return false;
   }, [calendarYear, calendarMonth, currentActualYear, currentActualMonth]);
 
-  // 同一場所の複数投稿一覧フルスクリーン画面用ステート
   const [isMultiPostsModalOpen, setIsMultiPostsModalOpen] = useState<boolean>(false);
   const [multiPostsList, setMultiPostsList] = useState<Spot[]>([]);
   const [multiPostSearchKeyword, setMultiPostSearchKeyword] = useState<string>('');
   const [multiPostSortType, setMultiPostSortType] = useState<MultiPostSortType>('newest');
 
-  // どのコメントに対する返信かを保持するステート
   const [replyTargetUser, setReplyTargetUser] = useState<string | null>(null);
-
-  // タイムライン上で直接TikTok風コメントシートを開閉するステート
   const [openCommentsForSpot, setOpenCommentsForSpot] = useState<Record<string, boolean>>({});
 
   const scannerRef = useRef<HTMLDivElement>(null);
@@ -1110,7 +1101,6 @@ export default function WapApp() {
   const [manualLon, setManualLon] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // プレビュー操作用ステート（2本指でのピンチ、縦横ドラッグ）
   const [previewScale, setPreviewScale] = useState<number>(1);
   const [previewOffset, setPreviewOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const isDraggingRef = useRef<boolean>(false);
@@ -1684,7 +1674,7 @@ export default function WapApp() {
           id: fileId,
           file,
           fileUrl: usableUrl,
-          thumbUrl: thumbUrl || FALLBACK_IMAGE_URL,
+          thumbUrl: thumbUrl || usableUrl,
           fileType: 'video',
           hasGps: false,
           dateTime: new Date().toLocaleDateString(),
@@ -1805,8 +1795,8 @@ export default function WapApp() {
     const finalLat = parseFloat(manualLat);
     const finalLon = parseFloat(manualLon);
 
-    let uploadedUrl = sanitizeImageSrc(current.fileUrl);
-    let finalThumbUrl = sanitizeImageSrc(current.thumbUrl || current.fileUrl);
+    let uploadedUrl = current.fileUrl;
+    let finalThumbUrl = current.thumbUrl || current.fileUrl;
 
     if (supabase) {
       try {
@@ -1829,7 +1819,7 @@ export default function WapApp() {
           }
         }
       } catch (err) {
-        console.log('Storage upload bypassed, using persistent URL:', err);
+        console.log('Storage upload bypassed, using local/data URL:', err);
       }
     }
 
@@ -2529,14 +2519,8 @@ export default function WapApp() {
                 >
                   <div style={{ width: '100%', height: '160px', background: '#0f172a', position: 'relative' }}>
                     <img
-                      src={sanitizeImageSrc(spot.thumbUrl || spot.fileUrl)}
+                      src={resolveMediaSrc(spot.thumbUrl, spot.fileUrl)}
                       alt={spot.title}
-                      onError={(e) => {
-                        const target = e.currentTarget;
-                        if (target.src !== FALLBACK_IMAGE_URL) {
-                          target.src = FALLBACK_IMAGE_URL;
-                        }
-                      }}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   </div>
@@ -2582,12 +2566,8 @@ export default function WapApp() {
                     <div key={s.id} onClick={() => { setSelectedCalendarDate(null); handleOpenSpot(s); }} style={{ display: 'flex', gap: '10px', background: '#f8fafc', padding: '10px', borderRadius: '12px', border: '1px solid #e2e8f0', cursor: 'pointer', alignItems: 'center' }}>
                       <div style={{ width: '50px', height: '50px', borderRadius: '8px', overflow: 'hidden', background: '#000', flexShrink: 0 }}>
                         <img
-                          src={sanitizeImageSrc(s.thumbUrl || s.fileUrl)}
+                          src={resolveMediaSrc(s.thumbUrl, s.fileUrl)}
                           alt={s.title}
-                          onError={(e) => {
-                            const target = e.currentTarget;
-                            if (target.src !== FALLBACK_IMAGE_URL) target.src = FALLBACK_IMAGE_URL;
-                          }}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                       </div>
@@ -2859,12 +2839,8 @@ export default function WapApp() {
                           </div>
                         ) : (
                           <img
-                            src={sanitizeImageSrc(spot.fileUrl || spot.thumbUrl)}
+                            src={resolveMediaSrc(spot.fileUrl, spot.thumbUrl)}
                             alt={spot.title}
-                            onError={(e) => {
-                              const target = e.currentTarget;
-                              if (target.src !== FALLBACK_IMAGE_URL) target.src = FALLBACK_IMAGE_URL;
-                            }}
                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             loading="lazy"
                           />
@@ -2976,12 +2952,8 @@ export default function WapApp() {
                       <video src={s.fileUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
                       <img
-                        src={sanitizeImageSrc(s.thumbUrl || s.fileUrl)}
+                        src={resolveMediaSrc(s.thumbUrl, s.fileUrl)}
                         alt={s.title}
-                        onError={(e) => {
-                          const target = e.currentTarget;
-                          if (target.src !== FALLBACK_IMAGE_URL) target.src = FALLBACK_IMAGE_URL;
-                        }}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     )}
@@ -3075,12 +3047,8 @@ export default function WapApp() {
                         <video src={s.fileUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
                         <img
-                          src={sanitizeImageSrc(s.thumbUrl || s.fileUrl)}
+                          src={resolveMediaSrc(s.thumbUrl, s.fileUrl)}
                           alt={s.title}
-                          onError={(e) => {
-                            const target = e.currentTarget;
-                            if (target.src !== FALLBACK_IMAGE_URL) target.src = FALLBACK_IMAGE_URL;
-                          }}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           loading="lazy"
                         />
@@ -3213,12 +3181,8 @@ export default function WapApp() {
                                 {item.spot ? (
                                   <>
                                     <img
-                                      src={sanitizeImageSrc(item.spot.thumbUrl || item.spot.fileUrl)}
+                                      src={resolveMediaSrc(item.spot.thumbUrl, item.spot.fileUrl)}
                                       alt="thumb"
-                                      onError={(e) => {
-                                        const target = e.currentTarget;
-                                        if (target.src !== FALLBACK_IMAGE_URL) target.src = FALLBACK_IMAGE_URL;
-                                      }}
                                       style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0 }}
                                     />
                                     <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -3246,12 +3210,8 @@ export default function WapApp() {
                         <video src={s.fileUrl} autoPlay loop muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
                         <img
-                          src={sanitizeImageSrc(s.thumbUrl || s.fileUrl)}
+                          src={resolveMediaSrc(s.thumbUrl, s.fileUrl)}
                           alt={s.title}
-                          onError={(e) => {
-                            const target = e.currentTarget;
-                            if (target.src !== FALLBACK_IMAGE_URL) target.src = FALLBACK_IMAGE_URL;
-                          }}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           loading="lazy"
                         />
@@ -3517,12 +3477,8 @@ export default function WapApp() {
                     <video src={currentMedia.fileUrl} controls autoPlay loop muted={false} playsInline style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                   ) : (
                     <img
-                      src={sanitizeImageSrc(currentMedia.fileUrl)}
+                      src={resolveMediaSrc(currentMedia.fileUrl, selectedSpot.fileUrl)}
                       alt={selectedSpot.title}
-                      onError={(e) => {
-                        const target = e.currentTarget;
-                        if (target.src !== FALLBACK_IMAGE_URL) target.src = FALLBACK_IMAGE_URL;
-                      }}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   );
@@ -3754,12 +3710,8 @@ export default function WapApp() {
               >
                 {pendingUploads[currentUploadIndex].fileType === 'image' ? (
                   <img
-                    src={sanitizeImageSrc(pendingUploads[currentUploadIndex].fileUrl)}
+                    src={pendingUploads[currentUploadIndex].fileUrl}
                     alt="preview"
-                    onError={(e) => {
-                      const target = e.currentTarget;
-                      if (target.src !== FALLBACK_IMAGE_URL) target.src = FALLBACK_IMAGE_URL;
-                    }}
                     style={{
                       width: '100%',
                       height: '100%',
