@@ -299,7 +299,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 
 2️⃣ **すてきな写真や動画をマップに投稿する（カンタン！）**
 - マップ画面の左下にある「📷＋ 写真/動画を追加」ボタンを押してね。
-- スマホの中にある写真や動画を選ぶと、自動的に場所（位置情報）がマップにセットされるよ！（※場所が違うときは「地名・住所・施設名検索」で正しい場所をえらんでね）
+- スマホの中にある写真や動画を選ぶと、自動的に場所（位置情報）がマップにセットされるよ！（※場所が違うときは「地名・住所検索」で正しい場所をえらんでね）
 - プレビュー画面で、iPhoneの写真アプリと同じように**「二本指で広げたり縮めたり（ピンチイン・アウト）」**して大きさを自由に変えたり、指でスワイプして位置を微調整できるよ！
 - タイトルや思い出メモを入力して、「マップに反映する 🚀」を押すだけ！
 
@@ -586,7 +586,7 @@ export const COUNTRIES: Record<string, { names: Record<string, string>; flag: st
   BA: { names: { ja: 'ボスニア・ヘルツェゴビナ', en: 'Bosnia and Herzegovina', ko: '보스니아 헤르체고비나', zh: '波黑' }, flag: '🇧🇦', region: '🇪🇺 ヨーロッパ', lat: 43.9159, lon: 17.6791, zoom: 7 },
   ME: { names: { ja: 'モンテネグロ', en: 'Montenegro', ko: '몬테네그로', zh: '黑山' }, flag: '🇲🇪', region: '🇪🇺 ヨーロッパ', lat: 42.7087, lon: 19.3744, zoom: 8 },
   MK: { names: { ja: '北マケドニア', en: 'North Macedonia', ko: '북마케도니아', zh: '北马其顿' }, flag: '🇲🇰', region: '🇪🇺 ヨーロッパ', lat: 41.6086, lon: 21.7453, zoom: 8 },
-  MD: { names: { ja: 'モルドバ', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
+  MD: { names: { ja: 'モルド바', en: 'Moldova', ko: '몰도바', zh: '摩尔多瓦' }, flag: '🇲🇩', region: '🇪🇺 ヨーロッパ', lat: 47.4116, lon: 28.3699, zoom: 7 },
   BY: { names: { ja: 'ベラルーシ', en: 'Belarus', ko: '벨라루스', zh: '白俄罗斯' }, flag: '🇧🇾', region: '🇪🇺 ヨーロッパ', lat: 53.7098, lon: 27.9534, zoom: 6 },
   RU: { names: { ja: 'ロシア', en: 'Russia', ko: '러시아', zh: '俄罗斯' }, flag: '🇷🇺', region: '🇪🇺 ヨーロッパ', lat: 61.5240, lon: 105.3188, zoom: 3 },
   SE: { names: { ja: 'スウェーデン', en: 'Sweden', ko: '스베덴', zh: '瑞典' }, flag: '🇸🇪', region: '🇪🇺 北欧', lat: 60.1282, lon: 18.6435, zoom: 5 },
@@ -938,9 +938,10 @@ const GoogleMapComponent = ({
       const rawUrl = resolveMediaSrc(spot.thumbUrl, spot.fileUrl);
       const imgUrl = thumbCache[rawUrl] || rawUrl;
 
+      // 複数投稿時の右上バッジを赤色に、サムネイルをピン枠にぴったり収める
       const badgeSvg = count > 1 ? `
-<circle cx="38" cy="10" r="10" fill="#10b981" stroke="#ffffff" stroke-width="2" />
-<text x="38" y="14" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">+${count}</text>
+<circle cx="37" cy="10" r="9.5" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
+<text x="37" y="13.8" fill="#ffffff" font-size="10.5" font-weight="bold" text-anchor="middle">+${count}</text>
 ` : '';
 
       const marker = new window.google.maps.Marker({
@@ -949,16 +950,21 @@ const GoogleMapComponent = ({
         title: spot.title,
         icon: {
           url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" width="44" height="46" viewBox="0 0 44 46">
+<svg xmlns="http://www.w3.org/2000/svg" width="44" height="48" viewBox="0 0 44 48">
+<defs>
+<clipPath id="pinClip">
+<circle cx="22" cy="18" r="14.2" />
+</clipPath>
+</defs>
 <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
 <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.3)" />
 </filter>
-<path d="M22 46 C22 46 38 29 38 17 C38 7.6 30.8 0 22 0 C13.2 0 6 7.6 6 17 C6 29 22 46 22 46 Z" fill="#ffffff" stroke="#0284c7" stroke-width="2.5" filter="url(#shadow)" />
-<image href="${imgUrl}" x="7" y="5" width="30" height="30" clip-path="circle(15px at 15px 15px)" preserveAspectRatio="xMidYMid slice" />
+<path d="M22 46 C22 46 38.5 29.5 38.5 18 C38.5 8.8 31.1 1.5 22 1.5 C12.9 1.5 5.5 8.8 5.5 18 C5.5 29.5 22 46 22 46 Z" fill="#ffffff" stroke="#0284c7" stroke-width="2.5" filter="url(#shadow)" />
+<image href="${imgUrl}" x="7.8" y="3.8" width="28.4" height="28.4" clip-path="url(#pinClip)" preserveAspectRatio="xMidYMid slice" />
 ${badgeSvg}
 </svg>
 `)}`,
-          scaledSize: new window.google.maps.Size(44, 46),
+          scaledSize: new window.google.maps.Size(44, 48),
           anchor: new window.google.maps.Point(22, 46),
         }
       });
@@ -1354,6 +1360,17 @@ export default function WapApp() {
     }
   };
 
+  // 場所検索（Nominatimで入力クエリをそのまま検索しヒットしやすく改善）
+  const searchPlacesByQuery = async (rawQuery: string): Promise<PlaceSuggestion[]> => {
+    const trimmed = rawQuery.trim();
+    if (!trimmed) return [];
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(trimmed)}&limit=8&addressdetails=1`
+    );
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  };
+
   useEffect(() => {
     if (!mapSearchKeyword.trim() || mapSearchKeyword.startsWith('#')) {
       setMapSearchSuggestions([]);
@@ -1361,9 +1378,8 @@ export default function WapApp() {
     }
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearchKeyword)}&limit=6`);
-        const data = await res.json();
-        setMapSearchSuggestions(data || []);
+        const data = await searchPlacesByQuery(mapSearchKeyword);
+        setMapSearchSuggestions(data);
       } catch {
         setMapSearchSuggestions([]);
       }
@@ -1394,13 +1410,19 @@ export default function WapApp() {
     if (mapSearchSuggestions.length > 0) {
       handleSelectMapSuggestion(mapSearchSuggestions[0]);
     } else {
+      setIsSearchingLocation(true);
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearchKeyword)}&limit=1`);
-        const data = await res.json();
+        const data = await searchPlacesByQuery(mapSearchKeyword);
         if (data && data[0]) {
           handleSelectMapSuggestion(data[0]);
+        } else {
+          showToast('該当する場所が見つかりませんでした');
         }
-      } catch {}
+      } catch {
+        showToast('検索に失敗しました');
+      } finally {
+        setIsSearchingLocation(false);
+      }
     }
   };
 
@@ -1411,9 +1433,8 @@ export default function WapApp() {
     }
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressSearchQuery)}&limit=6`);
-        const data = await res.json();
-        setAddressSuggestions(data || []);
+        const data = await searchPlacesByQuery(addressSearchQuery);
+        setAddressSuggestions(data);
       } catch {
         setAddressSuggestions([]);
       }
@@ -1766,7 +1787,7 @@ export default function WapApp() {
     const hasValidManualLocation = manualLat !== '' && manualLon !== '' && !isNaN(parseFloat(manualLat)) && !isNaN(parseFloat(manualLon));
 
     if (!hasValidManualLocation) {
-      showWarning('⚠️ 位置情報が指定されていません。「地名・住所・施設名検索」で必ず場所を選択してください。');
+      showWarning('⚠️ 位置情報が指定されていません。「地名・住所検索」で必ず場所を選択してください。');
       return;
     }
 
@@ -3863,11 +3884,11 @@ export default function WapApp() {
               {currentUploadIndex === 0 && (
                 <div style={{ background: '#f0fdf4', padding: '10px', borderRadius: '10px', border: '1px solid #bbf7d0', marginBottom: '12px', position: 'relative', boxSizing: 'border-box' }}>
                   <div style={{ fontSize: '11px', fontWeight: 'bold', color: '#15803d', marginBottom: '6px' }}>
-                    📍 住所・場所名・大学名などを検索
+                    📍 住所・場所名を検索
                   </div>
                   <input
                     type="text"
-                    placeholder="住所・場所名・大学名を入力"
+                    placeholder="住所・場所名を入力"
                     value={addressSearchQuery}
                     onChange={(e) => setAddressSearchQuery(e.target.value)}
                     style={{ width: '100%', padding: '7px 8px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '16px', background: '#ffffff', marginBottom: '4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', touchAction: 'manipulation', boxSizing: 'border-box' }}
