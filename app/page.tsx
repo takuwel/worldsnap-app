@@ -38,10 +38,24 @@ function resolveMediaSrc(primary?: string, secondary?: string): string {
   return FALLBACK_IMAGE_URL;
 }
 
+function clampPreviewTransform(
+  scale: number,
+  offset: { x: number; y: number },
+  containerWidth = 360,
+  containerHeight = 180
+): { scale: number; offset: { x: number; y: number } } {
+  const safeScale = Math.max(1, Math.min(3.5, scale));
+  const maxX = Math.max(0, ((safeScale - 1) * containerWidth) / 2);
+  const maxY = Math.max(0, ((safeScale - 1) * containerHeight) / 2);
+  const clampedX = Math.max(-maxX, Math.min(maxX, offset.x));
+  const clampedY = Math.max(-maxY, Math.min(maxY, offset.y));
+  return { scale: safeScale, offset: { x: clampedX, y: clampedY } };
+}
+
 // ==========================================
 // 1. 型定義 & 多言語マスターデータ
 // ==========================================
-export type ViewCategory = 'view' | 'gourmet' | 'rain';
+export type ViewCategory = 'view' | 'gourmet' | 'rain' | 'cafe' | 'onsen' | 'shopping';
 export type DisplayScope = 'my' | 'friends' | 'world';
 export type TabType = 'map' | 'timeline' | 'ranking' | 'profile';
 export type MapThemeType = 'light' | 'dark' | 'pastel';
@@ -237,6 +251,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     view: '景色',
     gourmet: 'グルメ',
     rain: '雨の日',
+    cafe: 'カフェ',
+    onsen: '温泉',
+    shopping: 'ショッピング',
     myMap: 'マイマップ',
     friends: 'フレンド',
     world: 'ワールド',
@@ -331,6 +348,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     view: 'View',
     gourmet: 'Gourmet',
     rain: 'Rainy',
+    cafe: 'Cafe',
+    onsen: 'Onsen',
+    shopping: 'Shopping',
     myMap: 'My Map',
     friends: 'Friends',
     world: 'World',
@@ -393,6 +413,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     view: '경치',
     gourmet: '맛집',
     rain: '비',
+    cafe: '카페',
+    onsen: '온천',
+    shopping: '쇼핑',
     myMap: '내 지도',
     friends: '친구',
     world: '전체',
@@ -455,6 +478,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     view: '风景',
     gourmet: '美食',
     rain: '雨天',
+    cafe: '咖啡',
+    onsen: '温泉',
+    shopping: '购物',
     myMap: '我的地图',
     friends: '好友',
     world: '世界',
@@ -735,6 +761,23 @@ const INITIAL_SPOTS: Spot[] = [
   },
 ];
 
+const PRIMARY_MODES: { cat: ViewCategory; emoji: string; labelKey: string }[] = [
+  { cat: 'view', emoji: '🏔️', labelKey: 'view' },
+  { cat: 'gourmet', emoji: '🍔', labelKey: 'gourmet' },
+  { cat: 'rain', emoji: '🌧️', labelKey: 'rain' },
+];
+
+const EXTRA_MODES: { cat: ViewCategory; emoji: string; labelKey: string }[] = [
+  { cat: 'cafe', emoji: '☕', labelKey: 'cafe' },
+  { cat: 'onsen', emoji: '♨️', labelKey: 'onsen' },
+  { cat: 'shopping', emoji: '🛍️', labelKey: 'shopping' },
+];
+
+const ALL_MODES: { cat: ViewCategory; emoji: string; labelKey: string }[] = [
+  ...PRIMARY_MODES,
+  ...EXTRA_MODES,
+];
+
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#([^\s#]+)/g);
   return matches ? matches.map((tag) => tag.replace('#', '')) : [];
@@ -938,7 +981,6 @@ const GoogleMapComponent = ({
       const rawUrl = resolveMediaSrc(spot.thumbUrl, spot.fileUrl);
       const imgUrl = thumbCache[rawUrl] || rawUrl;
 
-      // 複数投稿時の右上バッジを赤色に、サムネイルをピン枠にぴったり収める
       const badgeSvg = count > 1 ? `
 <circle cx="37" cy="10" r="9.5" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
 <text x="37" y="13.8" fill="#ffffff" font-size="10.5" font-weight="bold" text-anchor="middle">+${count}</text>
@@ -1000,7 +1042,8 @@ export default function WapApp() {
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState<boolean>(false);
 
   const [currentTab, setCurrentTab] = useState<TabType>('map');
-  const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain']);
+  const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain', 'cafe', 'onsen', 'shopping']);
+  const [showExtraModes, setShowExtraModes] = useState<boolean>(false);
   const [mapTheme, setMapTheme] = useState<MapThemeType>('light');
   const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
   const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
@@ -1109,6 +1152,7 @@ export default function WapApp() {
 
   const [previewScale, setPreviewScale] = useState<number>(1);
   const [previewOffset, setPreviewOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const previewBoxRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef<boolean>(false);
   const dragStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const initialPinchDistRef = useRef<number | null>(null);
@@ -1145,6 +1189,20 @@ export default function WapApp() {
   const showWarning = (msg: string) => {
     setWarningMessage(msg);
     setTimeout(() => setWarningMessage(null), 5000);
+  };
+
+  const resetPreviewToSafeCenter = () => {
+    setPreviewScale(1);
+    setPreviewOffset({ x: 0, y: 0 });
+  };
+
+  const applySafePreviewMove = (nextScale: number, rawOffset: { x: number; y: number }) => {
+    const rect = previewBoxRef.current?.getBoundingClientRect();
+    const w = rect?.width || 360;
+    const h = rect?.height || 180;
+    const clamped = clampPreviewTransform(nextScale, rawOffset, w, h);
+    setPreviewScale(clamped.scale);
+    setPreviewOffset(clamped.offset);
   };
 
   const handleStepCalendarMonth = (delta: number) => {
@@ -1360,7 +1418,6 @@ export default function WapApp() {
     }
   };
 
-  // 場所検索（Nominatimで入力クエリをそのまま検索しヒットしやすく改善）
   const searchPlacesByQuery = async (rawQuery: string): Promise<PlaceSuggestion[]> => {
     const trimmed = rawQuery.trim();
     if (!trimmed) return [];
@@ -1739,8 +1796,7 @@ export default function WapApp() {
       setPendingUploads(pendingList);
       setCurrentUploadIndex(0);
       setSeparateCaptionsMode(false);
-      setPreviewScale(1);
-      setPreviewOffset({ x: 0, y: 0 });
+      resetPreviewToSafeCenter();
       const first = pendingList[0];
       setPostCategory(selectedCategories[0] || 'view');
       setSelectedScopes(['world', 'friends', 'my']);
@@ -1913,8 +1969,7 @@ export default function WapApp() {
     if (currentUploadIndex + 1 < pendingUploads.length) {
       const nextIndex = currentUploadIndex + 1;
       setCurrentUploadIndex(nextIndex);
-      setPreviewScale(1);
-      setPreviewOffset({ x: 0, y: 0 });
+      resetPreviewToSafeCenter();
       setManualLat(finalLat.toString());
       setManualLon(finalLon.toString());
     } else {
@@ -2031,6 +2086,7 @@ export default function WapApp() {
   const headerTextColor = '#0f172a';
 
   const isAnyTimelineCommentOpen = Object.values(openCommentsForSpot).some(Boolean);
+  const visibleModes = showExtraModes ? EXTRA_MODES : PRIMARY_MODES;
 
   if (!isClient) {
     return <div style={{ background: '#ffffff', width: '100vw', height: '100dvh' }}></div>;
@@ -2689,34 +2745,54 @@ export default function WapApp() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px', boxSizing: 'border-box' }}>
-                <div style={{ display: 'flex', gap: '4px', background: 'rgba(255,255,255,0.95)', padding: '3px 6px', borderRadius: '20px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box', touchAction: 'manipulation' }}>
-                  {(['view', 'gourmet', 'rain'] as const).map((cat) => {
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.95)', padding: '3px 6px', borderRadius: '20px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box', touchAction: 'manipulation', maxWidth: 'calc(100% - 92px)', overflowX: 'auto' }}>
+                  {visibleModes.map(({ cat, emoji, labelKey }) => {
                     const isChecked = selectedCategories.includes(cat);
                     return (
                       <button
                         key={cat}
+                        type="button"
                         onClick={() => toggleCategoryFilter(cat)}
                         style={{
-                          padding: '4px 8px',
+                          padding: '4px 7px',
                           borderRadius: '16px',
                           border: 'none',
                           background: isChecked ? '#0284c7' : '#f1f5f9',
                           color: isChecked ? '#ffffff' : '#64748b',
                           fontWeight: 'bold',
-                          fontSize: '11px',
+                          fontSize: '10.5px',
                           cursor: 'pointer',
                           whiteSpace: 'nowrap',
                           boxSizing: 'border-box',
                         }}
                       >
                         {isChecked ? '✓ ' : ''}
-                        {cat === 'view' ? `🏔️${t('view')}` : cat === 'gourmet' ? `🍔${t('gourmet')}` : `🌧️${t('rain')}`}
+                        {emoji}{t(labelKey)}
                       </button>
                     );
                   })}
+                  <button
+                    type="button"
+                    aria-label="モード配置切り替え"
+                    onClick={() => setShowExtraModes((prev) => !prev)}
+                    style={{
+                      padding: '3px 7px',
+                      borderRadius: '14px',
+                      border: '1px solid #bae6fd',
+                      background: showExtraModes ? '#e0f2fe' : '#f8fafc',
+                      color: '#0284c7',
+                      fontWeight: '900',
+                      fontSize: '12px',
+                      cursor: 'pointer',
+                      lineHeight: 1,
+                      flexShrink: 0,
+                    }}
+                  >
+                    ＞
+                  </button>
                 </div>
 
-                <div style={{ display: 'flex', background: 'rgba(255,255,255,0.95)', padding: '3px 8px', borderRadius: '20px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box', touchAction: 'manipulation' }}>
+                <div style={{ display: 'flex', background: 'rgba(255,255,255,0.95)', padding: '3px 8px', borderRadius: '20px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box', touchAction: 'manipulation', flexShrink: 0 }}>
                   <select
                     value={displayScope}
                     onChange={(e) => setDisplayScope(e.target.value as DisplayScope)}
@@ -3675,23 +3751,30 @@ export default function WapApp() {
                 )}
               </div>
 
+              {/* 位置調整エリア（動かしすぎても黒画面が出ず、離す/超えると安全位置へ自動復帰） */}
               <div
+                ref={previewBoxRef}
                 onMouseDown={(e) => {
                   isDraggingRef.current = true;
                   dragStartRef.current = { x: e.clientX - previewOffset.x, y: e.clientY - previewOffset.y };
                 }}
                 onMouseMove={(e) => {
                   if (!isDraggingRef.current) return;
-                  const newX = e.clientX - dragStartRef.current.x;
-                  const newY = e.clientY - dragStartRef.current.y;
-                  const limit = 150 * previewScale;
-                  setPreviewOffset({
-                    x: Math.max(-limit, Math.min(limit, newX)),
-                    y: Math.max(-limit, Math.min(limit, newY))
+                  applySafePreviewMove(previewScale, {
+                    x: e.clientX - dragStartRef.current.x,
+                    y: e.clientY - dragStartRef.current.y,
                   });
                 }}
-                onMouseUp={() => { isDraggingRef.current = false; }}
-                onMouseLeave={() => { isDraggingRef.current = false; }}
+                onMouseUp={() => {
+                  isDraggingRef.current = false;
+                  applySafePreviewMove(previewScale, previewOffset);
+                }}
+                onMouseLeave={() => {
+                  if (isDraggingRef.current) {
+                    isDraggingRef.current = false;
+                    applySafePreviewMove(previewScale, previewOffset);
+                  }
+                }}
                 onTouchStart={(e) => {
                   if (e.touches.length === 1) {
                     isDraggingRef.current = true;
@@ -3710,24 +3793,21 @@ export default function WapApp() {
                     const dx = e.touches[0].clientX - e.touches[1].clientX;
                     const dy = e.touches[0].clientY - e.touches[1].clientY;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    const minAllowedScale = 0.8;
-                    const newScale = Math.max(minAllowedScale, Math.min(4.0, initialScaleRef.current * (dist / initialPinchDistRef.current)));
-                    setPreviewScale(newScale);
+                    const nextScale = initialScaleRef.current * (dist / initialPinchDistRef.current);
+                    applySafePreviewMove(nextScale, previewOffset);
                   } else if (isDraggingRef.current && e.touches.length === 1) {
-                    const newX = e.touches[0].clientX - dragStartRef.current.x;
-                    const newY = e.touches[0].clientY - dragStartRef.current.y;
-                    const limit = 150 * previewScale;
-                    setPreviewOffset({
-                      x: Math.max(-limit, Math.min(limit, newX)),
-                      y: Math.max(-limit, Math.min(limit, newY))
+                    applySafePreviewMove(previewScale, {
+                      x: e.touches[0].clientX - dragStartRef.current.x,
+                      y: e.touches[0].clientY - dragStartRef.current.y,
                     });
                   }
                 }}
                 onTouchEnd={() => {
                   isDraggingRef.current = false;
                   initialPinchDistRef.current = null;
+                  applySafePreviewMove(previewScale, previewOffset);
                 }}
-                style={{ width: '100%', height: '180px', borderRadius: '12px', overflow: 'hidden', background: '#000', marginBottom: '8px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'grab', touchAction: 'none' }}
+                style={{ width: '100%', height: '180px', borderRadius: '12px', overflow: 'hidden', background: '#ffffff', border: '1px solid #e2e8f0', marginBottom: '8px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'grab', touchAction: 'none' }}
               >
                 {pendingUploads[currentUploadIndex].fileType === 'image' ? (
                   <img
@@ -3737,8 +3817,9 @@ export default function WapApp() {
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
-                      transform: `scale(${previewScale}) translate(${previewOffset.x / previewScale}px, ${previewOffset.y / previewScale}px)`,
-                      transition: isDraggingRef.current ? 'none' : 'transform 0.15s ease-out'
+                      transform: `translate(${previewOffset.x}px, ${previewOffset.y}px) scale(${previewScale})`,
+                      transformOrigin: 'center center',
+                      transition: isDraggingRef.current ? 'none' : 'transform 0.2s ease-out'
                     }}
                   />
                 ) : (
@@ -3753,18 +3834,19 @@ export default function WapApp() {
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
-                      transform: `scale(${previewScale}) translate(${previewOffset.x / previewScale}px, ${previewOffset.y / previewScale}px)`,
-                      transition: isDraggingRef.current ? 'none' : 'transform 0.15s ease-out'
+                      transform: `translate(${previewOffset.x}px, ${previewOffset.y}px) scale(${previewScale})`,
+                      transformOrigin: 'center center',
+                      transition: isDraggingRef.current ? 'none' : 'transform 0.2s ease-out'
                     }}
                   />
                 )}
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '12px', background: '#f8fafc', padding: '6px 10px', borderRadius: '8px', border: '1px solid #e2e8f0', touchAction: 'manipulation' }}>
-                <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 2本指でピンチ＆自由なドラッグ移動が可能</span>
+                <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#64748b' }}>🔍 2本指でピンチ＆ドラッグ調整（枠外は自動復帰）</span>
                 <button
                   type="button"
-                  onClick={() => { setPreviewScale(1); setPreviewOffset({ x: 0, y: 0 }); }}
+                  onClick={resetPreviewToSafeCenter}
                   style={{ background: '#e2e8f0', border: 'none', borderRadius: '6px', padding: '0 8px', height: '28px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', touchAction: 'manipulation' }}
                 >
                   位置をリセット
@@ -3779,7 +3861,7 @@ export default function WapApp() {
                         🏷️ スポットのカテゴリを選択
                       </label>
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', marginBottom: '12px', touchAction: 'manipulation' }}>
-                        {(['view', 'gourmet', 'rain'] as const).map((cat) => {
+                        {ALL_MODES.map(({ cat, emoji, labelKey }) => {
                           const isSelected = postCategory === cat;
                           return (
                             <button
@@ -3798,7 +3880,7 @@ export default function WapApp() {
                                 touchAction: 'manipulation'
                               }}
                             >
-                              {cat === 'view' ? `🏔️ ${t('view')}` : cat === 'gourmet' ? `🍔 ${t('gourmet')}` : `🌧️ ${t('rain')}`}
+                              {emoji} {t(labelKey)}
                             </button>
                           );
                         })}
