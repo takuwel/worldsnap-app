@@ -249,7 +249,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     profile: 'マイページ',
     addPhoto: '写真 / 動画を追加',
     exportMap: 'マップ保存',
-    filterBtn: '絞り込む',
+    filterBtn: 'ピンを絞り込む',
+    selectedModesLabel: '選択中のモード',
+    clearModesBtn: 'クリア',
     view: '景色',
     gourmet: 'グルメ',
     rain: '雨の日',
@@ -276,7 +278,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 マップの色',
     mapColorWhite: '⬜ ホワイト',
     mapColorDark: '⬛ ダーク',
-    mapColorBase: '🗺️ ベースマップの色',
+    mapColorBase: '🌿 ナチュラル',
     baseCountrySetting: '📍 ベースの国 (初期マップ)',
     blockListTitle: '🚫 ブロック中ユーザー管理',
     eulaTitle: '📜 利用規約 (EULA)',
@@ -351,7 +353,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     profile: 'Profile',
     addPhoto: 'Add Photo / Video',
     exportMap: 'Save Map',
-    filterBtn: 'Filter',
+    filterBtn: 'Filter Pins',
+    selectedModesLabel: 'Selected Modes',
+    clearModesBtn: 'Clear',
     view: 'View',
     gourmet: 'Gourmet',
     rain: 'Rainy',
@@ -378,7 +382,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Map Color',
     mapColorWhite: '⬜ White',
     mapColorDark: '⬛ Dark',
-    mapColorBase: '🗺️ Base Map',
+    mapColorBase: '🌿 Natural',
     baseCountrySetting: '📍 Base Country',
     blockListTitle: '🚫 Blocked Users',
     eulaTitle: '📜 Terms & Policy (EULA)',
@@ -421,7 +425,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     profile: '마이페이지',
     addPhoto: '사진 / 영상 추가',
     exportMap: '지도 저장',
-    filterBtn: '필터',
+    filterBtn: '핀 필터링',
+    selectedModesLabel: '선택된 모드',
+    clearModesBtn: '초기화',
     view: '풍경',
     gourmet: '맛집',
     rain: '비 오는 날',
@@ -448,7 +454,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 지도 색상',
     mapColorWhite: '⬜ 화이트',
     mapColorDark: '⬛ 다크',
-    mapColorBase: '🗺️ 기본 지도 색',
+    mapColorBase: '🌿 내추럴',
     baseCountrySetting: '📍 기본 국가',
     blockListTitle: '🚫 차단된 사용자',
     eulaTitle: '📜 이용약관',
@@ -491,7 +497,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     profile: '我的主页',
     addPhoto: '添加照片 / 视频',
     exportMap: '保存地图',
-    filterBtn: '筛选',
+    filterBtn: '筛选图钉',
+    selectedModesLabel: '已选模式',
+    clearModesBtn: '清除',
     view: '风景',
     gourmet: '美食',
     rain: '雨天',
@@ -502,15 +510,6 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     friends: '好友',
     world: '世界',
     openGoogleMaps: '🧭 使用 Google 地图导航',
-    likeSpot: '❤️ 点赞',
-    likedSpot: '❤️ 已点赞',
-    report: '⚠️ 举报',
-    block: '🚫 屏蔽',
-    delete: '🗑️ 删除',
-    edit: '✏️ 编辑',
-    visited: '访问国家',
-    posts: '帖子',
-    friendCode: '好友码',
     searchPlaceholder: '🔍 搜索城市、地点、#标签',
     countrySearchPlaceholder: '🔍 搜索国家名称',
     settings: '⚙️ 设置菜单',
@@ -518,31 +517,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 地图颜色',
     mapColorWhite: '⬜ 白色',
     mapColorDark: '⬛ 深色',
-    mapColorBase: '🗺️ 基础地图色',
+    mapColorBase: '🌿 自然色',
     baseCountrySetting: '📍 基础国家',
-    blockListTitle: '🚫 已屏蔽用户',
-    eulaTitle: '📜 服务条款',
-    guideTitle: '📖 使用说明',
-    translate: '🌐 翻译',
     close: '关闭',
-    tabPosts: '📸 帖子',
-    tabTimeline: '📅 日志',
-    tabSaved: '❤️ 收藏',
-    tabBadges: '🏅 徽章',
-    tabFriends: '👥 好友',
-    reportSpot: '🚨 举报此帖子',
-    blockUser: '🚫 屏蔽此用户',
-    supportContactBtn: '✉️ 联系客服 (wap.support.official@gmail.com)',
-    scopeWorld: '🌎 世界',
-    scopeFriends: '👥 好友',
-    scopeMy: '📍 我的地图',
-    deleteAccountBtn: '⚠️ 注销账号',
-    commentPlaceholder: '💬 输入评论...',
-    commentSend: '发送',
-    myQrCode: '📱 我的二维码',
-    scanQrCode: '📷 扫描二维码',
-    eulaFullText: `[wap 服务条款与位置政策]\n联系邮箱: wap.support.official@gmail.com`,
-    guideFullText: `[wap 使用指南]`
   },
   zh_tw: {
     step1Title: 'Step 1: 選擇顯示語言',
@@ -561,7 +538,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     profile: '個人主頁',
     addPhoto: '新增照片 / 影片',
     exportMap: '儲存地圖',
-    filterBtn: '篩選',
+    filterBtn: '篩選地標',
+    selectedModesLabel: '已選模式',
+    clearModesBtn: '清除',
     view: '風景',
     gourmet: '美食',
     rain: '雨天',
@@ -572,15 +551,6 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     friends: '好友',
     world: '世界',
     openGoogleMaps: '🧭 使用 Google 地圖導航',
-    likeSpot: '❤️ 按讚',
-    likedSpot: '❤️ 已按讚',
-    report: '⚠️ 檢舉',
-    block: '🚫 封鎖',
-    delete: '🗑️ 刪除',
-    edit: '✏️ 編輯',
-    visited: '造訪國家',
-    posts: '貼文',
-    friendCode: '好友碼',
     searchPlaceholder: '🔍 搜尋城市、地點、#標籤',
     countrySearchPlaceholder: '🔍 搜尋國家名稱',
     settings: '⚙️ 設定選單',
@@ -588,31 +558,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 地圖顏色',
     mapColorWhite: '⬜ 白色',
     mapColorDark: '⬛ 深色',
-    mapColorBase: '🗺️ 基礎地圖色',
+    mapColorBase: '🌿 自然色',
     baseCountrySetting: '📍 基礎國家',
-    blockListTitle: '🚫 已封鎖使用者',
-    eulaTitle: '📜 服務條款',
-    guideTitle: '📖 操作說明',
-    translate: '🌐 翻譯',
     close: '關閉',
-    tabPosts: '📸 貼文',
-    tabTimeline: '📅 日誌',
-    tabSaved: '❤️ 收藏',
-    tabBadges: '🏅 徽章',
-    tabFriends: '👥 好友',
-    reportSpot: '🚨 檢舉此貼文',
-    blockUser: '🚫 封鎖此使用者',
-    supportContactBtn: '✉️ 聯絡客服 (wap.support.official@gmail.com)',
-    scopeWorld: '🌎 世界',
-    scopeFriends: '👥 好友',
-    scopeMy: '📍 我的地圖',
-    deleteAccountBtn: '⚠️ 刪除帳號',
-    commentPlaceholder: '💬 輸入留言...',
-    commentSend: '送出',
-    myQrCode: '📱 我的 QR Code',
-    scanQrCode: '📷 掃描 QR Code',
-    eulaFullText: `[wap 服務條款與位置政策]\n聯絡信箱: wap.support.official@gmail.com`,
-    guideFullText: `[wap 操作指南]`
   },
   es: {
     map: 'Mapa',
@@ -620,7 +568,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Ranking',
     profile: 'Perfil',
     addPhoto: 'Añadir foto / video',
-    filterBtn: 'Filtrar',
+    filterBtn: 'Filtrar pines',
+    selectedModesLabel: 'Modos elegidos',
+    clearModesBtn: 'Limpiar',
     view: 'Vista',
     gourmet: 'Gastronomía',
     rain: 'Lluvia',
@@ -637,7 +587,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Color del mapa',
     mapColorWhite: '⬜ Blanco',
     mapColorDark: '⬛ Oscuro',
-    mapColorBase: '🗺️ Mapa base',
+    mapColorBase: '🌿 Natural',
     baseCountrySetting: '📍 País base',
     close: 'Cerrar',
   },
@@ -647,7 +597,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Classement',
     profile: 'Profil',
     addPhoto: 'Ajouter photo / vidéo',
-    filterBtn: 'Filtrer',
+    filterBtn: 'Filtrer repères',
+    selectedModesLabel: 'Modes choisis',
+    clearModesBtn: 'Effacer',
     view: 'Paysage',
     gourmet: 'Gastronomie',
     rain: 'Pluie',
@@ -664,7 +616,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Couleur de la carte',
     mapColorWhite: '⬜ Blanc',
     mapColorDark: '⬛ Sombre',
-    mapColorBase: '🗺️ Carte de base',
+    mapColorBase: '🌿 Naturel',
     baseCountrySetting: '📍 Pays de base',
     close: 'Fermer',
   },
@@ -674,7 +626,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Rangliste',
     profile: 'Profil',
     addPhoto: 'Foto / Video hinzufügen',
-    filterBtn: 'Filtern',
+    filterBtn: 'Pins filtern',
+    selectedModesLabel: 'Gewählte Modi',
+    clearModesBtn: 'Zurücksetzen',
     view: 'Aussicht',
     gourmet: 'Kulinarik',
     rain: 'Regen',
@@ -691,7 +645,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Kartenfarbe',
     mapColorWhite: '⬜ Weiß',
     mapColorDark: '⬛ Dunkel',
-    mapColorBase: '🗺️ Basiskarte',
+    mapColorBase: '🌿 Natürlich',
     baseCountrySetting: '📍 Basisland',
     close: 'Schließen',
   },
@@ -701,7 +655,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Ranking',
     profile: 'Perfil',
     addPhoto: 'Adicionar foto / vídeo',
-    filterBtn: 'Filtrar',
+    filterBtn: 'Filtrar pinos',
+    selectedModesLabel: 'Modos escolhidos',
+    clearModesBtn: 'Limpar',
     view: 'Vista',
     gourmet: 'Gastronomia',
     rain: 'Chuva',
@@ -718,7 +674,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Cor do mapa',
     mapColorWhite: '⬜ Branco',
     mapColorDark: '⬛ Escuro',
-    mapColorBase: '🗺️ Mapa base',
+    mapColorBase: '🌿 Natural',
     baseCountrySetting: '📍 País base',
     close: 'Fechar',
   },
@@ -728,7 +684,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Classifica',
     profile: 'Profilo',
     addPhoto: 'Aggiungi foto / video',
-    filterBtn: 'Filtra',
+    filterBtn: 'Filtra pin',
+    selectedModesLabel: 'Modalità scelte',
+    clearModesBtn: 'Pulisci',
     view: 'Panorama',
     gourmet: 'Gourmet',
     rain: 'Pioggia',
@@ -745,7 +703,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Colore mappa',
     mapColorWhite: '⬜ Bianco',
     mapColorDark: '⬛ Scuro',
-    mapColorBase: '🗺️ Mappa base',
+    mapColorBase: '🌿 Naturale',
     baseCountrySetting: '📍 Paese base',
     close: 'Chiudi',
   },
@@ -755,7 +713,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Рейтинг',
     profile: 'Профиль',
     addPhoto: 'Добавить фото / видео',
-    filterBtn: 'Фильтр',
+    filterBtn: 'Фильтр меток',
+    selectedModesLabel: 'Выбранные режимы',
+    clearModesBtn: 'Сброс',
     view: 'Виды',
     gourmet: 'Еда',
     rain: 'Дождь',
@@ -772,7 +732,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Цвет карты',
     mapColorWhite: '⬜ Белый',
     mapColorDark: '⬛ Тёмный',
-    mapColorBase: '🗺️ Базовая карта',
+    mapColorBase: '🌿 Природный',
     baseCountrySetting: '📍 Базовая страна',
     close: 'Закрыть',
   },
@@ -782,7 +742,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'الترتيب',
     profile: 'الملف الشخصي',
     addPhoto: 'إضافة صورة / فيديو',
-    filterBtn: 'تصفية',
+    filterBtn: 'تصفية الدبابيس',
+    selectedModesLabel: 'الأوضاع المختارة',
+    clearModesBtn: 'مسح',
     view: 'منظر',
     gourmet: 'طعام',
     rain: 'مطر',
@@ -799,7 +761,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 لون الخريطة',
     mapColorWhite: '⬜ أبيض',
     mapColorDark: '⬛ داكن',
-    mapColorBase: '🗺️ الخريطة الأساسية',
+    mapColorBase: '🌿 طبيعي',
     baseCountrySetting: '📍 البلد الأساسي',
     close: 'إغلاق',
   },
@@ -809,7 +771,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'रैंकिंग',
     profile: 'प्रोफ़ाइल',
     addPhoto: 'फ़ोटो / वीडियो जोड़ें',
-    filterBtn: 'फ़िल्टर',
+    filterBtn: 'पिन फ़िल्टर करें',
+    selectedModesLabel: 'चयनित मोड',
+    clearModesBtn: 'साफ़ करें',
     view: 'दृश्य',
     gourmet: 'भोजन',
     rain: 'बारिश',
@@ -826,7 +790,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 मानचित्र का रंग',
     mapColorWhite: '⬜ सफ़ेद',
     mapColorDark: '⬛ डार्क',
-    mapColorBase: '🗺️ बेस मैप',
+    mapColorBase: '🌿 प्राकृतिक',
     baseCountrySetting: '📍 मुख्य देश',
     close: 'बंद करें',
   },
@@ -836,7 +800,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'อันดับ',
     profile: 'โปรไฟล์',
     addPhoto: 'เพิ่มรูป / วิดีโอ',
-    filterBtn: 'กรอง',
+    filterBtn: 'กรองหมุด',
+    selectedModesLabel: 'โหมดที่เลือก',
+    clearModesBtn: 'ล้าง',
     view: 'วิว',
     gourmet: 'ของอร่อย',
     rain: 'วันฝนตก',
@@ -853,7 +819,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 สีแผนที่',
     mapColorWhite: '⬜ ขาว',
     mapColorDark: '⬛ มืด',
-    mapColorBase: '🗺️ แผนที่หลัก',
+    mapColorBase: '🌿 ธรรมชาติ',
     baseCountrySetting: '📍 ประเทศหลัก',
     close: 'ปิด',
   },
@@ -863,7 +829,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Xếp hạng',
     profile: 'Hồ sơ',
     addPhoto: 'Thêm ảnh / video',
-    filterBtn: 'Lọc',
+    filterBtn: 'Lọc ghim',
+    selectedModesLabel: 'Chế độ đã chọn',
+    clearModesBtn: 'Xóa lọc',
     view: 'Cảnh đẹp',
     gourmet: 'Ẩm thực',
     rain: 'Ngày mưa',
@@ -880,7 +848,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Màu bản đồ',
     mapColorWhite: '⬜ Trắng',
     mapColorDark: '⬛ Tối',
-    mapColorBase: '🗺️ Bản đồ nền',
+    mapColorBase: '🌿 Tự nhiên',
     baseCountrySetting: '📍 Quốc gia mặc định',
     close: 'Đóng',
   },
@@ -890,7 +858,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Peringkat',
     profile: 'Profil',
     addPhoto: 'Tambah foto / video',
-    filterBtn: 'Filter',
+    filterBtn: 'Filter pin',
+    selectedModesLabel: 'Mode terpilih',
+    clearModesBtn: 'Hapus',
     view: 'Pemandangan',
     gourmet: 'Kuliner',
     rain: 'Hari hujan',
@@ -907,7 +877,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Warna peta',
     mapColorWhite: '⬜ Putih',
     mapColorDark: '⬛ Gelap',
-    mapColorBase: '🗺️ Peta dasar',
+    mapColorBase: '🌿 Alami',
     baseCountrySetting: '📍 Negara utama',
     close: 'Tutup',
   },
@@ -917,7 +887,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Kedudukan',
     profile: 'Profil',
     addPhoto: 'Tambah foto / video',
-    filterBtn: 'Tapis',
+    filterBtn: 'Tapis pin',
+    selectedModesLabel: 'Mod dipilih',
+    clearModesBtn: 'Kosongkan',
     view: 'Pemandangan',
     gourmet: 'Makanan',
     rain: 'Hari hujan',
@@ -934,7 +906,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Warna peta',
     mapColorWhite: '⬜ Putih',
     mapColorDark: '⬛ Gelap',
-    mapColorBase: '🗺️ Peta asas',
+    mapColorBase: '🌿 Semula jadi',
     baseCountrySetting: '📍 Negara utama',
     close: 'Tutup',
   },
@@ -944,7 +916,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Ranking',
     profile: 'Profile',
     addPhoto: 'Magdagdag ng photo / video',
-    filterBtn: 'I-filter',
+    filterBtn: 'I-filter ang pin',
+    selectedModesLabel: 'Napiling mode',
+    clearModesBtn: 'I-clear',
     view: 'Tanawin',
     gourmet: 'Pagkain',
     rain: 'Maulan',
@@ -961,7 +935,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Kulay ng mapa',
     mapColorWhite: '⬜ Puti',
     mapColorDark: '⬛ Madilim',
-    mapColorBase: '🗺️ Base map',
+    mapColorBase: '🌿 Natural',
     baseCountrySetting: '📍 Pangunahing bansa',
     close: 'Isara',
   },
@@ -971,7 +945,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Sıralama',
     profile: 'Profil',
     addPhoto: 'Fotoğraf / video ekle',
-    filterBtn: 'Filtrele',
+    filterBtn: 'Pin filtrele',
+    selectedModesLabel: 'Seçili modlar',
+    clearModesBtn: 'Temizle',
     view: 'Manzara',
     gourmet: 'Gurme',
     rain: 'Yağmurlu',
@@ -988,7 +964,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Harita rengi',
     mapColorWhite: '⬜ Beyaz',
     mapColorDark: '⬛ Koyu',
-    mapColorBase: '🗺️ Temel harita',
+    mapColorBase: '🌿 Doğal',
     baseCountrySetting: '📍 Ana ülke',
     close: 'Kapat',
   },
@@ -998,7 +974,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Ranglijst',
     profile: 'Profiel',
     addPhoto: 'Foto / video toevoegen',
-    filterBtn: 'Filteren',
+    filterBtn: 'Pins filteren',
+    selectedModesLabel: 'Gekozen modi',
+    clearModesBtn: 'Wissen',
     view: 'Uitzicht',
     gourmet: 'Gastronomie',
     rain: 'Regen',
@@ -1015,7 +993,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Kaartkleur',
     mapColorWhite: '⬜ Wit',
     mapColorDark: '⬛ Donker',
-    mapColorBase: '🗺️ Basiskaart',
+    mapColorBase: '🌿 Natuurlijk',
     baseCountrySetting: '📍 Basisland',
     close: 'Sluiten',
   },
@@ -1025,7 +1003,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Ranking',
     profile: 'Profil',
     addPhoto: 'Dodaj zdjęcie / wideo',
-    filterBtn: 'Filtruj',
+    filterBtn: 'Filtruj pinezki',
+    selectedModesLabel: 'Wybrane tryby',
+    clearModesBtn: 'Wyczyść',
     view: 'Widok',
     gourmet: 'Kulinaria',
     rain: 'Deszcz',
@@ -1042,7 +1022,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Kolor mapy',
     mapColorWhite: '⬜ Biały',
     mapColorDark: '⬛ Ciemny',
-    mapColorBase: '🗺️ Mapa bazowa',
+    mapColorBase: '🌿 Naturalny',
     baseCountrySetting: '📍 Kraj bazowy',
     close: 'Zamknij',
   },
@@ -1052,7 +1032,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Topplista',
     profile: 'Profil',
     addPhoto: 'Lägg till foto / video',
-    filterBtn: 'Filtrera',
+    filterBtn: 'Filtrera nålar',
+    selectedModesLabel: 'Valda lägen',
+    clearModesBtn: 'Rensa',
     view: 'Vy',
     gourmet: 'Mat',
     rain: 'Regn',
@@ -1069,7 +1051,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Kartfärg',
     mapColorWhite: '⬜ Vit',
     mapColorDark: '⬛ Mörk',
-    mapColorBase: '🗺️ Baskarta',
+    mapColorBase: '🌿 Naturlig',
     baseCountrySetting: '📍 Basland',
     close: 'Stäng',
   },
@@ -1079,7 +1061,9 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     ranking: 'Рейтинг',
     profile: 'Профіль',
     addPhoto: 'Додати фото / відео',
-    filterBtn: 'Фільтр',
+    filterBtn: 'Фільтр міток',
+    selectedModesLabel: 'Обрані режими',
+    clearModesBtn: 'Очистити',
     view: 'Краєвид',
     gourmet: 'Їжа',
     rain: 'Дощ',
@@ -1096,7 +1080,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     mapColorSetting: '🎨 Колір карти',
     mapColorWhite: '⬜ Білий',
     mapColorDark: '⬛ Темний',
-    mapColorBase: '🗺️ Базова карта',
+    mapColorBase: '🌿 Природний',
     baseCountrySetting: '📍 Базова країна',
     close: 'Закрити',
   }
@@ -1338,21 +1322,13 @@ const INITIAL_SPOTS: Spot[] = [
   },
 ];
 
-const PRIMARY_MODES: { cat: ViewCategory; emoji: string; labelKey: string }[] = [
+const ALL_MODES: { cat: ViewCategory; emoji: string; labelKey: string }[] = [
   { cat: 'view', emoji: '🏔️', labelKey: 'view' },
   { cat: 'gourmet', emoji: '🍔', labelKey: 'gourmet' },
   { cat: 'rain', emoji: '🌧️', labelKey: 'rain' },
-];
-
-const EXTRA_MODES: { cat: ViewCategory; emoji: string; labelKey: string }[] = [
   { cat: 'cafe', emoji: '☕', labelKey: 'cafe' },
   { cat: 'onsen', emoji: '♨️', labelKey: 'onsen' },
   { cat: 'shopping', emoji: '🛍️', labelKey: 'shopping' },
-];
-
-const ALL_MODES: { cat: ViewCategory; emoji: string; labelKey: string }[] = [
-  ...PRIMARY_MODES,
-  ...EXTRA_MODES,
 ];
 
 function getMapStylesByTheme(theme: MapThemeType) {
@@ -1662,8 +1638,7 @@ export default function WapApp() {
   const [currentTab, setCurrentTab] = useState<TabType>('map');
   // 基本は全モード表示
   const [selectedCategories, setSelectedCategories] = useState<ViewCategory[]>(['view', 'gourmet', 'rain', 'cafe', 'onsen', 'shopping']);
-  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState<boolean>(false);
-  const [showExtraModes, setShowExtraModes] = useState<boolean>(false);
+  const [isModeSelectScreenOpen, setIsModeSelectScreenOpen] = useState<boolean>(false);
   const [mapTheme, setMapTheme] = useState<MapThemeType>('light');
   const [displayScope, setDisplayScope] = useState<DisplayScope>('world');
   const [mapSearchKeyword, setMapSearchKeyword] = useState<string>('');
@@ -2027,15 +2002,21 @@ export default function WapApp() {
   };
 
   const toggleCategoryFilter = (cat: ViewCategory) => {
-    if (selectedCategories.includes(cat)) {
-      if (selectedCategories.length === 1) {
-        showToast('⚠️ 最低1つのカテゴリを選択する必要があります');
-        return;
+    setSelectedCategories((prev) => {
+      if (prev.includes(cat)) {
+        if (prev.length === 1) {
+          showToast('⚠️ 最低1つのモードを選択してください');
+          return prev;
+        }
+        return prev.filter((c) => c !== cat);
       }
-      setSelectedCategories((prev) => prev.filter((c) => c !== cat));
-    } else {
-      setSelectedCategories((prev) => [...prev, cat]);
-    }
+      return [...prev, cat];
+    });
+  };
+
+  const handleClearCategoryFilter = () => {
+    setSelectedCategories(ALL_MODES.map((m) => m.cat));
+    showToast('✓ 全モードを表示します');
   };
 
   const searchPlacesByQuery = async (rawQuery: string): Promise<PlaceSuggestion[]> => {
@@ -2706,8 +2687,14 @@ export default function WapApp() {
   const headerTextColor = '#0f172a';
 
   const isAnyTimelineCommentOpen = Object.values(openCommentsForSpot).some(Boolean);
-  const visibleModes = showExtraModes ? EXTRA_MODES : PRIMARY_MODES;
   const isAllModesSelected = ALL_MODES.every((m) => selectedCategories.includes(m.cat));
+  const selectedModeLabels = ALL_MODES
+    .filter((m) => selectedCategories.includes(m.cat))
+    .map((m) => `${m.emoji}${t(m.labelKey)}`);
+
+  const filterButtonDisplayText = isAllModesSelected
+    ? `🎛️ ${t('filterBtn')}`
+    : `${t('selectedModesLabel')}: ${selectedModeLabels.join(', ')}`;
 
   if (!isClient) {
     return <div style={{ background: '#ffffff', width: '100vw', height: '100dvh' }}></div>;
@@ -2743,6 +2730,69 @@ export default function WapApp() {
         <input type="file" ref={profileAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={onboardingAvatarInputRef} accept="image/*" onChange={handleAvatarFileSelect} style={{ display: 'none' }} />
         <input type="file" ref={appendMoreMediaInputRef} accept="image/*,video/*" multiple onChange={handleAppendMoreMedia} style={{ display: 'none' }} />
+
+        {/* 全6モード一括選択画面（左上「←」で戻る・クリアボタン付き） */}
+        {isModeSelectScreenOpen && (
+          <div style={{ position: 'fixed', inset: 0, width: '100vw', height: '100dvh', background: '#ffffff', color: '#0f172a', zIndex: 100002, display: 'flex', flexDirection: 'column', boxSizing: 'border-box', paddingTop: 'env(safe-area-inset-top, 0px)', paddingBottom: 'calc(24px + env(safe-area-inset-bottom, 0px))', touchAction: 'pan-y' }}>
+            <div style={{ height: '54px', padding: '0 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', background: '#ffffff', flexShrink: 0, gap: '8px' }}>
+              <button
+                type="button"
+                aria-label="戻る"
+                onClick={() => setIsModeSelectScreenOpen(false)}
+                style={{ background: '#f1f5f9', color: '#0f172a', border: 'none', borderRadius: '10px', padding: '7px 12px', fontSize: '15px', fontWeight: '900', cursor: 'pointer', flexShrink: 0, touchAction: 'manipulation' }}
+              >
+                ←
+              </button>
+
+              <div style={{ fontSize: '15px', fontWeight: '900', color: PIN_BLUE_COLOR, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {t('filterBtn')}
+              </div>
+
+              <button
+                type="button"
+                onClick={handleClearCategoryFilter}
+                style={{ background: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca', borderRadius: '10px', padding: '6px 12px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', flexShrink: 0, touchAction: 'manipulation' }}
+              >
+                {t('clearModesBtn')}
+              </button>
+            </div>
+
+            <div className="scrollable-content" style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', alignContent: 'start', touchAction: 'pan-y', boxSizing: 'border-box' }}>
+              {ALL_MODES.map(({ cat, emoji, labelKey }) => {
+                const isSelected = selectedCategories.includes(cat);
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => toggleCategoryFilter(cat)}
+                    style={{
+                      padding: '18px 14px',
+                      borderRadius: '16px',
+                      border: `2px solid ${isSelected ? PIN_BLUE_COLOR : '#e2e8f0'}`,
+                      background: isSelected ? '#f0f9ff' : '#ffffff',
+                      color: isSelected ? PIN_BLUE_COLOR : '#334155',
+                      fontWeight: '900',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '8px',
+                      boxShadow: isSelected ? '0 4px 14px rgba(2,132,199,0.14)' : 'none',
+                      touchAction: 'manipulation',
+                    }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                      <span style={{ fontSize: '20px' }}>{emoji}</span>
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t(labelKey)}</span>
+                    </span>
+                    <span>{isSelected ? '✓' : ''}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {isOnboarding && (
           <div style={{ position: 'fixed', inset: 0, background: '#ffffff', color: '#0f172a', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', touchAction: 'none' }}>
@@ -3366,75 +3416,29 @@ export default function WapApp() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none', gap: '6px', boxSizing: 'border-box' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', pointerEvents: 'auto', boxSizing: 'border-box', touchAction: 'manipulation', maxWidth: 'calc(100% - 92px)' }}>
-                  <button
-                    type="button"
-                    onClick={() => setIsFilterMenuOpen((prev) => !prev)}
-                    style={{
-                      padding: '5px 10px',
-                      borderRadius: '18px',
-                      border: '1px solid #e2e8f0',
-                      background: isFilterMenuOpen || !isAllModesSelected ? PIN_BLUE_COLOR : 'rgba(255,255,255,0.96)',
-                      color: isFilterMenuOpen || !isAllModesSelected ? '#ffffff' : '#0f172a',
-                      fontWeight: 'bold',
-                      fontSize: '11px',
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
-                    }}
-                  >
-                    🎛️ {t('filterBtn')}
-                  </button>
-
-                  {isFilterMenuOpen && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(255,255,255,0.96)', padding: '3px 6px', borderRadius: '20px', boxShadow: '0 4px 18px rgba(0,0,0,0.12)', border: '1px solid #e2e8f0', overflowX: 'auto' }}>
-                      {visibleModes.map(({ cat, emoji, labelKey }) => {
-                        const isChecked = selectedCategories.includes(cat);
-                        return (
-                          <button
-                            key={cat}
-                            type="button"
-                            onClick={() => toggleCategoryFilter(cat)}
-                            style={{
-                              padding: '4px 7px',
-                              borderRadius: '16px',
-                              border: 'none',
-                              background: isChecked ? PIN_BLUE_COLOR : '#f1f5f9',
-                              color: isChecked ? '#ffffff' : '#64748b',
-                              fontWeight: 'bold',
-                              fontSize: '10.5px',
-                              cursor: 'pointer',
-                              whiteSpace: 'nowrap',
-                              boxSizing: 'border-box',
-                            }}
-                          >
-                            {isChecked ? '✓ ' : ''}
-                            {emoji}{t(labelKey)}
-                          </button>
-                        );
-                      })}
-                      <button
-                        type="button"
-                        aria-label="モード配置切り替え"
-                        onClick={() => setShowExtraModes((prev) => !prev)}
-                        style={{
-                          padding: '3px 7px',
-                          borderRadius: '14px',
-                          border: '1px solid #bae6fd',
-                          background: showExtraModes ? '#e0f2fe' : '#f8fafc',
-                          color: PIN_BLUE_COLOR,
-                          fontWeight: '900',
-                          fontSize: '12px',
-                          cursor: 'pointer',
-                          lineHeight: 1,
-                          flexShrink: 0,
-                        }}
-                      >
-                        ＞
-                      </button>
-                    </div>
-                  )}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsModeSelectScreenOpen(true)}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '20px',
+                    border: '1px solid #e2e8f0',
+                    background: !isAllModesSelected ? PIN_BLUE_COLOR : 'rgba(255,255,255,0.96)',
+                    color: !isAllModesSelected ? '#ffffff' : '#0f172a',
+                    fontWeight: 'bold',
+                    fontSize: '11px',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: 'calc(100% - 92px)',
+                    pointerEvents: 'auto',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                    touchAction: 'manipulation',
+                  }}
+                >
+                  {filterButtonDisplayText}
+                </button>
 
                 <div style={{ display: 'flex', background: 'rgba(255,255,255,0.95)', padding: '3px 8px', borderRadius: '20px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', pointerEvents: 'auto', border: '1px solid #e2e8f0', boxSizing: 'border-box', touchAction: 'manipulation', flexShrink: 0 }}>
                   <select
@@ -4009,7 +4013,7 @@ export default function WapApp() {
         </div>
 
         {/* ボトムナビゲーション */}
-        {!isMultiPostsModalOpen && (
+        {!isMultiPostsModalOpen && !isModeSelectScreenOpen && (
           <nav style={{ position: 'fixed', bottom: '12px', left: '16px', right: '16px', maxWidth: '420px', margin: '0 auto', height: '60px', background: 'rgba(255, 255, 255, 0.98)', backdropFilter: 'blur(12px)', border: '1px solid #cbd5e1', borderRadius: '30px', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)', display: 'flex', justifyContent: 'space-around', alignItems: 'center', zIndex: 99999, boxSizing: 'border-box', padding: '0 8px', touchAction: 'manipulation' }}>
             <button onClick={() => { setSelectedSpot(null); setCurrentTab('map'); }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: currentTab === 'map' ? 'bold' : 'normal', color: currentTab === 'map' ? themeAccent : '#64748b', padding: '6px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', flex: 1, touchAction: 'manipulation' }}>
               <span style={{ fontSize: '20px' }}>🗺️</span><span>{t('map')}</span>
