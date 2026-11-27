@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import 'leaflet/dist/leaflet.css';
 
 // ==========================================
 // 0. Supabase クライアント初期化 & メディアURLヘルパー
@@ -10,7 +11,6 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyCYqbNfMr77hi-gvKwo1by9xSdADgUaN7I';
 const FALLBACK_IMAGE_URL = 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&auto=format&fit=crop';
 const PIN_BLUE_COLOR = '#0284c7';
 
@@ -1331,25 +1331,23 @@ const ALL_MODES: { cat: ViewCategory; emoji: string; labelKey: string }[] = [
   { cat: 'shopping', emoji: '🛍️', labelKey: 'shopping' },
 ];
 
-function getMapStylesByTheme(theme: MapThemeType) {
+function getLeafletTileConfig(theme: MapThemeType): { url: string; filterCss: string } {
   if (theme === 'dark') {
-    return [
-      { elementType: 'geometry', stylers: [{ color: '#1e293b' }] },
-      { elementType: 'labels.text.stroke', stylers: [{ color: '#0f172a' }] },
-      { elementType: 'labels.text.fill', stylers: [{ color: '#cbd5e1' }] },
-      { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f172a' }] },
-      { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#334155' }] },
-    ];
+    return {
+      url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+      filterCss: 'none',
+    };
   }
   if (theme === 'pastel') {
-    return [
-      { elementType: 'geometry', stylers: [{ color: '#fef9c3' }] },
-      { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#bae6fd' }] },
-      { featureType: 'landscape.natural', elementType: 'geometry', stylers: [{ color: '#dcfce7' }] },
-      { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
-    ];
+    return {
+      url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+      filterCss: 'sepia(0.28) saturate(1.25) brightness(1.03)',
+    };
   }
-  return [];
+  return {
+    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+    filterCss: 'none',
+  };
 }
 
 function getMapContainerBgColor(theme: MapThemeType): string {
@@ -1405,17 +1403,25 @@ function generateVideoThumbnail(file: File): Promise<string> {
   });
 }
 
+function escapeHtmlAttr(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 // ==========================================
-// 2. Google Maps API コンポーネント
+// 2. Leaflet コンポーネント（完全無料・API課金なし）
 // ==========================================
-const GoogleMapComponent = ({
+const LeafletMapComponent = ({
   spots,
   center,
   zoom,
   targetCenter,
   targetZoom,
   theme,
-  userLang,
   onMoveEnd,
   onSelectSpot,
   onDoubleTap,
@@ -1426,19 +1432,31 @@ const GoogleMapComponent = ({
   targetCenter: [number, number] | null;
   targetZoom: number | null;
   theme: MapThemeType;
-  userLang: string;
+  userLang?: string;
   onMoveEnd: (center: [number, number], zoom: number) => void;
   onSelectSpot: (s: Spot) => void;
   onDoubleTap: (lat: number, lon: number) => void;
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
+  const tileLayerRef = useRef<any>(null);
+  const markerLayerRef = useRef<any>(null);
+  const leafletLibRef = useRef<any>(null);
+  const onMoveEndRef = useRef(onMoveEnd);
+  const onSelectSpotRef = useRef(onSelectSpot);
+  const onDoubleTapRef = useRef(onDoubleTap);
+
+  onMoveEndRef.current = onMoveEnd;
+  onSelectSpotRef.current = onSelectSpot;
+  onDoubleTapRef.current = onDoubleTap;
+
   const [thumbCache, setThumbCache] = useState<Record<string, string>>({});
+  const [currentZoomForCluster, setCurrentZoomForCluster] = useState<number>(zoom);
   const bgColor = getMapContainerBgColor(theme);
+  const tileConfig = useMemo(() => getLeafletTileConfig(theme), [theme]);
 
   useEffect(() => {
-    spots.forEach(spot => {
+    spots.forEach((spot) => {
       const url = resolveMediaSrc(spot.thumbUrl, spot.fileUrl);
       if (!url || thumbCache[url]) return;
 
@@ -1455,114 +1473,127 @@ const GoogleMapComponent = ({
             ctx.fillRect(0, 0, 64, 64);
             ctx.drawImage(img, 0, 0, 64, 64);
             const dataUri = canvas.toDataURL('image/jpeg', 0.9);
-            setThumbCache(prev => ({ ...prev, [url]: dataUri }));
+            setThumbCache((prev) => ({ ...prev, [url]: dataUri }));
           }
         } catch {
-          setThumbCache(prev => ({ ...prev, [url]: url }));
+          setThumbCache((prev) => ({ ...prev, [url]: url }));
         }
       };
       img.onerror = () => {
-        setThumbCache(prev => ({ ...prev, [url]: url }));
+        setThumbCache((prev) => ({ ...prev, [url]: url }));
       };
       img.src = url;
     });
-  }, [spots]);
+  }, [spots, thumbCache]);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !mapRef.current) return;
 
-    const initMap = () => {
-      if (!mapRef.current || mapInstanceRef.current || !window.google || !window.google.maps) return;
+    let isCancelled = false;
 
-      const map = new window.google.maps.Map(mapRef.current, {
-        center: { lat: center[0], lng: center[1] },
+    const setupMap = async () => {
+      const LModule = await import('leaflet');
+      const L = LModule.default || LModule;
+      if (isCancelled || !mapRef.current || mapInstanceRef.current) return;
+
+      leafletLibRef.current = L;
+
+      const map = L.map(mapRef.current, {
+        center: [center[0], center[1]],
         zoom: zoom,
         minZoom: 3,
         maxZoom: 18,
-        disableDefaultUI: true,
         zoomControl: false,
-        gestureHandling: 'greedy',
-        backgroundColor: bgColor,
-        styles: getMapStylesByTheme(theme),
+        attributionControl: false,
+        doubleClickZoom: false,
       });
 
       mapInstanceRef.current = map;
-      window.google.maps.event.trigger(map, 'resize');
 
-      map.addListener('idle', () => {
+      const layer = L.tileLayer(tileConfig.url, {
+        maxZoom: 19,
+        subdomains: 'abcd',
+      }).addTo(map);
+      tileLayerRef.current = layer;
+
+      const markerGroup = L.layerGroup().addTo(map);
+      markerLayerRef.current = markerGroup;
+
+      map.on('moveend', () => {
         const c = map.getCenter();
         const z = map.getZoom();
-        if (c && z) {
-          onMoveEnd([c.lat(), c.lng()], z);
+        setCurrentZoomForCluster(z);
+        onMoveEndRef.current([c.lat, c.lng], z);
+      });
+
+      map.on('dblclick', (e: any) => {
+        if (e?.latlng) {
+          onDoubleTapRef.current(e.latlng.lat, e.latlng.lng);
         }
       });
 
-      map.addListener('dblclick', (e: any) => {
-        if (e.latLng) {
-          onDoubleTap(e.latLng.lat(), e.latLng.lng());
+      setTimeout(() => {
+        if (!isCancelled && mapInstanceRef.current) {
+          mapInstanceRef.current.invalidateSize();
         }
-      });
+      }, 100);
     };
 
-    if (!window.google || !window.google.maps) {
-      const existingScript = document.getElementById('google-maps-script');
-      if (!existingScript) {
-        const script = document.createElement('script');
-        script.id = 'google-maps-script';
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&language=${userLang}`;
-        script.async = true;
-        script.defer = true;
-        script.onload = () => initMap();
-        document.head.appendChild(script);
-      } else {
-        const checkInterval = setInterval(() => {
-          if (window.google && window.google.maps) {
-            clearInterval(checkInterval);
-            initMap();
-          }
-        }, 30);
+    setupMap();
+
+    return () => {
+      isCancelled = true;
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+        tileLayerRef.current = null;
+        markerLayerRef.current = null;
       }
+    };
+  }, []);
+
+  useEffect(() => {
+    const L = leafletLibRef.current;
+    const map = mapInstanceRef.current;
+    if (!L || !map) return;
+
+    if (tileLayerRef.current) {
+      tileLayerRef.current.setUrl(tileConfig.url);
     } else {
-      initMap();
+      tileLayerRef.current = L.tileLayer(tileConfig.url, {
+        maxZoom: 19,
+        subdomains: 'abcd',
+      }).addTo(map);
     }
-  }, [userLang]);
+  }, [tileConfig.url]);
 
   useEffect(() => {
-    if (mapInstanceRef.current && window.google && window.google.maps) {
-      mapInstanceRef.current.setOptions({
-        styles: getMapStylesByTheme(theme),
-        backgroundColor: bgColor,
-      });
-    }
-  }, [theme, bgColor]);
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 80);
+  }, [theme]);
 
   useEffect(() => {
-    if (mapInstanceRef.current && window.google && window.google.maps) {
-      mapInstanceRef.current.setCenter({ lat: center[0], lng: center[1] });
-      mapInstanceRef.current.setZoom(zoom);
-    }
-  }, [center, zoom]);
-
-  useEffect(() => {
-    if (mapInstanceRef.current && targetCenter && targetZoom) {
-      mapInstanceRef.current.panTo({ lat: targetCenter[0], lng: targetCenter[1] });
-      mapInstanceRef.current.setZoom(targetZoom);
-    }
+    const map = mapInstanceRef.current;
+    if (!map || !targetCenter || targetZoom === null) return;
+    map.setView([targetCenter[0], targetCenter[1]], targetZoom, { animate: true });
+    setCurrentZoomForCluster(targetZoom);
   }, [targetCenter, targetZoom]);
 
   useEffect(() => {
-    if (!mapInstanceRef.current || !window.google || !window.google.maps) return;
+    const L = leafletLibRef.current;
+    const markerGroup = markerLayerRef.current;
+    if (!L || !markerGroup) return;
 
-    markersRef.current.forEach((m) => m.setMap(null));
-    markersRef.current = [];
+    markerGroup.clearLayers();
 
-    const map = mapInstanceRef.current;
-    const currentZoom = map.getZoom() || 5;
-
-    const precision = currentZoom < 6 ? 1 : currentZoom < 9 ? 2 : 3;
+    const activeZoom = currentZoomForCluster || 5;
+    const precision = activeZoom < 6 ? 1 : activeZoom < 9 ? 2 : 3;
 
     const locationMap = new Map<string, Spot[]>();
-    spots.forEach(spot => {
+    spots.forEach((spot) => {
       const key = `${spot.lat.toFixed(precision)},${spot.lon.toFixed(precision)}`;
       if (!locationMap.has(key)) locationMap.set(key, []);
       locationMap.get(key)!.push(spot);
@@ -1572,48 +1603,67 @@ const GoogleMapComponent = ({
       const spot = groupSpots[0];
       const count = groupSpots.length;
       const rawUrl = resolveMediaSrc(spot.thumbUrl, spot.fileUrl);
-      const imgUrl = thumbCache[rawUrl] || rawUrl;
+      const imgUrl = escapeHtmlAttr(thumbCache[rawUrl] || rawUrl);
+      const safeTitle = escapeHtmlAttr(spot.title || '');
 
-      const badgeSvg = count > 1 ? `
+      const badgeSvg =
+        count > 1
+          ? `
 <circle cx="37" cy="10" r="9.5" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
 <text x="37" y="13.8" fill="#ffffff" font-size="10.5" font-weight="bold" text-anchor="middle">+${count}</text>
-` : '';
+`
+          : '';
 
-      const marker = new window.google.maps.Marker({
-        position: { lat: spot.lat, lng: spot.lon },
-        map: map,
-        title: spot.title,
-        icon: {
-          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" width="44" height="48" viewBox="0 0 44 48">
-<defs>
-<clipPath id="pinClip">
-<circle cx="22" cy="18" r="14.2" />
-</clipPath>
-</defs>
-<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-<feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.3)" />
-</filter>
-<path d="M22 46 C22 46 38.5 29.5 38.5 18 C38.5 8.8 31.1 1.5 22 1.5 C12.9 1.5 5.5 8.8 5.5 18 C5.5 29.5 22 46 22 46 Z" fill="${PIN_BLUE_COLOR}" stroke="#ffffff" stroke-width="2.5" filter="url(#shadow)" />
-<circle cx="22" cy="18" r="14.2" fill="${PIN_BLUE_COLOR}" />
-<image href="${imgUrl}" x="7.8" y="3.8" width="28.4" height="28.4" clip-path="url(#pinClip)" preserveAspectRatio="xMidYMid slice" />
-${badgeSvg}
-</svg>
-`)}`,
-          scaledSize: new window.google.maps.Size(44, 48),
-          anchor: new window.google.maps.Point(22, 46),
-        }
+      const html = `
+<div title="${safeTitle}" style="width:44px;height:48px;position:relative;cursor:pointer;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="44" height="48" viewBox="0 0 44 48">
+    <defs>
+      <clipPath id="wapPinClip-${spot.id}">
+        <circle cx="22" cy="18" r="14.2" />
+      </clipPath>
+    </defs>
+    <path d="M22 46 C22 46 38.5 29.5 38.5 18 C38.5 8.8 31.1 1.5 22 1.5 C12.9 1.5 5.5 8.8 5.5 18 C5.5 29.5 22 46 22 46 Z" fill="${PIN_BLUE_COLOR}" stroke="#ffffff" stroke-width="2.5" />
+    <circle cx="22" cy="18" r="14.2" fill="${PIN_BLUE_COLOR}" />
+    <image href="${imgUrl}" x="7.8" y="3.8" width="28.4" height="28.4" clip-path="url(#wapPinClip-${spot.id})" preserveAspectRatio="xMidYMid slice" />
+    ${badgeSvg}
+  </svg>
+</div>
+`;
+
+      const icon = L.divIcon({
+        html,
+        className: 'wap-leaflet-pin-icon',
+        iconSize: [44, 48],
+        iconAnchor: [22, 46],
       });
 
-      marker.addListener('click', () => {
-        onSelectSpot(spot);
+      const marker = L.marker([spot.lat, spot.lon], { icon });
+      marker.on('click', () => {
+        onSelectSpotRef.current(spot);
       });
-
-      markersRef.current.push(marker);
+      marker.addTo(markerGroup);
     });
-  }, [spots, thumbCache, zoom]);
+  }, [spots, thumbCache, currentZoomForCluster]);
 
-  return <div ref={mapRef} style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: bgColor, touchAction: 'auto' }} />;
+  return (
+    <div style={{ width: '100%', height: '100%', position: 'absolute', inset: 0, background: bgColor, touchAction: 'auto' }}>
+      <style>{`
+        .wap-leaflet-pin-icon {
+          background: transparent !important;
+          border: none !important;
+        }
+        .wap-leaflet-tile-pane .leaflet-tile-pane {
+          filter: ${tileConfig.filterCss};
+          transition: filter 0.25s ease;
+        }
+      `}</style>
+      <div
+        ref={mapRef}
+        className="wap-leaflet-tile-pane"
+        style={{ width: '100%', height: '100%', background: bgColor }}
+      />
+    </div>
+  );
 };
 
 // ==========================================
@@ -2602,7 +2652,6 @@ export default function WapApp() {
         ignoreElements: (element) => {
           return (
             element.classList?.contains('ws-no-export') ||
-            element.classList?.contains('gmnopr') ||
             element.tagName === 'BUTTON' ||
             element.tagName === 'INPUT' ||
             element.tagName === 'SELECT'
@@ -3172,7 +3221,7 @@ export default function WapApp() {
                           setIsScanQrOpen(false);
                           showToast(`🎉 ${friendName}さんとフレンドになりました！🤝`);
                           document.body.removeChild(tempDiv);
-                        } catch (err) {
+                        } catch {
                           showWarning('⚠️ QRコードを検出できませんでした。別の画像をお試しください。');
                         }
                       }
@@ -3455,7 +3504,7 @@ export default function WapApp() {
             </div>
 
             <div ref={exportRef} style={{ flex: 1, width: '100%', height: '100%', position: 'relative', background: getMapContainerBgColor(mapTheme), boxSizing: 'border-box' }}>
-              <GoogleMapComponent
+              <LeafletMapComponent
                 spots={filteredSpots}
                 center={currentMapCenter}
                 zoom={currentMapZoom}
