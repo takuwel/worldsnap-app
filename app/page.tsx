@@ -140,6 +140,38 @@ export interface PlaceSuggestion {
   lon: string;
 }
 
+interface LocalizedPlaceLabel {
+  id: string;
+  lat: number;
+  lon: number;
+  minZoom: number;
+  names: Record<string, string>;
+}
+
+const LOCALIZED_PLACE_LABELS: LocalizedPlaceLabel[] = [
+  { id: 'tokyo', lat: 35.6762, lon: 139.6503, minZoom: 5, names: { ja: '東京', en: 'Tokyo', ko: '도쿄', zh: '东京', zh_tw: '東京', fr: 'Tokyo', de: 'Tokio', es: 'Tokio', it: 'Tokyo', pt: 'Tóquio', ru: 'Токио', ar: 'طوكيو', hi: 'टोक्यो', th: 'โตเกียว', vi: 'Tokyo', id: 'Tokyo', ms: 'Tokyo', tl: 'Tokyo', tr: 'Tokyo', nl: 'Tokio', pl: 'Tokio', sv: 'Tokyo', uk: 'Токіо' } },
+  { id: 'osaka', lat: 34.6937, lon: 135.5023, minZoom: 6, names: { ja: '大阪', en: 'Osaka', ko: '오사카', zh: '大阪', zh_tw: '大阪' } },
+  { id: 'kyoto', lat: 35.0116, lon: 135.7681, minZoom: 6, names: { ja: '京都', en: 'Kyoto', ko: '교토', zh: '京都', zh_tw: '京都' } },
+  { id: 'sapporo', lat: 43.0618, lon: 141.3545, minZoom: 5, names: { ja: '札幌', en: 'Sapporo', ko: '삿포로', zh: '札幌', zh_tw: '札幌' } },
+  { id: 'fukuoka', lat: 33.5902, lon: 130.4017, minZoom: 6, names: { ja: '福岡', en: 'Fukuoka', ko: '후쿠오카', zh: '福冈', zh_tw: '福岡' } },
+  { id: 'seoul', lat: 37.5665, lon: 126.9780, minZoom: 5, names: { ja: 'ソウル', en: 'Seoul', ko: '서울', zh: '首尔', zh_tw: '首爾' } },
+  { id: 'busan', lat: 35.1796, lon: 129.0756, minZoom: 6, names: { ja: '釜山', en: 'Busan', ko: '부산', zh: '釜山', zh_tw: '釜山' } },
+  { id: 'beijing', lat: 39.9042, lon: 116.4074, minZoom: 4, names: { ja: '北京', en: 'Beijing', ko: '베이징', zh: '北京', zh_tw: '北京' } },
+  { id: 'shanghai', lat: 31.2304, lon: 121.4737, minZoom: 4, names: { ja: '上海', en: 'Shanghai', ko: '상하이', zh: '上海', zh_tw: '上海' } },
+  { id: 'taipei', lat: 25.0330, lon: 121.5654, minZoom: 6, names: { ja: '台北', en: 'Taipei', ko: '타이베이', zh: '台北', zh_tw: '臺北' } },
+  { id: 'bangkok', lat: 13.7563, lon: 100.5018, minZoom: 5, names: { ja: 'バンコク', en: 'Bangkok', ko: '방콕', zh: '曼谷', zh_tw: '曼谷', th: 'กรุงเทพมหานคร' } },
+  { id: 'singapore', lat: 1.3521, lon: 103.8198, minZoom: 6, names: { ja: 'シンガポール', en: 'Singapore', ko: '싱가포르', zh: '新加坡', zh_tw: '新加坡' } },
+  { id: 'london', lat: 51.5072, lon: -0.1276, minZoom: 4, names: { ja: 'ロンドン', en: 'London', ko: '런던', zh: '伦敦', zh_tw: '倫敦', fr: 'Londres', de: 'London', es: 'Londres', it: 'Londra', pt: 'Londres', ru: 'Лондон' } },
+  { id: 'paris', lat: 48.8566, lon: 2.3522, minZoom: 4, names: { ja: 'パリ', en: 'Paris', ko: '파리', zh: '巴黎', zh_tw: '巴黎', fr: 'Paris', de: 'Paris', es: 'París', it: 'Parigi', pt: 'Paris', ru: 'Париж' } },
+  { id: 'rome', lat: 41.9028, lon: 12.4964, minZoom: 5, names: { ja: 'ローマ', en: 'Rome', ko: '로마', zh: '罗马', zh_tw: '羅馬', it: 'Roma', fr: 'Rome', es: 'Roma' } },
+  { id: 'berlin', lat: 52.5200, lon: 13.4050, minZoom: 5, names: { ja: 'ベルリン', en: 'Berlin', ko: '베를린', zh: '柏林', zh_tw: '柏林', de: 'Berlin' } },
+  { id: 'madrid', lat: 40.4168, lon: -3.7038, minZoom: 5, names: { ja: 'マドリード', en: 'Madrid', ko: '마드리드', zh: '马德里', zh_tw: '馬德里', es: 'Madrid' } },
+  { id: 'newyork', lat: 40.7128, lon: -74.0060, minZoom: 4, names: { ja: 'ニューヨーク', en: 'New York', ko: '뉴욕', zh: '纽约', zh_tw: '紐約', es: 'Nueva York', fr: 'New York' } },
+  { id: 'losangeles', lat: 34.0522, lon: -118.2437, minZoom: 4, names: { ja: 'ロサンゼルス', en: 'Los Angeles', ko: '로스앤젤레스', zh: '洛杉矶', zh_tw: '洛杉磯' } },
+  { id: 'sydney', lat: -33.8688, lon: 151.2093, minZoom: 4, names: { ja: 'シドニー', en: 'Sydney', ko: '시드니', zh: '悉尼', zh_tw: '雪梨' } },
+  { id: 'dubai', lat: 25.2048, lon: 55.2708, minZoom: 5, names: { ja: 'ドバイ', en: 'Dubai', ko: '두바이', zh: '迪拜', zh_tw: '杜拜', ar: 'دبي' } },
+];
+
 const NG_PATTERNS = [
   '死ね', 'しね', '殺す', 'ころす', '殺してやる', '消えろ', 'きえろ', '消え失せろ',
   'バカ', 'ばか', 'アホ', 'あほ', 'クズ', 'くず', 'カス', 'かす', 'ゴミ', 'ごみ', 'クソ', 'くそ',
@@ -314,26 +346,26 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 1. 本アプリでは、ユーザー生成コンテンツ（UGC）の安全性を保つため、暴言、ヘイトスピーチ、差別的表現、過度な性的表現などの不適切な投稿を厳禁としています。
 2. 掲載されているスポットの写真や店舗情報は投稿時点のものであり、現在地において建物がなくなっている、閉店している、またはリニューアルされている場合があります。当サービスは掲載情報の正確性や現状への適合性を保証するものではなく、現地に赴く際はユーザーご自身の責任で最新情報をご確認ください。
 3. 各投稿やコメントには応援機能および悪質ユーザーの「ブロック（🚫）」機能、ならびにお問い合わせ窓口（wap.support.official@gmail.com）を完備しています。`,
-    guideFullText: `📖【wap（ワップ）のわかりやすい使い方ガイド】
+    guideFullText: `📖【wap（ワップ）最新操作ガイド】
 
-1️⃣ **マップ画面で地図を見る・探す**
-- 下のメニューの「🗺️ マップ」を押すと、世界地図や日本地図が開くよ！
-- 画面の上にある🔍「検索バー」に、行きたい場所の名前（例: 京都）やハッシュタグ（例: #絶景）を入力して虫眼鏡ボタンを押すと、その場所へビューンと飛べるよ。
-- 左上の「☰」ボタンを押すと、言語の変更や設定ができるよ。
+📱 **縦画面固定（ポートレート）について**
+- TikTokと同じように縦画面表示に最適化しています。端末を横にしても横画面に崩れず快適に操作できます。
 
-2️⃣ **すてきな写真や動画をマップに投稿する（カンタン！）**
-- マップ画面の左下にある「📷＋ 写真/動画を追加」ボタンを押してね。
-- スマホの中にある写真や動画を選ぶと、自動的に場所（位置情報）がマップにセットされるよ！（※場所が違うときは「地名・住所検索」で正しい場所をえらんでね）
-- プレビュー画面で、iPhoneの写真アプリと同じように**「二本指で広げたり縮めたり（ピンチイン・アウト）」**して大きさを自由に変えたり、指でスワイプして位置を微調整できるよ！
-- タイトルや思い出メモを入力して、「マップに反映する 🚀」を押すだけ！
+1️⃣ **マップ画面で地図を見る・探す・絞り込む**
+- 「🗺️ マップ」では、設定した表示言語に合わせて国名・地域・主要都市の地名表示や検索結果が統一されます。
+- 上部の🔍検索バーで都市名や「#タグ」を検索でき、ピンをダブルタップするとズームイン、右下の「🪟」ボタンで段階的にズームアウトできます。
+- 「ピンを絞り込む」ボタンから全6モード（景色・グルメ・雨の日・カフェ・温泉・ショッピング）を一括選択でき、「クリア」で全表示に戻せます。右上では「ワールド／フレンド／マイマップ」の表示範囲を切り替えられます。
+- 左上の「☰」から表示言語・マップの色（ホワイト／ダーク／ナチュラル）・ベースの国を変更できます。
 
-3️⃣ **みんなの投稿を見る（タイムライン）**
-- 下のメニューの「🗓️ タイムライン」を押すと、あなたのベース国の投稿が優先されて、みんなの写真や動画がTikTokみたいに縦に流れてくるよ！
-- 動画は音声つきでスムーズに再生されるよ。画面のどこを上下にスワイプしても次の投稿へサクサク進むよ！投稿をタップすれば詳しい情報が見られるよ。
+2️⃣ **写真・動画を投稿する**
+- 「📷＋ 写真/動画を追加」から写真や動画を選ぶと、EXIF位置情報がある場合は自動で位置がセットされます（※「地名・住所検索」でも場所を指定できます）。
+- 複数枚・複数本を選んだ場合は1つの投稿にまとめられ、「＋ 写真・動画を追加する」で後から追加したり、「✏️ キャプションを分けて入力する」で1枚ずつタイトル・メモを変えることもできます。
+- プレビュー画面では**2本指のピンチイン・アウトとドラッグ**で拡大・位置調整ができ、枠外にズレても自動で安全な枠内に戻ります。「🅿️ 駐車場あり」もチェック可能です。
 
-4️⃣ **ランキングと自分のページ**
-- 「🏆 ランキング」では、みんなに大人気のスポットがわかるよ。
-- 「👤 マイページ」では、自分の投稿した数や、訪問した国の数、自分だけの「QRコード」を確認して友達とフレンドになれるよ！マイページの「投稿」や「保存」にある写真を押すと、いつでも投稿の詳細を確認できるよ。`
+3️⃣ **タイムライン・ランキング・マイページ**
+- 「🗓️ タイムライン」ではベース国の投稿が優先表示され、上下スワイプで次の投稿へ進めます。コメント欄を開いている間は誤スクロールを防ぎます。
+- 「🏆 ランキング」では人気スポットをチェックでき、経路案内は「🧭 Googleマップで経路案内」からGoogleマップへスムーズに連携できます。
+- 「👤 マイページ」では投稿一覧・月送り対応の「旅のログ カレンダー」・保存済み・称号・QRコードによるフレンド追加が使えます。`
   },
   en: {
     step1Title: 'Step 1: Select Language',
@@ -405,7 +437,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     myQrCode: '📱 My QR Code',
     scanQrCode: '📷 Scan QR Code',
     eulaFullText: `[wap Terms of Service & Location Policy]\nContact: wap.support.official@gmail.com`,
-    guideFullText: `[wap Guide]`
+    guideFullText: `[wap User Guide]\n\n📱 Portrait Lock: Locked to portrait orientation like TikTok.\n🗺️ Map & Language: Place names and search results follow your selected display language, with 6 category modes, scope filters, pinch-zoom-drag post preview, travel log calendar, and QR friend sharing.`
   },
   ko: {
     step1Title: 'Step 1: 표시 언어 선택',
@@ -477,7 +509,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     myQrCode: '📱 내 QR코드',
     scanQrCode: '📷 QR코드 스캔',
     eulaFullText: `[wap 이용약관 및 위치정보 정책]\n문의: wap.support.official@gmail.com`,
-    guideFullText: `[wap 사용 가이드]`
+    guideFullText: `[wap 사용 가이드]\n\n📱 세로 화면 고정: TikTok처럼 세로 화면에 맞춰져 기기를 돌려도 레이아웃이 흐트러지지 않습니다.\n🗺️ 언어 통일 및 기능: 선택한 표시 언어로 지명과 검색 결과가 통일되며, 6개 모드 필터, 핀치/드래그 미리보기, 여행 로그 캘린더, QR 친구 추가를 지원합니다.`
   },
   zh: {
     step1Title: 'Step 1: 选择显示语言',
@@ -1330,7 +1362,6 @@ const ALL_MODES: { cat: ViewCategory; emoji: string; labelKey: string }[] = [
   { cat: 'shopping', emoji: '🛍️', labelKey: 'shopping' },
 ];
 
-// APIキー不要のOpenStreetMapタイルを使い、色味とコントラストを整えて投稿ピンを見やすくする設定
 function getLeafletTileConfig(theme: MapThemeType): { url: string; filterCss: string } {
   const osmUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
   if (theme === 'dark') {
@@ -1349,6 +1380,10 @@ function getLeafletTileConfig(theme: MapThemeType): { url: string; filterCss: st
     url: osmUrl,
     filterCss: 'saturate(0.95) brightness(1.01) contrast(0.95)',
   };
+}
+
+function getLocalizedLabelText(names: Record<string, string>, langCode: string): string {
+  return names[langCode] || names.en || names.ja || Object.values(names)[0] || '';
 }
 
 function getMapContainerBgColor(theme: MapThemeType): string {
@@ -1414,7 +1449,7 @@ function escapeHtmlAttr(str: string): string {
 }
 
 // ==========================================
-// 2. Leaflet コンポーネント
+// 2. Leaflet コンポーネント（設定言語統一ラベル＋投稿ピン）
 // ==========================================
 const LeafletMapComponent = ({
   spots,
@@ -1423,6 +1458,7 @@ const LeafletMapComponent = ({
   targetCenter,
   targetZoom,
   theme,
+  userLang = 'ja',
   isVisibleTab,
   onMoveEnd,
   onSelectSpot,
@@ -1443,6 +1479,7 @@ const LeafletMapComponent = ({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const tileLayerRef = useRef<any>(null);
+  const labelLayerRef = useRef<any>(null);
   const markerLayerRef = useRef<any>(null);
   const leafletLibRef = useRef<any>(null);
   const onMoveEndRef = useRef(onMoveEnd);
@@ -1531,6 +1568,9 @@ const LeafletMapComponent = ({
       }).addTo(map);
       tileLayerRef.current = layer;
 
+      const labelGroup = L.layerGroup().addTo(map);
+      labelLayerRef.current = labelGroup;
+
       const markerGroup = L.layerGroup().addTo(map);
       markerLayerRef.current = markerGroup;
 
@@ -1574,6 +1614,7 @@ const LeafletMapComponent = ({
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
         tileLayerRef.current = null;
+        labelLayerRef.current = null;
         markerLayerRef.current = null;
       }
     };
@@ -1607,6 +1648,45 @@ const LeafletMapComponent = ({
     map.setView([targetCenter[0], targetCenter[1]], targetZoom, { animate: true });
     setCurrentZoomForCluster(targetZoom);
   }, [targetCenter, targetZoom]);
+
+  // 設定言語（userLang）で国・主要都市の地名ラベルを統一描画
+  useEffect(() => {
+    const L = leafletLibRef.current;
+    const labelGroup = labelLayerRef.current;
+    if (!L || !labelGroup) return;
+
+    labelGroup.clearLayers();
+    const activeZoom = currentZoomForCluster || 5;
+    const textColor = theme === 'dark' ? '#e2e8f0' : '#0f172a';
+    const haloColor = theme === 'dark' ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.9)';
+
+    if (activeZoom <= 6) {
+      Object.entries(COUNTRIES).forEach(([code, c]) => {
+        const label = escapeHtmlAttr(getLocalizedLabelText(c.names, userLang));
+        if (!label) return;
+        const icon = L.divIcon({
+          html: `<div style="font-size:11px;font-weight:800;color:${textColor};text-shadow:0 0 4px ${haloColor},0 1px 2px ${haloColor};white-space:nowrap;pointer-events:none;transform:translate(-50%,-50%);">${label}</div>`,
+          className: 'wap-lang-country-label',
+          iconSize: [0, 0],
+          iconAnchor: [0, 0],
+        });
+        L.marker([c.lat, c.lon], { icon, interactive: false }).addTo(labelGroup);
+      });
+    }
+
+    LOCALIZED_PLACE_LABELS.forEach((place) => {
+      if (activeZoom < place.minZoom) return;
+      const label = escapeHtmlAttr(getLocalizedLabelText(place.names, userLang));
+      if (!label) return;
+      const icon = L.divIcon({
+        html: `<div style="font-size:11px;font-weight:700;color:${textColor};background:${haloColor};padding:1px 6px;border-radius:8px;white-space:nowrap;pointer-events:none;transform:translate(-50%,-50%);border:1px solid rgba(148,163,184,0.35);">${label}</div>`,
+        className: 'wap-lang-city-label',
+        iconSize: [0, 0],
+        iconAnchor: [0, 0],
+      });
+      L.marker([place.lat, place.lon], { icon, interactive: false }).addTo(labelGroup);
+    });
+  }, [userLang, currentZoomForCluster, theme]);
 
   useEffect(() => {
     const L = leafletLibRef.current;
@@ -1677,7 +1757,13 @@ const LeafletMapComponent = ({
         .wap-leaflet-pin-icon {
           background: transparent !important;
           border: none !important;
-          z-index: 400 !important;
+          z-index: 450 !important;
+        }
+        .wap-lang-country-label,
+        .wap-lang-city-label {
+          background: transparent !important;
+          border: none !important;
+          z-index: 420 !important;
         }
         .wap-leaflet-tile-pane .leaflet-tile-pane {
           filter: ${tileConfig.filterCss};
@@ -1766,6 +1852,17 @@ export default function WapApp() {
 
   const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
   const [targetZoom, setTargetZoom] = useState<number | null>(null);
+
+  // TikTok同様に縦画面（portrait）固定を試行
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const orient = (window.screen as any)?.orientation;
+      if (orient && typeof orient.lock === 'function') {
+        orient.lock('portrait').catch(() => {});
+      }
+    } catch {}
+  }, []);
 
   useEffect(() => {
     setIsClient(true);
@@ -2098,8 +2195,9 @@ export default function WapApp() {
   const searchPlacesByQuery = async (rawQuery: string): Promise<PlaceSuggestion[]> => {
     const trimmed = rawQuery.trim();
     if (!trimmed) return [];
+    const apiLang = userLangCode === 'zh_tw' ? 'zh-TW' : userLangCode;
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(trimmed)}&limit=8&addressdetails=1`
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(trimmed)}&accept-language=${encodeURIComponent(apiLang)}&limit=8&addressdetails=1`
     );
     const data = await res.json();
     return Array.isArray(data) ? data : [];
@@ -2119,7 +2217,7 @@ export default function WapApp() {
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [mapSearchKeyword]);
+  }, [mapSearchKeyword, userLangCode]);
 
   const handleSelectMapSuggestion = (item: PlaceSuggestion) => {
     const lat = parseFloat(item.lat);
@@ -2174,7 +2272,7 @@ export default function WapApp() {
       }
     }, 300);
     return () => clearTimeout(timer);
-  }, [addressSearchQuery]);
+  }, [addressSearchQuery, userLangCode]);
 
   const handleSelectAddressSuggestion = (item: PlaceSuggestion) => {
     const placeLabel = item.display_name.split(',')[0];
@@ -2782,12 +2880,22 @@ export default function WapApp() {
         <link rel="icon" href="/icon-192.png" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+        <meta name="screen-orientation" content="portrait" />
+        <meta name="x5-orientation" content="portrait" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="wap" />
         <meta name="theme-color" content={currentBackgroundColor} />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
+
+      <style>{`
+        @media screen and (orientation: landscape) and (max-height: 600px) {
+          html, body {
+            overflow: hidden !important;
+          }
+        }
+      `}</style>
 
       <div style={{ background: currentBackgroundColor, color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', WebkitUserSelect: 'none', touchAction: currentTab === 'map' ? 'auto' : 'pan-y', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         {warningMessage && (
@@ -3430,7 +3538,7 @@ export default function WapApp() {
             >
               {Object.entries(COUNTRIES).map(([code, c]) => (
                 <option key={code} value={code}>
-                  {c.flag} {c.names[userLangCode] || c.names.en} ({c.region})
+                  {c.flag} {getLocalizedLabelText(c.names, userLangCode)} ({c.region})
                 </option>
               ))}
             </select>
@@ -4193,7 +4301,7 @@ export default function WapApp() {
                             }}
                           >
                             <span style={{ fontWeight: isSelected ? 'bold' : 'normal', color: isSelected ? PIN_BLUE_COLOR : '#0f172a' }}>
-                              {c.flag} {c.names[userLangCode] || c.names.en}
+                              {c.flag} {getLocalizedLabelText(c.names, userLangCode)}
                             </span>
                             {isSelected && <span style={{ color: PIN_BLUE_COLOR, fontSize: '11px' }}>✓</span>}
                           </div>
