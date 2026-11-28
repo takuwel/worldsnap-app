@@ -1330,7 +1330,7 @@ const ALL_MODES: { cat: ViewCategory; emoji: string; labelKey: string }[] = [
   { cat: 'shopping', emoji: '🛍️', labelKey: 'shopping' },
 ];
 
-// 三角マーク・標高表記・道路番号などのラベルを省きつつ、色が薄くならないクリアな地図設定
+// ラベル・記号なしタイル（*_nolabels）へ切り替え
 function getLeafletTileConfig(theme: MapThemeType): { url: string; filterCss: string } {
   if (theme === 'dark') {
     return {
@@ -1413,7 +1413,7 @@ function escapeHtmlAttr(str: string): string {
 }
 
 // ==========================================
-// 2. Leaflet コンポーネント（クリア地図・投稿ピン主役）
+// 2. Leaflet コンポーネント
 // ==========================================
 const LeafletMapComponent = ({
   spots,
