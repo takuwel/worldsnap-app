@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import 'leaflet/dist/leaflet.css';
 
 // ==========================================
 // 0. Supabase クライアント初期化 & メディアURLヘルパー
@@ -1422,6 +1421,7 @@ const LeafletMapComponent = ({
   targetCenter,
   targetZoom,
   theme,
+  isVisibleTab,
   onMoveEnd,
   onSelectSpot,
   onDoubleTap,
@@ -1433,6 +1433,7 @@ const LeafletMapComponent = ({
   targetZoom: number | null;
   theme: MapThemeType;
   userLang?: string;
+  isVisibleTab?: boolean;
   onMoveEnd: (center: [number, number], zoom: number) => void;
   onSelectSpot: (s: Spot) => void;
   onDoubleTap: (lat: number, lon: number) => void;
@@ -1454,6 +1455,19 @@ const LeafletMapComponent = ({
   const [currentZoomForCluster, setCurrentZoomForCluster] = useState<number>(zoom);
   const bgColor = getMapContainerBgColor(theme);
   const tileConfig = useMemo(() => getLeafletTileConfig(theme), [theme]);
+
+  // Leaflet CSS をクライアント側で確実に読み込む
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const cssId = 'leaflet-css-cdn';
+    if (!document.getElementById(cssId)) {
+      const link = document.createElement('link');
+      link.id = cssId;
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+    }
+  }, []);
 
   useEffect(() => {
     spots.forEach((spot) => {
@@ -1490,6 +1504,7 @@ const LeafletMapComponent = ({
     if (typeof window === 'undefined' || !mapRef.current) return;
 
     let isCancelled = false;
+    let resizeObserver: ResizeObserver | null = null;
 
     const setupMap = async () => {
       const LModule = await import('leaflet');
@@ -1532,17 +1547,29 @@ const LeafletMapComponent = ({
         }
       });
 
+      if (typeof ResizeObserver !== 'undefined' && mapRef.current) {
+        resizeObserver = new ResizeObserver(() => {
+          if (mapInstanceRef.current) {
+            mapInstanceRef.current.invalidateSize();
+          }
+        });
+        resizeObserver.observe(mapRef.current);
+      }
+
       setTimeout(() => {
         if (!isCancelled && mapInstanceRef.current) {
           mapInstanceRef.current.invalidateSize();
         }
-      }, 100);
+      }, 120);
     };
 
     setupMap();
 
     return () => {
       isCancelled = true;
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
@@ -1573,7 +1600,7 @@ const LeafletMapComponent = ({
     setTimeout(() => {
       map.invalidateSize();
     }, 80);
-  }, [theme]);
+  }, [theme, isVisibleTab]);
 
   useEffect(() => {
     const map = mapInstanceRef.current;
@@ -1624,7 +1651,7 @@ const LeafletMapComponent = ({
     </defs>
     <path d="M22 46 C22 46 38.5 29.5 38.5 18 C38.5 8.8 31.1 1.5 22 1.5 C12.9 1.5 5.5 8.8 5.5 18 C5.5 29.5 22 46 22 46 Z" fill="${PIN_BLUE_COLOR}" stroke="#ffffff" stroke-width="2.5" />
     <circle cx="22" cy="18" r="14.2" fill="${PIN_BLUE_COLOR}" />
-    <image href="${imgUrl}" x="7.8" y="3.8" width="28.4" height="28.4" clip-path="url(#wapPinClip-${spot.id})" preserveAspectRatio="xMidYMid slice" />
+    <image href="${imgUrl}" xlink:href="${imgUrl}" x="7.8" y="3.8" width="28.4" height="28.4" clip-path="url(#wapPinClip-${spot.id})" preserveAspectRatio="xMidYMid slice" />
     ${badgeSvg}
   </svg>
 </div>
@@ -1660,7 +1687,7 @@ const LeafletMapComponent = ({
       <div
         ref={mapRef}
         className="wap-leaflet-tile-pane"
-        style={{ width: '100%', height: '100%', background: bgColor }}
+        style={{ width: '100%', height: '100%', minHeight: '200px', background: bgColor }}
       />
     </div>
   );
@@ -3428,7 +3455,7 @@ export default function WapApp() {
         <div style={{ flex: 1, minHeight: 0, height: 'calc(100dvh - 48px - env(safe-area-inset-top, 0px))', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', background: '#ffffff', padding: 0, margin: 0, boxSizing: 'border-box' }}>
 
           {/* マップタブ */}
-          <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', position: 'relative', background: getMapContainerBgColor(mapTheme), border: 'none', boxSizing: 'border-box' }}>
+          <div style={{ display: currentTab === 'map' ? 'flex' : 'none', flexDirection: 'column', height: '100%', width: '100%', flex: 1, minHeight: 0, position: 'relative', background: getMapContainerBgColor(mapTheme), border: 'none', boxSizing: 'border-box' }}>
             <div style={{ position: 'absolute', top: '10px', left: '12px', right: '12px', zIndex: 500, display: 'flex', flexDirection: 'column', gap: '6px', pointerEvents: 'none', boxSizing: 'border-box' }}>
               <div style={{ position: 'relative', pointerEvents: 'auto', boxSizing: 'border-box', touchAction: 'auto' }}>
                 <form onSubmit={handleJumpLocationSearch} style={{ display: 'flex', gap: '8px', background: 'rgba(255,255,255,0.95)', color: '#000', backdropFilter: 'blur(10px)', padding: '5px 12px', borderRadius: '30px', boxShadow: '0 4px 18px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0', boxSizing: 'border-box' }}>
@@ -3503,7 +3530,7 @@ export default function WapApp() {
               </div>
             </div>
 
-            <div ref={exportRef} style={{ flex: 1, width: '100%', height: '100%', position: 'relative', background: getMapContainerBgColor(mapTheme), boxSizing: 'border-box' }}>
+            <div ref={exportRef} style={{ flex: 1, width: '100%', height: '100%', minHeight: '200px', position: 'relative', background: getMapContainerBgColor(mapTheme), boxSizing: 'border-box' }}>
               <LeafletMapComponent
                 spots={filteredSpots}
                 center={currentMapCenter}
@@ -3512,6 +3539,7 @@ export default function WapApp() {
                 targetZoom={targetZoom}
                 theme={mapTheme}
                 userLang={userLangCode}
+                isVisibleTab={currentTab === 'map'}
                 onMoveEnd={handleMapMoveEnd}
                 onSelectSpot={(spot) => {
                   const nearby = spots.filter(s => Math.abs(s.lat - spot.lat) < 0.005 && Math.abs(s.lon - spot.lon) < 0.005);
