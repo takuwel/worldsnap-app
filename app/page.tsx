@@ -10,7 +10,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = (supabaseUrl && supabaseAnonKey) ? createClient(supabaseUrl, supabaseAnonKey) : null;
 
-const FALLBACK_IMAGE_URL = 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=1200&auto=format&fit=crop';
+const FALLBACK_IMAGE_URL = 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&auto=format&fit=crop';
 const PIN_BLUE_COLOR = '#0284c7';
 
 function readFileAsPersistentDataUrl(file: File): Promise<string> {
@@ -562,166 +562,526 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     close: '關閉',
   },
   es: {
-    map: 'Mapa', feed: 'Cronología', ranking: 'Ranking', profile: 'Perfil', addPhoto: 'Añadir foto / video',
-    filterBtn: 'Filtrar pines', selectedModesLabel: 'Modos elegidos', clearModesBtn: 'Limpiar',
-    view: 'Vista', gourmet: 'Gastronomía', rain: 'Lluvia', cafe: 'Café', onsen: 'Onsen', shopping: 'Compras',
-    myMap: 'Mi Mapa', friends: 'Amigos', world: 'Mundo', openGoogleMaps: '🧭 Abrir en Google Maps',
-    searchPlaceholder: '🔍 Buscar ciudad, lugar, #etiqueta', settings: '⚙️ Ajustes', langSetting: '🌐 Idioma',
-    mapColorSetting: '🎨 Color del mapa', mapColorWhite: '⬜ Blanco', mapColorDark: '⬛ Oscuro',
-    mapColorBase: '🌿 Natural', baseCountrySetting: '📍 País base', close: 'Cerrar',
+    map: 'Mapa',
+    feed: 'Cronología',
+    ranking: 'Ranking',
+    profile: 'Perfil',
+    addPhoto: 'Añadir foto / video',
+    filterBtn: 'Filtrar pines',
+    selectedModesLabel: 'Modos elegidos',
+    clearModesBtn: 'Limpiar',
+    view: 'Vista',
+    gourmet: 'Gastronomía',
+    rain: 'Lluvia',
+    cafe: 'Café',
+    onsen: 'Onsen',
+    shopping: 'Compras',
+    myMap: 'Mi Mapa',
+    friends: 'Amigos',
+    world: 'Mundo',
+    openGoogleMaps: '🧭 Abrir en Google Maps',
+    searchPlaceholder: '🔍 Buscar ciudad, lugar, #etiqueta',
+    settings: '⚙️ Ajustes',
+    langSetting: '🌐 Idioma',
+    mapColorSetting: '🎨 Color del mapa',
+    mapColorWhite: '⬜ Blanco',
+    mapColorDark: '⬛ Oscuro',
+    mapColorBase: '🌿 Natural',
+    baseCountrySetting: '📍 País base',
+    close: 'Cerrar',
   },
   fr: {
-    map: 'Carte', feed: 'Fil', ranking: 'Classement', profile: 'Profil', addPhoto: 'Ajouter photo / vidéo',
-    filterBtn: 'Filtrer repères', selectedModesLabel: 'Modes choisis', clearModesBtn: 'Effacer',
-    view: 'Paysage', gourmet: 'Gastronomie', rain: 'Pluie', cafe: 'Café', onsen: 'Onsen', shopping: 'Shopping',
-    myMap: 'Ma Carte', friends: 'Amis', world: 'Monde', openGoogleMaps: '🧭 Itinéraire Google Maps',
-    searchPlaceholder: '🔍 Rechercher ville, lieu, #tag', settings: '⚙️ Paramètres', langSetting: '🌐 Langue',
-    mapColorSetting: '🎨 Couleur de la carte', mapColorWhite: '⬜ Blanc', mapColorDark: '⬛ Sombre',
-    mapColorBase: '🌿 Naturel', baseCountrySetting: '📍 Pays de base', close: 'Fermer',
+    map: 'Carte',
+    feed: 'Fil',
+    ranking: 'Classement',
+    profile: 'Profil',
+    addPhoto: 'Ajouter photo / vidéo',
+    filterBtn: 'Filtrer repères',
+    selectedModesLabel: 'Modes choisis',
+    clearModesBtn: 'Effacer',
+    view: 'Paysage',
+    gourmet: 'Gastronomie',
+    rain: 'Pluie',
+    cafe: 'Café',
+    onsen: 'Onsen',
+    shopping: 'Shopping',
+    myMap: 'Ma Carte',
+    friends: 'Amis',
+    world: 'Monde',
+    openGoogleMaps: '🧭 Itinéraire Google Maps',
+    searchPlaceholder: '🔍 Rechercher ville, lieu, #tag',
+    settings: '⚙️ Paramètres',
+    langSetting: '🌐 Langue',
+    mapColorSetting: '🎨 Couleur de la carte',
+    mapColorWhite: '⬜ Blanc',
+    mapColorDark: '⬛ Sombre',
+    mapColorBase: '🌿 Naturel',
+    baseCountrySetting: '📍 Pays de base',
+    close: 'Fermer',
   },
   de: {
-    map: 'Karte', feed: 'Verlauf', ranking: 'Rangliste', profile: 'Profil', addPhoto: 'Foto / Video hinzufügen',
-    filterBtn: 'Pins filtern', selectedModesLabel: 'Gewählte Modi', clearModesBtn: 'Zurücksetzen',
-    view: 'Aussicht', gourmet: 'Kulinarik', rain: 'Regen', cafe: 'Café', onsen: 'Onsen', shopping: 'Shopping',
-    myMap: 'Meine Karte', friends: 'Freunde', world: 'Welt', openGoogleMaps: '🧭 Mit Google Maps navigieren',
-    searchPlaceholder: '🔍 Ort, Stadt, #Tag suchen', settings: '⚙️ Einstellungen', langSetting: '🌐 Sprache',
-    mapColorSetting: '🎨 Kartenfarbe', mapColorWhite: '⬜ Weiß', mapColorDark: '⬛ Dunkel',
-    mapColorBase: '🌿 Natürlich', baseCountrySetting: '📍 Basisland', close: 'Schließen',
+    map: 'Karte',
+    feed: 'Verlauf',
+    ranking: 'Rangliste',
+    profile: 'Profil',
+    addPhoto: 'Foto / Video hinzufügen',
+    filterBtn: 'Pins filtern',
+    selectedModesLabel: 'Gewählte Modi',
+    clearModesBtn: 'Zurücksetzen',
+    view: 'Aussicht',
+    gourmet: 'Kulinarik',
+    rain: 'Regen',
+    cafe: 'Café',
+    onsen: 'Onsen',
+    shopping: 'Shopping',
+    myMap: 'Meine Karte',
+    friends: 'Freunde',
+    world: 'Welt',
+    openGoogleMaps: '🧭 Mit Google Maps navigieren',
+    searchPlaceholder: '🔍 Ort, Stadt, #Tag suchen',
+    settings: '⚙️ Einstellungen',
+    langSetting: '🌐 Sprache',
+    mapColorSetting: '🎨 Kartenfarbe',
+    mapColorWhite: '⬜ Weiß',
+    mapColorDark: '⬛ Dunkel',
+    mapColorBase: '🌿 Natürlich',
+    baseCountrySetting: '📍 Basisland',
+    close: 'Schließen',
   },
   pt: {
-    map: 'Mapa', feed: 'Linha do tempo', ranking: 'Ranking', profile: 'Perfil', addPhoto: 'Adicionar foto / vídeo',
-    filterBtn: 'Filtrar pinos', selectedModesLabel: 'Modos escolhidos', clearModesBtn: 'Limpar',
-    view: 'Vista', gourmet: 'Gastronomia', rain: 'Chuva', cafe: 'Café', onsen: 'Onsen', shopping: 'Compras',
-    myMap: 'Meu Mapa', friends: 'Amigos', world: 'Mundo', openGoogleMaps: '🧭 Navegar no Google Maps',
-    searchPlaceholder: '🔍 Buscar cidade, local, #tag', settings: '⚙️ Configurações', langSetting: '🌐 Idioma',
-    mapColorSetting: '🎨 Cor do mapa', mapColorWhite: '⬜ Branco', mapColorDark: '⬛ Escuro',
-    mapColorBase: '🌿 Natural', baseCountrySetting: '📍 País base', close: 'Fechar',
+    map: 'Mapa',
+    feed: 'Linha do tempo',
+    ranking: 'Ranking',
+    profile: 'Perfil',
+    addPhoto: 'Adicionar foto / vídeo',
+    filterBtn: 'Filtrar pinos',
+    selectedModesLabel: 'Modos escolhidos',
+    clearModesBtn: 'Limpar',
+    view: 'Vista',
+    gourmet: 'Gastronomia',
+    rain: 'Chuva',
+    cafe: 'Café',
+    onsen: 'Onsen',
+    shopping: 'Compras',
+    myMap: 'Meu Mapa',
+    friends: 'Amigos',
+    world: 'Mundo',
+    openGoogleMaps: '🧭 Navegar no Google Maps',
+    searchPlaceholder: '🔍 Buscar cidade, local, #tag',
+    settings: '⚙️ Configurações',
+    langSetting: '🌐 Idioma',
+    mapColorSetting: '🎨 Cor do mapa',
+    mapColorWhite: '⬜ Branco',
+    mapColorDark: '⬛ Escuro',
+    mapColorBase: '🌿 Natural',
+    baseCountrySetting: '📍 País base',
+    close: 'Fechar',
   },
   it: {
-    map: 'Mappa', feed: 'Feed', ranking: 'Classifica', profile: 'Profilo', addPhoto: 'Aggiungi foto / video',
-    filterBtn: 'Filtra pin', selectedModesLabel: 'Modalità scelte', clearModesBtn: 'Pulisci',
-    view: 'Panorama', gourmet: 'Gourmet', rain: 'Pioggia', cafe: 'Caffè', onsen: 'Onsen', shopping: 'Shopping',
-    myMap: 'La Mia Mappa', friends: 'Amici', world: 'Mondo', openGoogleMaps: '🧭 Naviga con Google Maps',
-    searchPlaceholder: '🔍 Cerca città, luogo, #tag', settings: '⚙️ Impostazioni', langSetting: '🌐 Lingua',
-    mapColorSetting: '🎨 Colore mappa', mapColorWhite: '⬜ Bianco', mapColorDark: '⬛ Scuro',
-    mapColorBase: '🌿 Naturale', baseCountrySetting: '📍 Paese base', close: 'Chiudi',
+    map: 'Mappa',
+    feed: 'Feed',
+    ranking: 'Classifica',
+    profile: 'Profilo',
+    addPhoto: 'Aggiungi foto / video',
+    filterBtn: 'Filtra pin',
+    selectedModesLabel: 'Modalità scelte',
+    clearModesBtn: 'Pulisci',
+    view: 'Panorama',
+    gourmet: 'Gourmet',
+    rain: 'Pioggia',
+    cafe: 'Caffè',
+    onsen: 'Onsen',
+    shopping: 'Shopping',
+    myMap: 'La Mia Mappa',
+    friends: 'Amici',
+    world: 'Mondo',
+    openGoogleMaps: '🧭 Naviga con Google Maps',
+    searchPlaceholder: '🔍 Cerca città, luogo, #tag',
+    settings: '⚙️ Impostazioni',
+    langSetting: '🌐 Lingua',
+    mapColorSetting: '🎨 Colore mappa',
+    mapColorWhite: '⬜ Bianco',
+    mapColorDark: '⬛ Scuro',
+    mapColorBase: '🌿 Naturale',
+    baseCountrySetting: '📍 Paese base',
+    close: 'Chiudi',
   },
   ru: {
-    map: 'Карта', feed: 'Лента', ranking: 'Рейтинг', profile: 'Профиль', addPhoto: 'Добавить фото / видео',
-    filterBtn: 'Фильтр меток', selectedModesLabel: 'Выбранные режимы', clearModesBtn: 'Сброс',
-    view: 'Виды', gourmet: 'Еда', rain: 'Дождь', cafe: 'Кафе', onsen: 'Онсэн', shopping: 'Шоппинг',
-    myMap: 'Моя карта', friends: 'Друзья', world: 'Мир', openGoogleMaps: '🧭 Маршрут в Google Картах',
-    searchPlaceholder: '🔍 Поиск города, места, #тега', settings: '⚙️ Настройки', langSetting: '🌐 Язык',
-    mapColorSetting: '🎨 Цвет карты', mapColorWhite: '⬜ Белый', mapColorDark: '⬛ Тёмный',
-    mapColorBase: '🌿 Природный', baseCountrySetting: '📍 Базовая страна', close: 'Закрыть',
+    map: 'Карта',
+    feed: 'Лента',
+    ranking: 'Рейтинг',
+    profile: 'Профиль',
+    addPhoto: 'Добавить фото / видео',
+    filterBtn: 'Фильтр меток',
+    selectedModesLabel: 'Выбранные режимы',
+    clearModesBtn: 'Сброс',
+    view: 'Виды',
+    gourmet: 'Еда',
+    rain: 'Дождь',
+    cafe: 'Кафе',
+    onsen: 'Онсэн',
+    shopping: 'Шоппинг',
+    myMap: 'Моя карта',
+    friends: 'Друзья',
+    world: 'Мир',
+    openGoogleMaps: '🧭 Маршрут в Google Картах',
+    searchPlaceholder: '🔍 Поиск города, места, #тега',
+    settings: '⚙️ Настройки',
+    langSetting: '🌐 Язык',
+    mapColorSetting: '🎨 Цвет карты',
+    mapColorWhite: '⬜ Белый',
+    mapColorDark: '⬛ Тёмный',
+    mapColorBase: '🌿 Природный',
+    baseCountrySetting: '📍 Базовая страна',
+    close: 'Закрыть',
   },
   ar: {
-    map: 'الخريطة', feed: 'الخلاصة', ranking: 'الترتيب', profile: 'الملف الشخصي', addPhoto: 'إضافة صورة / فيديو',
-    filterBtn: 'تصفية الدبابيس', selectedModesLabel: 'الأوضاع المختارة', clearModesBtn: 'مسح',
-    view: 'منظر', gourmet: 'طعام', rain: 'مطر', cafe: 'مقهى', onsen: 'ينابيع', shopping: 'تسوق',
-    myMap: 'خريطتي', friends: 'الأصدقاء', world: 'العالم', openGoogleMaps: '🧭 الانتقال عبر خرائط Google',
-    searchPlaceholder: '🔍 ابحث عن مدينة أو مكان أو #وسم', settings: '⚙️ الإعدادات', langSetting: '🌐 اللغة',
-    mapColorSetting: '🎨 لون الخريطة', mapColorWhite: '⬜ أبيض', mapColorDark: '⬛ داكن',
-    mapColorBase: '🌿 طبيعي', baseCountrySetting: '📍 البلد الأساسي', close: 'إغلاق',
+    map: 'الخريطة',
+    feed: 'الخلاصة',
+    ranking: 'الترتيب',
+    profile: 'الملف الشخصي',
+    addPhoto: 'إضافة صورة / فيديو',
+    filterBtn: 'تصفية الدبابيس',
+    selectedModesLabel: 'الأوضاع المختارة',
+    clearModesBtn: 'مسح',
+    view: 'منظر',
+    gourmet: 'طعام',
+    rain: 'مطر',
+    cafe: 'مقهى',
+    onsen: 'ينابيع',
+    shopping: 'تسوق',
+    myMap: 'خريطتي',
+    friends: 'الأصدقاء',
+    world: 'العالم',
+    openGoogleMaps: '🧭 الانتقال عبر خرائط Google',
+    searchPlaceholder: '🔍 ابحث عن مدينة أو مكان أو #وسم',
+    settings: '⚙️ الإعدادات',
+    langSetting: '🌐 اللغة',
+    mapColorSetting: '🎨 لون الخريطة',
+    mapColorWhite: '⬜ أبيض',
+    mapColorDark: '⬛ داكن',
+    mapColorBase: '🌿 طبيعي',
+    baseCountrySetting: '📍 البلد الأساسي',
+    close: 'إغلاق',
   },
   hi: {
-    map: 'मानचित्र', feed: 'फ़ीड', ranking: 'रैंकिंग', profile: 'प्रोफ़ाइल', addPhoto: 'फ़ोटो / वीडियो जोड़ें',
-    filterBtn: 'पिन फ़िल्टर करें', selectedModesLabel: 'चयनित मोड', clearModesBtn: 'साफ़ करें',
-    view: 'दृश्य', gourmet: 'भोजन', rain: 'बारिश', cafe: 'कैफ़े', onsen: 'ऑनसेन', shopping: 'शॉपिंग',
-    myMap: 'मेरा मानचित्र', friends: 'मित्र', world: 'विश्व', openGoogleMaps: '🧭 Google Maps से नेविगेट करें',
-    searchPlaceholder: '🔍 शहर, जगह या #टैग खोजें', settings: '⚙️ सेटिंग्स', langSetting: '🌐 भाषा',
-    mapColorSetting: '🎨 मानचित्र का रंग', mapColorWhite: '⬜ सफ़ेद', mapColorDark: '⬛ डार्क',
-    mapColorBase: '🌿 प्राकृतिक', baseCountrySetting: '📍 मुख्य देश', close: 'बंद करें',
+    map: 'मानचित्र',
+    feed: 'फ़ीड',
+    ranking: 'रैंकिंग',
+    profile: 'प्रोफ़ाइल',
+    addPhoto: 'फ़ोटो / वीडियो जोड़ें',
+    filterBtn: 'पिन फ़िल्टर करें',
+    selectedModesLabel: 'चयनित मोड',
+    clearModesBtn: 'साफ़ करें',
+    view: 'दृश्य',
+    gourmet: 'भोजन',
+    rain: 'बारिश',
+    cafe: 'कैफ़े',
+    onsen: 'ऑनसेन',
+    shopping: 'शॉपिंग',
+    myMap: 'मेरा मानचित्र',
+    friends: 'मित्र',
+    world: 'विश्व',
+    openGoogleMaps: '🧭 Google Maps से नेविगेट करें',
+    searchPlaceholder: '🔍 शहर, जगह या #टैग खोजें',
+    settings: '⚙️ सेटिंग्स',
+    langSetting: '🌐 भाषा',
+    mapColorSetting: '🎨 मानचित्र का रंग',
+    mapColorWhite: '⬜ सफ़ेद',
+    mapColorDark: '⬛ डार्क',
+    mapColorBase: '🌿 प्राकृतिक',
+    baseCountrySetting: '📍 मुख्य देश',
+    close: 'बंद करें',
   },
   th: {
-    map: 'แผนที่', feed: 'ไทม์ไลน์', ranking: 'อันดับ', profile: 'โปรไฟล์', addPhoto: 'เพิ่มรูป / วิดีโอ',
-    filterBtn: 'กรองหมุด', selectedModesLabel: 'โหมดที่เลือก', clearModesBtn: 'ล้าง',
-    view: 'วิว', gourmet: 'ของอร่อย', rain: 'วันฝนตก', cafe: 'คาเฟ่', onsen: 'ออนเซ็น', shopping: 'ช้อปปิ้ง',
-    myMap: 'แผนที่ของฉัน', friends: 'เพื่อน', world: 'ทั่วโลก', openGoogleMaps: '🧭 นำทางด้วย Google Maps',
-    searchPlaceholder: '🔍 ค้นหาเมือง สถานที่ หรือ #แท็ก', settings: '⚙️ ตั้งค่า', langSetting: '🌐 ภาษา',
-    mapColorSetting: '🎨 สีแผนที่', mapColorWhite: '⬜ ขาว', mapColorDark: '⬛ มืด',
-    mapColorBase: '🌿 ธรรมชาติ', baseCountrySetting: '📍 ประเทศหลัก', close: 'ปิด',
+    map: 'แผนที่',
+    feed: 'ไทม์ไลน์',
+    ranking: 'อันดับ',
+    profile: 'โปรไฟล์',
+    addPhoto: 'เพิ่มรูป / วิดีโอ',
+    filterBtn: 'กรองหมุด',
+    selectedModesLabel: 'โหมดที่เลือก',
+    clearModesBtn: 'ล้าง',
+    view: 'วิว',
+    gourmet: 'ของอร่อย',
+    rain: 'วันฝนตก',
+    cafe: 'คาเฟ่',
+    onsen: 'ออนเซ็น',
+    shopping: 'ช้อปปิ้ง',
+    myMap: 'แผนที่ของฉัน',
+    friends: 'เพื่อน',
+    world: 'ทั่วโลก',
+    openGoogleMaps: '🧭 นำทางด้วย Google Maps',
+    searchPlaceholder: '🔍 ค้นหาเมือง สถานที่ หรือ #แท็ก',
+    settings: '⚙️ ตั้งค่า',
+    langSetting: '🌐 ภาษา',
+    mapColorSetting: '🎨 สีแผนที่',
+    mapColorWhite: '⬜ ขาว',
+    mapColorDark: '⬛ มืด',
+    mapColorBase: '🌿 ธรรมชาติ',
+    baseCountrySetting: '📍 ประเทศหลัก',
+    close: 'ปิด',
   },
   vi: {
-    map: 'Bản đồ', feed: 'Dòng thời gian', ranking: 'Xếp hạng', profile: 'Hồ sơ', addPhoto: 'Thêm ảnh / video',
-    filterBtn: 'Lọc ghim', selectedModesLabel: 'Chế độ đã chọn', clearModesBtn: 'Xóa lọc',
-    view: 'Cảnh đẹp', gourmet: 'Ẩm thực', rain: 'Ngày mưa', cafe: 'Cà phê', onsen: 'Suối nước nóng', shopping: 'Mua sắm',
-    myMap: 'Bản đồ của tôi', friends: 'Bạn bè', world: 'Thế giới', openGoogleMaps: '🧭 Chỉ đường bằng Google Maps',
-    searchPlaceholder: '🔍 Tìm thành phố, địa điểm, #thẻ', settings: '⚙️ Cài đặt', langSetting: '🌐 Ngôn ngữ',
-    mapColorSetting: '🎨 Màu bản đồ', mapColorWhite: '⬜ Trắng', mapColorDark: '⬛ Tối',
-    mapColorBase: '🌿 Tự nhiên', baseCountrySetting: '📍 Quốc gia mặc định', close: 'Đóng',
+    map: 'Bản đồ',
+    feed: 'Dòng thời gian',
+    ranking: 'Xếp hạng',
+    profile: 'Hồ sơ',
+    addPhoto: 'Thêm ảnh / video',
+    filterBtn: 'Lọc ghim',
+    selectedModesLabel: 'Chế độ đã chọn',
+    clearModesBtn: 'Xóa lọc',
+    view: 'Cảnh đẹp',
+    gourmet: 'Ẩm thực',
+    rain: 'Ngày mưa',
+    cafe: 'Cà phê',
+    onsen: 'Suối nước nóng',
+    shopping: 'Mua sắm',
+    myMap: 'Bản đồ của tôi',
+    friends: 'Bạn bè',
+    world: 'Thế giới',
+    openGoogleMaps: '🧭 Chỉ đường bằng Google Maps',
+    searchPlaceholder: '🔍 Tìm thành phố, địa điểm, #thẻ',
+    settings: '⚙️ Cài đặt',
+    langSetting: '🌐 Ngôn ngữ',
+    mapColorSetting: '🎨 Màu bản đồ',
+    mapColorWhite: '⬜ Trắng',
+    mapColorDark: '⬛ Tối',
+    mapColorBase: '🌿 Tự nhiên',
+    baseCountrySetting: '📍 Quốc gia mặc định',
+    close: 'Đóng',
   },
   id: {
-    map: 'Peta', feed: 'Linimasa', ranking: 'Peringkat', profile: 'Profil', addPhoto: 'Tambah foto / video',
-    filterBtn: 'Filter pin', selectedModesLabel: 'Mode terpilih', clearModesBtn: 'Hapus',
-    view: 'Pemandangan', gourmet: 'Kuliner', rain: 'Hari hujan', cafe: 'Kafe', onsen: 'Onsen', shopping: 'Belanja',
-    myMap: 'Petaku', friends: 'Teman', world: 'Dunia', openGoogleMaps: '🧭 Navigasi dengan Google Maps',
-    searchPlaceholder: '🔍 Cari kota, tempat, #tagar', settings: '⚙️ Pengaturan', langSetting: '🌐 Bahasa',
-    mapColorSetting: '🎨 Warna peta', mapColorWhite: '⬜ Putih', mapColorDark: '⬛ Gelap',
-    mapColorBase: '🌿 Alami', baseCountrySetting: '📍 Negara utama', close: 'Tutup',
+    map: 'Peta',
+    feed: 'Linimasa',
+    ranking: 'Peringkat',
+    profile: 'Profil',
+    addPhoto: 'Tambah foto / video',
+    filterBtn: 'Filter pin',
+    selectedModesLabel: 'Mode terpilih',
+    clearModesBtn: 'Hapus',
+    view: 'Pemandangan',
+    gourmet: 'Kuliner',
+    rain: 'Hari hujan',
+    cafe: 'Kafe',
+    onsen: 'Onsen',
+    shopping: 'Belanja',
+    myMap: 'Petaku',
+    friends: 'Teman',
+    world: 'Dunia',
+    openGoogleMaps: '🧭 Navigasi dengan Google Maps',
+    searchPlaceholder: '🔍 Cari kota, tempat, #tagar',
+    settings: '⚙️ Pengaturan',
+    langSetting: '🌐 Bahasa',
+    mapColorSetting: '🎨 Warna peta',
+    mapColorWhite: '⬜ Putih',
+    mapColorDark: '⬛ Gelap',
+    mapColorBase: '🌿 Alami',
+    baseCountrySetting: '📍 Negara utama',
+    close: 'Tutup',
   },
   ms: {
-    map: 'Peta', feed: 'Garis masa', ranking: 'Kedudukan', profile: 'Profil', addPhoto: 'Tambah foto / video',
-    filterBtn: 'Tapis pin', selectedModesLabel: 'Mod dipilih', clearModesBtn: 'Kosongkan',
-    view: 'Pemandangan', gourmet: 'Makanan', rain: 'Hari hujan', cafe: 'Kafe', onsen: 'Onsen', shopping: 'Membeli-belah',
-    myMap: 'Peta Saya', friends: 'Rakan', world: 'Dunia', openGoogleMaps: '🧭 Pandu arah dengan Google Maps',
-    searchPlaceholder: '🔍 Cari bandar, tempat, #tag', settings: '⚙️ Tetapan', langSetting: '🌐 Bahasa',
-    mapColorSetting: '🎨 Warna peta', mapColorWhite: '⬜ Putih', mapColorDark: '⬛ Gelap',
-    mapColorBase: '🌿 Semula jadi', baseCountrySetting: '📍 Negara utama', close: 'Tutup',
+    map: 'Peta',
+    feed: 'Garis masa',
+    ranking: 'Kedudukan',
+    profile: 'Profil',
+    addPhoto: 'Tambah foto / video',
+    filterBtn: 'Tapis pin',
+    selectedModesLabel: 'Mod dipilih',
+    clearModesBtn: 'Kosongkan',
+    view: 'Pemandangan',
+    gourmet: 'Makanan',
+    rain: 'Hari hujan',
+    cafe: 'Kafe',
+    onsen: 'Onsen',
+    shopping: 'Membeli-belah',
+    myMap: 'Peta Saya',
+    friends: 'Rakan',
+    world: 'Dunia',
+    openGoogleMaps: '🧭 Pandu arah dengan Google Maps',
+    searchPlaceholder: '🔍 Cari bandar, tempat, #tag',
+    settings: '⚙️ Tetapan',
+    langSetting: '🌐 Bahasa',
+    mapColorSetting: '🎨 Warna peta',
+    mapColorWhite: '⬜ Putih',
+    mapColorDark: '⬛ Gelap',
+    mapColorBase: '🌿 Semula jadi',
+    baseCountrySetting: '📍 Negara utama',
+    close: 'Tutup',
   },
   tl: {
-    map: 'Mapa', feed: 'Timeline', ranking: 'Ranking', profile: 'Profile', addPhoto: 'Magdagdag ng photo / video',
-    filterBtn: 'I-filter ang pin', selectedModesLabel: 'Napiling mode', clearModesBtn: 'I-clear',
-    view: 'Tanawin', gourmet: 'Pagkain', rain: 'Maulan', cafe: 'Cafe', onsen: 'Onsen', shopping: 'Shopping',
-    myMap: 'Aking Mapa', friends: 'Mga Kaibigan', world: 'Mundo', openGoogleMaps: '🧭 Mag-navigate gamit ang Google Maps',
-    searchPlaceholder: '🔍 Maghanap ng lungsod, lugar, #tag', settings: '⚙️ Mga Setting', langSetting: '🌐 Wika',
-    mapColorSetting: '🎨 Kulay ng mapa', mapColorWhite: '⬜ Puti', mapColorDark: '⬛ Madilim',
-    mapColorBase: '🌿 Natural', baseCountrySetting: '📍 Pangunahing bansa', close: 'Isara',
+    map: 'Mapa',
+    feed: 'Timeline',
+    ranking: 'Ranking',
+    profile: 'Profile',
+    addPhoto: 'Magdagdag ng photo / video',
+    filterBtn: 'I-filter ang pin',
+    selectedModesLabel: 'Napiling mode',
+    clearModesBtn: 'I-clear',
+    view: 'Tanawin',
+    gourmet: 'Pagkain',
+    rain: 'Maulan',
+    cafe: 'Cafe',
+    onsen: 'Onsen',
+    shopping: 'Shopping',
+    myMap: 'Aking Mapa',
+    friends: 'Mga Kaibigan',
+    world: 'Mundo',
+    openGoogleMaps: '🧭 Mag-navigate gamit ang Google Maps',
+    searchPlaceholder: '🔍 Maghanap ng lungsod, lugar, #tag',
+    settings: '⚙️ Mga Setting',
+    langSetting: '🌐 Wika',
+    mapColorSetting: '🎨 Kulay ng mapa',
+    mapColorWhite: '⬜ Puti',
+    mapColorDark: '⬛ Madilim',
+    mapColorBase: '🌿 Natural',
+    baseCountrySetting: '📍 Pangunahing bansa',
+    close: 'Isara',
   },
   tr: {
-    map: 'Harita', feed: 'Akış', ranking: 'Sıralama', profile: 'Profil', addPhoto: 'Fotoğraf / video ekle',
-    filterBtn: 'Pin filtrele', selectedModesLabel: 'Seçili modlar', clearModesBtn: 'Temizle',
-    view: 'Manzara', gourmet: 'Gurme', rain: 'Yağmurlu', cafe: 'Kafe', onsen: 'Kaplıca', shopping: 'Alışveriş',
-    myMap: 'Haritam', friends: 'Arkadaşlar', world: 'Dünya', openGoogleMaps: '🧭 Google Haritalar ile yol tarifi',
-    searchPlaceholder: '🔍 Şehir, mekan, #etiket ara', settings: '⚙️ Ayarlar', langSetting: '🌐 Dil',
-    mapColorSetting: '🎨 Harita rengi', mapColorWhite: '⬜ Beyaz', mapColorDark: '⬛ Koyu',
-    mapColorBase: '🌿 Doğal', baseCountrySetting: '📍 Ana ülke', close: 'Kapat',
+    map: 'Harita',
+    feed: 'Akış',
+    ranking: 'Sıralama',
+    profile: 'Profil',
+    addPhoto: 'Fotoğraf / video ekle',
+    filterBtn: 'Pin filtrele',
+    selectedModesLabel: 'Seçili modlar',
+    clearModesBtn: 'Temizle',
+    view: 'Manzara',
+    gourmet: 'Gurme',
+    rain: 'Yağmurlu',
+    cafe: 'Kafe',
+    onsen: 'Kaplıca',
+    shopping: 'Alışveriş',
+    myMap: 'Haritam',
+    friends: 'Arkadaşlar',
+    world: 'Dünya',
+    openGoogleMaps: '🧭 Google Haritalar ile yol tarifi',
+    searchPlaceholder: '🔍 Şehir, mekan, #etiket ara',
+    settings: '⚙️ Ayarlar',
+    langSetting: '🌐 Dil',
+    mapColorSetting: '🎨 Harita rengi',
+    mapColorWhite: '⬜ Beyaz',
+    mapColorDark: '⬛ Koyu',
+    mapColorBase: '🌿 Doğal',
+    baseCountrySetting: '📍 Ana ülke',
+    close: 'Kapat',
   },
   nl: {
-    map: 'Kaart', feed: 'Tijdlijn', ranking: 'Ranglijst', profile: 'Profiel', addPhoto: 'Foto / video toevoegen',
-    filterBtn: 'Pins filteren', selectedModesLabel: 'Gekozen modi', clearModesBtn: 'Wissen',
-    view: 'Uitzicht', gourmet: 'Gastronomie', rain: 'Regen', cafe: 'Café', onsen: 'Onsen', shopping: 'Shoppen',
-    myMap: 'Mijn Kaart', friends: 'Vrienden', world: 'Wereld', openGoogleMaps: '🧭 Navigeren met Google Maps',
-    searchPlaceholder: '🔍 Zoek stad, plek, #tag', settings: '⚙️ Instellingen', langSetting: '🌐 Taal',
-    mapColorSetting: '🎨 Kaartkleur', mapColorWhite: '⬜ Wit', mapColorDark: '⬛ Donker',
-    mapColorBase: '🌿 Natuurlijk', baseCountrySetting: '📍 Basisland', close: 'Sluiten',
+    map: 'Kaart',
+    feed: 'Tijdlijn',
+    ranking: 'Ranglijst',
+    profile: 'Profiel',
+    addPhoto: 'Foto / video toevoegen',
+    filterBtn: 'Pins filteren',
+    selectedModesLabel: 'Gekozen modi',
+    clearModesBtn: 'Wissen',
+    view: 'Uitzicht',
+    gourmet: 'Gastronomie',
+    rain: 'Regen',
+    cafe: 'Café',
+    onsen: 'Onsen',
+    shopping: 'Shoppen',
+    myMap: 'Mijn Kaart',
+    friends: 'Vrienden',
+    world: 'Wereld',
+    openGoogleMaps: '🧭 Navigeren met Google Maps',
+    searchPlaceholder: '🔍 Zoek stad, plek, #tag',
+    settings: '⚙️ Instellingen',
+    langSetting: '🌐 Taal',
+    mapColorSetting: '🎨 Kaartkleur',
+    mapColorWhite: '⬜ Wit',
+    mapColorDark: '⬛ Donker',
+    mapColorBase: '🌿 Natuurlijk',
+    baseCountrySetting: '📍 Basisland',
+    close: 'Sluiten',
   },
   pl: {
-    map: 'Mapa', feed: 'Oś czasu', ranking: 'Ranking', profile: 'Profil', addPhoto: 'Dodaj zdjęcie / wideo',
-    filterBtn: 'Filtruj pinezki', selectedModesLabel: 'Wybrane tryby', clearModesBtn: 'Wyczyść',
-    view: 'Widok', gourmet: 'Kulinaria', rain: 'Deszcz', cafe: 'Kawiarnia', onsen: 'Onsen', shopping: 'Zakupy',
-    myMap: 'Moja Mapa', friends: 'Znajomi', world: 'Świat', openGoogleMaps: '🧭 Nawiguj w Google Maps',
-    searchPlaceholder: '🔍 Szukaj miasta, miejsca, #tagu', settings: '⚙️ Ustawienia', langSetting: '🌐 Język',
-    mapColorSetting: '🎨 Kolor mapy', mapColorWhite: '⬜ Biały', mapColorDark: '⬛ Ciemny',
-    mapColorBase: '🌿 Naturalny', baseCountrySetting: '📍 Kraj bazowy', close: 'Zamknij',
+    map: 'Mapa',
+    feed: 'Oś czasu',
+    ranking: 'Ranking',
+    profile: 'Profil',
+    addPhoto: 'Dodaj zdjęcie / wideo',
+    filterBtn: 'Filtruj pinezki',
+    selectedModesLabel: 'Wybrane tryby',
+    clearModesBtn: 'Wyczyść',
+    view: 'Widok',
+    gourmet: 'Kulinaria',
+    rain: 'Deszcz',
+    cafe: 'Kawiarnia',
+    onsen: 'Onsen',
+    shopping: 'Zakupy',
+    myMap: 'Moja Mapa',
+    friends: 'Znajomi',
+    world: 'Świat',
+    openGoogleMaps: '🧭 Nawiguj w Google Maps',
+    searchPlaceholder: '🔍 Szukaj miasta, miejsca, #tagu',
+    settings: '⚙️ Ustawienia',
+    langSetting: '🌐 Język',
+    mapColorSetting: '🎨 Kolor mapy',
+    mapColorWhite: '⬜ Biały',
+    mapColorDark: '⬛ Ciemny',
+    mapColorBase: '🌿 Naturalny',
+    baseCountrySetting: '📍 Kraj bazowy',
+    close: 'Zamknij',
   },
   sv: {
-    map: 'Karta', feed: 'Flöde', ranking: 'Topplista', profile: 'Profil', addPhoto: 'Lägg till foto / video',
-    filterBtn: 'Filtrera nålar', selectedModesLabel: 'Valda lägen', clearModesBtn: 'Rensa',
-    view: 'Vy', gourmet: 'Mat', rain: 'Regn', cafe: 'Café', onsen: 'Onsen', shopping: 'Shopping',
-    myMap: 'Min Karta', friends: 'Vänner', world: 'Världen', openGoogleMaps: '🧭 Navigera med Google Maps',
-    searchPlaceholder: '🔍 Sök stad, plats, #tagg', settings: '⚙️ Inställningar', langSetting: '🌐 Språk',
-    mapColorSetting: '🎨 Kartfärg', mapColorWhite: '⬜ Vit', mapColorDark: '⬛ Mörk',
-    mapColorBase: '🌿 Naturlig', baseCountrySetting: '📍 Basland', close: 'Stäng',
+    map: 'Karta',
+    feed: 'Flöde',
+    ranking: 'Topplista',
+    profile: 'Profil',
+    addPhoto: 'Lägg till foto / video',
+    filterBtn: 'Filtrera nålar',
+    selectedModesLabel: 'Valda lägen',
+    clearModesBtn: 'Rensa',
+    view: 'Vy',
+    gourmet: 'Mat',
+    rain: 'Regn',
+    cafe: 'Café',
+    onsen: 'Onsen',
+    shopping: 'Shopping',
+    myMap: 'Min Karta',
+    friends: 'Vänner',
+    world: 'Världen',
+    openGoogleMaps: '🧭 Navigera med Google Maps',
+    searchPlaceholder: '🔍 Sök stad, plats, #tagg',
+    settings: '⚙️ Inställningar',
+    langSetting: '🌐 Språk',
+    mapColorSetting: '🎨 Kartfärg',
+    mapColorWhite: '⬜ Vit',
+    mapColorDark: '⬛ Mörk',
+    mapColorBase: '🌿 Naturlig',
+    baseCountrySetting: '📍 Basland',
+    close: 'Stäng',
   },
   uk: {
-    map: 'Карта', feed: 'Стрічка', ranking: 'Рейтинг', profile: 'Профіль', addPhoto: 'Додати фото / відео',
-    filterBtn: 'Фільтр міток', selectedModesLabel: 'Обрані режими', clearModesBtn: 'Очистити',
-    view: 'Краєвид', gourmet: 'Їжа', rain: 'Дощ', cafe: 'Кафе', onsen: 'Онсен', shopping: 'Шопінг',
-    myMap: 'Моя карта', friends: 'Друзі', world: 'Світ', openGoogleMaps: '🧭 Навігація в Google Картах',
-    searchPlaceholder: '🔍 Пошук міста, місця, #тегу', settings: '⚙️ Налаштування', langSetting: '🌐 Мова',
-    mapColorSetting: '🎨 Колір карти', mapColorWhite: '⬜ Білий', mapColorDark: '⬛ Темний',
-    mapColorBase: '🌿 Природний', baseCountrySetting: '📍 Базова країна', close: 'Закрити',
+    map: 'Карта',
+    feed: 'Стрічка',
+    ranking: 'Рейтинг',
+    profile: 'Профіль',
+    addPhoto: 'Додати фото / відео',
+    filterBtn: 'Фільтр міток',
+    selectedModesLabel: 'Обрані режими',
+    clearModesBtn: 'Очистити',
+    view: 'Краєвид',
+    gourmet: 'Їжа',
+    rain: 'Дощ',
+    cafe: 'Кафе',
+    onsen: 'Онсен',
+    shopping: 'Шопінг',
+    myMap: 'Моя карта',
+    friends: 'Друзі',
+    world: 'Світ',
+    openGoogleMaps: '🧭 Навігація в Google Картах',
+    searchPlaceholder: '🔍 Пошук міста, місця, #тегу',
+    settings: '⚙️ Налаштування',
+    langSetting: '🌐 Мова',
+    mapColorSetting: '🎨 Колір карти',
+    mapColorWhite: '⬜ Білий',
+    mapColorDark: '⬛ Темний',
+    mapColorBase: '🌿 Природний',
+    baseCountrySetting: '📍 Базова країна',
+    close: 'Закрити',
   }
 };
 
@@ -941,11 +1301,11 @@ const INITIAL_SPOTS: Spot[] = [
     title: '渋谷スクランブル交差点＆SHIBUYA SKY',
     description: 'wap公式がおすすめする東京の代表的スポット✨ #東京 #公式スポット',
     fileName: 'shibuya.jpg',
-    fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=1600&q=95&auto=format&fit=crop',
-    thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&q=95&auto=format&fit=crop',
+    fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=1200&auto=format&fit=crop',
+    thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=300&h=300&auto=format&fit=crop',
     fileType: 'image',
     mediaList: [
-      { fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=1600&q=95&auto=format&fit=crop', thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=600&q=95&auto=format&fit=crop', fileType: 'image', fileName: 'shibuya.jpg', createdAt: '2026/08/12' }
+      { fileUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=1200&auto=format&fit=crop', thumbUrl: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=300&h=300&auto=format&fit=crop', fileType: 'image', fileName: 'shibuya.jpg', createdAt: '2026/08/12' }
     ],
     lat: 35.6595,
     lon: 139.7005,
@@ -970,31 +1330,30 @@ const ALL_MODES: { cat: ViewCategory; emoji: string; labelKey: string }[] = [
   { cat: 'shopping', emoji: '🛍️', labelKey: 'shopping' },
 ];
 
-// Googleマップに近い「線が整理されたクリアな地図タイル」設定（Retina高精細対応）
+// 道路標識・店舗アイコンなどの細かいPOIを控えめにして投稿ピンを見やすくするタイル設定
 function getLeafletTileConfig(theme: MapThemeType): { url: string; filterCss: string } {
-  const cleanStreetUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
   if (theme === 'dark') {
     return {
-      url: cleanStreetUrl,
-      filterCss: 'invert(0.92) hue-rotate(180deg) saturate(0.85) contrast(1.05)',
+      url: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
+      filterCss: 'contrast(0.95) brightness(0.92)',
     };
   }
   if (theme === 'pastel') {
     return {
-      url: cleanStreetUrl,
-      filterCss: 'saturate(1.12) brightness(1.03)',
+      url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+      filterCss: 'sepia(0.24) saturate(1.15) brightness(1.03)',
     };
   }
   return {
-    url: cleanStreetUrl,
-    filterCss: 'saturate(0.95) contrast(1.02)',
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+    filterCss: 'saturate(0.65) brightness(1.04) contrast(0.92)',
   };
 }
 
 function getMapContainerBgColor(theme: MapThemeType): string {
   if (theme === 'dark') return '#0f172a';
   if (theme === 'pastel') return '#fef9c3';
-  return '#f8fafc';
+  return '#ffffff';
 }
 
 function extractHashtags(text: string): string[] {
@@ -1023,12 +1382,12 @@ function generateVideoThumbnail(file: File): Promise<string> {
         setTimeout(() => {
           try {
             const canvas = document.createElement('canvas');
-            canvas.width = 640;
-            canvas.height = 480;
+            canvas.width = 320;
+            canvas.height = 240;
             const ctx = canvas.getContext('2d');
             if (ctx) {
               ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-              resolve(canvas.toDataURL('image/jpeg', 0.95));
+              resolve(canvas.toDataURL('image/jpeg', 0.9));
             } else {
               resolve('');
             }
@@ -1054,7 +1413,7 @@ function escapeHtmlAttr(str: string): string {
 }
 
 // ==========================================
-// 2. Leaflet コンポーネント（クリア表示＆高精細Retina対応）
+// 2. Leaflet コンポーネント（クリア地図・投稿ピン主役）
 // ==========================================
 const LeafletMapComponent = ({
   spots,
@@ -1110,7 +1469,6 @@ const LeafletMapComponent = ({
     }
   }, []);
 
-  // ピン用サムネイルを高解像度（128x128・空白は青色 #0284c7）でキャッシュ
   useEffect(() => {
     spots.forEach((spot) => {
       const url = resolveMediaSrc(spot.thumbUrl, spot.fileUrl);
@@ -1121,14 +1479,14 @@ const LeafletMapComponent = ({
       img.onload = () => {
         try {
           const canvas = document.createElement('canvas');
-          canvas.width = 128;
-          canvas.height = 128;
+          canvas.width = 64;
+          canvas.height = 64;
           const ctx = canvas.getContext('2d');
           if (ctx) {
             ctx.fillStyle = PIN_BLUE_COLOR;
-            ctx.fillRect(0, 0, 128, 128);
-            ctx.drawImage(img, 0, 0, 128, 128);
-            const dataUri = canvas.toDataURL('image/jpeg', 0.95);
+            ctx.fillRect(0, 0, 64, 64);
+            ctx.drawImage(img, 0, 0, 64, 64);
+            const dataUri = canvas.toDataURL('image/jpeg', 0.9);
             setThumbCache((prev) => ({ ...prev, [url]: dataUri }));
           }
         } catch {
@@ -1169,7 +1527,7 @@ const LeafletMapComponent = ({
 
       const layer = L.tileLayer(tileConfig.url, {
         maxZoom: 19,
-        detectRetina: true,
+        subdomains: 'abcd',
       }).addTo(map);
       tileLayerRef.current = layer;
 
@@ -1231,7 +1589,7 @@ const LeafletMapComponent = ({
     } else {
       tileLayerRef.current = L.tileLayer(tileConfig.url, {
         maxZoom: 19,
-        detectRetina: true,
+        subdomains: 'abcd',
       }).addTo(map);
     }
   }, [tileConfig.url]);
@@ -1285,17 +1643,17 @@ const LeafletMapComponent = ({
 
       const html = `
 <div title="${safeTitle}" style="width:44px;height:48px;position:relative;cursor:pointer;">
-<svg xmlns="http://www.w3.org/2000/svg" width="44" height="48" viewBox="0 0 44 48">
-<defs>
-  <clipPath id="wapPinClip-${spot.id}">
-    <circle cx="22" cy="18" r="14.2" />
-  </clipPath>
-</defs>
-<path d="M22 46 C22 46 38.5 29.5 38.5 18 C38.5 8.8 31.1 1.5 22 1.5 C12.9 1.5 5.5 8.8 5.5 18 C5.5 29.5 22 46 22 46 Z" fill="${PIN_BLUE_COLOR}" stroke="#ffffff" stroke-width="2.5" />
-<circle cx="22" cy="18" r="14.2" fill="${PIN_BLUE_COLOR}" />
-<image href="${imgUrl}" xlink:href="${imgUrl}" x="7.8" y="3.8" width="28.4" height="28.4" clip-path="url(#wapPinClip-${spot.id})" preserveAspectRatio="xMidYMid slice" />
-${badgeSvg}
-</svg>
+  <svg xmlns="http://www.w3.org/2000/svg" width="44" height="48" viewBox="0 0 44 48">
+    <defs>
+      <clipPath id="wapPinClip-${spot.id}">
+        <circle cx="22" cy="18" r="14.2" />
+      </clipPath>
+    </defs>
+    <path d="M22 46 C22 46 38.5 29.5 38.5 18 C38.5 8.8 31.1 1.5 22 1.5 C12.9 1.5 5.5 8.8 5.5 18 C5.5 29.5 22 46 22 46 Z" fill="${PIN_BLUE_COLOR}" stroke="#ffffff" stroke-width="2.5" />
+    <circle cx="22" cy="18" r="14.2" fill="${PIN_BLUE_COLOR}" />
+    <image href="${imgUrl}" xlink:href="${imgUrl}" x="7.8" y="3.8" width="28.4" height="28.4" clip-path="url(#wapPinClip-${spot.id})" preserveAspectRatio="xMidYMid slice" />
+    ${badgeSvg}
+  </svg>
 </div>
 `;
 
@@ -1320,13 +1678,11 @@ ${badgeSvg}
         .wap-leaflet-pin-icon {
           background: transparent !important;
           border: none !important;
+          z-index: 400 !important;
         }
         .wap-leaflet-tile-pane .leaflet-tile-pane {
           filter: ${tileConfig.filterCss};
           transition: filter 0.25s ease;
-        }
-        .wap-leaflet-tile-pane .leaflet-tile {
-          image-rendering: -webkit-optimize-contrast;
         }
       `}</style>
       <div
@@ -2054,7 +2410,6 @@ export default function WapApp() {
     showToast('💬 コメントを投稿しました！');
   };
 
-  // 高画質を維持したままアップロードファイルを読み込む（元画像サイズ上限を12MBまで拡大）
   const parseFilesToPendingList = async (files: File[]): Promise<PendingUploadItem[]> => {
     const EXIFModule = await import('exif-js');
     const EXIF = EXIFModule.default || EXIFModule;
@@ -2062,7 +2417,7 @@ export default function WapApp() {
 
     for (const file of files) {
       const previewBlobUrl = URL.createObjectURL(file);
-      const persistentDataUrl = !file.type.startsWith('video/') && file.size < 12000000
+      const persistentDataUrl = !file.type.startsWith('video/') && file.size < 2500000
         ? await readFileAsPersistentDataUrl(file)
         : '';
       const usableUrl = persistentDataUrl || previewBlobUrl;
@@ -2074,8 +2429,8 @@ export default function WapApp() {
         pendingList.push({
           id: fileId,
           file,
-          fileUrl: previewBlobUrl,
-          thumbUrl: thumbUrl || previewBlobUrl,
+          fileUrl: usableUrl,
+          thumbUrl: thumbUrl || usableUrl,
           fileType: 'video',
           hasGps: false,
           dateTime: new Date().toLocaleDateString(),
@@ -2310,7 +2665,7 @@ export default function WapApp() {
     e.preventDefault();
     e.stopPropagation();
     if (!exportRef.current) return;
-    showToast('📸 高画質マップ画像を生成中...');
+    showToast('📸 マップ画像を生成中...');
 
     try {
       const html2canvasModule = await import('html2canvas');
@@ -2319,7 +2674,7 @@ export default function WapApp() {
       const canvas = await html2canvas(exportRef.current, {
         useCORS: true,
         allowTaint: true,
-        scale: 3,
+        scale: 2,
         logging: false,
         ignoreElements: (element) => {
           return (
@@ -2394,7 +2749,7 @@ export default function WapApp() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         showToast('💾 マップ画像を保存しました！');
-      }, 'image/png', 1.0);
+      }, 'image/png');
     } catch (err) {
       console.error('Export error:', err);
       showToast('❌ 画像生成に失敗しました');
