@@ -1330,24 +1330,23 @@ const ALL_MODES: { cat: ViewCategory; emoji: string; labelKey: string }[] = [
   { cat: 'shopping', emoji: '🛍️', labelKey: 'shopping' },
 ];
 
-// OpenStreetMap タイルを使い、色味とコントラストを抑えて標識を目立たなくする設定
+// 三角マーク・標高表記・道路番号などのラベルを省きつつ、色が薄くならないクリアな地図設定
 function getLeafletTileConfig(theme: MapThemeType): { url: string; filterCss: string } {
-  const osmUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
   if (theme === 'dark') {
     return {
-      url: osmUrl,
-      filterCss: 'invert(0.92) hue-rotate(180deg) brightness(0.88) contrast(0.92) saturate(0.4)',
+      url: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
+      filterCss: 'contrast(1.15) saturate(1.1) brightness(1.0)',
     };
   }
   if (theme === 'pastel') {
     return {
-      url: osmUrl,
-      filterCss: 'sepia(0.28) saturate(0.75) brightness(1.04) contrast(0.88)',
+      url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+      filterCss: 'sepia(0.25) saturate(1.35) contrast(1.08) brightness(0.98)',
     };
   }
   return {
-    url: osmUrl,
-    filterCss: 'grayscale(0.55) brightness(1.06) contrast(0.84)',
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+    filterCss: 'saturate(1.2) contrast(1.08) brightness(0.98)',
   };
 }
 
@@ -1528,6 +1527,7 @@ const LeafletMapComponent = ({
 
       const layer = L.tileLayer(tileConfig.url, {
         maxZoom: 19,
+        subdomains: 'abcd',
       }).addTo(map);
       tileLayerRef.current = layer;
 
@@ -1589,6 +1589,7 @@ const LeafletMapComponent = ({
     } else {
       tileLayerRef.current = L.tileLayer(tileConfig.url, {
         maxZoom: 19,
+        subdomains: 'abcd',
       }).addTo(map);
     }
   }, [tileConfig.url]);
