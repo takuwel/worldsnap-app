@@ -148,28 +148,30 @@ interface LocalizedPlaceLabel {
   names: Record<string, string>;
 }
 
+const MAJOR_COUNTRY_LABEL_CODES = ['JP', 'CN', 'KR', 'TW', 'TH', 'VN', 'SG', 'MY', 'ID', 'PH', 'IN', 'AE', 'FR', 'ES', 'IT', 'GB', 'DE', 'US', 'CA', 'BR', 'AU', 'NZ'];
+
 const LOCALIZED_PLACE_LABELS: LocalizedPlaceLabel[] = [
-  { id: 'tokyo', lat: 35.6762, lon: 139.6503, minZoom: 5, names: { ja: '東京', en: 'Tokyo', ko: '도쿄', zh: '东京', zh_tw: '東京', fr: 'Tokyo', de: 'Tokio', es: 'Tokio', it: 'Tokyo', pt: 'Tóquio', ru: 'Токио', ar: 'طوكيو', hi: 'टोक्यो', th: 'โตเกียว', vi: 'Tokyo', id: 'Tokyo', ms: 'Tokyo', tl: 'Tokyo', tr: 'Tokyo', nl: 'Tokio', pl: 'Tokio', sv: 'Tokyo', uk: 'Токіо' } },
-  { id: 'osaka', lat: 34.6937, lon: 135.5023, minZoom: 6, names: { ja: '大阪', en: 'Osaka', ko: '오사카', zh: '大阪', zh_tw: '大阪' } },
-  { id: 'kyoto', lat: 35.0116, lon: 135.7681, minZoom: 6, names: { ja: '京都', en: 'Kyoto', ko: '교토', zh: '京都', zh_tw: '京都' } },
-  { id: 'sapporo', lat: 43.0618, lon: 141.3545, minZoom: 5, names: { ja: '札幌', en: 'Sapporo', ko: '삿포로', zh: '札幌', zh_tw: '札幌' } },
-  { id: 'fukuoka', lat: 33.5902, lon: 130.4017, minZoom: 6, names: { ja: '福岡', en: 'Fukuoka', ko: '후쿠오카', zh: '福冈', zh_tw: '福岡' } },
-  { id: 'seoul', lat: 37.5665, lon: 126.9780, minZoom: 5, names: { ja: 'ソウル', en: 'Seoul', ko: '서울', zh: '首尔', zh_tw: '首爾' } },
-  { id: 'busan', lat: 35.1796, lon: 129.0756, minZoom: 6, names: { ja: '釜山', en: 'Busan', ko: '부산', zh: '釜山', zh_tw: '釜山' } },
-  { id: 'beijing', lat: 39.9042, lon: 116.4074, minZoom: 4, names: { ja: '北京', en: 'Beijing', ko: '베이징', zh: '北京', zh_tw: '北京' } },
-  { id: 'shanghai', lat: 31.2304, lon: 121.4737, minZoom: 4, names: { ja: '上海', en: 'Shanghai', ko: '상하이', zh: '上海', zh_tw: '上海' } },
-  { id: 'taipei', lat: 25.0330, lon: 121.5654, minZoom: 6, names: { ja: '台北', en: 'Taipei', ko: '타이베이', zh: '台北', zh_tw: '臺北' } },
-  { id: 'bangkok', lat: 13.7563, lon: 100.5018, minZoom: 5, names: { ja: 'バンコク', en: 'Bangkok', ko: '방콕', zh: '曼谷', zh_tw: '曼谷', th: 'กรุงเทพมหานคร' } },
-  { id: 'singapore', lat: 1.3521, lon: 103.8198, minZoom: 6, names: { ja: 'シンガポール', en: 'Singapore', ko: '싱가포르', zh: '新加坡', zh_tw: '新加坡' } },
-  { id: 'london', lat: 51.5072, lon: -0.1276, minZoom: 4, names: { ja: 'ロンドン', en: 'London', ko: '런던', zh: '伦敦', zh_tw: '倫敦', fr: 'Londres', de: 'London', es: 'Londres', it: 'Londra', pt: 'Londres', ru: 'Лондон' } },
-  { id: 'paris', lat: 48.8566, lon: 2.3522, minZoom: 4, names: { ja: 'パリ', en: 'Paris', ko: '파리', zh: '巴黎', zh_tw: '巴黎', fr: 'Paris', de: 'Paris', es: 'París', it: 'Parigi', pt: 'Paris', ru: 'Париж' } },
-  { id: 'rome', lat: 41.9028, lon: 12.4964, minZoom: 5, names: { ja: 'ローマ', en: 'Rome', ko: '로마', zh: '罗马', zh_tw: '羅馬', it: 'Roma', fr: 'Rome', es: 'Roma' } },
-  { id: 'berlin', lat: 52.5200, lon: 13.4050, minZoom: 5, names: { ja: 'ベルリン', en: 'Berlin', ko: '베를린', zh: '柏林', zh_tw: '柏林', de: 'Berlin' } },
-  { id: 'madrid', lat: 40.4168, lon: -3.7038, minZoom: 5, names: { ja: 'マドリード', en: 'Madrid', ko: '마드리드', zh: '马德里', zh_tw: '馬德里', es: 'Madrid' } },
-  { id: 'newyork', lat: 40.7128, lon: -74.0060, minZoom: 4, names: { ja: 'ニューヨーク', en: 'New York', ko: '뉴욕', zh: '纽约', zh_tw: '紐約', es: 'Nueva York', fr: 'New York' } },
-  { id: 'losangeles', lat: 34.0522, lon: -118.2437, minZoom: 4, names: { ja: 'ロサンゼルス', en: 'Los Angeles', ko: '로스앤젤레스', zh: '洛杉矶', zh_tw: '洛杉磯' } },
-  { id: 'sydney', lat: -33.8688, lon: 151.2093, minZoom: 4, names: { ja: 'シドニー', en: 'Sydney', ko: '시드니', zh: '悉尼', zh_tw: '雪梨' } },
-  { id: 'dubai', lat: 25.2048, lon: 55.2708, minZoom: 5, names: { ja: 'ドバイ', en: 'Dubai', ko: '두바이', zh: '迪拜', zh_tw: '杜拜', ar: 'دبي' } },
+  { id: 'tokyo', lat: 35.6762, lon: 139.6503, minZoom: 7, names: { ja: '東京', en: 'Tokyo', ko: '도쿄', zh: '东京', zh_tw: '東京', fr: 'Tokyo', de: 'Tokio', es: 'Tokio', it: 'Tokyo', pt: 'Tóquio', ru: 'Токио', ar: 'طوكيو', hi: 'टोक्यो', th: 'โตเกียว', vi: 'Tokyo', id: 'Tokyo', ms: 'Tokyo', tl: 'Tokyo', tr: 'Tokyo', nl: 'Tokio', pl: 'Tokio', sv: 'Tokyo', uk: 'Токіо' } },
+  { id: 'osaka', lat: 34.6937, lon: 135.5023, minZoom: 8, names: { ja: '大阪', en: 'Osaka', ko: '오사카', zh: '大阪', zh_tw: '大阪' } },
+  { id: 'kyoto', lat: 35.0116, lon: 135.7681, minZoom: 8, names: { ja: '京都', en: 'Kyoto', ko: '교토', zh: '京都', zh_tw: '京都' } },
+  { id: 'sapporo', lat: 43.0618, lon: 141.3545, minZoom: 7, names: { ja: '札幌', en: 'Sapporo', ko: '삿포로', zh: '札幌', zh_tw: '札幌' } },
+  { id: 'fukuoka', lat: 33.5902, lon: 130.4017, minZoom: 8, names: { ja: '福岡', en: 'Fukuoka', ko: '후쿠오카', zh: '福冈', zh_tw: '福岡' } },
+  { id: 'seoul', lat: 37.5665, lon: 126.9780, minZoom: 7, names: { ja: 'ソウル', en: 'Seoul', ko: '서울', zh: '首尔', zh_tw: '首爾' } },
+  { id: 'busan', lat: 35.1796, lon: 129.0756, minZoom: 8, names: { ja: '釜山', en: 'Busan', ko: '부산', zh: '釜山', zh_tw: '釜山' } },
+  { id: 'beijing', lat: 39.9042, lon: 116.4074, minZoom: 6, names: { ja: '北京', en: 'Beijing', ko: '베이징', zh: '北京', zh_tw: '北京' } },
+  { id: 'shanghai', lat: 31.2304, lon: 121.4737, minZoom: 6, names: { ja: '上海', en: 'Shanghai', ko: '상하이', zh: '上海', zh_tw: '上海' } },
+  { id: 'taipei', lat: 25.0330, lon: 121.5654, minZoom: 8, names: { ja: '台北', en: 'Taipei', ko: '타이베이', zh: '台北', zh_tw: '臺北' } },
+  { id: 'bangkok', lat: 13.7563, lon: 100.5018, minZoom: 7, names: { ja: 'バンコク', en: 'Bangkok', ko: '방콕', zh: '曼谷', zh_tw: '曼谷', th: 'กรุงเทพมหานคร' } },
+  { id: 'singapore', lat: 1.3521, lon: 103.8198, minZoom: 8, names: { ja: 'シンガポール', en: 'Singapore', ko: '싱가포르', zh: '新加坡', zh_tw: '新加坡' } },
+  { id: 'london', lat: 51.5072, lon: -0.1276, minZoom: 7, names: { ja: 'ロンドン', en: 'London', ko: '런던', zh: '伦敦', zh_tw: '倫敦', fr: 'Londres', de: 'London', es: 'Londres', it: 'Londra', pt: 'Londres', ru: 'Лондон' } },
+  { id: 'paris', lat: 48.8566, lon: 2.3522, minZoom: 7, names: { ja: 'パリ', en: 'Paris', ko: '파리', zh: '巴黎', zh_tw: '巴黎', fr: 'Paris', de: 'Paris', es: 'París', it: 'Parigi', pt: 'Paris', ru: 'Париж' } },
+  { id: 'rome', lat: 41.9028, lon: 12.4964, minZoom: 7, names: { ja: 'ローマ', en: 'Rome', ko: '로마', zh: '罗马', zh_tw: '羅馬', it: 'Roma', fr: 'Rome', es: 'Roma' } },
+  { id: 'berlin', lat: 52.5200, lon: 13.4050, minZoom: 7, names: { ja: 'ベルリン', en: 'Berlin', ko: '베를린', zh: '柏林', zh_tw: '柏林', de: 'Berlin' } },
+  { id: 'madrid', lat: 40.4168, lon: -3.7038, minZoom: 7, names: { ja: 'マドリード', en: 'Madrid', ko: '마드리드', zh: '马德里', zh_tw: '馬德里', es: 'Madrid' } },
+  { id: 'newyork', lat: 40.7128, lon: -74.0060, minZoom: 6, names: { ja: 'ニューヨーク', en: 'New York', ko: '뉴욕', zh: '纽约', zh_tw: '紐約', es: 'Nueva York', fr: 'New York' } },
+  { id: 'losangeles', lat: 34.0522, lon: -118.2437, minZoom: 6, names: { ja: 'ロサンゼルス', en: 'Los Angeles', ko: '로스앤젤레스', zh: '洛杉矶', zh_tw: '洛杉磯' } },
+  { id: 'sydney', lat: -33.8688, lon: 151.2093, minZoom: 6, names: { ja: 'シドニー', en: 'Sydney', ko: '시드니', zh: '悉尼', zh_tw: '雪梨' } },
+  { id: 'dubai', lat: 25.2048, lon: 55.2708, minZoom: 7, names: { ja: 'ドバイ', en: 'Dubai', ko: '두바이', zh: '迪拜', zh_tw: '杜拜', ar: 'دبي' } },
 ];
 
 const NG_PATTERNS = [
@@ -348,11 +350,8 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
 3. 各投稿やコメントには応援機能および悪質ユーザーの「ブロック（🚫）」機能、ならびにお問い合わせ窓口（wap.support.official@gmail.com）を完備しています。`,
     guideFullText: `📖【wap（ワップ）最新操作ガイド】
 
-📱 **縦画面固定（ポートレート）について**
-- TikTokと同じように縦画面表示に最適化しています。端末を横にしても横画面に崩れず快適に操作できます。
-
 1️⃣ **マップ画面で地図を見る・探す・絞り込む**
-- 「🗺️ マップ」では、設定した表示言語に合わせて国名・地域・主要都市の地名表示や検索結果が統一されます。
+- 「🗺️ マップ」では、設定した表示言語に合わせて国名・地域・主要都市の地名表示や検索結果が統一されます。広域表示では地名を絞り込んでスッキリ表示します。
 - 上部の🔍検索バーで都市名や「#タグ」を検索でき、ピンをダブルタップするとズームイン、右下の「🪟」ボタンで段階的にズームアウトできます。
 - 「ピンを絞り込む」ボタンから全6モード（景色・グルメ・雨の日・カフェ・温泉・ショッピング）を一括選択でき、「クリア」で全表示に戻せます。右上では「ワールド／フレンド／マイマップ」の表示範囲を切り替えられます。
 - 左上の「☰」から表示言語・マップの色（ホワイト／ダーク／ナチュラル）・ベースの国を変更できます。
@@ -437,7 +436,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     myQrCode: '📱 My QR Code',
     scanQrCode: '📷 Scan QR Code',
     eulaFullText: `[wap Terms of Service & Location Policy]\nContact: wap.support.official@gmail.com`,
-    guideFullText: `[wap User Guide]\n\n📱 Portrait Lock: Locked to portrait orientation like TikTok.\n🗺️ Map & Language: Place names and search results follow your selected display language, with 6 category modes, scope filters, pinch-zoom-drag post preview, travel log calendar, and QR friend sharing.`
+    guideFullText: `[wap User Guide]\n\n🗺️ Map & Language: Place names and search results follow your selected display language with minimal labels when zoomed out, alongside 6 category modes, scope filters, pinch-zoom-drag post preview, travel log calendar, and QR friend sharing.`
   },
   ko: {
     step1Title: 'Step 1: 표시 언어 선택',
@@ -509,7 +508,7 @@ export const DICTIONARIES: Record<string, Record<string, string>> = {
     myQrCode: '📱 내 QR코드',
     scanQrCode: '📷 QR코드 스캔',
     eulaFullText: `[wap 이용약관 및 위치정보 정책]\n문의: wap.support.official@gmail.com`,
-    guideFullText: `[wap 사용 가이드]\n\n📱 세로 화면 고정: TikTok처럼 세로 화면에 맞춰져 기기를 돌려도 레이아웃이 흐트러지지 않습니다.\n🗺️ 언어 통일 및 기능: 선택한 표시 언어로 지명과 검색 결과가 통일되며, 6개 모드 필터, 핀치/드래그 미리보기, 여행 로그 캘린더, QR 친구 추가를 지원합니다.`
+    guideFullText: `[wap 사용 가이드]\n\n🗺️ 언어 통일 및 기능: 선택한 표시 언어로 지명과 검색 결과가 통일되며, 축소 시 지명 표시를 줄여 깔끔하게 보이고 6개 모드 필터, 핀치/드래그 미리보기, 여행 로그 캘린더, QR 친구 추가를 지원합니다.`
   },
   zh: {
     step1Title: 'Step 1: 选择显示语言',
@@ -1449,7 +1448,7 @@ function escapeHtmlAttr(str: string): string {
 }
 
 // ==========================================
-// 2. Leaflet コンポーネント（設定言語統一ラベル＋投稿ピン）
+// 2. Leaflet コンポーネント（引きズーム時は地名を絞ってスッキリ表示）
 // ==========================================
 const LeafletMapComponent = ({
   spots,
@@ -1649,7 +1648,7 @@ const LeafletMapComponent = ({
     setCurrentZoomForCluster(targetZoom);
   }, [targetCenter, targetZoom]);
 
-  // 設定言語（userLang）で国・主要都市の地名ラベルを統一描画
+  // 引きズーム時は地名を厳選し、ズームインに応じて主要都市を追加表示
   useEffect(() => {
     const L = leafletLibRef.current;
     const labelGroup = labelLayerRef.current;
@@ -1660,12 +1659,14 @@ const LeafletMapComponent = ({
     const textColor = theme === 'dark' ? '#e2e8f0' : '#0f172a';
     const haloColor = theme === 'dark' ? 'rgba(15,23,42,0.85)' : 'rgba(255,255,255,0.9)';
 
-    if (activeZoom <= 6) {
-      Object.entries(COUNTRIES).forEach(([code, c]) => {
+    if (activeZoom <= 5) {
+      MAJOR_COUNTRY_LABEL_CODES.forEach((code) => {
+        const c = COUNTRIES[code];
+        if (!c) return;
         const label = escapeHtmlAttr(getLocalizedLabelText(c.names, userLang));
         if (!label) return;
         const icon = L.divIcon({
-          html: `<div style="font-size:11px;font-weight:800;color:${textColor};text-shadow:0 0 4px ${haloColor},0 1px 2px ${haloColor};white-space:nowrap;pointer-events:none;transform:translate(-50%,-50%);">${label}</div>`,
+          html: `<div style="font-size:10px;font-weight:700;color:${textColor};text-shadow:0 0 3px ${haloColor};white-space:nowrap;pointer-events:none;transform:translate(-50%,-50%);">${label}</div>`,
           className: 'wap-lang-country-label',
           iconSize: [0, 0],
           iconAnchor: [0, 0],
@@ -1679,7 +1680,7 @@ const LeafletMapComponent = ({
       const label = escapeHtmlAttr(getLocalizedLabelText(place.names, userLang));
       if (!label) return;
       const icon = L.divIcon({
-        html: `<div style="font-size:11px;font-weight:700;color:${textColor};background:${haloColor};padding:1px 6px;border-radius:8px;white-space:nowrap;pointer-events:none;transform:translate(-50%,-50%);border:1px solid rgba(148,163,184,0.35);">${label}</div>`,
+        html: `<div style="font-size:10px;font-weight:700;color:${textColor};background:${haloColor};padding:1px 5px;border-radius:6px;white-space:nowrap;pointer-events:none;transform:translate(-50%,-50%);border:1px solid rgba(148,163,184,0.3);">${label}</div>`,
         className: 'wap-lang-city-label',
         iconSize: [0, 0],
         iconAnchor: [0, 0],
@@ -1852,17 +1853,6 @@ export default function WapApp() {
 
   const [targetCenter, setTargetCenter] = useState<[number, number] | null>(null);
   const [targetZoom, setTargetZoom] = useState<number | null>(null);
-
-  // TikTok同様に縦画面（portrait）固定を試行
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const orient = (window.screen as any)?.orientation;
-      if (orient && typeof orient.lock === 'function') {
-        orient.lock('portrait').catch(() => {});
-      }
-    } catch {}
-  }, []);
 
   useEffect(() => {
     setIsClient(true);
@@ -2377,7 +2367,7 @@ export default function WapApp() {
       const conf = COUNTRIES[userCountry] || COUNTRIES.JP;
       setTargetCenter([conf.lat, conf.lon]);
       setTargetZoom(conf.zoom);
-      showToast(`🇯🇵 ${conf.names[userLangCode] || conf.names.en} 全体へ戻しました`);
+      showToast(`🇯🇵 ${getLocalizedLabelText(conf.names, userLangCode)} 全体へ戻しました`);
     } else {
       setTargetCenter([20.0, 0.0]);
       setTargetZoom(3);
@@ -2391,7 +2381,7 @@ export default function WapApp() {
     const target = COUNTRIES[userCountry] || COUNTRIES.JP;
     setTargetCenter([target.lat, target.lon]);
     setTargetZoom(target.zoom);
-    showToast(`🌍 ${target.names[userLangCode] || target.names.en} へようこそ！`);
+    showToast(`🌍 ${getLocalizedLabelText(target.names, userLangCode)} へようこそ！`);
   };
 
   const handleAvatarFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -2711,7 +2701,7 @@ export default function WapApp() {
         lat: finalLat,
         lon: finalLon,
         countryCode: userCountry,
-        cityName: currentConfig.names[userLangCode] || currentConfig.names.en,
+        cityName: getLocalizedLabelText(currentConfig.names, userLangCode),
         category: postCategory,
         scopes: selectedScopes,
         hasParking: current.hasParking,
@@ -2880,22 +2870,12 @@ export default function WapApp() {
         <link rel="icon" href="/icon-192.png" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-        <meta name="screen-orientation" content="portrait" />
-        <meta name="x5-orientation" content="portrait" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="wap" />
         <meta name="theme-color" content={currentBackgroundColor} />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" async></script>
       </head>
-
-      <style>{`
-        @media screen and (orientation: landscape) and (max-height: 600px) {
-          html, body {
-            overflow: hidden !important;
-          }
-        }
-      `}</style>
 
       <div style={{ background: currentBackgroundColor, color: '#0f172a', height: '100dvh', maxHeight: '100dvh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', overflow: 'hidden', position: 'fixed', inset: 0, fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', userSelect: 'none', WebkitUserSelect: 'none', touchAction: currentTab === 'map' ? 'auto' : 'pan-y', paddingTop: 'env(safe-area-inset-top, 0px)' }}>
         {warningMessage && (
@@ -3058,7 +3038,7 @@ export default function WapApp() {
                                 }}
                               >
                                 <span style={{ fontSize: '13px', fontWeight: isSelected ? '900' : 'bold', color: isSelected ? PIN_BLUE_COLOR : '#0f172a' }}>
-                                  {c.flag} {c.names[userLangCode] || c.names.en}
+                                  {c.flag} {getLocalizedLabelText(c.names, userLangCode)}
                                 </span>
                                 {isSelected && <span style={{ color: PIN_BLUE_COLOR, fontWeight: 'bold', fontSize: '12px' }}>✓ 選択中</span>}
                               </div>
